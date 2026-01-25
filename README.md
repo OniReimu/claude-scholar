@@ -10,11 +10,13 @@
 
 ```
 .claude/
-├── skills/          # 自定义技能（30+）
+├── skills/          # 自定义技能（24+）
 ├── commands/        # Slash 命令
 ├── agents/          # 自定义代理
 ├── hooks/           # Git 钩子
 ├── plugins/         # 插件
+│   └── marketplaces/
+│       └── ai-research-skills/  # AI 研究技能插件
 ├── CLAUDE.md        # 全局配置
 └── settings.json    # Claude 设置
 ```
@@ -32,10 +34,10 @@
 ### 写作相关 Skills
 
 - **scientific-writing** - 学术论文写作辅助
-  - 顶会投稿（NeurIPS, ICML, ICLR, KDD）
+  - 顶会投稿（NeurIPS, ICML, ICLR, ACL, AAAI, COLM）
   - 高影响期刊（Nature, Science, Cell, PNAS）
-- **paper-writer** - 论文结构和写作指导
-- **stop-slop** - 移除 AI 写作模式
+  - ML 会议专用参考和 LaTeX 模板
+- **writing-anti-ai** - 去除 AI 写作痕迹（中英双语）
 
 ### Claude Code 开发 Skills
 
