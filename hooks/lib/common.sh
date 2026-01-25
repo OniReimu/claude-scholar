@@ -104,7 +104,7 @@ detect_temp_files() {
   fi
 
   # 已知临时目录
-  for dir in "docs/plans" ".claude/temp" "tmp" "temp"; do
+  for dir in "plan" "docs/plans" ".claude/temp" "tmp" "temp"; do
     if [ -d "$cwd/$dir" ]; then
       while IFS= read -r file; do
         [ -n "$file" ] && temp_files+=("$file")
