@@ -1,0 +1,8 @@
+{
+  "name": "user-commands",
+  "displayName": "User Commands",
+  "description": "Custom user commands for project management",
+  "version": "1.0.0",
+  "publisher": "user",
+  "author": "user"
+}

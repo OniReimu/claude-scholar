@@ -1,0 +1,18 @@
+Backup Manifest
+==============
+Skill Name: skill-improver
+Source Path: /Users/gaoruizhang/.claude/skills/skill-improver
+Backup Date: 2026年 1月23日 星期五 13时55分44秒 CST
+Timestamp: 20260123-135544
+
+Files Backed Up:
+references/merge-strategies.md
+references/plan-format.md
+scripts/verify-update.sh
+scripts/backup-skill.sh
+SKILL.md
+
+Restore Instructions:
+-------------------
+To restore this backup, run:
+  cp -R /Users/gaoruizhang/.claude/skills/backup/skill-improver-20260123-135544/* /Users/gaoruizhang/.claude/skills/skill-improver/
