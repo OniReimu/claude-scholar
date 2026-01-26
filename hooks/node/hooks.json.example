@@ -1,0 +1,70 @@
+{
+  "description": "跨平台 Hooks 配置示例",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE}/hooks/node/session-start.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE}/hooks/node/session-summary.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE}/hooks/node/stop-summary.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE}/hooks/node/security-guard.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE}/hooks/node/resource-forced-eval.js",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "node ${CLAUDE}/hooks/node/skill-forced-eval.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
