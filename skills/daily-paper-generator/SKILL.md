@@ -1,7 +1,7 @@
 ---
 name: daily-paper-generator
 description: Use when the user asks to "generate daily paper", "search arXiv for EEG papers", "find EEG decoding papers", "review brain-computer interface papers", or wants to create paper summaries for EEG/brain decoding/speech decoding research. This skill automates searching arXiv for recent papers on EEG decoding, EEG speech decoding, or brain foundation models, reviewing paper quality, and generating structured Chinese/English summaries.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Daily Paper Generator
@@ -26,6 +26,94 @@ Use this skill when:
 - User needs paper reviews with both Chinese and English summaries
 - User wants to track recent arXiv publications in neuro/AI intersection
 
+## Output Format
+
+Each paper summary follows this structure (see `example/daily paper example.md` for complete example):
+
+### 1. Header Section
+```markdown
+# Paper Title
+
+## 作者及单位
+Author list
+Institution
+
+## arXiv 链接
+https://arxiv.org/abs/ARXIV_ID
+
+**发表日期**: YYYY-MM-DD
+**arXiv ID**: XXXX.XXXXX
+**分类**: cs.LG, q-bio.NC, eess.SP
+```
+
+### 2. Review Sections
+
+**中文评语** (~300 words):
+- Background (1-2 sentences): Research context and importance
+- Challenges (2-3 sentences): Problems with existing methods
+- Contribution (1-2 sentences): Core contribution of this work
+- Method (2-3 sentences): Key technical details
+- Results (2-3 sentences): Main findings and metrics
+- Analysis & Limitations (1-2 sentences): Significance and limitations
+
+**English Review** (fluent academic English):
+- Concise summary following the same structure as Chinese review
+- Use natural academic prose (avoid AI-like patterns)
+- Apply scientific writing best practices
+
+### 3. Main Figure Section
+```markdown
+## 主图
+[预留论文主图位置]
+```
+
+### 4. Metadata Table
+```markdown
+## 论文元数据
+
+| 项目 | 内容 |
+|------|------|
+| **标题** | Paper Title |
+| **第一作者** | First Author Name |
+| **作者列表** | Full author list |
+| **第一作者单位** | Institution |
+| **发表日期** | YYYY-MM-DD |
+| **arXiv 链接** | https://arxiv.org/abs/ID |
+| **PDF 链接** | https://arxiv.org/pdf/ID |
+| **分类** | cs.LG, q-bio.NC, eess.SP |
+```
+
+### 5. Integrated Format (for publishing)
+```markdown
+## 整合格式
+
+Daily Paper MMDD
+
+Paper Title
+
+https://arxiv.org/abs/ARXIV_ID
+
+[Chinese Review]
+
+[English Review]
+```
+
+### 6. Appendix
+```markdown
+## 附录
+
+**github连接：** [Available/Not Available]
+
+**补充说明**
+
+[Key insights, impact points]
+
+**Sources:**
+- [arXiv Abstract](URL)
+- [arXiv HTML](URL)
+- [Paperverse Review](URL) (if available)
+```
+
 ## Quick Reference
 
 | Task | Method |
@@ -34,7 +122,8 @@ Use this skill when:
 | Get paper details | Navigate to arXiv pages and extract metadata |
 | Evaluate quality | Use criteria in `references/quality-criteria.md` |
 | Write Chinese review | Follow style in `references/writing-style.md` |
-| Create output | Use template in `examples/paper-template.md` |
+| Write English review | Apply scientific-writing skill best practices |
+| Create output | Use template in `example/daily paper example.md` |
 
 ## Workflow
 
@@ -66,16 +155,6 @@ Use this skill when:
    - Abstract preview
    - Publication date
 
-**Example Chrome commands:**
-```javascript
-// Navigate to arXiv search
-navigate("https://arxiv.org/search/?searchtype=all&query=EEG+decoding&abstracts=show&order=-announced_date_first")
-
-// Get search results
-getTabs()  // List tabs
-screenshot()  // Capture page for analysis
-```
-
 ### Step 2: Retrieve Paper Details
 
 For each candidate paper, navigate to its arXiv abs page and extract:
@@ -90,17 +169,7 @@ For each candidate paper, navigate to its arXiv abs page and extract:
 - arXiv ID (from URL or page)
 - Categories (from `.subjects`)
 - Comments (if present)
-
-**Chrome extraction example**:
-```javascript
-// Navigate to paper page
-navigate("https://arxiv.org/abs/2507.11783")
-
-// Extract data
-getTitle()    // Paper title
-getAuthors()  // Author list
-getAbstract() // Abstract text
-```
+- First author institution (if available in comments or author affiliations)
 
 ### Step 3: Evaluate Paper Quality
 
@@ -125,25 +194,32 @@ Review each paper using the 5-dimension criteria in `references/quality-criteria
 
 ### Step 4: Generate Paper Summaries
 
-For each selected paper, create a summary following the structure in `examples/paper-template.md`:
+For each selected paper, create a summary following the structure in `example/daily paper example.md`:
 
-**Required fields:**
-- Title
-- Authors and first author institution
-- arXiv link (abs page, not PDF)
-- Chinese review (~300 words)
-- English review (fluent academic English)
-- Key figure descriptions
+**Required sections:**
+1. Title (H1 heading)
+2. 作者及单位 (Authors and Institution)
+3. arXiv 链接 (with metadata: date, ID, categories)
+4. 中文评语 (Chinese review, ~300 words)
+5. English Review (fluent academic English)
+6. 主图 (placeholder for main figure)
+7. 论文元数据 (metadata table)
+8. 整合格式 (integrated format for publishing)
+9. 附录 (appendix with github link,补充说明, sources)
 
-**Chinese review structure** (see `references/writing-style.md`):
-1. Background (1-2 sentences): Research context and importance
-2. Challenges (2-3 sentences): Problems with existing methods
-3. Contribution (1-2 sentences): Core contribution of this work
-4. Method (2-3 sentences): Key technical details
-5. Results (2-3 sentences): Main findings and metrics
-6. Analysis & Limitations (1-2 sentences): Significance and limitations
+**Writing Chinese review** (see `references/writing-style.md`):
+- Background: 研究背景和重要性
+- Challenges: 现有方法的不足
+- Contribution: 本工作的核心贡献
+- Method: 关键技术细节
+- Results: 主要发现和指标
+- Analysis & Limitations: 意义和局限性
 
-**Writing style:** Follow the templates and examples in `references/writing-style.md` for consistent academic tone and structure.
+**Writing English review**:
+- Apply scientific-writing skill best practices
+- Use anti-AI writing principles (natural, varied sentence structure)
+- Keep concise and direct
+- Avoid formulaic transitions ("furthermore", "moreover", "additionally")
 
 ### Step 5: Save Output
 
@@ -151,42 +227,18 @@ Create Markdown files in the `daily paper/` directory:
 
 ```
 daily paper/
-├── 2025-01-25-1430-paper-1.md
-├── 2025-01-25-1430-paper-2.md
-└── 2025-01-25-1430-paper-3.md
+├── 2025-01-26-1430-paper-1.md
+├── 2025-01-26-1430-paper-2.md
+└── 2025-01-26-1430-paper-3.md
 ```
 
 **Filename format:** `YYYY-MM-DD-HHMM-paper-N.md`
 
-**Important:** 使用时间戳（精确到分钟）避免覆盖之前生成的文件。如果同一天多次生成，时间戳会确保每次生成都是唯一的文件名。
+**Important:** 使用时间戳（精确到分钟）避免覆盖之前生成的文件。
 
-**Template:** Use `examples/paper-template.md` as the base format.
+## Example Output
 
-## Chrome Search Examples
-
-**Example 1: Search for EEG decoding papers**
-```
-1. Navigate to: https://arxiv.org/search/?searchtype=all&query=EEG+decoding&abstracts=show&order=-announced_date_first
-2. Screenshot the results page
-3. Extract top 10 paper listings
-4. Navigate to each paper's abs page for details
-```
-
-**Example 2: Search for foundation models**
-```
-1. Navigate to: https://arxiv.org/search/?searchtype=all&query=EEG+foundation+model&abstracts=show&order=-announced_date_first
-2. Filter by date (check submission dates)
-3. Select recent papers (last 3 months)
-```
-
-**Example 3: Extract paper metadata**
-```
-1. Navigate to: https://arxiv.org/abs/PAPER_ID
-2. Extract title from <h1 class="title mathjax">
-3. Extract authors from .authors a
-4. Extract abstract from blockquote.abstract
-5. Extract date from .dateline
-```
+See `example/daily paper example.md` for a complete example of the DeeperBrain paper summary with all sections properly formatted.
 
 ## Additional Resources
 
@@ -198,7 +250,7 @@ daily paper/
 
 ### Example Files
 
-- **`examples/paper-template.md`** - Output Markdown template with all required fields
+- **`example/daily paper example.md`** - Complete output example with all sections
 - **`scripts/arxiv_search.py`** - Legacy Python script (deprecated, use Chrome instead)
 
 ### Chrome MCP Tools
@@ -217,3 +269,5 @@ Use Chrome MCP tools for browser automation:
 4. **Quality focus:** Prioritize content quality (innovation, method, experiments) over quantitative metrics
 5. **Bilingual output:** Both Chinese and English reviews are required for each paper
 6. **Chrome required:** This workflow uses Chrome browser automation via MCP tools
+7. **Complete format:** Ensure all 9 sections are included in each summary
+8. **Consistent naming:** Use Daily Paper MMDD format in integrated section

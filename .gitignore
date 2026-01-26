@@ -18,6 +18,7 @@ file-history/
 cache/
 debug/
 downloads/
+ide/
 logs/
 paste-cache/
 todos/
@@ -28,6 +29,8 @@ stats-cache.json
 statsig/
 
 # 其他临时文件
-projects/
+docs/
+plan/
 plans/
+projects/
 temp/

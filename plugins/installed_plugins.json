@@ -36,10 +36,10 @@
     "ralph-loop@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/gaoruizhang/.claude/plugins/cache/claude-plugins-official/ralph-loop/96276205880a",
-        "version": "96276205880a",
+        "installPath": "/Users/gaoruizhang/.claude/plugins/cache/claude-plugins-official/ralph-loop/e30768372b41",
+        "version": "e30768372b41",
         "installedAt": "2026-01-20T16:22:04.721Z",
-        "lastUpdated": "2026-01-20T16:22:04.721Z",
+        "lastUpdated": "2026-01-26T06:04:47.497Z",
         "gitCommitSha": "96276205880a60fd66bbae981f5ab568e70c4cbf"
       }
     ],
@@ -66,10 +66,10 @@
     "github@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/gaoruizhang/.claude/plugins/cache/claude-plugins-official/github/96276205880a",
-        "version": "96276205880a",
+        "installPath": "/Users/gaoruizhang/.claude/plugins/cache/claude-plugins-official/github/e30768372b41",
+        "version": "e30768372b41",
         "installedAt": "2026-01-20T16:53:49.988Z",
-        "lastUpdated": "2026-01-20T16:53:49.988Z",
+        "lastUpdated": "2026-01-26T06:04:47.504Z",
         "gitCommitSha": "96276205880a60fd66bbae981f5ab568e70c4cbf"
       }
     ],
