@@ -23,8 +23,19 @@ user_prompt=$(echo "$input" | jq -r '.user_prompt // ""')
 
 # Check if the input is a slash command (escape hatch)
 if [[ "$user_prompt" =~ ^/ ]]; then
-    # Skip skill evaluation for slash commands
-    exit 0
+    # 区分命令和路径：
+    # - 命令：/commit, /update-github (斜杠后不包含第二个斜杠)
+    # - 路径：/Users/xxx, /path/to/file (包含路径分隔符)
+    # 去掉第一个斜杠后检查剩余部分
+    rest="${user_prompt:1}"
+    if [[ "$rest" =~ / ]]; then
+        # 剩余部分包含斜杠，这是路径，继续进行 skill 扫描
+        :
+    else
+        # 这是命令，跳过 skill 评估
+        echo '{"continue": true}'
+        exit 0
+    fi
 fi
 
 # 动态收集技能列表
