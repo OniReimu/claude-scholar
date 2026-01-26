@@ -338,7 +338,7 @@ function getEnabledPlugins(homeDir) {
 function getAvailableCommands(homeDir) {
   const commands = [];
 
-  // 收集本地命令
+  // 只收集本地命令，不收集插件命令
   const localCommandsDir = path.join(homeDir, '.claude', 'commands');
   if (fs.existsSync(localCommandsDir)) {
     const commandFiles = fs.readdirSync(localCommandsDir)
@@ -351,57 +351,6 @@ function getAvailableCommands(homeDir) {
         name: cmdName,
         path: path.join(localCommandsDir, cmdFile)
       });
-    }
-  }
-
-  // 收集插件命令
-  const pluginsCache = path.join(homeDir, '.claude', 'plugins', 'cache');
-  if (!fs.existsSync(pluginsCache)) {
-    return commands;
-  }
-
-  // 遍历所有 marketplace
-  const marketplaces = fs.readdirSync(pluginsCache, { withFileTypes: true })
-    .filter(d => d.isDirectory())
-    .map(d => d.name);
-
-  for (const marketplace of marketplaces) {
-    const marketplacePath = path.join(pluginsCache, marketplace);
-
-    // 遍历每个插件
-    const plugins = fs.readdirSync(marketplacePath, { withFileTypes: true })
-      .filter(d => d.isDirectory() && !d.name.startsWith('.'))
-      .map(d => d.name);
-
-    for (const plugin of plugins) {
-      const pluginPath = path.join(marketplacePath, plugin);
-
-      // 查找最新版本
-      const versions = fs.readdirSync(pluginPath, { withFileTypes: true })
-        .filter(d => d.isDirectory())
-        .map(d => d.name)
-        .sort()
-        .reverse();
-
-      if (versions.length === 0) continue;
-
-      const latestVersion = versions[0];
-      const pluginRoot = path.join(pluginPath, latestVersion);
-      const commandsDir = path.join(pluginRoot, 'commands');
-
-      if (fs.existsSync(commandsDir)) {
-        const commandFiles = fs.readdirSync(commandsDir)
-          .filter(f => f.endsWith('.md'));
-
-        for (const cmdFile of commandFiles) {
-          const cmdName = cmdFile.replace('.md', '');
-          commands.push({
-            plugin: plugin,
-            name: cmdName,
-            path: path.join(commandsDir, cmdFile)
-          });
-        }
-      }
     }
   }
 
