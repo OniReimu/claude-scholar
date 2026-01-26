@@ -13,6 +13,9 @@ const fs = require('fs');
 // 导入共享函数库
 const common = require('./hook-common');
 
+// 导入包管理器检测
+const { getPackageManager, getSelectionPrompt } = require('../scripts/lib/package-manager');
+
 // 读取 stdin 输入
 let input = {};
 try {
@@ -73,6 +76,21 @@ if (gitInfo.is_repo) {
 } else {
   output += `▸ Git: 非仓库\n\n`;
 }
+
+// 包管理器检测
+try {
+  const pm = getPackageManager();
+  output += `📦 包管理器: ${pm.name} (${pm.source})\n`;
+
+  // 如果是通过 fallback 检测的，提示设置
+  if (pm.source === 'fallback' || pm.source === 'default') {
+    output += `💡 运行 /setup-pm 配置首选包管理器\n`;
+  }
+} catch (err) {
+  // 包管理器检测失败，静默忽略
+}
+
+output += '\n';
 
 // 待办事项
 output += `📋 待办事项:\n`;

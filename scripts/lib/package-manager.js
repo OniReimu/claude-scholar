@@ -343,5 +343,12 @@ module.exports = {
   getAvailablePackageManagers,
   printPackageManagerInfo,
   getProjectConfigPath,
-  getGlobalConfigPath
+  getGlobalConfigPath,
+  // 为 setup-package-manager.js 添加的导出
+  setPreferredPackageManager: setGlobalPackageManager,
+  detectFromLockFile,
+  detectFromPackageJson,
+  getSelectionPrompt: () => {
+    return '\n💡 运行 /setup-pm 配置首选包管理器\n';
+  }
 };
