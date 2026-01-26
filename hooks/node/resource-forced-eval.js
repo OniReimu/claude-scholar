@@ -157,7 +157,7 @@ function collectPluginCommands() {
       const pluginRoot = path.join(pluginPath, latestVersion);
       const commandsDir = path.join(pluginRoot, 'commands');
 
-      if (fs.existsSync(commandsDir)) {
+      if (fs.existsSync(commandsDir) && fs.statSync(commandsDir).isDirectory()) {
         const commandFiles = fs.readdirSync(commandsDir)
           .filter(f => f.endsWith('.md'));
 
@@ -169,7 +169,8 @@ function collectPluginCommands() {
     }
   }
 
-  return commands;
+  // 去重
+  return [...new Set(commands)].sort();
 }
 
 // 收集 AI Research Skills
