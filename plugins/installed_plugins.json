@@ -5,10 +5,10 @@
       {
         "scope": "project",
         "projectPath": "/Users/gaoruizhang",
-        "installPath": "/Users/gaoruizhang/.claude/plugins/cache/claude-plugins-official/superpowers/4.0.3",
-        "version": "4.0.3",
+        "installPath": "/Users/gaoruizhang/.claude/plugins/cache/claude-plugins-official/superpowers/4.1.1",
+        "version": "4.1.1",
         "installedAt": "2026-01-19T03:21:20.197Z",
-        "lastUpdated": "2026-01-19T10:13:00.674Z",
+        "lastUpdated": "2026-01-27T14:16:20.287Z",
         "gitCommitSha": "ac471e69c2a672f50e491a45f6ff56b104d0e562"
       }
     ],
@@ -16,10 +16,10 @@
       {
         "scope": "project",
         "projectPath": "/Users/gaoruizhang",
-        "installPath": "/Users/gaoruizhang/.claude/plugins/cache/claude-plugins-official/hookify/96276205880a",
-        "version": "96276205880a",
+        "installPath": "/Users/gaoruizhang/.claude/plugins/cache/claude-plugins-official/hookify/e30768372b41",
+        "version": "e30768372b41",
         "installedAt": "2026-01-19T10:13:00.674Z",
-        "lastUpdated": "2026-01-19T10:13:00.674Z",
+        "lastUpdated": "2026-01-27T14:16:18.871Z",
         "gitCommitSha": "96276205880a60fd66bbae981f5ab568e70c4cbf"
       }
     ],

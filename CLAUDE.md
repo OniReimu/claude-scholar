@@ -1,180 +1,289 @@
-# Claude 配置
+# Claude Scholar Configuration
 
-## 项目概述
+## Project Overview
 
-**AI Research Assistant Skills Library** - 面向学术研究的 AI 技能库
+**Claude Scholar** - A comprehensive Claude Code configuration system for academic research and software development.
 
-**Mission**: 使 Claude 成为 AI 研究的得力助手，从数据处理到模型训练到论文写作，覆盖完整的研究工作流。
-
----
-
-## 全局配置
-
-### 语言设置
-- 用中文进行回答
-- 专业术语保持英文（如 NeurIPS, RLHF, TDD, Git）
-- 不翻译特定名词或名称
-
-### 工作目录规范
-- 计划文档：`/plan` 文件夹
-- 临时文件：`/temp` 文件夹
-- 文件夹不存在时自动创建
-
-### Git 工作流
-- 提交规范：Conventional Commits
-- 同步到远程仓库
-
-### 任务执行原则
-- 复杂任务先交流意见，再拆解实施
-- 实施后进行示例测试
-- 做好备份，不影响现有功能
-- 完成后及时删除临时文件
+**Mission**: Cover the complete academic research lifecycle (from ideation to publication) and software development workflows, while providing plugin development and project management capabilities.
 
 ---
 
-## 技能目录结构
+## Recommended Tech Stack
 
-### 📝 写作相关 (2 skills)
+**Python Ecosystem**:
+- **Package Management**: `uv` - Modern Python package manager
+- **Configuration**: Hydra + OmegaConf (config composition, override, type-safe)
+- **Model Training**: Transformers Trainer
 
-- **scientific-writing**: 学术论文写作辅助，覆盖顶会（NeurIPS, ICML, ICLR, KDD）和高影响期刊（Nature, Science, Cell, PNAS）投稿，提供逻辑分析、反 AI 化写作、审稿人视角润色
-- **writing-anti-ai**: 去除 AI 写作痕迹，支持中英文双语，基于维基百科"AI 写作特征"指南，检测并修复夸大象征意义、宣传性语言、肤浅分析、模糊归因、AI 词汇、否定式排比等模式
-
-### 💻 开发相关 (7 skills)
-
-- **git-workflow**: Git 工作流规范（Conventional Commits, 分支管理策略）
-- **bug-detective**: 调试和错误排查（Python, Bash/Zsh, JavaScript/TypeScript）
-- **code-review-excellence**: 代码审查最佳实践
-- **architecture-design**: ML 项目代码框架和设计模式
-- **uv-package-manager**: uv 包管理器使用指南
-- **code-simplifier**: 代码简化和重构
-
-### 🔌 Claude Code 插件开发 (7 skills)
-
-- **skill-development**: Skill 开发指南
-- **command-development**: Slash 命令开发
-- **agent-identifier**: Agent 开发和配置
-- **hook-development**: Hook 开发和事件处理
-- **mcp-integration**: MCP 服务器集成
-- **command-name**: 插件结构和组织
-
-### 📊 规划与协作 (2 skills)
-
-- **planning-with-files**: 使用 Markdown 文件进行规划和进度跟踪
-- **doc-coauthoring**: 文档协作工作流
-
-### 🧪 其他技能
-
-- **kaggle-learner**: 从 Kaggle 解决方案中学习
-- **latex-conference-template-organizer**: LaTeX 会议模板整理
-- **webapp-testing**: 本地 Web 应用测试
-
----
-
-## 用户背景
-
-### 学术背景
-- **学历**: 计算机科学 PhD
-- **投稿目标**:
-  - 顶会：NeurIPS, ICML, ICLR, KDD
-  - 高影响期刊：Nature, Science, Cell, PNAS
-- **关注点**: 学术写作质量、逻辑连贯性、自然表达
-
----
-
-## 技术栈偏好
-
-### Python 生态
-- **包管理**: `uv` - 现代化 Python 包管理器
-- **配置管理**: Hydra + OmegaConf
-  - 支持配置组合和覆盖
-  - 类型安全的配置访问
-- **模型训练**: Transformers Trainer
-
-### Git 规范
-- **提交规范**: Conventional Commits
+**Git Standards**:
+- **Commit Convention**: Conventional Commits
   ```
   Type: feat, fix, docs, style, refactor, perf, test, chore
   Scope: data, model, config, trainer, utils, workflow
   ```
-- **分支策略**: master/develop/feature/bugfix/hotfix/release
-- **合并策略**:
-  - 功能分支用 rebase 同步
-  - 用 merge --no-ff 合并
+- **Branching Strategy**: master/develop/feature/bugfix/hotfix/release
+- **Merge Strategy**: Use rebase to sync feature branches, merge with --no-ff
 
 ---
 
-## 工作风格
+## Global Configuration
 
-### 任务管理
-- 使用 TodoWrite 工具跟踪任务进度
-- 复杂任务先规划再执行
-- 优先使用已有的 skills 和工具
+### Language Settings
+- Respond in the user's language
+- Preserve technical terms (e.g., NeurIPS, RLHF, TDD, Git)
+- Do not translate proper nouns or names
 
-### 沟通方式
-- 不确定时主动询问细节
-- 重要操作前先确认再执行
-- 遵循 hook 强制流程（当激活时）
+### Working Directory Standards
+- Planning documents: `/plan` folder
+- Temporary files: `/temp` folder
+- Auto-create folders if they don't exist
 
-### 代码风格
-- Python: 遵循 PEP 8
-- 注释：使用中文
-- 命名：函数和变量使用英文
+### Task Execution Principles
+- For complex tasks: discuss first, then break down, then implement
+- Test with examples after implementation
+- Backup before changes, preserve existing functionality
+- Clean up temporary files after completion
 
----
-
-## 命名规范
-
-### Skill 命名
-- 格式：kebab-case（小写+连字符）
-- 形式：优先使用 gerund form（动词+ing）
-- 示例：`scientific-writing`, `git-workflow`, `bug-detective`
-
-### Tags 命名
-- 格式：Title Case
-- 缩写全大写：TDD, RLHF, NeurIPS, ICLR
-- 示例：`[Writing, Research, Academic]`
-
-### 描述规范
-- 人称：第三人称
-- 内容：包含用途和使用场景
-- 示例："为学术论文写作提供指导，覆盖顶会投稿要求"
+### Working Style
+- **Task Management**: Use TodoWrite to track progress, plan before executing complex tasks, prioritize existing skills
+- **Communication**: Ask when uncertain, confirm before important operations, follow hook-enforced workflows
+- **Code Style**: Python follows PEP 8, comments in English, naming in English
 
 ---
 
-## 任务完成总结
+## Core Workflows
 
-**每次任务完成或用户准备离开时，必须主动提供总结，包含以下内容：**
-
-### 📋 操作回顾
-- 列出执行的主要操作
-- 修改了哪些文件
-- 使用了哪些工具/命令
-
-### 📊 当前状态
-- Git 状态（如果在仓库中）：分支、变更文件数
-- 文件系统状态：临时文件、新增文件
-- 运行状态（如适用）：服务、进程等
-
-### 💡 下一步建议
-- 基于实际操作的针对性建议
-- 考虑：是否需要提交代码、清理临时文件、测试验证等
-- 不要使用通用的"记得备份"建议，除非确实需要
-
----
-
-## 总结格式示例
+### Research Lifecycle (7 Stages)
 
 ```
----
-📋 本次操作回顾
-1. XXX
-2. XXX
+Ideation → ML Development → Experiment Analysis → Paper Writing → Self-Review → Submission/Rebuttal → Post-Acceptance
+```
 
-📊 当前状态
-• XXX
+| Stage | Core Tools | Commands |
+|-------|-----------|----------|
+| 1. Research Ideation | `research-ideation` skill + `literature-reviewer` agent | `/research-init` |
+| 2. ML Project Development | `architecture-design` skill + `code-reviewer` agent | `/plan`, `/commit`, `/tdd` |
+| 3. Experiment Analysis | `results-analysis` skill + `data-analyst` agent | `/analyze-results` |
+| 4. Paper Writing | `ml-paper-writing` skill + `paper-miner` agent | - |
+| 5. Paper Self-Review | `paper-self-review` skill | - |
+| 6. Submission & Rebuttal | `review-response` skill + `rebuttal-writer` agent | `/rebuttal` |
+| 7. Post-Acceptance | `post-acceptance` skill | `/presentation`, `/poster`, `/promote` |
 
-💡 下一步建议
-1. XXX
-2. XXX
+### Supporting Workflows
+
+- **Automated Execution**: 5 Hooks trigger automatically at various session stages (skill evaluation, environment init, work summary, security checks)
+- **Knowledge Extraction**: `paper-miner` and `kaggle-miner` agents continuously extract knowledge from papers and competitions
+- **Skill Evolution**: `skill-development` → `skill-quality-reviewer` → `skill-improver` three-step improvement cycle
+
 ---
+
+## Skills Directory (32 skills)
+
+### Research & Analysis (4 skills)
+
+- **research-ideation**: Research ideation kickoff (5W1H, literature review, gap analysis, research question formulation)
+- **results-analysis**: Experiment results analysis (statistical tests, visualization, ablation studies)
+- **citation-verification**: Citation verification (multi-layer: format → API → metadata → content)
+- **daily-paper-generator**: Daily paper generator for research tracking
+
+### Paper Writing & Publication (7 skills)
+
+- **ml-paper-writing**: ML/AI paper writing assistance
+  - Conferences: NeurIPS, ICML, ICLR, ACL, AAAI, COLM
+  - Journals: Nature, Science, Cell, PNAS
+- **writing-anti-ai**: Remove AI writing patterns (English & Chinese bilingual)
+- **paper-self-review**: Paper self-review (6-item quality checklist)
+- **review-response**: Systematic rebuttal writing
+- **post-acceptance**: Post-acceptance processing (presentations, posters, promotion)
+- **doc-coauthoring**: Document collaboration workflow
+- **latex-conference-template-organizer**: LaTeX conference template organization
+
+### Development Workflow (6 skills)
+
+- **daily-coding**: Daily coding checklist (minimal mode, auto-triggered)
+- **git-workflow**: Git workflow standards (Conventional Commits, branching strategies)
+- **code-review-excellence**: Code review best practices
+- **bug-detective**: Debugging and error troubleshooting (Python, Bash/Zsh, JavaScript/TypeScript)
+- **architecture-design**: ML project code framework and design patterns
+- **verification-loop**: Verification loops and testing
+
+### Plugin Development (8 skills)
+
+- **skill-development**: Skill development guide
+- **skill-improver**: Skill improvement tools
+- **skill-quality-reviewer**: Skill quality assessment
+- **command-development**: Slash command development
+- **command-name**: Plugin structure guide
+- **agent-identifier**: Agent development and configuration
+- **hook-development**: Hook development and event handling
+- **mcp-integration**: MCP server integration
+
+### Tools & Utilities (4 skills)
+
+- **planning-with-files**: Use Markdown files for planning and progress tracking
+- **uv-package-manager**: uv package manager usage
+- **webapp-testing**: Local web application testing
+- **kaggle-learner**: Kaggle competition learning
+
+### Web Design (3 skills)
+
+- **frontend-design**: Create unique, production-grade frontend interfaces, avoiding generic AI aesthetics
+- **ui-ux-pro-max**: UI/UX design intelligence (50+ styles, 97 palettes, 57 font pairings, 9 tech stacks)
+- **web-design-reviewer**: Website design visual inspection, identify and fix responsive, accessibility, and layout issues
+
+---
+
+## Commands (50+)
+
+### Research Workflow Commands
+
+| Command | Function |
+|---------|----------|
+| `/research-init` | Start research ideation workflow (5W1H, literature review, gap analysis) |
+| `/analyze-results` | Analyze experiment results (statistical tests, visualization, ablation) |
+| `/rebuttal` | Generate systematic rebuttal document |
+| `/presentation` | Create conference presentation outline |
+| `/poster` | Generate academic poster design plan |
+| `/promote` | Generate promotional content (Twitter, LinkedIn, blog) |
+
+### Development Workflow Commands
+
+| Command | Function |
+|---------|----------|
+| `/plan` | Create implementation plan |
+| `/commit` | Commit code (following Conventional Commits) |
+| `/update-github` | Commit and push to GitHub |
+| `/update-readme` | Update README documentation |
+| `/code-review` | Code review |
+| `/tdd` | Test-driven development workflow |
+| `/build-fix` | Fix build errors |
+| `/verify` | Verify changes |
+| `/checkpoint` | Create checkpoint |
+| `/refactor-clean` | Refactor and cleanup |
+| `/learn` | Extract reusable patterns from code |
+| `/create_project` | Create new project |
+| `/setup-pm` | Configure package manager (uv/pnpm) |
+| `/update-memory` | Check and update CLAUDE.md memory |
+
+### SuperClaude Command Set (`/sc`)
+
+- `/sc agent` - Agent dispatch
+- `/sc analyze` - Code analysis
+- `/sc brainstorm` - Interactive brainstorming
+- `/sc build` - Build project
+- `/sc business-panel` - Business panel
+- `/sc cleanup` - Code cleanup
+- `/sc design` - System design
+- `/sc document` - Generate documentation
+- `/sc estimate` - Effort estimation
+- `/sc explain` - Code explanation
+- `/sc git` - Git operations
+- `/sc help` - Help information
+- `/sc implement` - Feature implementation
+- `/sc improve` - Code improvement
+- `/sc index` - Project indexing
+- `/sc index-repo` - Repository indexing
+- `/sc load` - Load context
+- `/sc pm` - Package manager operations
+- `/sc recommend` - Recommend solutions
+- `/sc reflect` - Reflection and summary
+- `/sc research` - Technical research
+- `/sc save` - Save context
+- `/sc select-tool` - Tool selection
+- `/sc spawn` - Spawn subtasks
+- `/sc spec-panel` - Spec panel
+- `/sc task` - Task management
+- `/sc test` - Test execution
+- `/sc troubleshoot` - Troubleshooting
+- `/sc workflow` - Workflow management
+
+---
+
+## Agents (14)
+
+### Research Workflow Agents
+
+- **literature-reviewer** - Literature search, classification, and trend analysis
+- **data-analyst** - Automated data analysis and visualization
+- **rebuttal-writer** - Systematic rebuttal writing with tone optimization
+- **paper-miner** - Extract writing knowledge from successful papers
+
+### Development Workflow Agents
+
+- **architect** - System architecture design
+- **build-error-resolver** - Build error resolution
+- **bug-analyzer** - Deep code execution flow analysis and root cause investigation
+- **code-reviewer** - Code review
+- **dev-planner** - Development task planning and breakdown
+- **refactor-cleaner** - Code refactoring and cleanup
+- **tdd-guide** - TDD workflow guidance
+- **kaggle-miner** - Kaggle engineering practice extraction
+
+### Design & Content Agents
+
+- **ui-sketcher** - UI blueprint design and interaction specs
+- **story-generator** - User story and requirement generation
+
+---
+
+## Hooks (5)
+
+Cross-platform Node.js hooks for automated workflow execution:
+
+| Hook | Trigger | Function |
+|------|---------|----------|
+| `session-start.js` | Session start | Display Git status, todos, available commands |
+| `skill-forced-eval.js` | Every user input | Force evaluate all available skills |
+| `session-summary.js` | Session end | Generate work log, detect CLAUDE.md updates |
+| `stop-summary.js` | Session stop | Quick status check, temp file detection |
+| `security-guard.js` | File operations | Security validation (secret detection, dangerous command interception) |
+
+---
+
+## Rules (4)
+
+Global constraints, always active:
+
+| Rule File | Purpose |
+|-----------|---------|
+| `coding-style.md` | ML project code standards: 200-400 line files, immutable config, type hints, Factory & Registry patterns |
+| `agents.md` | Agent orchestration: auto-invocation timing, parallel execution, multi-perspective analysis |
+| `security.md` | Security standards: secret management, sensitive file protection, pre-commit security checks |
+| `experiment-reproducibility.md` | Experiment reproducibility: random seeds, config recording, environment recording, checkpoint management |
+
+---
+
+## Naming Conventions
+
+### Skill Naming
+- Format: kebab-case (lowercase + hyphens)
+- Form: Prefer gerund form (verb+ing)
+- Examples: `scientific-writing`, `git-workflow`, `bug-detective`
+
+### Tags Naming
+- Format: Title Case
+- Abbreviations all caps: TDD, RLHF, NeurIPS, ICLR
+- Examples: `[Writing, Research, Academic]`
+
+### Description Conventions
+- Person: Third person
+- Content: Include purpose and use cases
+- Example: "Provides guidance for academic paper writing, covering top conference submission requirements"
+
+---
+
+## Task Completion Summary
+
+Proactively provide a brief summary when a task is completed:
+
+```
+Operation Review
+1. [Main operations]
+2. [Modified files]
+
+Current Status
+- [Git/filesystem/runtime status]
+
+Next Steps
+1. [Targeted suggestions]
 ```
