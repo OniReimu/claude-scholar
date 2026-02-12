@@ -1,9 +1,5 @@
 # Claude Scholar
 
-<div align="center">
-  <img src="LOGO.jpg" alt="Claude Scholar Logo" width="800"/>
-</div>
-
 **Language**: [English](README.md) | [中文](README.zh-CN.md)
 
 Personal Claude Code configuration repository, optimized for academic research and software development - a complete working environment.

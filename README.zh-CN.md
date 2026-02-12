@@ -1,9 +1,5 @@
 # Claude Scholar
 
-<div align="center">
-  <img src="LOGO.jpg" alt="Claude Scholar Logo" width="800"/>
-</div>
-
 **语言**: [English](README.md) | [中文](README.zh-CN.md)
 
 面向学术研究和软件开发的个人 Claude Code 配置仓库 - 一个完整的工作环境。
