@@ -429,13 +429,17 @@ Claude Scholar 支持两个运行时环境：
 
 ##### 选项 1：插件安装（推荐）
 
-通过 Claude Code 插件管理器一键安装：
+通过 Claude Code 插件管理器安装：
 
 ```bash
-claude plugin add https://github.com/OniReimu/claude-scholar.git
+# 第一步：添加 marketplace
+claude plugin marketplace add OniReimu/claude-scholar
+
+# 第二步：安装插件
+claude plugin install claude-scholar@claude-scholar
 ```
 
-**优势**：自动组件发现、版本跟踪、便捷更新。
+**优势**：自动组件发现、版本跟踪、通过 `claude plugin update` 便捷更新。
 
 **包含**：所有 34 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
 

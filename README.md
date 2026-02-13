@@ -429,13 +429,17 @@ Choose the installation method that fits your needs:
 
 ##### Option 1: Plugin Installation (Recommended)
 
-One-command install via Claude Code plugin manager:
+Install via Claude Code plugin manager:
 
 ```bash
-claude plugin add https://github.com/OniReimu/claude-scholar.git
+# Step 1: Add marketplace
+claude plugin marketplace add OniReimu/claude-scholar
+
+# Step 2: Install plugin
+claude plugin install claude-scholar@claude-scholar
 ```
 
-**Benefits**: Automatic component discovery, version tracking, easy updates.
+**Benefits**: Automatic component discovery, version tracking, easy updates via `claude plugin update`.
 
 **Includes**: All 34 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
 

@@ -1,0 +1,26 @@
+{
+  "name": "claude-scholar",
+  "owner": {
+    "name": "OniReimu"
+  },
+  "metadata": {
+    "description": "Academic research and software development skill system for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "claude-scholar",
+      "source": ".",
+      "description": "Complete research lifecycle from ideation to publication — 34 skills, 50+ commands, 14 agents, 5 hooks",
+      "version": "1.1.0",
+      "author": {
+        "name": "OniReimu"
+      },
+      "homepage": "https://github.com/OniReimu/claude-scholar",
+      "repository": "https://github.com/OniReimu/claude-scholar",
+      "license": "MIT",
+      "keywords": ["academic", "research", "paper-writing", "NeurIPS", "ICML", "ICLR", "ML", "skills", "workflow"],
+      "category": "productivity"
+    }
+  ]
+}
