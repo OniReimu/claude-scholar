@@ -267,83 +267,122 @@ about [phenomenon], which we discuss next.
 
 
 
-## 何凯明（Kaiming He）的论文结构模式
+## Kaiming He's Paper Structure Patterns
 
-> 来源: 分析了何凯明的 19 篇代表性论文
-> 添加时间: {datetime.now().strftime('%Y-%m-%d')}
+> Source: Analyzed 19 representative papers by Kaiming He
 
-### 摘要结构模式
+### Abstract Structure Patterns
 
-何凯明在摘要中常用的开场模式：
+Common opening patterns used by Kaiming He in abstracts:
 
-**模式 1: 直接陈述贡献**
+**Pattern 1: Direct contribution statement**
 ```
 We introduce [method name], a [key feature] framework for [task].
 We show that [method] achieves [result] on [dataset].
 ```
 
-**模式 2: 问题-解决方案**
+**Pattern 2: Problem-solution**
 ```
 [Problem] is difficult for [task]. We present [solution]
 that addresses this by [key mechanism].
 ```
 
-**示例** (来自 ResNet):
+**Example** (from ResNet):
 ```
 Deeper neural networks are more difficult to train. We present a
 residual learning framework to ease the training of networks that
 are substantially deeper than those used previously.
 ```
 
-### 引言结构模式
+### Introduction Structure Patterns
 
-**三段式引言:**
-1. **问题陈述** (2-3段) - 描述挑战和现有方法
-2. **方法概述** (1-2段) - 简洁介绍解决方案
-3. **主要贡献** (1段) - 列表形式，每条 1-2 行
+**Three-part introduction:**
+1. **Problem statement** (2-3 paragraphs) - Describe challenges and existing methods
+2. **Method overview** (1-2 paragraphs) - Concise introduction of the solution
+3. **Main contributions** (1 paragraph) - Bulleted list, 1-2 lines each
 
-**贡献列表模式:**
+**Contribution list pattern:**
 ```markdown
-- 我们提出了 [方法]，解决了 [问题]
-- 我们展示了 [方法] 在 [数据集] 上的 [性能提升]
-- 我们证明了 [原理] 是有效的
+- We propose [method], which addresses [problem]
+- We demonstrate [method] achieves [performance improvement] on [dataset]
+- We show that [principle] is effective
 ```
 
-### 方法部分结构
+### Methods Section Structure
 
-何凯明的方法部分通常包含：
+Kaiming He's methods sections typically contain:
 
-1. **符号定义** - 清晰定义所有变量和符号
-2. **问题形式化** - 数学公式表达
-3. **方法描述** - 逐步算法解释
-4. **实现细节** - 网络架构、训练设置
+1. **Notation definitions** - Clearly define all variables and symbols
+2. **Problem formalization** - Mathematical formulation
+3. **Method description** - Step-by-step algorithm explanation
+4. **Implementation details** - Network architecture, training setup
 
-**常用句式:**
-- "Let us consider [变量] as [定义]"
-- "Formally, we define [公式]"
-- "We hypothesize that [假设]"
-- "To the extreme, [极端情况]"
+**Common sentence patterns:**
+- "Let us consider [variable] as [definition]"
+- "Formally, we define [formula]"
+- "We hypothesize that [hypothesis]"
+- "To the extreme, [extreme case]"
 
-### 实验部分结构
+### Experiments Section Structure
 
-1. **实验设置** - 数据集、评价指标、实现细节
-2. **主要结果** - 核心性能对比
-3. **消融实验** - 组件分析
-4. **可视化分析** - 图表展示
+1. **Experimental setup** - Datasets, evaluation metrics, implementation details
+2. **Main results** - Core performance comparisons
+3. **Ablation studies** - Component analysis
+4. **Visualization analysis** - Figures and charts
 
-**结果描述模式:**
-- "Table X shows that [结果]"
-- "Fig. Y illustrates that [观察]"
-- "Our method achieves [指标] on [任务]"
+**Result description patterns:**
+- "Table X shows that [result]"
+- "Fig. Y illustrates that [observation]"
+- "Our method achieves [metric] on [task]"
 - "This represents a [X]% improvement over baseline"
 
-### 相关工作部分组织
+### Related Work Organization
 
-何凯明倾向于**主题式组织**而非时间顺序：
+Kaiming He favors **thematic organization** over chronological ordering:
 
-**好的组织方式:**
-- "One line of work uses [方法A] [引用], whereas we use [方法B]"
-- "[方法A] [引用] assumes [假设], but we show [反驳]"
+**Good organization:**
+- "One line of work uses [Method A] [refs], whereas we use [Method B]"
+- "[Method A] [refs] assumes [assumption], but we show [counter-evidence]"
 
-**避免:**
-- "X et al. introduced [方法]. Y et al. improved [方法]"
+**Avoid:**
+- "X et al. introduced [method]. Y et al. improved [method]"
+
+---
+
+## Paper Organization Standards
+
+### Standard Section Order
+
+Recommended section organization for security/AI venue papers:
+
+```
+1. Introduction
+2. Related Works
+3. Preliminary (optional; may be merged with Related Works if brief)
+4. System Model
+5. <Your Method / Your Design>
+6. Experiments
+   6.1 Experiment Settings
+   6.2 Results
+7. Discussion (Security Analysis for security papers; Limitations also here)
+8. Conclusion / Future Work
+```
+
+**Key notes:**
+
+- **Preliminary** is optional. If the content is brief, merge it with Related Works. When merged, use this recommended structure: Definitions first, then Existing Works, then a Comparison Table between your method and prior work
+- **Related Works must include a comparison table** (see templates in `references/latex-style-guide.md`)
+- **Experiments** must be split into Settings and Results subsections; do not mix them together
+- **Discussion** is where Security Analysis and Limitations belong; do not place Limitations in the Conclusion
+
+### Section Organization Anti-patterns
+
+- **Do not over-subdivide**: No more than 8 top-level sections (excluding References)
+- **Do not mention "draft" or "xxx-style" in the paper body**:
+  - Forbidden: "This manuscript provides a complete pre-experimental draft for TIFS-style review"
+  - Forbidden: "This is an xxx-style paper"
+  - Forbidden: "This draft presents..."
+  - Correct approach: State the content directly without meta-descriptions
+- **Do not include an overly long Paper Organization at the end of the Introduction**:
+  - 2-3 sentences maximum: "The rest of this paper is organized as follows. Section 2... Section 3..."
+  - No need to write a description for every single section

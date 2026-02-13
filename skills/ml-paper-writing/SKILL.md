@@ -1193,6 +1193,7 @@ Baseline & 85.2 & 45ms \\
 | [checklists.md](references/checklists.md) | NeurIPS 16-item, ICML, ICLR, ACL requirements |
 | [reviewer-guidelines.md](references/reviewer-guidelines.md) | Evaluation criteria, scoring, rebuttals |
 | [sources.md](references/sources.md) | Complete bibliography of all sources |
+| [latex-style-guide.md](references/latex-style-guide.md) | LaTeX 格式规范：四级标题、packeditemize、hyperref、对比表格模板 |
 | **Literature Research:** |
 | [arxiv-search-guide.md](references/literature-research/arxiv-search-guide.md) | arXiv search strategies, URL patterns, Chrome MCP automation |
 | [paper-quality-criteria.md](references/literature-research/paper-quality-criteria.md) | 5-dimension paper evaluation rubrics (innovation, method, experiments, writing, impact) |
