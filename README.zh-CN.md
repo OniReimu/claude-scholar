@@ -188,14 +188,18 @@ skill-development → skill-quality-reviewer → skill-improver
 
 ```
 claude-scholar/
-├── hooks/               # 跨平台 JavaScript 钩子（自动化执行）
+├── AGENTS.md            # Codex 运行时指令（等效于 CLAUDE.md + hooks）
+├── .codex/              # Codex 专用文件
+│   └── INSTALL.md               # Codex 安装指南
+│
+├── hooks/               # 跨平台 JavaScript 钩子（仅 Claude Code）
 │   ├── session-start.js         # 会话开始 - 显示 Git 状态、待办事项、命令
 │   ├── skill-forced-eval.js     # 每次提示前强制技能评估
 │   ├── session-summary.js       # 会话结束 - 生成带有建议的工作日志
 │   ├── stop-summary.js          # 会话停止 - 快速状态检查、临时文件检测
 │   └── security-guard.js        # 文件操作的安全验证
 │
-├── skills/              # 32 个专业技能（领域知识 + 工作流）
+├── skills/              # 33 个专业技能（领域知识 + 工作流）
 │   ├── ml-paper-writing/        # 完整论文写作：NeurIPS, ICML, ICLR, ACL, AAAI, COLM
 │   │   └── references/
 │   │       └── knowledge/        # 从成功论文中提取的模式
@@ -296,6 +300,11 @@ claude-scholar/
 │   ├── agents.md                # 代理编排：何时委托、并行执行
 │   ├── security.md              # 密钥管理、敏感文件保护
 │   └── experiment-reproducibility.md  # 随机种子、配置记录、检查点
+│
+├── scripts/
+│   ├── install-codex.sh         # Codex 安装器（macOS/Linux，符号链接）
+│   ├── install-codex-windows.ps1 # Codex 安装器（Windows，junction）
+│   └── lib/                     # 共享脚本工具
 │
 ├── CLAUDE.md            # 全局配置：项目概述、偏好设置、规则
 │
@@ -399,11 +408,25 @@ claude-scholar/
 
 ## 快速开始
 
+### 多运行时支持
+
+Claude Scholar 支持两个运行时环境：
+
+| | Claude Code | Codex |
+|---|------------|-------|
+| **技能** | 33 个（完整） | 26 个通用 + 6 个参考 |
+| **钩子** | 5 个自动化 | 不适用（AGENTS.md 替代） |
+| **命令** | 50+ 斜杠命令 | 不适用（直接使用技能） |
+| **代理** | 14 个专业 | 14 个（通过 `spawn_agent`） |
+| **安装** | 克隆到 `~/.claude` | 符号链接 + AGENTS.md |
+
 ### 安装选项
+
+#### Claude Code 安装
 
 选择适合您需求的安装方式：
 
-#### 选项 1：完整安装（推荐）
+##### 选项 1：完整安装（推荐）
 
 数据科学、AI 研究和学术写作的完整设置：
 
@@ -414,9 +437,9 @@ git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/.claude
 # 重启 Claude Code CLI
 ```
 
-**包含**：所有 32 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
+**包含**：所有 33 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
 
-#### 选项 2：最小化安装
+##### 选项 2：最小化安装
 
 仅核心钩子和基本技能（加载更快，复杂度更低）：
 
@@ -441,7 +464,7 @@ rm -rf /tmp/claude-scholar
 
 **包含**：5 个钩子、7 个核心技能（完整研究工作流 + 基本开发）。
 
-#### 选项 3：选择性安装
+##### 选项 3：选择性安装
 
 选择和选择特定组件：
 
@@ -468,9 +491,33 @@ cp rules/agents.md ~/.claude/rules/
 
 **推荐用于**：想要自定义配置的高级用户。
 
+#### Codex 安装
+
+```bash
+# 克隆仓库
+git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/claude-scholar
+
+# 运行安装脚本（创建符号链接，复制 AGENTS.md）
+chmod +x ~/claude-scholar/scripts/install-codex.sh
+~/claude-scholar/scripts/install-codex.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+git clone https://github.com/Galaxy-Dawn/claude-scholar.git $HOME\claude-scholar
+& "$HOME\claude-scholar\scripts\install-codex-windows.ps1"
+```
+
+**安装内容：**
+- 创建符号链接：`~/.agents/skills/claude-scholar` → `skills/`
+- 复制 `AGENTS.md` → `~/.codex/AGENTS.md`
+- 通过 `git pull` 更新，无需重新安装
+
+详细 Codex 安装指南请参阅 [.codex/INSTALL.md](.codex/INSTALL.md)。
+
 ### 系统要求
 
-- Claude Code CLI
+- Claude Code CLI 或 Codex CLI (v0.91+)
 - Git
 - （可选）Node.js（用于钩子）
 - （可选）uv、Python（用于 Python 开发）

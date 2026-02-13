@@ -188,14 +188,18 @@ skill-development → skill-quality-reviewer → skill-improver
 
 ```
 claude-scholar/
-├── hooks/               # Cross-platform JavaScript hooks (automated enforcement)
+├── AGENTS.md            # Codex runtime instructions (equivalent to CLAUDE.md + hooks)
+├── .codex/              # Codex-specific files
+│   └── INSTALL.md               # Codex installation guide
+│
+├── hooks/               # Cross-platform JavaScript hooks (Claude Code only)
 │   ├── session-start.js         # Session begin - shows Git status, todos, commands
 │   ├── skill-forced-eval.js     # Force skill evaluation before each prompt
 │   ├── session-summary.js       # Session end - generates work log with recommendations
 │   ├── stop-summary.js          # Session stop - quick status check, temp file detection
 │   └── security-guard.js        # Security validation for file operations
 │
-├── skills/              # 32 specialized skills (domain knowledge + workflows)
+├── skills/              # 33 specialized skills (domain knowledge + workflows)
 │   ├── ml-paper-writing/        # Full paper writing: NeurIPS, ICML, ICLR, ACL, AAAI, COLM
 │   │   └── references/
 │   │       └── knowledge/        # Extracted patterns from successful papers
@@ -296,6 +300,11 @@ claude-scholar/
 │   ├── agents.md                # Agent orchestration: when to delegate, parallel execution
 │   ├── security.md              # Secrets management, sensitive file protection
 │   └── experiment-reproducibility.md  # Random seeds, config recording, checkpoints
+│
+├── scripts/
+│   ├── install-codex.sh         # Codex installer (macOS/Linux, symlink-based)
+│   ├── install-codex-windows.ps1 # Codex installer (Windows, junction-based)
+│   └── lib/                     # Shared script utilities
 │
 ├── CLAUDE.md            # Global configuration: project overview, preferences, rules
 │
@@ -399,11 +408,25 @@ claude-scholar/
 
 ## Quick Start
 
+### Multi-Runtime Support
+
+Claude Scholar supports two runtimes:
+
+| | Claude Code | Codex |
+|---|------------|-------|
+| **Skills** | 33 (full) | 26 universal + 6 reference |
+| **Hooks** | 5 automated | N/A (AGENTS.md replaces) |
+| **Commands** | 50+ slash commands | N/A (use skills directly) |
+| **Agents** | 14 specialized | 14 (via `spawn_agent`) |
+| **Install** | Clone to `~/.claude` | Symlink + AGENTS.md |
+
 ### Installation Options
+
+#### Claude Code Installation
 
 Choose the installation method that fits your needs:
 
-#### Option 1: Full Installation (Recommended)
+##### Option 1: Full Installation (Recommended)
 
 Complete setup for data science, AI research, and academic writing:
 
@@ -414,9 +437,9 @@ git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/.claude
 # Restart Claude Code CLI
 ```
 
-**Includes**: All 32 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
+**Includes**: All 33 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
 
-#### Option 2: Minimal Installation
+##### Option 2: Minimal Installation
 
 Core hooks and essential skills only (faster load, less complexity):
 
@@ -441,7 +464,7 @@ rm -rf /tmp/claude-scholar
 
 **Includes**: 5 hooks, 7 core skills (complete research workflow + essential development).
 
-#### Option 3: Selective Installation
+##### Option 3: Selective Installation
 
 Pick and choose specific components:
 
@@ -468,9 +491,33 @@ cp rules/agents.md ~/.claude/rules/
 
 **Recommended for**: Advanced users who want custom configurations.
 
+#### Codex Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/claude-scholar
+
+# Run the install script (creates symlinks, copies AGENTS.md)
+chmod +x ~/claude-scholar/scripts/install-codex.sh
+~/claude-scholar/scripts/install-codex.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+git clone https://github.com/Galaxy-Dawn/claude-scholar.git $HOME\claude-scholar
+& "$HOME\claude-scholar\scripts\install-codex-windows.ps1"
+```
+
+**What it does:**
+- Creates symlink: `~/.agents/skills/claude-scholar` → `skills/`
+- Copies `AGENTS.md` → `~/.codex/AGENTS.md`
+- Updates via `git pull` — no re-install needed
+
+See [.codex/INSTALL.md](.codex/INSTALL.md) for detailed Codex installation guide.
+
 ### Requirements
 
-- Claude Code CLI
+- Claude Code CLI or Codex CLI (v0.91+)
 - Git
 - (Optional) Node.js (for hooks)
 - (Optional) uv, Python (for Python development)
