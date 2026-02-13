@@ -24,8 +24,10 @@ Use this skill when you need to:
 - Generate the Results section of a paper
 - Compare performance across multiple models
 - Perform statistical significance tests
-- Create publication-quality visualizations
+- Create publication-quality **data-driven** visualizations (bar charts, line plots, heatmaps, scatter plots)
 - Validate the reliability of experimental results
+
+> **Note:** This skill handles **data-driven** plots via matplotlib/seaborn. For **conceptual diagrams** (system overviews, pipeline figures, architecture diagrams, threat models), use the `paper-figure-generator` skill instead.
 
 ## Workflow
 

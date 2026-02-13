@@ -1,0 +1,26 @@
+{
+  "name": "claude-scholar",
+  "version": "1.1.0",
+  "description": "Academic research and software development skill system — covering the complete research lifecycle from ideation to publication, with 34 skills, 50+ commands, 14 agents, and 5 hooks.",
+  "author": {
+    "name": "OniReimu",
+    "url": "https://github.com/OniReimu"
+  },
+  "homepage": "https://github.com/OniReimu/claude-scholar",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OniReimu/claude-scholar.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "academic",
+    "research",
+    "paper-writing",
+    "NeurIPS",
+    "ICML",
+    "ICLR",
+    "ML",
+    "skills",
+    "workflow"
+  ]
+}

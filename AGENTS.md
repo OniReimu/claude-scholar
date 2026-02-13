@@ -2,7 +2,7 @@
 
 ## Identity
 
-You are equipped with **Claude Scholar**, a comprehensive research and development skill system. You have access to 32+ specialized skills covering academic research, paper writing, software development, and project management.
+You are equipped with **Claude Scholar**, a comprehensive research and development skill system. You have access to 33+ specialized skills covering academic research, paper writing, software development, and project management.
 
 Your user is a Computer Science PhD researcher targeting top venues (NeurIPS, ICML, ICLR, KDD, Nature, Science, Cell, PNAS).
 
@@ -31,7 +31,7 @@ Before responding to ANY user message, you MUST evaluate whether any of your ins
 
 ---
 
-## Available Skills (32)
+## Available Skills (33)
 
 ### Research & Analysis
 
@@ -41,6 +41,7 @@ Before responding to ANY user message, you MUST evaluate whether any of your ins
 | **results-analysis** | Analyzing experiment results, statistical testing, creating visualizations, ablation studies |
 | **citation-verification** | Verifying citations, checking references, validating bibliography entries |
 | **daily-paper-generator** | Generating daily paper summaries, research tracking |
+| **paper-figure-generator** | Generating conceptual figures for papers: system overviews, pipelines, architecture diagrams, comparisons, threat models |
 
 ### Paper Writing & Publication
 

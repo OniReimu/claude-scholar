@@ -10,9 +10,9 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-02-13**: Added `paper-figure-generator` skill for AI-powered conceptual figure generation (system overviews, pipelines, architectures via Gemini/OpenAI); packaged project as Claude Code plugin (`.claude-plugin/plugin.json`); added `.env.example`; deep workflow integration across ml-paper-writing, results-analysis, post-acceptance, and using-claude-scholar; 34 skills total
 - **2026-02-11**: Major update — added 10 new skills (research-ideation, results-analysis, citation-verification, review-response, paper-self-review, post-acceptance, daily-coding, frontend-design, ui-ux-pro-max, web-design-reviewer), 7 new agents, 8 research workflow commands, 2 new rules (security, experiment-reproducibility); restructured CLAUDE.md; 89 files changed
 - **2026-01-26**: Rewrote all Hooks to cross-platform Node.js; completely rewrote README; expanded ML paper writing knowledge base; merged PR #1 (cross-platform support)
-- **2026-01-25**: Project open-sourced, v1.0.0 released with 25 skills (architecture-design, bug-detective, git-workflow, kaggle-learner, scientific-writing, etc.), 2 agents (paper-miner, kaggle-miner), 30+ commands (including SuperClaude suite), 5 Shell Hooks, and 2 rules (coding-style, agents)
 
 ## Introduction
 
@@ -199,7 +199,7 @@ claude-scholar/
 │   ├── stop-summary.js          # Session stop - quick status check, temp file detection
 │   └── security-guard.js        # Security validation for file operations
 │
-├── skills/              # 33 specialized skills (domain knowledge + workflows)
+├── skills/              # 34 specialized skills (domain knowledge + workflows)
 │   ├── ml-paper-writing/        # Full paper writing: NeurIPS, ICML, ICLR, ACL, AAAI, COLM
 │   │   └── references/
 │   │       └── knowledge/        # Extracted patterns from successful papers
@@ -313,7 +313,7 @@ claude-scholar/
 
 ## Feature Highlights
 
-### Skills (32 total)
+### Skills (33 total)
 
 **Web Design:**
 - `frontend-design` - Create distinctive, production-grade frontend interfaces
@@ -334,6 +334,7 @@ claude-scholar/
 - `paper-self-review` - 6-item quality checklist for paper self-assessment
 - `post-acceptance` - Conference preparation: presentations, posters, promotion
 - `citation-verification` - Multi-layer citation validation to prevent hallucinations
+- `paper-figure-generator` - Generate conceptual academic figures (system overviews, pipelines, architectures) via Gemini/OpenAI
 
 **Development:**
 - `daily-coding` - Daily coding checklist (minimal, auto-triggered)
@@ -414,11 +415,11 @@ Claude Scholar supports two runtimes:
 
 | | Claude Code | Codex |
 |---|------------|-------|
-| **Skills** | 33 (full) | 26 universal + 6 reference |
+| **Skills** | 34 (full) | 27 universal + 6 reference |
 | **Hooks** | 5 automated | N/A (AGENTS.md replaces) |
 | **Commands** | 50+ slash commands | N/A (use skills directly) |
 | **Agents** | 14 specialized | 14 (via `spawn_agent`) |
-| **Install** | Clone to `~/.claude` | Symlink + AGENTS.md |
+| **Install** | Clone / Plugin | Symlink + AGENTS.md |
 
 ### Installation Options
 
@@ -426,9 +427,21 @@ Claude Scholar supports two runtimes:
 
 Choose the installation method that fits your needs:
 
-##### Option 1: Full Installation (Recommended)
+##### Option 1: Plugin Installation (Recommended)
 
-Complete setup for data science, AI research, and academic writing:
+One-command install via Claude Code plugin manager:
+
+```bash
+claude plugin add https://github.com/OniReimu/claude-scholar.git
+```
+
+**Benefits**: Automatic component discovery, version tracking, easy updates.
+
+**Includes**: All 34 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
+
+##### Option 2: Full Installation (Git Clone)
+
+Complete setup by cloning directly to `~/.claude`:
 
 ```bash
 # Clone the repository
@@ -437,9 +450,9 @@ git clone https://github.com/OniReimu/claude-scholar.git ~/.claude
 # Restart Claude Code CLI
 ```
 
-**Includes**: All 33 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
+**Includes**: All 34 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
 
-##### Option 2: Minimal Installation
+##### Option 3: Minimal Installation
 
 Core hooks and essential skills only (faster load, less complexity):
 
@@ -464,7 +477,7 @@ rm -rf /tmp/claude-scholar
 
 **Includes**: 5 hooks, 7 core skills (complete research workflow + essential development).
 
-##### Option 3: Selective Installation
+##### Option 4: Selective Installation
 
 Pick and choose specific components:
 

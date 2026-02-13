@@ -459,6 +459,7 @@ Figure 1 deserves special attention—many readers skip directly to it.
 - Use vector graphics (PDF/EPS for plots)
 - Write captions that stand alone without main text
 - Ensure readability in black-and-white (8% of men have color vision deficiency)
+- **For conceptual diagrams** (system overviews, pipelines, architectures): use `paper-figure-generator` skill to generate publication-quality figures via AI image generation (Gemini/OpenAI)
 
 **Step 3: Write Abstract (5-Sentence Formula)**
 
@@ -1179,6 +1180,10 @@ Baseline & 85.2 & 45ms \\
 - Verify **grayscale readability** (8% of men have color vision deficiency)
 - **No title inside figure**—the caption serves this function
 - **Self-contained captions**—reader should understand without main text
+
+**Figure type distinction:**
+- **Data-driven plots** (bar charts, line plots, heatmaps, scatter plots): use `results-analysis` skill with matplotlib/seaborn
+- **Conceptual diagrams** (system overviews, pipelines, architectures, threat models, comparisons): use `paper-figure-generator` skill with AI image generation APIs
 
 ---
 

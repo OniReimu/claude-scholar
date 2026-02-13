@@ -10,9 +10,9 @@
 
 ## News
 
+- **2026-02-13**: 新增 `paper-figure-generator` 技能，支持 AI 生成学术概念图（系统总览、Pipeline、架构图，基于 Gemini/OpenAI）；项目打包为 Claude Code 插件（`.claude-plugin/plugin.json`）；新增 `.env.example`；深度整合至 ml-paper-writing、results-analysis、post-acceptance、using-claude-scholar 工作流；共 34 个技能
 - **2026-02-11**: 大版本更新，新增 10 个 skills（research-ideation、results-analysis、citation-verification、review-response、paper-self-review、post-acceptance、daily-coding、frontend-design、ui-ux-pro-max、web-design-reviewer）、7 个 agents、8 个研究工作流命令、2 条新规则（security、experiment-reproducibility）；重构 CLAUDE.md；涉及 89 个文件
 - **2026-01-26**: 所有 Hooks 重写为跨平台 Node.js 版本；README 完全重写；扩展 ML 论文写作知识库；合并 PR #1（跨平台支持）
-- **2026-01-25**: 项目正式开源，v1.0.0 发布，包含 25 个 skills（architecture-design、bug-detective、git-workflow、kaggle-learner、scientific-writing 等）、2 个 agents（paper-miner、kaggle-miner）、30+ 个命令（含 SuperClaude 命令套件）、5 个 Shell Hooks、2 条规则（coding-style、agents）
 
 ## 简介
 
@@ -199,7 +199,7 @@ claude-scholar/
 │   ├── stop-summary.js          # 会话停止 - 快速状态检查、临时文件检测
 │   └── security-guard.js        # 文件操作的安全验证
 │
-├── skills/              # 33 个专业技能（领域知识 + 工作流）
+├── skills/              # 34 个专业技能（领域知识 + 工作流）
 │   ├── ml-paper-writing/        # 完整论文写作：NeurIPS, ICML, ICLR, ACL, AAAI, COLM
 │   │   └── references/
 │   │       └── knowledge/        # 从成功论文中提取的模式
@@ -313,7 +313,7 @@ claude-scholar/
 
 ## 功能亮点
 
-### 技能（32 个）
+### 技能（33 个）
 
 **网页设计：**
 - `frontend-design` - 创建独特、生产级的前端界面
@@ -334,6 +334,7 @@ claude-scholar/
 - `paper-self-review` - 6 项质量检查清单
 - `post-acceptance` - 会议准备：演讲、海报、推广
 - `citation-verification` - 多层引文验证，防止幻觉引用
+- `paper-figure-generator` - 学术论文概念图生成（系统总览、Pipeline、架构图等，支持 Gemini/OpenAI）
 
 **开发：**
 - `daily-coding` - 日常编码检查清单（极简模式，自动触发）
@@ -414,11 +415,11 @@ Claude Scholar 支持两个运行时环境：
 
 | | Claude Code | Codex |
 |---|------------|-------|
-| **技能** | 33 个（完整） | 26 个通用 + 6 个参考 |
+| **技能** | 34 个（完整） | 27 个通用 + 6 个参考 |
 | **钩子** | 5 个自动化 | 不适用（AGENTS.md 替代） |
 | **命令** | 50+ 斜杠命令 | 不适用（直接使用技能） |
 | **代理** | 14 个专业 | 14 个（通过 `spawn_agent`） |
-| **安装** | 克隆到 `~/.claude` | 符号链接 + AGENTS.md |
+| **安装** | 克隆 / 插件 | 符号链接 + AGENTS.md |
 
 ### 安装选项
 
@@ -426,9 +427,21 @@ Claude Scholar 支持两个运行时环境：
 
 选择适合您需求的安装方式：
 
-##### 选项 1：完整安装（推荐）
+##### 选项 1：插件安装（推荐）
 
-数据科学、AI 研究和学术写作的完整设置：
+通过 Claude Code 插件管理器一键安装：
+
+```bash
+claude plugin add https://github.com/OniReimu/claude-scholar.git
+```
+
+**优势**：自动组件发现、版本跟踪、便捷更新。
+
+**包含**：所有 34 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
+
+##### 选项 2：完整安装（Git Clone）
+
+通过克隆到 `~/.claude` 进行完整设置：
 
 ```bash
 # 克隆仓库
@@ -437,9 +450,9 @@ git clone https://github.com/OniReimu/claude-scholar.git ~/.claude
 # 重启 Claude Code CLI
 ```
 
-**包含**：所有 33 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
+**包含**：所有 34 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
 
-##### 选项 2：最小化安装
+##### 选项 3：最小化安装
 
 仅核心钩子和基本技能（加载更快，复杂度更低）：
 
@@ -464,7 +477,7 @@ rm -rf /tmp/claude-scholar
 
 **包含**：5 个钩子、7 个核心技能（完整研究工作流 + 基本开发）。
 
-##### 选项 3：选择性安装
+##### 选项 4：选择性安装
 
 选择和选择特定组件：
 
