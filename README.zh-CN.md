@@ -432,7 +432,7 @@ Claude Scholar 支持两个运行时环境：
 
 ```bash
 # 克隆仓库
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/.claude
+git clone https://github.com/OniReimu/claude-scholar.git ~/.claude
 
 # 重启 Claude Code CLI
 ```
@@ -445,7 +445,7 @@ git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/.claude
 
 ```bash
 # 克隆仓库
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git /tmp/claude-scholar
 
 # 仅复制钩子和核心技能
 mkdir -p ~/.claude/hooks ~/.claude/skills
@@ -470,7 +470,7 @@ rm -rf /tmp/claude-scholar
 
 ```bash
 # 克隆仓库
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git /tmp/claude-scholar
 cd /tmp/claude-scholar
 
 # 复制您需要的内容，例如：
@@ -495,7 +495,7 @@ cp rules/agents.md ~/.claude/rules/
 
 ```bash
 # 克隆仓库
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git ~/claude-scholar
 
 # 运行安装脚本（创建符号链接，复制 AGENTS.md）
 chmod +x ~/claude-scholar/scripts/install-codex.sh
@@ -504,7 +504,7 @@ chmod +x ~/claude-scholar/scripts/install-codex.sh
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git $HOME\claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 & "$HOME\claude-scholar\scripts\install-codex-windows.ps1"
 ```
 
@@ -591,4 +591,4 @@ MIT 许可证
 
 **面向数据科学、AI 研究和学术写作。**
 
-仓库：[https://github.com/Galaxy-Dawn/claude-scholar](https://github.com/Galaxy-Dawn/claude-scholar)
+仓库：[https://github.com/OniReimu/claude-scholar](https://github.com/OniReimu/claude-scholar)

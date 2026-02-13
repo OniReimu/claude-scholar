@@ -432,7 +432,7 @@ Complete setup for data science, AI research, and academic writing:
 
 ```bash
 # Clone the repository
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/.claude
+git clone https://github.com/OniReimu/claude-scholar.git ~/.claude
 
 # Restart Claude Code CLI
 ```
@@ -445,7 +445,7 @@ Core hooks and essential skills only (faster load, less complexity):
 
 ```bash
 # Clone repository
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git /tmp/claude-scholar
 
 # Copy only hooks and core skills
 mkdir -p ~/.claude/hooks ~/.claude/skills
@@ -470,7 +470,7 @@ Pick and choose specific components:
 
 ```bash
 # Clone repository
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git /tmp/claude-scholar
 cd /tmp/claude-scholar
 
 # Copy what you need, for example:
@@ -495,7 +495,7 @@ cp rules/agents.md ~/.claude/rules/
 
 ```bash
 # Clone the repository
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git ~/claude-scholar
 
 # Run the install script (creates symlinks, copies AGENTS.md)
 chmod +x ~/claude-scholar/scripts/install-codex.sh
@@ -504,7 +504,7 @@ chmod +x ~/claude-scholar/scripts/install-codex.sh
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git $HOME\claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 & "$HOME\claude-scholar\scripts\install-codex-windows.ps1"
 ```
 
@@ -591,4 +591,4 @@ These projects provided valuable insights and foundations for the research-orien
 
 **For data science, AI research, and academic writing.**
 
-Repository: [https://github.com/Galaxy-Dawn/claude-scholar](https://github.com/Galaxy-Dawn/claude-scholar)
+Repository: [https://github.com/OniReimu/claude-scholar](https://github.com/OniReimu/claude-scholar)

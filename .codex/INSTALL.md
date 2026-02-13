@@ -12,7 +12,7 @@
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git ~/claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git ~/claude-scholar
 
 # 2. Run the install script
 chmod +x ~/claude-scholar/scripts/install-codex.sh
@@ -23,7 +23,7 @@ chmod +x ~/claude-scholar/scripts/install-codex.sh
 
 ```powershell
 # 1. Clone the repository
-git clone https://github.com/Galaxy-Dawn/claude-scholar.git $HOME\claude-scholar
+git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 
 # 2. Run the install script (as Administrator)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
