@@ -574,6 +574,44 @@ This section combines foundational knowledge and positioning against existing wo
 
 This section formally defines **what you are solving** and **under what assumptions**.
 
+**MANDATORY: Notation Table.** This section MUST open with a notation table (`Table~\ref{tab:notation}`) that defines all symbols used throughout the paper. This table is the single source of truth — all subsequent sections (Methods, Experiments, Discussion) must use notation consistent with this table.
+
+Best practices for the notation table:
+- Use `threeparttable` + `\resizebox{\linewidth}{!}` for clean formatting
+- Two columns: `Symbol | Meaning`
+- Group by logical section using `\midrule` separators and optional `\cellcolor` for visual grouping (e.g., main text symbols vs. complexity analysis symbols)
+- Add `\begin{tablenotes}` to explain grouping logic
+- Place at `[t]` position for top-of-page placement
+
+```latex
+\begin{table}[t]
+\caption{Notations}
+\label{tab:notation}
+\centering
+\vspace{5pt}
+\begin{threeparttable}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{c|l}
+\toprule
+\textbf{Symbol} & \multicolumn{1}{c}{\textbf{Meaning}} \\
+\midrule
+\cellcolor{pink!25} $x$ & Input data point. \\
+\cellcolor{pink!25} $\theta$ & Model parameters. \\
+% ... main text symbols ...
+\midrule
+\cellcolor{yellow!10} $\mathcal{O}(\cdot)$ & Asymptotic complexity. \\
+% ... analysis-only symbols ...
+\bottomrule
+\end{tabular}%
+}
+\begin{tablenotes}
+\scriptsize
+\item Upper part: notations in the main text; lower part: complexity analysis.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+```
+
 **Components** (include all that apply to the paper context):
 
 - **Problem Definition**: Formal mathematical formulation (input space, output space, objective function, constraints)
@@ -583,7 +621,7 @@ This section formally defines **what you are solving** and **under what assumpti
 - **Assumptions**: Explicit list (e.g., "honest-but-curious server", "IID data distribution")
 
 **Guidelines:**
-- Use formal notation introduced in §2 Preliminaries
+- All notation in subsequent sections MUST match `Table~\ref{tab:notation}` — never introduce a symbol without defining it in the notation table first
 - Keep the scope tight — this section defines the problem, NOT the solution (§4)
 - For non-security papers, this section may be titled "Problem Setup" or "Problem Formulation"
 - If the system model is simple enough (e.g., standard supervised learning), it may be demoted to a subsection of §2 or §4
@@ -591,6 +629,7 @@ This section formally defines **what you are solving** and **under what assumpti
 > **MANDATORY: Generate a system architecture / workflow figure for this section.** Use `paper-figure-generator` skill to create the diagram. Select from `system-overview`, `pipeline`, `threat-model`, or `architecture` layout as appropriate. This figure typically becomes Figure 2 (after Figure 1 from Step 2) and is referenced in the System Model text. Do NOT proceed to Step 7 without producing this figure.
 >
 > **MANDATORY OUTPUT for Step 6:**
+> - [ ] Notation table (`Table~\ref{tab:notation}`) with all symbols used in the paper
 > - [ ] LaTeX text for §3 (problem definition + architecture + threat model as applicable)
 > - [ ] Architecture/workflow figure file (via `paper-figure-generator`)
 > - [ ] `\label{fig:system-model}` reference in the LaTeX text
@@ -836,7 +875,9 @@ Figure~\ref{fig:convergence} shows ... [analysis] ...
 
 **\subsection{Discussion and Analysis}**
 
-Opens with 1-2 paragraphs introducing what aspects need deeper analysis and why, then uses `\subsubsection` for each topic:
+Opens with 1-2 paragraphs introducing what aspects need deeper analysis and why, then uses `\subsubsection` for each topic.
+
+**Mathematical rigor requirement:** Discussion and Analysis must provide **reliable, theoretically grounded analysis** wherever possible. Do not make vague claims — back them up with mathematical expressions, formal arguments, or references to established theory. All notation MUST match the notation table (`Table~\ref{tab:notation}`).
 
 ```latex
 \subsection{Discussion and Analysis}
@@ -844,9 +885,19 @@ Opens with 1-2 paragraphs introducing what aspects need deeper analysis and why,
 [1-2 paragraphs: overview of key discussion points and motivation]
 
 \subsubsection{Security Analysis}
+% Formal security arguments: reduction proofs, game-based definitions,
+% or structured threat coverage analysis with references to §3 threat model.
 ...
 
 \subsubsection{Complexity Analysis}
+% MUST provide Big-O complexity bounds for time and space.
+% Use notation from Table~\ref{tab:notation}.
+% Example:
+% "The per-query cost is $\mathcal{O}(|\mathcal{P}| \cdot C_{\max}^2 \cdot T)$
+%  where $|\mathcal{P}|$ is the number of eligible edges,
+%  $C_{\max} = \max_\ell C_\ell$ is the largest channel width,
+%  and $T$ is the probe set size."
+% Compare with baseline complexity when applicable.
 ...
 
 \subsubsection{Limitations}
@@ -857,6 +908,13 @@ Explain why limitations do not undermine core claims.
 \subsubsection{Real-World Applicability}
 ...
 ```
+
+**Complexity Analysis guidelines:**
+- Provide Big-O bounds for both **time** and **space** complexity
+- Break down by algorithm phase if multi-stage (e.g., "Stage 1: $\mathcal{O}(n \log n)$, Stage 2: $\mathcal{O}(n^2 d)$")
+- Compare against baseline methods' complexity in a mini table or inline comparison
+- Use exact variable names from `Table~\ref{tab:notation}` — never introduce ad-hoc symbols
+- If full analysis is lengthy, provide summary bounds in main text and defer proofs to Appendix with `\ref`
 
 **What belongs here:** Security analysis, complexity analysis, limitations, real-world applicability, failure mode analysis, scalability discussion.
 
