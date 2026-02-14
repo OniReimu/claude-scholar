@@ -23,7 +23,7 @@ DEFAULT_PROVIDER=google
 
 ## Google Gemini（推荐）
 
-**模型**: `gemini-2.0-flash-preview-image-generation`
+**模型**: `gemini-3-pro-image-preview`
 
 ### 获取 API Key
 

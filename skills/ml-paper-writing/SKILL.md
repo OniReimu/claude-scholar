@@ -421,6 +421,28 @@ Every successful ML paper centers on what Neel Nanda calls "the narrative": a sh
 
 ---
 
+## Cross-Skill Integration Map
+
+The paper writing workflow orchestrates multiple skills at specific steps:
+
+| Step | Skill | Purpose |
+|------|-------|---------|
+| Step 2 | `paper-figure-generator` | Generate conceptual Figure 1 (system overview, pipeline, architecture) |
+| Step 7 | `rules/experiment-reproducibility.md` | Random seeds, config recording, checkpoint management |
+| Step 8 | `results-analysis` | Statistical analysis, figure/table generation, visualization selection |
+| Step 8 | `figures4papers` reference | Publication-ready Python plotting style |
+| Step 10 | `citation-verification` | Validate all references before finalizing Related Work |
+| Step 13 | `paper-self-review` | 6-item quality checklist |
+| Step 13 | `citation-verification` | Final reference validation |
+| Step 13 | `writing-anti-ai` | Remove AI writing patterns if needed |
+
+**Knowledge base** (populated by `paper-miner` agent, used throughout writing):
+- `references/knowledge/structure.md` → Section organization patterns (Steps 4, 10, 11)
+- `references/knowledge/writing-techniques.md` → Sentence templates, transitions (Steps 3, 4, 9)
+- `references/knowledge/submission-guides.md` → Venue requirements (Step 12)
+
+---
+
 ## Paper Structure Workflow
 
 ### Workflow 1: Writing a Complete Paper (Iterative)
@@ -434,11 +456,14 @@ Paper Writing Progress:
 - [ ] Step 3: Draft abstract → get feedback → revise
 - [ ] Step 4: Draft introduction → get feedback → revise
 - [ ] Step 5: Draft methods → get feedback → revise
-- [ ] Step 6: Draft experiments → get feedback → revise
-- [ ] Step 7: Draft related work → get feedback → revise
-- [ ] Step 8: Draft limitations → get feedback → revise
-- [ ] Step 9: Complete paper checklist (required)
-- [ ] Step 10: Final review cycle and submission
+- [ ] Step 6: Design experiment plan (contribution-aligned)
+- [ ] Step 7: Execute experiments → collect results
+- [ ] Step 8: Analyze results → generate figures/tables
+- [ ] Step 9: Draft experiments section → get feedback → revise
+- [ ] Step 10: Draft related work → get feedback → revise
+- [ ] Step 11: Draft limitations → get feedback → revise
+- [ ] Step 12: Complete paper checklist (required)
+- [ ] Step 13: Final review cycle and submission
 ```
 
 **Step 1: Define the One-Sentence Contribution**
@@ -458,7 +483,7 @@ Figure 1 deserves special attention—many readers skip directly to it.
 - Convey core idea, approach, or most compelling result
 - Use vector graphics (PDF/EPS for plots)
 - Write captions that stand alone without main text
-- Ensure readability in black-and-white (8% of men have color vision deficiency)
+- **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color
 - **For conceptual diagrams** (system overviews, pipelines, architectures): use `paper-figure-generator` skill to generate publication-quality figures via AI image generation (Gemini/OpenAI)
 
 **Step 3: Write Abstract (5-Sentence Formula)**
@@ -491,7 +516,103 @@ Enable reimplementation:
 - Architectural details sufficient for reproduction
 - Present final design decisions; ablations go in experiments
 
-**Step 6: Experiments Section**
+**Step 6: Design Experiment Plan (Contribution-Aligned)**
+
+**This is the critical step most automated workflows skip.** Before writing the experiments section, you MUST design and plan experiments that provide the right evidence for your specific contribution type.
+
+**6a. Identify Contribution Paradigm:**
+
+| Paradigm | Evidence Standard | Typical Evaluation |
+|----------|------------------|-------------------|
+| **New Method/Algorithm** | Quantitative superiority on established benchmarks | Accuracy/F1/BLEU vs baselines, ablation studies, convergence analysis, complexity analysis |
+| **New System** | End-to-end performance + component analysis | Throughput/latency/cost, scalability experiments, real deployment metrics |
+| **New Dataset/Benchmark** | Utility demonstration + quality analysis | Baseline results, inter-annotator agreement, dataset statistics, bias analysis |
+| **New Measurement/Analysis** | Reproducibility + insight validity | Statistical tests, effect sizes, multiple datasets, robustness checks |
+| **New Theory/Framework** | Formal proofs + empirical validation | Synthetic experiments confirming predictions, real-world case studies |
+| **User Study / HCI** | External validity + qualitative rigor | IRB approval, participant demographics, interview coding, thematic analysis, mixed methods |
+| **Security/Privacy** | Threat model coverage + attack/defense evaluation | Attack success rates, defense overhead, adversarial robustness, formal guarantees |
+
+**6b. Generate Experiment Plan** (present to user for confirmation):
+
+```
+Experiment Plan:
+1. Main Evaluation
+   - Claim it supports: [from Step 1 contribution]
+   - Datasets: [specific names, sizes, splits]
+   - Baselines: [at least 3-5 strong, recent baselines from venue norms]
+   - Metrics: [primary + secondary, with direction ↑/↓]
+   - Statistical methodology: [seeds, runs, error bars type]
+
+2. Ablation Study
+   - Components to ablate: [each key design choice]
+   - Expected insight: [what each ablation reveals]
+
+3. Analysis Experiments
+   - Sensitivity analysis: [hyperparameters to sweep]
+   - Qualitative analysis: [case studies, failure cases, visualizations]
+   - Efficiency analysis: [if applicable: FLOPs, memory, latency]
+
+4. [Paradigm-specific experiments]
+   - User study protocol / Attack evaluation / Scalability test / etc.
+```
+
+**6c. Validate Alignment:** For each experiment, verify the chain:
+```
+Claim (Step 1) → Experiment Design → Expected Evidence → Planned Figure/Table
+```
+
+If any claim lacks experimental support, add experiments. If any experiment doesn't support a claim, remove or move to appendix.
+
+**Step 7: Execute Experiments**
+
+**Actively write and run experiment code.** Do not just describe what to do—implement it.
+
+- Write Python experiment scripts using the project's existing codebase and config system (Hydra/OmegaConf)
+- Run experiments and collect raw results (CSV/JSON/TensorBoard logs)
+- Log compute infrastructure (GPU type, total hours)
+
+**Reproducibility requirements** (per `rules/experiment-reproducibility.md`):
+- Set random seeds at the start of every experiment:
+  ```python
+  import random, numpy as np, torch
+  def set_seed(seed: int = 42):
+      random.seed(seed)
+      np.random.seed(seed)
+      torch.manual_seed(seed)
+      torch.cuda.manual_seed_all(seed)
+  ```
+- Save Hydra config to outputs directory (auto-save enabled by default)
+- Record environment: `pip freeze > requirements.txt`, log GPU info (`torch.cuda.get_device_name()`)
+- Checkpoint naming: `best_model.pt`, `checkpoint_epoch_N.pt`, `checkpoint_latest.pt`
+- Record dataset hash or version tag for reproducibility
+
+If experiments require user's compute resources or take extended time, generate the complete runnable scripts and provide execution instructions.
+
+**Step 8: Analyze Results and Generate Figures/Tables**
+
+Use `results-analysis` skill for statistical analysis, then select the right presentation format:
+
+**Visualization Selection Guide** (match data characteristics to figure type):
+
+| Data Characteristic | Best Visualization | Tool |
+|--------------------|-------------------|------|
+| Trend / convergence over time | Line plot | matplotlib (see `figures4papers` reference) |
+| Distribution / outliers | Box plot or violin plot | matplotlib/seaborn |
+| Multi-objective tradeoff (accuracy-latency-cost) | Pareto front or scatter matrix | matplotlib |
+| Ablation / component contribution | Bar chart or waterfall chart | matplotlib |
+| Fairness / group differences | Grouped box plot with CI error bars | matplotlib/seaborn |
+| Attention / feature importance | Heatmap | matplotlib/seaborn |
+| High-dimensional embeddings | t-SNE / UMAP scatter | matplotlib |
+
+**When to use figures vs tables:**
+- **Python figures**: Data is sparse, trends/distributions/relationships need visual encoding, fewer than ~20 data points per comparison
+- **Tables (`booktabs` + `\resizebox`)**: Dense numerical results, many metrics (5+) AND/OR many baselines (5+), double-column (`table*`) when the comparison matrix is large
+
+**Figure quality reference**: Follow `figures4papers` (https://github.com/ChenLiu-1996/figures4papers) for publication-ready Python plotting — consistent style, proper font sizes, colorblind-safe palettes, no chart junk.
+
+Generate all figures as PDF (vector) via `matplotlib.pyplot.savefig('fig.pdf', bbox_inches='tight')`.
+
+**Step 9: Draft Experiments Section**
 
 For each experiment, explicitly state:
 - What claim it supports
@@ -505,7 +626,7 @@ Requirements:
 - Compute infrastructure (GPU type, total hours)
 - Seed-setting methods
 
-**Step 7: Related Work**
+**Step 10: Related Work**
 
 Organize methodologically, not paper-by-paper:
 
@@ -515,16 +636,45 @@ Organize methodologically, not paper-by-paper:
 
 Cite generously—reviewers likely authored relevant papers.
 
-**Step 8: Limitations Section (REQUIRED)**
+**REQUIRED: Include a comparison table** with existing work. This table should clearly show how your method differs from prior work across key dimensions. Use one of the two templates from `references/latex-style-guide.md`:
+- **Feature Comparison Matrix** (checkmark/cross style) — best for comparing binary features across methods
+- **Qualitative Comparison Table** (multi-column text descriptions) — best for nuanced differences
+
+If Preliminary content is brief, merge it with Related Work using this structure: Definitions → Existing Works → Comparison Table.
+
+**Step 11: Limitations Section (REQUIRED)**
 
 All major conferences require this. Counter-intuitively, honesty helps:
 - Reviewers are instructed not to penalize honest limitation acknowledgment
 - Pre-empt criticisms by identifying weaknesses first
 - Explain why limitations don't undermine core claims
 
-**Step 9: Paper Checklist**
+**Positioning**: Limitations and Security Analysis belong in a **Discussion** section, NOT in the Conclusion (see `references/knowledge/structure.md`). Some venues allow a standalone Limitations section — check venue requirements.
 
-NeurIPS, ICML, and ICLR all require paper checklists. See [references/checklists.md](references/checklists.md).
+**Page limit notes** (critical for submission):
+- **NeurIPS**: Limitations section does NOT count toward page limit
+- **ICML**: Broader Impact Statement required after conclusion, does NOT count toward page limit
+- **ICLR**: Mandatory Limitations section
+- **ACL**: Mandatory Limitations section, does NOT count toward page limit
+
+**Step 12: Paper Checklist**
+
+NeurIPS, ICML, and ICLR all require paper checklists. See [references/checklists.md](references/checklists.md) for complete venue-specific checklists.
+
+**Venue-specific critical items:**
+- **NeurIPS**: 16-item mandatory checklist, Broader Impact section
+- **ICML**: Broader Impact Statement (after conclusion, outside page limit)
+- **ICLR**: LLM disclosure required if LLMs used in research process
+- **ACL**: Responsible NLP Research checklist, mandatory Limitations section
+
+**Step 13: Final Review Cycle and Submission**
+
+Final pass before submission:
+- Use `paper-self-review` skill for 6-item quality checklist
+- Use `citation-verification` skill for reference validation
+- Use `writing-anti-ai` skill if needed for natural voice
+- Verify claim-evidence-figure alignment from Step 6c
+- Check page limits, anonymization, supplementary materials
 
 ---
 
@@ -1152,10 +1302,17 @@ See [references/reviewer-guidelines.md](references/reviewer-guidelines.md) for d
 
 ### Tables
 
-Use `booktabs` LaTeX package for professional tables:
+Use `booktabs` LaTeX package for professional tables. Always wrap tables in `\resizebox` to fit column/page width:
 
 ```latex
 \usepackage{booktabs}
+\usepackage{graphicx} % for \resizebox
+
+% Single-column table
+\begin{table}[t]
+\centering
+\caption{Main results on benchmark X.}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcc}
 \toprule
 Method & Accuracy ↑ & Latency ↓ \\
@@ -1163,7 +1320,22 @@ Method & Accuracy ↑ & Latency ↓ \\
 Baseline & 85.2 & 45ms \\
 \textbf{Ours} & \textbf{92.1} & 38ms \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
+\end{table}
+
+% Double-column table (many metrics or baselines)
+\begin{table*}[t]
+\centering
+\caption{Comprehensive comparison across all benchmarks.}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l*{8}{c}}
+\toprule
+...
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
 ```
 
 **Rules:**
@@ -1171,6 +1343,11 @@ Baseline & 85.2 & 45ms \\
 - Include direction symbols (↑ higher is better, ↓ lower is better)
 - Right-align numerical columns
 - Consistent decimal precision
+- Always use `\resizebox{\columnwidth}{!}` (or `\textwidth` for `table*`)
+
+**When to use tables vs figures:**
+- **Tables**: Many metrics AND/OR many baselines, data is dense enough to justify structured grid layout, double-column (`table*`) when needed
+- **Figures (Python plots)**: Fewer data points, showing trends/distributions/relationships, data needs spatial/visual encoding to convey meaning
 
 ### Figures
 

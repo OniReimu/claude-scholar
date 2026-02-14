@@ -3,7 +3,7 @@
 import { readFileSync } from "node:fs";
 import type { ProviderConfig } from "../types";
 
-const DEFAULT_MODEL = "gemini-2.0-flash-preview-image-generation";
+const DEFAULT_MODEL = "gemini-3-pro-image-preview";
 
 /** 通过 Gemini API 生成图像 */
 export async function generate(

@@ -54,25 +54,32 @@ Select appropriate tools for data loading and preliminary validation based on da
 
 ### Step 2: Statistical Analysis
 
+**MANDATORY: Pre-checks before choosing a test** (see `references/statistical-methods.md`):
+1. **Normality test**: Run Shapiro-Wilk test (n < 50) or Kolmogorov-Smirnov test (n ≥ 50), inspect Q-Q plots
+2. **Variance homogeneity**: Run Levene's test (robust) or Bartlett's test (if normal)
+3. **Select test based on results**:
+   - Data is normal + equal variance → parametric tests (t-test, ANOVA)
+   - Data is NOT normal or unequal variance → non-parametric tests (Wilcoxon, Mann-Whitney U, Kruskal-Wallis)
+
 **Basic Statistics:**
-- Mean
-- Standard Deviation
-- Standard Error
-- Confidence Interval
+- Mean ± Standard Deviation (report variance across runs)
+- Standard Error (for confidence interval estimation)
+- 95% Confidence Interval
 
-**Significance Tests:**
-- t-test - Two-group comparison
-- ANOVA - Multi-group comparison
-- Wilcoxon test - Non-parametric test
-- Bonferroni correction - Multiple comparison correction
+**Significance Tests** (choose based on pre-check results):
 
-Select appropriate statistical tests based on data characteristics.
+| Scenario | Normal Data | Non-Normal Data |
+|----------|-------------|-----------------|
+| 2 groups | t-test (paired/independent) | Wilcoxon signed-rank / Mann-Whitney U |
+| 3+ groups | One-way ANOVA | Kruskal-Wallis |
+| Multiple comparisons | Bonferroni / Tukey HSD | Dunn's test |
 
 **Key Principles:**
-- Report complete statistical information (mean ± std/SE)
-- Specify the test method and significance level used
-- Report p-values and effect sizes
-- Consider multiple comparison issues
+- Report complete statistical information (mean ± std, n runs, seeds used)
+- Specify the test method and significance level (α = 0.05 by default)
+- Report p-values AND effect sizes (Cohen's d, η²)
+- Apply multiple comparison correction when testing multiple hypotheses
+- Ensure reproducibility: document random seeds per `rules/experiment-reproducibility.md`
 
 See `references/statistical-methods.md` for the complete statistical methods guide.
 
@@ -100,16 +107,34 @@ Systematically compare performance across different methods, ensuring fair compa
 - Appropriate error bars
 - Readable in black-and-white print
 
-**Common Chart Types:**
-- Line chart - Training curves, trend analysis
-- Bar chart - Performance comparison
-- Box plot - Distribution display
-- Heatmap - Correlation analysis
-- Scatter plot - Relationship display
+**Visualization Selection Guide** — match data characteristics to the right figure type:
 
-Use appropriate visualization tools to generate publication-quality figures.
+| Data Characteristic | Best Visualization | When to Use |
+|--------------------|-------------------|-------------|
+| Trend / convergence over epochs | **Line plot** | Training curves, learning rate schedules, performance over time |
+| Performance comparison across methods | **Bar chart** | Ablation studies, comparing 3-8 methods on 1-3 metrics |
+| Distribution / outliers across runs | **Box plot** or **violin plot** | Showing variance, comparing distributions across groups |
+| Multi-objective tradeoff | **Pareto front** or **scatter matrix** | Accuracy vs latency, accuracy vs cost, multi-dimensional tradeoffs |
+| Component contribution | **Waterfall chart** or **stacked bar** | Ablation showing cumulative contribution of each module |
+| Fairness / group differences | **Grouped box plot** with CI error bars | Comparing performance across demographic groups |
+| Feature importance / attention | **Heatmap** | Attention weights, correlation matrices, confusion matrices |
+| High-dimensional embeddings | **t-SNE / UMAP scatter** | Cluster visualization, representation quality analysis |
+| Sensitivity to hyperparameter | **Line plot with shaded CI** | Sweeping one hyperparameter while showing uncertainty |
 
-See `references/visualization-best-practices.md` for the visualization guide.
+**When to use figures vs tables:**
+- **Figures (Python plots)**: Data is sparse, need to show trends/distributions/relationships, fewer than ~20 data points per comparison, spatial encoding adds meaning
+- **Tables (`booktabs` + `\resizebox`)**: Dense numerical results, many metrics (5+) AND/OR many baselines (5+), readers need exact numbers, double-column (`table*`) for large comparison matrices
+
+**Figure quality reference**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) for publication-ready Python plotting — consistent style, proper font sizes, colorblind-safe palettes (Okabe-Ito or Paul Tol), no chart junk. Always save as PDF vector format.
+
+**Accessibility requirements:**
+- Use **colorblind-safe palettes**: Okabe-Ito (8 colors) or Paul Tol (up to 12 colors)
+- Verify **grayscale readability** (8% of men have color vision deficiency)
+- Differentiate lines by **style** (solid/dashed/dotted), not just color
+- Save as **PDF vector format**: `plt.savefig('fig.pdf', bbox_inches='tight')`
+- Font size ≥ 8pt in final printed figure
+
+See `references/visualization-best-practices.md` for additional details.
 
 ### Step 5: Writing the Results Section
 
@@ -143,6 +168,16 @@ See `references/visualization-best-practices.md` for the visualization guide.
 - Report complete statistical information
 - Honestly report limitations
 
+**Key Sentence Patterns** (see `references/results-writing-guide.md` for the full list):
+
+| Context | Pattern |
+|---------|---------|
+| Introduce experiment | "To validate [hypothesis], we conducted [experiment]" |
+| Describe results | "Our method achieves [value], outperforming [baseline]'s [value]" |
+| Statistical significance | "This difference is statistically significant (p < 0.01)" |
+| Ablation | "Removing [component] decreases performance by [value], indicating [conclusion]" |
+| Figure reference | "Figure X shows [phenomenon]. We observe that [key observation]" |
+
 See `references/results-writing-guide.md` for the complete writing guide.
 
 ### Step 6: Quality Check
@@ -153,7 +188,9 @@ See `references/results-writing-guide.md` for the complete writing guide.
 - [ ] Figures are clear and readable (including black-and-white print)
 - [ ] Hyperparameter search ranges are reported
 - [ ] Computational resources are specified (GPU type, time)
-- [ ] Random seed settings are specified
+- [ ] Random seed settings are specified (per `rules/experiment-reproducibility.md`)
+- [ ] Config file saved alongside results (Hydra / OmegaConf snapshot)
+- [ ] Environment recorded (Python version, GPU driver, key library versions)
 - [ ] Results are reproducible (code/data available)
 
 ## Common Mistakes and Pitfalls
