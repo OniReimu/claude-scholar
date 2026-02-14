@@ -667,9 +667,15 @@ Validate alignment — for each experiment, verify: `Claim (Step 1) → Experime
 
 Concrete actions (execute in order):
 1. **Write experiment scripts**: Python files using the project's codebase and config system (Hydra/OmegaConf), with `set_seed()` at entry point
-2. **Run the scripts**: Execute via Bash tool, capture stdout/stderr
+2. **Run the scripts**: Execute via `uv run script.py` (default Python runner), capture stdout/stderr
 3. **Collect raw results**: Save to CSV/JSON files in the project's results directory
 4. **Log metadata**: GPU type, total hours, library versions
+
+**Python tooling**: All experiment scripts default to `uv` for execution and dependency management:
+- Run scripts: `uv run python train.py` or `uv run script.py`
+- Add dependencies: `uv add torch transformers` (updates `pyproject.toml`)
+- Sync environment: `uv sync`
+- Record environment: `uv pip freeze > requirements.txt`
 
 ```python
 import random, numpy as np, torch
@@ -682,7 +688,7 @@ def set_seed(seed: int = 42):
 
 Reproducibility requirements (per `rules/experiment-reproducibility.md`):
 - Save Hydra config to outputs directory (auto-save enabled by default)
-- Record environment: `pip freeze > requirements.txt`, log GPU info
+- Record environment: `uv pip freeze > requirements.txt`, log GPU info
 - Checkpoint naming: `best_model.pt`, `checkpoint_epoch_N.pt`, `checkpoint_latest.pt`
 - Record dataset hash or version tag
 
