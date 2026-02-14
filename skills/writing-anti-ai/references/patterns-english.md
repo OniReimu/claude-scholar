@@ -146,11 +146,72 @@
 
 ### 13. Em Dash Overuse (破折号过度使用)
 
+AI heavily overuses em-dashes (`---` in LaTeX, `—` in Unicode) as parenthetical insertions. In academic writing this is one of the strongest AI signals. Human writers prefer: (1) starting a new sentence, (2) using a relative clause (`, which...`), or (3) using parenthetical commas.
+
+**Detection rule**: If a paragraph contains ≥ 2 em-dashes, it is almost certainly AI-generated. Even 1 em-dash per paragraph is above typical human frequency in academic prose.
+
+**Example 1 — Parenthetical insertion (most common AI pattern):**
+
 **Before**:
-> The term is primarily promoted by Dutch institutions—not by the people themselves. You don't say "Netherlands, Europe" as an address—yet this mislabeling continues—even in official documents.
+> The agent learns a policy from training data---either collected online through environment interaction or assembled offline from historical logs---and a growing body of work demonstrates that this process is vulnerable to data-poisoning attacks.
+
+**After** (new sentence):
+> The agent learns a policy from training data, which may be collected online through environment interaction or assembled offline from historical logs. A growing body of work demonstrates that this data-dependent learning process is vulnerable to data-poisoning attacks.
+
+**Example 2 — Appositive insertion:**
+
+**Before**:
+> Prior RL interpretability work focuses on saliency maps, policy summarization, or behavior clustering---none answer the security-critical question: which training transitions caused a dangerous decision?
+
+**After** (relative clause):
+> Prior RL interpretability work focuses on saliency maps, policy summarization, or behavior clustering, but none of these methods answer the security-critical question of which training transitions caused a dangerous decision.
+
+**Example 3 — General prose:**
+
+**Before**:
+> The term is primarily promoted by Dutch institutions---not by the people themselves. You don't say "Netherlands, Europe" as an address---yet this mislabeling continues---even in official documents.
 
 **After**:
 > The term is primarily promoted by Dutch institutions, not by the people themselves. You don't say "Netherlands, Europe" as an address, yet this mislabeling continues in official documents.
+
+**Fix strategies** (in order of preference):
+1. **New sentence**: Split at the em-dash. The parenthetical becomes its own sentence.
+2. **Relative clause**: Replace `---X---` with `, which X,` or `, where X,`
+3. **Parenthetical commas**: Replace `---X---` with `, X,` (only if X is short)
+4. **Subordinate clause**: Restructure using "although", "while", "because"
+
+**Note**: En-dash (`--` in LaTeX) for number ranges (e.g., "pages 10--15") or compound modifiers (e.g., "state--action space") is standard and NOT an AI signal.
+
+---
+
+### 13b. Colon-List Overuse (冒号引出内联列表)
+
+AI frequently uses colons to introduce inline enumerations, especially in introductions. The pattern: "broad claim colon specific-example-1, specific-example-2, and specific-example-3". Human writers vary their syntax more.
+
+**Detection rule**: If a sentence uses a colon followed by 3+ comma-separated noun phrases (especially with citations), it is likely AI-generated.
+
+**Example 1 — Introduction opening:**
+
+**Before**:
+> RL agents are increasingly deployed in domains where failures carry severe consequences: autonomous vehicles navigating complex traffic, medical treatment optimization where incorrect dosing can be lethal, and algorithmic trading where erroneous strategies risk catastrophic financial loss.
+
+**After** (separate sentences):
+> RL agents are increasingly deployed in domains where failures carry severe consequences. Autonomous vehicles must navigate complex traffic without collision. In medical treatment optimization, incorrect dosing can be lethal. Algorithmic trading bots risk catastrophic financial loss from erroneous strategies.
+
+**After** (alternative — "such as" with brief list):
+> RL agents are increasingly deployed in safety-critical domains such as autonomous driving, medical treatment optimization, and algorithmic trading, where failures carry severe consequences.
+
+**Example 2 — Method overview:**
+
+**Before**:
+> \method operates in four stages: (1) select query states, (2) compute IHVPs, (3) evaluate per-data-point influence scores, and (4) flag data points for removal.
+
+**After** (this pattern is acceptable for method overviews — ordered numbered steps after a colon are standard in technical writing and NOT an AI signal).
+
+**Fix strategies:**
+1. **Separate sentences**: Each item in the list becomes its own sentence with specific detail
+2. **"such as" / "including"**: For short enumerations (≤ 3 items), replace colon with "such as"
+3. **Keep as-is**: Numbered step lists (e.g., "(1)...(2)...(3)...") and definition-style colons ("We define X: ...") are standard academic usage, not AI signals
 
 ---
 

@@ -53,7 +53,8 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 **Patterns to avoid**:
 - Negative parallelisms: "It's not just X, it's Y"
 - Rule of three: "A, B, and C" (prefer two or four items)
-- Em-dash reveals: "X—Y" (just use commas)
+- Em-dash overuse: "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence)
+- Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including")
 
 ### 3. Vary Rhythm
 Mix sentence lengths. End paragraphs differently.
@@ -92,7 +93,8 @@ If it sounds like a pull-quote, rewrite it.
 |---------|-------------|----------|
 | **AI vocabulary** | Additionally, crucial, delve, enhance, landscape | 此外，至关重要，深入探讨，增强，格局 |
 | **Copula avoidance** | "serves as", "stands for", "represents" | "作为"，"代表"，"充当" |
-| **Em dash overuse** | Using — more than humans | 过度使用破折号 |
+| **Em dash overuse** | "X---Y---Z" parenthetical insertions | 过度使用破折号做插入语 |
+| **Colon-list overuse** | "X: A, B, and C" inline enumeration | 冒号引出内联列表 |
 | **Rule of three** | Forcing ideas into groups of three | 强行三段式 |
 | **Elegant variation** | Excessive synonym substitution | 过度换词 |
 
