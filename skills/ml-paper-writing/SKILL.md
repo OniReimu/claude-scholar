@@ -428,18 +428,19 @@ The paper writing workflow orchestrates multiple skills at specific steps:
 | Step | Skill | Purpose |
 |------|-------|---------|
 | Step 2 | `paper-figure-generator` | Generate conceptual Figure 1 (system overview, pipeline, architecture) |
-| Step 7 | `rules/experiment-reproducibility.md` | Random seeds, config recording, checkpoint management |
-| Step 8 | `results-analysis` | Statistical analysis, figure/table generation, visualization selection |
-| Step 8 | `figures4papers` reference | Publication-ready Python plotting style |
-| Step 10 | `citation-verification` | Validate all references before finalizing Related Work |
-| Step 13 | `paper-self-review` | 6-item quality checklist |
-| Step 13 | `citation-verification` | Final reference validation |
-| Step 13 | `writing-anti-ai` | Remove AI writing patterns if needed |
+| Step 6 | `paper-figure-generator` | System architecture diagram for System Model section |
+| Step 8b | `rules/experiment-reproducibility.md` | Random seeds, config recording, checkpoint management |
+| Step 8c | `results-analysis` | Statistical analysis, figure/table generation, visualization selection |
+| Step 8c | `figures4papers` reference | Publication-ready Python plotting style |
+| Step 5 | `citation-verification` | Validate references in Background & Related Work |
+| Step 11 | `paper-self-review` | 6-item quality checklist |
+| Step 11 | `citation-verification` | Final reference validation |
+| Step 11 | `writing-anti-ai` | Remove AI writing patterns if needed |
 
 **Knowledge base** (populated by `paper-miner` agent, used throughout writing):
-- `references/knowledge/structure.md` → Section organization patterns (Steps 4, 10, 11)
+- `references/knowledge/structure.md` → Section organization patterns (Steps 4, 5, 6)
 - `references/knowledge/writing-techniques.md` → Sentence templates, transitions (Steps 3, 4, 9)
-- `references/knowledge/submission-guides.md` → Venue requirements (Step 12)
+- `references/knowledge/submission-guides.md` → Venue requirements (Step 11)
 
 ---
 
@@ -486,6 +487,30 @@ Figure 1 deserves special attention—many readers skip directly to it.
 - **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color
 - **For conceptual diagrams** (system overviews, pipelines, architectures): use `paper-figure-generator` skill to generate publication-quality figures via AI image generation (Gemini/OpenAI)
 
+### Paper Section Structure
+
+The final paper follows this structure. Strictly control to **6 top-level numbered sections** (+ Abstract).
+
+| § | Section | Core Content |
+|---|---------|-------------|
+| — | Abstract | 5-sentence formula |
+| 1 | Introduction | Problem → Contribution list → Approach overview |
+| 2 | Background & Related Work | Definitions, notation, existing work (methodological grouping), qualitative comparison table (✓/✗/◐) |
+| 3 | System Model | Problem formulation, system architecture, workflow overview, threat model |
+| 4 | Our Approach | Technical method, algorithm/pseudocode, design decisions |
+| 5 | Experiments | Settings → Results → Discussion & Analysis (including limitations) |
+| 6 | Conclusion | Summary, key findings, future work |
+| — | Acknowledgments | Funding, collaborators (remove during anonymous review, restore for camera-ready) |
+
+**Section management rules:**
+- **Maximum 6 numbered sections** — do not proliferate top-level headings
+- Each `\subsection` must justify its existence with ≥ 2 substantive paragraphs of content
+- If a subsection is thin (< 2 paragraphs), demote to inline heading: `\noindent\textbf{Heading.}` followed by text on the same line
+- Same rule applies to `\subsubsection` — thin content uses `\noindent\textbf{}` instead
+- Never create a sub(sub)section containing only one paragraph or a single short list
+
+---
+
 **Step 3: Write Abstract (5-Sentence Formula)**
 
 From Sebastian Farquhar (DeepMind):
@@ -500,7 +525,7 @@ From Sebastian Farquhar (DeepMind):
 
 **Delete** generic openings like "Large language models have achieved remarkable success..."
 
-**Step 4: Write Introduction (1-1.5 pages max)**
+**Step 4: Write Introduction (→ §1, 1-1.5 pages max)**
 
 Must include:
 - 2-4 bullet contribution list (max 1-2 lines each in two-column format)
@@ -508,19 +533,95 @@ Must include:
 - Brief approach overview
 - Methods should start by page 2-3 maximum
 
-**Step 5: Methods Section**
+**Step 5: Write Background & Related Work (→ §2)**
+
+This section combines foundational knowledge and positioning against existing work.
+
+**Structure:**
+
+```
+\section{Background and Related Work}
+
+\subsection{Preliminaries}          % Definitions, notation, formal setup
+  [Only if enough content for ≥ 2 paragraphs; otherwise use \noindent\textbf{Preliminaries.}]
+
+\subsection{[Topic Group A]}        % e.g., "Federated Learning"
+  [Methodological grouping of related work]
+
+\subsection{[Topic Group B]}        % e.g., "Privacy-Preserving ML"
+  [Methodological grouping of related work]
+```
+
+**Writing principles:**
+- Organize methodologically, NOT paper-by-paper
+- **Good:** "One line of work uses Floogledoodle's assumption [refs] whereas we use Doobersnoddle's assumption because..."
+- **Bad:** "Snap et al. introduced X while Crackle et al. introduced Y."
+- Cite generously — reviewers likely authored relevant papers
+- End with a clear **positioning statement**: how your work differs from and advances beyond existing approaches
+
+**REQUIRED: Include a qualitative comparison table.** This table uses **symbols** (✓ / ✗ / ◐) or qualitative labels (High / Medium / Low) to compare features/properties — **NOT numerical values**. Numerical results belong in §5 Experiments. Use templates from `references/latex-style-guide.md`:
+- **Feature Comparison Matrix** (✓/✗/◐ style) — for binary or ternary feature comparison
+- **Qualitative Comparison Table** (multi-column text descriptions) — for nuanced differences
+
+> **Table scope separation**: §2 comparison table = qualitative properties (supports X? has property Y?). §5 experiment tables = quantitative metrics (accuracy, F1, latency). Both cover the same baselines and dimensions, but at different granularity levels.
+
+**Step 6: Write System Model (→ §3)**
+
+This section formally defines **what you are solving** and **under what assumptions**.
+
+**Components** (include all that apply to the paper context):
+
+- **Problem Definition**: Formal mathematical formulation (input space, output space, objective function, constraints)
+- **System Architecture**: High-level architecture — participants, components, communication topology
+- **Workflow Overview**: End-to-end pipeline — stages, data flow between components
+- **Threat Model** (security/privacy papers): Attacker capabilities, attack surface, trust assumptions, security goals
+- **Assumptions**: Explicit list (e.g., "honest-but-curious server", "IID data distribution")
+
+**Guidelines:**
+- Use formal notation introduced in §2 Preliminaries
+- Keep the scope tight — this section defines the problem, NOT the solution (§4)
+- For non-security papers, this section may be titled "Problem Setup" or "Problem Formulation"
+- If the system model is simple enough (e.g., standard supervised learning), it may be demoted to a subsection of §2 or §4
+
+> **MANDATORY: Generate a system architecture / workflow figure for this section.** Use `paper-figure-generator` skill to create the diagram. Select from `system-overview`, `pipeline`, `threat-model`, or `architecture` layout as appropriate. This figure typically becomes Figure 2 (after Figure 1 from Step 2) and is referenced in the System Model text. Do NOT proceed to Step 7 without producing this figure.
+>
+> **MANDATORY OUTPUT for Step 6:**
+> - [ ] LaTeX text for §3 (problem definition + architecture + threat model as applicable)
+> - [ ] Architecture/workflow figure file (via `paper-figure-generator`)
+> - [ ] `\label{fig:system-model}` reference in the LaTeX text
+
+**Step 7: Write Methods / Our Approach (→ §4)**
 
 Enable reimplementation:
 - Conceptual outline or pseudocode
 - All hyperparameters listed
 - Architectural details sufficient for reproduction
-- Present final design decisions; ablations go in experiments
+- Present final design decisions; ablations go in §5 Experiments
 
-**Step 6: Design Experiment Plan (Contribution-Aligned)**
+**Algorithm / Pseudocode** (if your method involves a non-trivial procedure):
 
-**This is the critical step most automated workflows skip.** Before writing the experiments section, you MUST design and plan experiments that provide the right evidence for your specific contribution type.
+Follow the Algorithm Presentation Pattern from `references/knowledge/structure.md`:
+1. High-level overview first (1-2 paragraphs explaining intuition)
+2. Mathematical formulation (objective function, constraints)
+3. Algorithm pseudocode block (`algorithm` + `algorithmic` LaTeX packages)
+4. Implementation details (practical choices not captured in pseudocode)
 
-**6a. Identify Contribution Paradigm:**
+Pseudocode guidelines:
+- Use `\begin{algorithm}[t]` with `\caption{}` and `\label{alg:name}`
+- Number lines with `\algorithmic[1]` for easy reference in text
+- Keep pseudocode at the right abstraction level — highlight what is **novel**, abstract away standard operations (e.g., "Train with SGD" not 10 lines of gradient update)
+- Use consistent notation: match variable names between math formulation, pseudocode, and prose
+- If the algorithm is short (< 5 lines), inline description may suffice; reserve `Algorithm` floats for procedures with ≥ 5 steps or non-obvious control flow
+
+**Step 8: Experiment Workflow (Plan → Execute → Analyze)**
+
+**This is the critical step most automated workflows skip.** Before writing §5, you MUST complete all three sub-steps below and produce their mandatory outputs. Do NOT skip ahead to Step 9.
+
+---
+
+**8a. Design Experiment Plan (Contribution-Aligned):**
+
+Identify contribution paradigm and match evidence standard:
 
 | Paradigm | Evidence Standard | Typical Evaluation |
 |----------|------------------|-------------------|
@@ -532,7 +633,7 @@ Enable reimplementation:
 | **User Study / HCI** | External validity + qualitative rigor | IRB approval, participant demographics, interview coding, thematic analysis, mixed methods |
 | **Security/Privacy** | Threat model coverage + attack/defense evaluation | Attack success rates, defense overhead, adversarial robustness, formal guarantees |
 
-**6b. Generate Experiment Plan** (present to user for confirmation):
+Generate experiment plan and **present to user for explicit confirmation before proceeding**:
 
 ```
 Experiment Plan:
@@ -548,118 +649,133 @@ Experiment Plan:
    - Expected insight: [what each ablation reveals]
 
 3. Analysis Experiments
-   - Sensitivity analysis: [hyperparameters to sweep]
-   - Qualitative analysis: [case studies, failure cases, visualizations]
-   - Efficiency analysis: [if applicable: FLOPs, memory, latency]
+   - Sensitivity / qualitative / efficiency analysis
 
 4. [Paradigm-specific experiments]
    - User study protocol / Attack evaluation / Scalability test / etc.
 ```
 
-**6c. Validate Alignment:** For each experiment, verify the chain:
+Validate alignment — for each experiment, verify: `Claim (Step 1) → Experiment Design → Expected Evidence → Planned Figure/Table`. If any claim lacks support, add experiments. If any experiment doesn't support a claim, move to appendix.
+
+> **GATE: Do NOT proceed to 8b until the user confirms the experiment plan.**
+
+---
+
+**8b. Execute Experiments:**
+
+**Write and run experiment code NOW.** This is not a planning step — produce actual code and actual results.
+
+Concrete actions (execute in order):
+1. **Write experiment scripts**: Python files using the project's codebase and config system (Hydra/OmegaConf), with `set_seed()` at entry point
+2. **Run the scripts**: Execute via Bash tool, capture stdout/stderr
+3. **Collect raw results**: Save to CSV/JSON files in the project's results directory
+4. **Log metadata**: GPU type, total hours, library versions
+
+```python
+import random, numpy as np, torch
+def set_seed(seed: int = 42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 ```
-Claim (Step 1) → Experiment Design → Expected Evidence → Planned Figure/Table
-```
 
-If any claim lacks experimental support, add experiments. If any experiment doesn't support a claim, remove or move to appendix.
-
-**Step 7: Execute Experiments**
-
-**Actively write and run experiment code.** Do not just describe what to do—implement it.
-
-- Write Python experiment scripts using the project's existing codebase and config system (Hydra/OmegaConf)
-- Run experiments and collect raw results (CSV/JSON/TensorBoard logs)
-- Log compute infrastructure (GPU type, total hours)
-
-**Reproducibility requirements** (per `rules/experiment-reproducibility.md`):
-- Set random seeds at the start of every experiment:
-  ```python
-  import random, numpy as np, torch
-  def set_seed(seed: int = 42):
-      random.seed(seed)
-      np.random.seed(seed)
-      torch.manual_seed(seed)
-      torch.cuda.manual_seed_all(seed)
-  ```
+Reproducibility requirements (per `rules/experiment-reproducibility.md`):
 - Save Hydra config to outputs directory (auto-save enabled by default)
-- Record environment: `pip freeze > requirements.txt`, log GPU info (`torch.cuda.get_device_name()`)
+- Record environment: `pip freeze > requirements.txt`, log GPU info
 - Checkpoint naming: `best_model.pt`, `checkpoint_epoch_N.pt`, `checkpoint_latest.pt`
-- Record dataset hash or version tag for reproducibility
+- Record dataset hash or version tag
 
-If experiments require user's compute resources or take extended time, generate the complete runnable scripts and provide execution instructions.
+> **Compute constraint handling**: If experiments require GPU or extended compute that exceeds the current environment, you MUST still: (1) write complete, runnable experiment scripts, (2) write a launch script that runs all experiments end-to-end, (3) present scripts to user and **wait for user to run them and provide raw results** before proceeding to 8c. Do NOT skip to Step 9 with placeholder results.
 
-**Step 8: Analyze Results and Generate Figures/Tables**
+> **GATE: Do NOT proceed to 8c until raw result files (CSV/JSON/logs) exist — either from direct execution or from user-provided results.**
 
-Use `results-analysis` skill for statistical analysis, then select the right presentation format:
+---
 
-**Visualization Selection Guide** (match data characteristics to figure type):
+**8c. Analyze Results and Generate Figures/Tables:**
+
+**Produce actual figure files and/or LaTeX table code NOW.** Use `results-analysis` skill for statistical analysis.
+
+Concrete actions:
+1. **Load raw results** from 8b output files
+2. **Run statistical tests** (significance, confidence intervals — see `results-analysis` skill)
+3. **Generate figures** (save as PDF) and/or **generate LaTeX table code** based on data characteristics:
 
 | Data Characteristic | Best Visualization | Tool |
 |--------------------|-------------------|------|
-| Trend / convergence over time | Line plot | matplotlib (see `figures4papers` reference) |
+| Trend / convergence over time | Line plot | matplotlib |
 | Distribution / outliers | Box plot or violin plot | matplotlib/seaborn |
-| Multi-objective tradeoff (accuracy-latency-cost) | Pareto front or scatter matrix | matplotlib |
+| Multi-objective tradeoff | Pareto front or scatter matrix | matplotlib |
 | Ablation / component contribution | Bar chart or waterfall chart | matplotlib |
-| Fairness / group differences | Grouped box plot with CI error bars | matplotlib/seaborn |
 | Attention / feature importance | Heatmap | matplotlib/seaborn |
 | High-dimensional embeddings | t-SNE / UMAP scatter | matplotlib |
 
-**When to use figures vs tables:**
-- **Python figures**: Data is sparse, trends/distributions/relationships need visual encoding, fewer than ~20 data points per comparison
-- **Tables (`booktabs` + `\resizebox`)**: Dense numerical results, many metrics (5+) AND/OR many baselines (5+), double-column (`table*`) when the comparison matrix is large
+**Figures vs tables:**
+- **Figures**: Sparse data, trends/distributions, < 20 data points per comparison
+- **Tables** (`booktabs` + `\resizebox`): Dense numerical results, many metrics (5+) and/or many baselines (5+), `table*` for large comparison matrices
 
-**Figure quality reference**: Follow `figures4papers` (https://github.com/ChenLiu-1996/figures4papers) for publication-ready Python plotting — consistent style, proper font sizes, colorblind-safe palettes, no chart junk.
+**Figure quality**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — consistent style, proper font sizes, colorblind-safe palettes (Okabe-Ito or Paul Tol), PDF vector format.
 
-Generate all figures as PDF (vector) via `matplotlib.pyplot.savefig('fig.pdf', bbox_inches='tight')`.
+> **MANDATORY OUTPUT for Step 8 (all three required before proceeding to Step 9):**
+> - [ ] Experiment plan document (confirmed by user in 8a)
+> - [ ] Raw result files — CSV/JSON/logs (produced in 8b, or provided by user)
+> - [ ] Figure PDF files AND/OR LaTeX table code (produced in 8c)
+>
+> **If any output is missing, STOP and address it. Do NOT write §5 Experiments without actual data.**
 
-**Step 9: Draft Experiments Section**
+**Step 9: Write Experiments Section (→ §5)**
 
-For each experiment, explicitly state:
-- What claim it supports
-- How it connects to main contribution
-- Experimental setting (details in appendix)
-- What to observe: "the blue line shows X, which demonstrates Y"
+§5 is structured as three subsections:
 
-Requirements:
-- Error bars with methodology (standard deviation vs standard error)
-- Hyperparameter search ranges
-- Compute infrastructure (GPU type, total hours)
-- Seed-setting methods
+```
+\section{Experiments}
 
-**Step 10: Related Work**
+\subsection{Experimental Setup}
+  - Datasets, baselines, metrics, implementation details
+  - Hyperparameter search ranges
+  - Compute infrastructure (GPU type, total hours)
+  - Seed-setting methods
 
-Organize methodologically, not paper-by-paper:
+\subsection{Results}
+  - For each experiment: what claim it supports, what to observe
+  - "the blue line shows X, which demonstrates Y"
+  - Quantitative tables with error bars (mean ± std, n runs)
+  - These tables complement the qualitative comparison table in §2 —
+    same baselines and dimensions, but with concrete numerical evidence
 
-**Good:** "One line of work uses Floogledoodle's assumption [refs] whereas we use Doobersnoddle's assumption because..."
+\subsection{Discussion and Analysis}
+  - Ablation analysis: component contributions
+  - Qualitative analysis: case studies, failure cases, visualizations
+  - Limitations: honestly report what does NOT work and why
+  - Broader implications of the results
+```
 
-**Bad:** "Snap et al. introduced X while Crackle et al. introduced Y."
+**Discussion and Analysis** subsection absorbs what would otherwise be standalone Limitations and Discussion sections. This keeps the paper tight.
 
-Cite generously—reviewers likely authored relevant papers.
-
-**REQUIRED: Include a comparison table** with existing work. This table should clearly show how your method differs from prior work across key dimensions. Use one of the two templates from `references/latex-style-guide.md`:
-- **Feature Comparison Matrix** (checkmark/cross style) — best for comparing binary features across methods
-- **Qualitative Comparison Table** (multi-column text descriptions) — best for nuanced differences
-
-If Preliminary content is brief, merge it with Related Work using this structure: Definitions → Existing Works → Comparison Table.
-
-**Step 11: Limitations Section (REQUIRED)**
-
-All major conferences require this. Counter-intuitively, honesty helps:
-- Reviewers are instructed not to penalize honest limitation acknowledgment
-- Pre-empt criticisms by identifying weaknesses first
-- Explain why limitations don't undermine core claims
-
-**Positioning**: Limitations and Security Analysis belong in a **Discussion** section, NOT in the Conclusion (see `references/knowledge/structure.md`). Some venues allow a standalone Limitations section — check venue requirements.
-
-**Page limit notes** (critical for submission):
-- **NeurIPS**: Limitations section does NOT count toward page limit
-- **ICML**: Broader Impact Statement required after conclusion, does NOT count toward page limit
-- **ICLR**: Mandatory Limitations section
+**Page limit notes** (critical — some venues treat limitations specially):
+- **NeurIPS**: Limitations section does NOT count toward page limit (can be standalone after §6 if preferred)
+- **ICML**: Broader Impact Statement required after conclusion, outside page limit
+- **ICLR**: Mandatory Limitations section (can stay as subsection of §5 or standalone)
 - **ACL**: Mandatory Limitations section, does NOT count toward page limit
 
-**Step 12: Paper Checklist**
+> If a venue **requires** a standalone Limitations section (not as subsection), extract it from §5.3 and place it after §6. This does not add to the section count since it's typically unnumbered or outside the page limit.
 
-NeurIPS, ICML, and ICLR all require paper checklists. See [references/checklists.md](references/checklists.md) for complete venue-specific checklists.
+**Step 10: Write Conclusion (→ §6)**
+
+Structure:
+- **Summary** (1 paragraph): Restate what was proposed, key technical insight, and main result
+- **Key findings** (2-3 sentences): Most important takeaways, grounded in evidence from §5
+- **Future work** (2-3 sentences): Concrete next steps, NOT vague aspirations
+
+**Guidelines:**
+- Do NOT introduce new information or results
+- Do NOT repeat the abstract verbatim — rephrase at a higher level
+- Keep concise: typically 0.5-0.75 column in two-column format
+- End on a forward-looking note
+
+**Step 11: Paper Checklist & Final Review**
+
+NeurIPS, ICML, and ICLR all require paper checklists. See `references/checklists.md` for complete venue-specific checklists.
 
 **Venue-specific critical items:**
 - **NeurIPS**: 16-item mandatory checklist, Broader Impact section
@@ -667,13 +783,11 @@ NeurIPS, ICML, and ICLR all require paper checklists. See [references/checklists
 - **ICLR**: LLM disclosure required if LLMs used in research process
 - **ACL**: Responsible NLP Research checklist, mandatory Limitations section
 
-**Step 13: Final Review Cycle and Submission**
-
-Final pass before submission:
+**Final pass before submission:**
 - Use `paper-self-review` skill for 6-item quality checklist
 - Use `citation-verification` skill for reference validation
 - Use `writing-anti-ai` skill if needed for natural voice
-- Verify claim-evidence-figure alignment from Step 6c
+- Verify claim-evidence-figure alignment from Step 8a
 - Check page limits, anonymization, supplementary materials
 
 ---
