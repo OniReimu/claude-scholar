@@ -749,55 +749,165 @@ Concrete actions:
 >
 > **If any output is missing, STOP and address it. Do NOT write §5 Experiments without actual data.**
 
-**Step 9: Write Experiments Section (→ §5)**
+**Step 9: Write Experiments Section**
 
-§5 is structured as three subsections:
+The Experiments section number depends on the paper (e.g., §5 or §6). The structure below is fixed regardless of section number.
 
+**Section opening** (1-2 short paragraphs):
+Summarize what experiments were conducted and why, before diving into details. This gives readers a roadmap of the experimental evaluation.
+
+---
+
+**\subsection{Experimental Settings}**
+
+Use `\noindent\textbf{}` fourth-level headings to organize (NOT `\subsubsection`):
+
+```latex
+\subsection{Experimental Settings}
+
+\noindent\textbf{Datasets.} We evaluate on three benchmarks: ...
+
+\noindent\textbf{Baselines.} We compare against five methods: ...
+
+\noindent\textbf{Metrics.} We report accuracy, F1 score, and ...
+
+\noindent\textbf{Implementation Details.} All experiments use PyTorch ...
+We set the learning rate to ... Hyperparameter search ranges are in Appendix~\ref{app:hyperparams}.
+All experiments run on [GPU type] for [total hours]. Seeds: ...
 ```
-\section{Experiments}
 
-\subsection{Experimental Setup}
-  - Datasets, baselines, metrics, implementation details
-  - Hyperparameter search ranges
-  - Compute infrastructure (GPU type, total hours)
-  - Seed-setting methods
+---
 
-\subsection{Results}
-  - For each experiment: what claim it supports, what to observe
-  - "the blue line shows X, which demonstrates Y"
-  - Quantitative tables with error bars (mean ± std, n runs)
-  - These tables complement the qualitative comparison table in §2 —
-    same baselines and dimensions, but with concrete numerical evidence
+**\subsection{Experimental Results}**
 
+Use `\subsubsection` for each experiment group. **Every** `\subsubsection` MUST:
+1. `\ref` to its corresponding figure or table (e.g., "as shown in Table~\ref{tab:main}" or "Figure~\ref{fig:convergence} shows...")
+2. End with a **Takeaway box** summarizing the key finding:
+
+```latex
+\begin{center}
+\fbox{%
+  \begin{minipage}{0.9\linewidth}
+  \textbf{Takeaway ([concise title]).} [1-2 sentence summary of the key finding
+  from this experiment, written as a self-contained statement.]
+  \end{minipage}
+}
+\end{center}
+```
+
+Example structure:
+
+```latex
+\subsection{Experimental Results}
+
+\subsubsection{Main Performance Comparison}
+Table~\ref{tab:main} presents ... [analysis of results] ...
+\begin{center}
+\fbox{\begin{minipage}{0.9\linewidth}
+\textbf{Takeaway (state-of-the-art on all benchmarks).} Our method
+outperforms all baselines on three datasets, with ...
+\end{minipage}}
+\end{center}
+
+\subsubsection{Ablation Study}
+To validate each component's contribution, we ... Table~\ref{tab:ablation} ...
+\begin{center}
+\fbox{\begin{minipage}{0.9\linewidth}
+\textbf{Takeaway (both modules are necessary).} Removing either module
+degrades performance by ...
+\end{minipage}}
+\end{center}
+
+\subsubsection{Convergence Analysis}
+Figure~\ref{fig:convergence} shows ... [analysis] ...
+\begin{center}
+\fbox{\begin{minipage}{0.9\linewidth}
+\textbf{Takeaway (fast convergence).} Our method converges in ...
+\end{minipage}}
+\end{center}
+```
+
+**Rules:**
+- Quantitative tables use error bars (mean ± std, n runs) and complement the qualitative comparison table in Background & Related Work (same baselines, concrete numbers)
+- **Ablation studies belong HERE** (as a `\subsubsection` of Results), NOT in Discussion
+- Each `\subsubsection` must have enough content (≥ 2 paragraphs + takeaway box)
+
+---
+
+**\subsection{Discussion and Analysis}**
+
+Opens with 1-2 paragraphs introducing what aspects need deeper analysis and why, then uses `\subsubsection` for each topic:
+
+```latex
 \subsection{Discussion and Analysis}
-  - Ablation analysis: component contributions
-  - Qualitative analysis: case studies, failure cases, visualizations
-  - Limitations: honestly report what does NOT work and why
-  - Broader implications of the results
+
+[1-2 paragraphs: overview of key discussion points and motivation]
+
+\subsubsection{Security Analysis}
+...
+
+\subsubsection{Complexity Analysis}
+...
+
+\subsubsection{Limitations}
+Honestly report what does NOT work and why.
+Explain why limitations do not undermine core claims.
+...
+
+\subsubsection{Real-World Applicability}
+...
 ```
 
-**Discussion and Analysis** subsection absorbs what would otherwise be standalone Limitations and Discussion sections. This keeps the paper tight.
+**What belongs here:** Security analysis, complexity analysis, limitations, real-world applicability, failure mode analysis, scalability discussion.
+
+**What does NOT belong here:**
+- Ablation studies → go in Experimental Results
+- Ethics considerations, open science, GenAI tools usage → go AFTER Conclusion (see Step 10)
+
+---
 
 **Page limit notes** (critical — some venues treat limitations specially):
-- **NeurIPS**: Limitations section does NOT count toward page limit (can be standalone after §6 if preferred)
+- **NeurIPS**: Limitations section does NOT count toward page limit (can be extracted as standalone after Conclusion)
 - **ICML**: Broader Impact Statement required after conclusion, outside page limit
-- **ICLR**: Mandatory Limitations section (can stay as subsection of §5 or standalone)
+- **ICLR**: Mandatory Limitations section (can stay as subsection or standalone)
 - **ACL**: Mandatory Limitations section, does NOT count toward page limit
 
-> If a venue **requires** a standalone Limitations section (not as subsection), extract it from §5.3 and place it after §6. This does not add to the section count since it's typically unnumbered or outside the page limit.
+> If a venue **requires** a standalone Limitations section, extract it from Discussion and place after Conclusion. This does not add to the section count since it's typically unnumbered or outside the page limit.
 
-**Step 10: Write Conclusion (→ §6)**
+**Step 10: Write Conclusion and Post-Conclusion Declarations**
+
+**Conclusion (§6 or last numbered section):**
 
 Structure:
 - **Summary** (1 paragraph): Restate what was proposed, key technical insight, and main result
-- **Key findings** (2-3 sentences): Most important takeaways, grounded in evidence from §5
+- **Key findings** (2-3 sentences): Most important takeaways, grounded in experimental evidence
 - **Future work** (2-3 sentences): Concrete next steps, NOT vague aspirations
 
-**Guidelines:**
+Guidelines:
 - Do NOT introduce new information or results
 - Do NOT repeat the abstract verbatim — rephrase at a higher level
 - Keep concise: typically 0.5-0.75 column in two-column format
 - End on a forward-looking note
+
+**Post-Conclusion Declarations** (unnumbered, after Conclusion, before References):
+
+Place the following as needed (check venue requirements):
+
+```latex
+\section*{Ethics Considerations}
+[If applicable: IRB approval, data privacy, potential misuse, dual-use concerns]
+
+\section*{Open Science Statement}
+[Code/data availability, reproducibility artifacts, anonymized repo link]
+
+\section*{Use of Generative AI Tools}
+[Disclosure of LLM usage in writing/coding, per venue policy. E.g., ICLR requires this.]
+
+\section*{Acknowledgments}
+[Funding, collaborators — remove during anonymous review, restore for camera-ready]
+```
+
+These are NOT counted in the 6 numbered sections and typically do NOT count toward page limits.
 
 **Step 11: Paper Checklist & Final Review**
 
