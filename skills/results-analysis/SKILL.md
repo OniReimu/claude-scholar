@@ -127,12 +127,30 @@ Systematically compare performance across different methods, ensuring fair compa
 
 **Figure quality reference**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) for publication-ready Python plotting — consistent style, proper font sizes, colorblind-safe palettes (Okabe-Ito or Paul Tol), no chart junk. Always save as PDF vector format.
 
+**CRITICAL — Font size and line width** (common mistake: too small after scaling):
+
+```python
+# 在每个绘图脚本开头设置，确保缩放到论文列宽后仍可读
+plt.rcParams.update({
+    'font.size': 28,           # 全局默认
+    'axes.labelsize': 30,      # x/y 轴标签
+    'xtick.labelsize': 26,     # 刻度标签
+    'ytick.labelsize': 26,
+    'legend.fontsize': 26,     # 图例
+    'lines.linewidth': 3.0,    # 线宽
+    'lines.markersize': 10,    # 标记点
+    'axes.linewidth': 2.0,     # 坐标轴线宽
+})
+```
+
+**所有文字必须 ≥ 24pt**（源文件中的 matplotlib pt 值，非打印尺寸）。
+
 **Accessibility requirements:**
 - Use **colorblind-safe palettes**: Okabe-Ito (8 colors) or Paul Tol (up to 12 colors)
 - Verify **grayscale readability** (8% of men have color vision deficiency)
 - Differentiate lines by **style** (solid/dashed/dotted), not just color
 - Save as **PDF vector format**: `plt.savefig('fig.pdf', bbox_inches='tight')`
-- Font size ≥ 8pt in final printed figure
+- Source font size ≥ 24pt, line width ≥ 2.5pt
 
 See `references/visualization-best-practices.md` for additional details.
 

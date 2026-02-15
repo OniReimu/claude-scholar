@@ -57,8 +57,8 @@
 
 **要点**:
 - 使用误差带（阴影区域）表示标准差/标准误
-- 线宽 1.5-2.0 pt
-- 标记点大小适中（4-6 pt）
+- 线宽 2.5-3.0 pt
+- 标记点大小适中（8-12 pt）
 - 网格线透明度 0.3
 
 **示例**: 训练损失曲线、准确率随 epoch 变化
@@ -110,11 +110,51 @@
 
 ## 图表元素规范
 
+### 字体大小规范
+
+**重要**: matplotlib 中的字体大小指的是 **源文件中的 pt 值**，不是最终打印尺寸。由于论文图表会被缩放到单栏（~3.5 inches）或双栏（~7 inches）宽度，源文件中的字体必须足够大才能在缩放后保持可读。
+
+**最低要求: 所有文字 ≥ 24pt**
+
+| 元素 | 推荐字体大小 | 说明 |
+|------|------------|------|
+| 坐标轴标签 (xlabel/ylabel) | 28-32 pt | 描述变量和单位 |
+| 刻度标签 (tick labels) | 24-28 pt | 数值刻度 |
+| 图例文字 (legend) | 24-28 pt | 曲线/方法名称 |
+| 标注文字 (annotations) | 24-26 pt | 图内标注 |
+| 子图标题 (subplot title) | 28-32 pt | 如 (a), (b) 等 |
+
+**推荐的 matplotlib 全局配置** — 在每个绘图脚本开头设置:
+
+```python
+import matplotlib.pyplot as plt
+
+plt.rcParams.update({
+    'font.size': 28,
+    'axes.labelsize': 30,
+    'axes.titlesize': 30,
+    'xtick.labelsize': 26,
+    'ytick.labelsize': 26,
+    'legend.fontsize': 26,
+    'figure.titlesize': 32,
+    'lines.linewidth': 3.0,
+    'lines.markersize': 10,
+    'axes.linewidth': 2.0,
+    'xtick.major.width': 2.0,
+    'ytick.major.width': 2.0,
+    'xtick.major.size': 8,
+    'ytick.major.size': 8,
+    'font.family': 'sans-serif',
+    'font.sans-serif': ['Arial', 'Helvetica', 'DejaVu Sans'],
+    'mathtext.fontset': 'dejavusans',
+})
+```
+
 ### 坐标轴
 
 **X 轴和 Y 轴**:
-- 标签字体大小: 10-12 pt
-- 刻度字体大小: 8-10 pt
+- 标签字体大小: 28-32 pt（源文件）
+- 刻度字体大小: 24-28 pt（源文件）
 - 标签清晰描述变量和单位
 - 刻度间距合理
 
@@ -129,7 +169,7 @@
 
 **内容**:
 - 简洁描述每条曲线/柱子
-- 字体大小 8-10 pt
+- 字体大小 24-28 pt（源文件）
 - 使用与图中一致的颜色和线型
 
 ### 标题和标签
@@ -217,8 +257,8 @@
 
 ### 错误 6: 字体过小
 
-❌ **错误**: 标签字体 6 pt
-✅ **正确**: 标签字体 10-12 pt
+❌ **错误**: 标签字体 6-12 pt（缩放后无法阅读）
+✅ **正确**: 标签字体 ≥ 24 pt（源文件中），确保缩放到论文列宽后仍可读
 
 ## 检查清单
 
@@ -231,8 +271,8 @@
 - [ ] Caption 中说明误差类型
 - [ ] 坐标轴标签清晰（包含单位）
 - [ ] 图例不遮挡数据
-- [ ] 字体大小适当（≥8 pt）
-- [ ] 线宽适当（1.5-2.0 pt）
+- [ ] 源文件字体大小 ≥ 24 pt（缩放后仍可读）
+- [ ] 线宽适当（2.5-3.0 pt）
 - [ ] Caption 独立完整
 
 ## 工具推荐

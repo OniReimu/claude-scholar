@@ -31,7 +31,7 @@ For every user message, scan the complete list of available skills:
 - `results-analysis` — Experiment analysis: statistical testing, visualization, ablation studies
 - `citation-verification` — Multi-layer citation validation (Format → API → Info → Content)
 - `daily-paper-generator` — Automated daily paper generation for research tracking
-- `paper-figure-generator` — Generate editable SVG academic figures (system overviews, pipelines, architectures, threat models, comparisons) via AutoFigure-Edit
+- `paper-figure-generator` — **AUTO-ACTIVATE during paper writing**: Generate editable SVG figures via AutoFigure-Edit when writing Figure 1, system model, method overview, or any section describing a system/pipeline/architecture. Also triggers on explicit requests for diagrams.
 
 **Paper Writing & Publication:**
 - `ml-paper-writing` — Full paper writing for NeurIPS, ICML, ICLR, ACL, AAAI, COLM, Nature, Science, Cell, PNAS

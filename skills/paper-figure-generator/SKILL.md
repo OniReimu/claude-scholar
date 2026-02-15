@@ -5,6 +5,11 @@ description: |
   "create system overview diagram", "make architecture figure", "draw pipeline",
   "create figure for paper", "design threat model figure", "make comparison figure",
   or needs a conceptual/illustrative academic diagram for a research paper.
+  Also AUTO-ACTIVATES during paper writing workflows: when writing Figure 1,
+  system model sections, method overview sections, or any paper section that
+  describes a system architecture, pipeline, or workflow that should be visualized.
+  If the user is writing a paper and discusses a method/system/pipeline, proactively
+  suggest generating a figure for it.
   Generates editable SVG academic figures using AutoFigure-Edit from method text descriptions.
 version: 0.2.0
 tags: [Research, Paper Writing, Figure Generation, Academic, SVG]

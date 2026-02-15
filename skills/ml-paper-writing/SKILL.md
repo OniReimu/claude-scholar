@@ -485,7 +485,7 @@ Figure 1 deserves special attention—many readers skip directly to it.
 - Use vector graphics (PDF/EPS for plots)
 - Write captions that stand alone without main text
 - **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color
-- **For conceptual diagrams** (system overviews, pipelines, architectures): use `paper-figure-generator` skill to generate editable SVG figures via AutoFigure-Edit
+- **MANDATORY for conceptual diagrams** (system overviews, pipelines, architectures): **activate `paper-figure-generator` skill NOW** to generate editable SVG figures via AutoFigure-Edit. Do NOT skip this step — Figure 1 is critical for reviewer first impressions.
 
 ### Paper Section Structure
 
@@ -779,7 +779,7 @@ Concrete actions:
 - **Figures**: Sparse data, trends/distributions, < 20 data points per comparison
 - **Tables** (`booktabs` + `\resizebox`): Dense numerical results, many metrics (5+) and/or many baselines (5+), `table*` for large comparison matrices
 
-**Figure quality**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — consistent style, proper font sizes, colorblind-safe palettes (Okabe-Ito or Paul Tol), PDF vector format.
+**Figure quality**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — consistent style, **font size ≥ 24pt in source** (critical: smaller fonts become unreadable after scaling to column width), colorblind-safe palettes (Okabe-Ito or Paul Tol), line width ≥ 2.5pt, PDF vector format. See `results-analysis` skill for recommended `plt.rcParams` template.
 
 > **MANDATORY OUTPUT for Step 8 (all three required before proceeding to Step 9):**
 > - [ ] Experiment plan document (confirmed by user in 8a)
