@@ -41,7 +41,7 @@ Before responding to ANY user message, you MUST evaluate whether any of your ins
 | **results-analysis** | Analyzing experiment results, statistical testing, creating visualizations, ablation studies |
 | **citation-verification** | Verifying citations, checking references, validating bibliography entries |
 | **daily-paper-generator** | Generating daily paper summaries, research tracking |
-| **paper-figure-generator** | Generating conceptual figures for papers: system overviews, pipelines, architecture diagrams, comparisons, threat models |
+| **paper-figure-generator** | Generating editable SVG figures for papers via AutoFigure-Edit: system overviews, pipelines, architecture diagrams, comparisons, threat models |
 
 ### Paper Writing & Publication
 

@@ -427,8 +427,8 @@ The paper writing workflow orchestrates multiple skills at specific steps:
 
 | Step | Skill | Purpose |
 |------|-------|---------|
-| Step 2 | `paper-figure-generator` | Generate conceptual Figure 1 (system overview, pipeline, architecture) |
-| Step 6 | `paper-figure-generator` | System architecture diagram for System Model section |
+| Step 2 | `paper-figure-generator` | Generate editable SVG Figure 1 via AutoFigure-Edit (system overview, pipeline, architecture) |
+| Step 6 | `paper-figure-generator` | System architecture diagram for System Model section (method.txt → SVG → PDF) |
 | Step 8b | `rules/experiment-reproducibility.md` | Random seeds, config recording, checkpoint management |
 | Step 8c | `results-analysis` | Statistical analysis, figure/table generation, visualization selection |
 | Step 8c | `figures4papers` reference | Publication-ready Python plotting style |
@@ -485,7 +485,7 @@ Figure 1 deserves special attention—many readers skip directly to it.
 - Use vector graphics (PDF/EPS for plots)
 - Write captions that stand alone without main text
 - **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color
-- **For conceptual diagrams** (system overviews, pipelines, architectures): use `paper-figure-generator` skill to generate publication-quality figures via AI image generation (Gemini/OpenAI)
+- **For conceptual diagrams** (system overviews, pipelines, architectures): use `paper-figure-generator` skill to generate editable SVG figures via AutoFigure-Edit
 
 ### Paper Section Structure
 
@@ -626,12 +626,12 @@ Best practices for the notation table:
 - For non-security papers, this section may be titled "Problem Setup" or "Problem Formulation"
 - If the system model is simple enough (e.g., standard supervised learning), it may be demoted to a subsection of §2 or §4
 
-> **MANDATORY: Generate a system architecture / workflow figure for this section.** Use `paper-figure-generator` skill to create the diagram. Select from `system-overview`, `pipeline`, `threat-model`, or `architecture` layout as appropriate. This figure typically becomes Figure 2 (after Figure 1 from Step 2) and is referenced in the System Model text. Do NOT proceed to Step 7 without producing this figure.
+> **MANDATORY: Generate a system architecture / workflow figure for this section.** Use `paper-figure-generator` skill to create the diagram via AutoFigure-Edit (write method text → generate SVG → convert to PDF). Select from `system-overview`, `pipeline`, `threat-model`, or `architecture` layout as appropriate. This figure typically becomes Figure 2 (after Figure 1 from Step 2) and is referenced in the System Model text. Do NOT proceed to Step 7 without producing this figure.
 >
 > **MANDATORY OUTPUT for Step 6:**
 > - [ ] Notation table (`Table~\ref{tab:notation}`) with all symbols used in the paper
 > - [ ] LaTeX text for §3 (problem definition + architecture + threat model as applicable)
-> - [ ] Architecture/workflow figure file (via `paper-figure-generator`)
+> - [ ] Architecture/workflow figure file (via `paper-figure-generator`, SVG→PDF)
 > - [ ] `\label{fig:system-model}` reference in the LaTeX text
 
 **Step 7: Write Methods / Our Approach (→ §4)**
@@ -1668,7 +1668,7 @@ Baseline & 85.2 & 45ms \\
 
 **Figure type distinction:**
 - **Data-driven plots** (bar charts, line plots, heatmaps, scatter plots): use `results-analysis` skill with matplotlib/seaborn
-- **Conceptual diagrams** (system overviews, pipelines, architectures, threat models, comparisons): use `paper-figure-generator` skill with AI image generation APIs
+- **Conceptual diagrams** (system overviews, pipelines, architectures, threat models, comparisons): use `paper-figure-generator` skill with AutoFigure-Edit (outputs editable SVG)
 
 ---
 

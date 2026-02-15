@@ -15,57 +15,75 @@
 - **分组**: 无明显分组，纯线性 pipeline
 - **数据变换**: Text → Tokens → Clean Tokens → Embeddings → Augmented Embeddings → Batched Tensors
 
-## Step 2: Select
+推荐布局：`pipeline`（多阶段处理链，最佳匹配）
 
-- **布局**: `pipeline`（多阶段处理链，最佳匹配）
-- **风格**: `clean-minimal`（用户指定，Nature/Science 风格）
+## Step 2: Prepare — method.txt + 参考图片
 
-## Step 3: Structure — content.md
+创建 `figures/nlp-pipeline/method.txt`:
 
-```markdown
-# NLP Data Preprocessing Pipeline - Figure Content
-
-## Title
+```text
 Text Preprocessing Pipeline
 
-## Components
-1. Raw Text - Unprocessed input documents and sentences
-2. Tokenizer - Splits text into subword tokens (BPE/WordPiece)
-3. Text Cleaner - Removes noise, normalizes unicode, handles special chars
-4. Embedding Layer - Maps token IDs to dense vector representations
-5. Data Augmenter - Applies augmentation (synonym replacement, back-translation)
-6. Model Input - Final batched tensor ready for training
+A multi-stage processing pipeline that transforms raw text into model-ready tensors.
 
-## Connections (left to right)
-- Raw Text → Tokenizer: "sentences"
-- Tokenizer → Text Cleaner: "token sequences"
-- Text Cleaner → Embedding Layer: "clean token IDs"
-- Embedding Layer → Data Augmenter: "embeddings [B, L, d]"
-- Data Augmenter → Model Input: "augmented [B, L, d]"
+Stage 1: Raw Text - Unprocessed input documents and sentences enter the pipeline.
 
-## Groupings
-(none - pure linear pipeline)
+Stage 2: Tokenizer - Splits text into subword tokens using BPE/WordPiece algorithm
+(vocabulary size 32K). Input: sentences. Output: token sequences.
 
-## Annotations
-- Tensor shape "[B, L, 768]" on Embedding output
-- "BPE vocab=32K" annotation on Tokenizer
-- "p=0.3" augmentation probability on Data Augmenter
+Stage 3: Text Cleaner - Removes noise, normalizes unicode characters, and handles
+special characters. Input: token sequences. Output: clean token IDs.
 
-## Emphasis
-- Embedding Layer: key transformation step
-- Data Augmenter: novel contribution (if applicable)
+Stage 4: Embedding Layer - Maps clean token IDs to dense vector representations.
+Output tensor shape: [B, L, 768] where B is batch size, L is sequence length.
+
+Stage 5: Data Augmenter - Applies augmentation techniques including synonym replacement
+and back-translation with probability p=0.3. Input: embeddings [B, L, d].
+Output: augmented embeddings [B, L, d].
+
+Stage 6: Model Input - Final batched tensor ready for model training.
+
+The pipeline flows strictly left to right, with each stage transforming the data
+representation for the next. The Embedding Layer is the key transformation step
+converting discrete tokens to continuous representations.
 ```
 
-## Step 4: Compose
+用户指定 clean minimal 风格，提供一张 Nature Methods 论文的参考图片：
 
-拼接 base + pipeline layout + clean-minimal style + content。
-
-## Step 5: Generate
+## Step 3: Setup
 
 ```bash
-npx -y bun skills/paper-figure-generator/scripts/main.ts \
-  --promptfiles figures/nlp-pipeline/prompt.md \
-  --output figures/nlp-pipeline/figure.png \
-  --ar 16:9 \
-  --provider google
+ls skills/paper-figure-generator/.autofigure-edit/autofigure2.py
+```
+
+## Step 4: Generate
+
+```bash
+# 带风格迁移的生成
+bash skills/paper-figure-generator/scripts/generate.sh \
+  --method_file figures/nlp-pipeline/method.txt \
+  --output_dir figures/nlp-pipeline \
+  --use_reference_image \
+  --reference_image_path path/to/nature-style-reference.png
+```
+
+输出:
+- `figures/nlp-pipeline/figure.png` — 光栅预览
+- `figures/nlp-pipeline/final.svg` — 可编辑 SVG
+
+## Step 5: Finalize
+
+```bash
+uv run python -c "import cairosvg; cairosvg.svg2pdf(url='figures/nlp-pipeline/final.svg', write_to='figures/nlp-pipeline/figure.pdf')"
+```
+
+```latex
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/nlp-pipeline/figure.pdf}
+  \caption{Text preprocessing pipeline. Raw text is tokenized (BPE, vocab=32K),
+  cleaned, embedded into dense vectors ($d{=}768$), and augmented ($p{=}0.3$)
+  before being fed to the model.}
+  \label{fig:preprocessing}
+\end{figure}
 ```

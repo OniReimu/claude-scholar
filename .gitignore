@@ -31,6 +31,9 @@ telemetry/
 stats-cache.json
 statsig/
 
+# AutoFigure-Edit local installation
+skills/paper-figure-generator/.autofigure-edit/
+
 # Other temporary files
 docs/
 plan/

@@ -1,33 +1,34 @@
-# Visual Styles
+# Visual Styles — Reference Image Guide
 
-3 种学术图表视觉风格，每种包含美学描述和 prompt 片段。
+AutoFigure-Edit 支持通过 `--reference_image_path` 进行风格迁移。提供一张参考图片，生成的图表会模仿其视觉风格。
 
 ---
 
-## 1. Modern Gradient (`modern-gradient`)
+## 如何使用风格迁移
 
-**默认风格**，适用于 NeurIPS/ICML/ICLR 2024-2025 风格的顶会论文。
+```bash
+bash scripts/generate.sh \
+  --method_file figures/my-figure/method.txt \
+  --output_dir figures/my-figure \
+  --use_reference_image \
+  --reference_image_path path/to/reference-style.png
+```
+
+---
+
+## 推荐风格方向
+
+### 1. Modern Gradient
+
+**适用于**: NeurIPS/ICML/ICLR 2024-2025 风格的顶会论文。
 
 **视觉特征**:
 - 渐变色模块背景（浅色到中等饱和度）
-- 圆角矩形（border-radius: 12-16px 等效）
-- 柔和阴影（subtle drop shadow）
-- 半透明分组框
-- 清晰的 sans-serif 字体（类似 Inter, Helvetica）
+- 圆角矩形
+- 柔和阴影
+- 清晰的 sans-serif 字体
 
-**Prompt 片段**:
-```
-Visual style: Modern gradient academic illustration.
-Use soft gradient fills for modules (light-to-medium saturation).
-Rounded rectangles with generous corner radius.
-Subtle drop shadows for depth.
-Clean sans-serif typography for all labels.
-White or very light gray background.
-Color palette: use harmonious gradients - blue (#4A90D9 to #7BB3F0), green (#4CAF50 to #81C784),
-purple (#7E57C2 to #B39DDB), orange (#FF9800 to #FFB74D), teal (#009688 to #4DB6AC).
-Semi-transparent group boundaries with light fill.
-Smooth, anti-aliased arrows with consistent weight.
-```
+**参考图片来源**: 从目标会议的 best paper 中截取 Figure 1 作为参考图片。
 
 **推荐色板**:
 | 用途 | 渐变色 |
@@ -40,31 +41,18 @@ Smooth, anti-aliased arrows with consistent weight.
 
 ---
 
-## 2. Clean Minimal (`clean-minimal`)
+### 2. Clean Minimal
 
-**适用于** Nature/Science/Cell 等高影响期刊，追求极简清晰的视觉效果。
+**适用于**: Nature/Science/Cell 等高影响期刊。
 
 **视觉特征**:
-- 纯色填充（flat colors），无渐变
-- 高对比度配色（深色文字 + 彩色模块）
-- 细线条（1-2px stroke）
-- 大量留白（generous whitespace）
+- 纯色填充，无渐变、无阴影
+- 高对比度配色
+- 细线条（1-2px）
+- 大量留白
 - 严格的网格对齐
 
-**Prompt 片段**:
-```
-Visual style: Clean minimal academic illustration, Nature/Science journal style.
-Use flat, solid color fills for modules - no gradients, no shadows.
-High contrast: dark text (#333333) on colored backgrounds.
-Thin, precise lines (1-2px) for borders and arrows.
-Generous whitespace between all elements.
-Strict grid alignment for all components.
-Color palette: limited to 3-4 colors - blue (#3B7DD8), coral (#E8604C),
-gold (#D4A843), gray (#8C8C8C), with white (#FFFFFF) backgrounds.
-Sharp corners or very slight rounding (2-4px).
-Simple arrowheads, no decorative elements.
-Typography: clean, professional, consistent sizing.
-```
+**参考图片来源**: Nature Methods 或 Science 论文中的示意图。
 
 **推荐色板**:
 | 用途 | 颜色 |
@@ -77,30 +65,18 @@ Typography: clean, professional, consistent sizing.
 
 ---
 
-## 3. Technical Blueprint (`technical-blueprint`)
+### 3. Technical Blueprint
 
-**适用于**工程导向的论文，强调技术精确性和系统化呈现。
+**适用于**: 工程导向论文，强调技术精确性。
 
 **视觉特征**:
 - 深色或蓝灰色背景
-- 网格线/参考线可见
-- 方正的块状元素（sharp corners）
-- 等宽字体标注（monospace labels）
-- 工程图纸/蓝图美学
+- 网格线可见
+- 方正元素
+- 等宽字体
+- 工程图纸美学
 
-**Prompt 片段**:
-```
-Visual style: Technical blueprint / engineering schematic style.
-Dark background (#1A1A2E or #0D1B2A) with light-colored elements.
-Visible grid lines in very subtle color for alignment reference.
-Sharp-cornered rectangles with thin bright borders.
-Monospace or technical font for labels and annotations.
-Accent colors: cyan (#00D4FF), green (#00FF88), yellow (#FFD700), white (#FFFFFF).
-Wire-style connections with right-angle routing.
-Component blocks with pin-style connection points.
-Circuit-board or architectural drawing aesthetic.
-Data flow shown with animated-style dashed lines or glowing edges.
-```
+**参考图片来源**: IEEE 系统架构论文或工程蓝图风格的示意图。
 
 **推荐色板**:
 | 用途 | 颜色 |
@@ -110,3 +86,13 @@ Data flow shown with animated-style dashed lines or glowing edges.
 | 数据流 | `#00FF88` (绿) |
 | 强调 | `#FFD700` (金黄) |
 | 文字 | `#FFFFFF` (白) |
+
+---
+
+## 选择参考图片的建议
+
+1. **从目标会议 Best Paper 中选择**: 最直接的方式 — 截取同会议同年度获奖论文的 Figure 1
+2. **保持风格一致性**: 同一篇论文的所有概念图应使用相同参考图片
+3. **分辨率要求**: 参考图片建议 ≥ 800px 宽，清晰可辨
+4. **避免过于复杂的参考图**: 选择结构清晰、元素分明的图片效果更好
+5. **不提供参考图也可以**: AutoFigure-Edit 有默认风格，适合大多数场景

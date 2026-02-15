@@ -5,20 +5,26 @@ description: |
   "create system overview diagram", "make architecture figure", "draw pipeline",
   "create figure for paper", "design threat model figure", "make comparison figure",
   or needs a conceptual/illustrative academic diagram for a research paper.
-  Generates publication-quality academic figures using Google Gemini or OpenAI image APIs.
-version: 0.1.0
-tags: [Research, Paper Writing, Figure Generation, Academic]
+  Generates editable SVG academic figures using AutoFigure-Edit from method text descriptions.
+version: 0.2.0
+tags: [Research, Paper Writing, Figure Generation, Academic, SVG]
 ---
 
 # Paper Figure Generator
 
-Generate publication-quality conceptual figures for academic papers using AI image generation APIs (Google Gemini, OpenAI). Covers common figure types: system overviews, pipelines, threat models, comparisons, and architecture diagrams.
+Generate publication-quality conceptual figures for academic papers using [AutoFigure-Edit](https://github.com/ResearAI/AutoFigure-Edit). Produces **editable SVG vector graphics** from method text descriptions. Covers common figure types: system overviews, pipelines, threat models, comparisons, and architecture diagrams.
+
+**Key advantages over generic image APIs:**
+- Output is SVG (editable), not just raster PNG
+- Designed specifically for scientific paper figures
+- Supports style transfer via reference images
+- Includes icon detection, segmentation, and SVG template generation
 
 ## 5-Step Workflow
 
-### Step 1: Analyze — Extract Structured Content
+### Step 1: Analyze — Extract Method Description
 
-Read the user's description of their method, system, or concept. Extract:
+Read the user's paper sections (method, system model, architecture) and extract a clear textual description of the system or method. Focus on:
 
 - **Components**: Named modules, blocks, or entities (3-8 recommended)
 - **Relationships**: Data flow, connections, interactions between components
@@ -28,11 +34,7 @@ Read the user's description of their method, system, or concept. Extract:
 
 Present the extracted structure to the user for confirmation before proceeding.
 
-### Step 2: Select — Recommend Layout and Style
-
-Based on the content analysis, recommend a **layout × style** combination from the options below. Use `AskUserQuestion` to let the user confirm or adjust.
-
-**Layouts** (see `references/layouts.md` for details):
+**Layout guidance** (see `references/layouts.md`): Choose the most appropriate layout type based on the content:
 
 | Layout | Best For |
 |--------|----------|
@@ -42,89 +44,88 @@ Based on the content analysis, recommend a **layout × style** combination from 
 | `comparison` | Side-by-side: ours vs baseline |
 | `architecture` | Detailed neural network / system architecture |
 
-**Styles** (see `references/styles.md` for details):
+### Step 2: Prepare — Write Method Text and Select Style
 
-| Style | Aesthetic |
-|-------|-----------|
-| `modern-gradient` | Gradient modules, rounded corners, soft shadows. NeurIPS/ICML 2024-2025 style |
-| `clean-minimal` | Flat, solid colors, high contrast. Nature/Science style |
-| `technical-blueprint` | Blueprint/schematic, engineering aesthetic |
+Create `figures/{topic-slug}/method.txt` with the method description from Step 1. Write it as clear, structured prose describing the system — AutoFigure-Edit generates figures directly from this text.
 
-Default recommendation: `system-overview` + `modern-gradient` for most papers.
+**Style transfer** (optional): If the user provides a reference image or wants a specific visual style, note the path for the `--reference_image_path` flag. See `references/styles.md` for guidance on selecting reference images.
 
-### Step 3: Structure — Create Content File
+### Step 3: Setup — Verify AutoFigure-Edit Installation
 
-Create `figures/{topic-slug}/content.md` with the structured content:
+Check if AutoFigure-Edit is installed:
 
-```markdown
-# {Topic} - Figure Content
-
-## Title
-{Figure title}
-
-## Components
-1. {Name} - {Description}
-2. ...
-
-## Connections
-- {Source} → {Target}: "{label}"
-- ...
-
-## Groupings
-- "{Group Name}": {Component1}, {Component2}
-- ...
-
-## Annotations
-- {annotation description}
-- ...
-
-## Emphasis
-- {Component}: {reason for visual prominence}
+```bash
+ls ${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/.autofigure-edit/autofigure2.py
 ```
 
-### Step 4: Compose — Assemble Generation Prompt
+If not installed, run setup:
 
-Read the prompt template from `references/base-prompt-template.md`. Assemble the final prompt by concatenating:
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/scripts/setup.sh
+```
 
-1. **Base context** (fixed academic requirements)
-2. **Layout fragment** from `references/layouts.md` (matching selected layout)
-3. **Style fragment** from `references/styles.md` (matching selected style)
-4. **Content section** (from Step 3's content.md, formatted per template)
-5. **Aspect ratio** specification (default: 16:9)
-
-Save the assembled prompt as `figures/{topic-slug}/prompt.md`.
-
-### Step 5: Generate — Run Image Generation
+### Step 4: Generate — Run AutoFigure-Edit
 
 Execute the generation script:
 
 ```bash
-npx -y bun ${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/scripts/main.ts \
-  --promptfiles figures/{topic-slug}/prompt.md \
-  --output figures/{topic-slug}/figure.png \
-  --ar 16:9
+bash ${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/scripts/generate.sh \
+  --method_file figures/{topic-slug}/method.txt \
+  --output_dir figures/{topic-slug}
 ```
 
 **CLI options:**
-- `--promptfiles <path>` — Path to assembled prompt file
-- `--output <path>` — Output image path (default: output.png)
-- `--provider <google|openai>` — Override auto-detected provider
-- `--model <name>` — Override default model
-- `--ar <ratio>` — Aspect ratio: 16:9, 4:3, 1:1, 3:2 (default: 16:9)
-- `--quality <normal|high>` — Image quality (default: normal)
-- `--ref <path>` — Reference image for style guidance
+- `--method_file <path>` — Path to method text file (required)
+- `--output_dir <path>` — Output directory (required)
+- `--use_reference_image --reference_image_path <path>` — Enable style transfer with reference image
+- `--image_model <name>` — Override image generation model
+- `--svg_model <name>` — Override SVG generation model
+- `--sam_backend <local|fal|roboflow>` — Override SAM3 backend (default: auto-detected from env)
+- `--optimize_iterations <n>` — SVG refinement iterations (0 to disable)
+- `--merge_threshold <n>` — Region merging threshold (0 to disable)
 
-**Provider configuration**: See `references/provider-setup.md` for API key setup.
+**Output files:**
+- `figures/{topic-slug}/figure.png` — Raster preview
+- `figures/{topic-slug}/final.svg` — Editable SVG vector graphic
+- `figures/{topic-slug}/icons/` — Extracted icon assets
 
-After generation, display the output path and ask if the user wants to:
-- Regenerate with adjustments
-- Try a different style or layout
-- Refine the prompt
+After generation, display the output paths and ask if the user wants to:
+- Regenerate with adjustments (modify method.txt or add reference image)
+- Try a different style via reference image
+- Manually edit the SVG
+
+### Step 5: Finalize — Convert SVG to PDF for LaTeX
+
+Convert the SVG to PDF for LaTeX inclusion:
+
+```bash
+# Option 1: 使用 AutoFigure-Edit 自带的 cairosvg（推荐，无需额外安装）
+AUTOFIGURE_PYTHON="${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/.autofigure-edit/.venv/bin/python"
+$AUTOFIGURE_PYTHON -c "import cairosvg; cairosvg.svg2pdf(url='figures/{slug}/final.svg', write_to='figures/{slug}/figure.pdf')"
+
+# Option 2: 项目 venv 中安装 cairosvg
+uv pip install cairosvg
+uv run python -c "import cairosvg; cairosvg.svg2pdf(url='figures/{slug}/final.svg', write_to='figures/{slug}/figure.pdf')"
+
+# Option 3: Inkscape CLI
+inkscape figures/{slug}/final.svg --export-type=pdf --export-filename=figures/{slug}/figure.pdf
+```
+
+Embed in LaTeX:
+
+```latex
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/{slug}/figure.pdf}
+  \caption{System overview of the proposed method.}
+  \label{fig:system-overview}
+\end{figure}
+```
 
 ## Important Notes
 
 - This skill generates **conceptual/illustrative diagrams**, not data-driven plots or charts
 - For data visualization (bar charts, line plots, heatmaps), use the `results-analysis` skill instead
-- The generation script requires `bun` runtime (installed via `npx -y bun`)
-- At least one API key (GOOGLE_API_KEY or OPENAI_API_KEY) must be configured in `.env`
-- Generated figures are saved locally; embed them in LaTeX with `\includegraphics`
+- AutoFigure-Edit is installed locally at `skills/paper-figure-generator/.autofigure-edit/` (gitignored)
+- Requires `OPENROUTER_API_KEY` and `ROBOFLOW_API_KEY` (free) in `.env`
+- Output SVG can be further edited with any SVG editor (Inkscape, Illustrator, AutoFigure-Edit's built-in editor)

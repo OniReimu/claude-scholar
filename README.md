@@ -10,7 +10,8 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
-- **2026-02-13**: Added `paper-figure-generator` skill for AI-powered conceptual figure generation (system overviews, pipelines, architectures via Gemini/OpenAI); packaged project as Claude Code plugin (`.claude-plugin/plugin.json`); added `.env.example`; deep workflow integration across ml-paper-writing, results-analysis, post-acceptance, and using-claude-scholar; 34 skills total
+- **2026-02-15**: Migrated `paper-figure-generator` to AutoFigure-Edit — generates editable SVG vector figures from method text descriptions; replaces Gemini/OpenAI raster generation; supports style transfer via reference images; uses OpenRouter + Roboflow (free SAM3 API)
+- **2026-02-13**: Added `paper-figure-generator` skill; packaged project as Claude Code plugin (`.claude-plugin/plugin.json`); added `.env.example`; deep workflow integration across ml-paper-writing, results-analysis, post-acceptance, and using-claude-scholar; 34 skills total
 - **2026-02-11**: Major update — added 10 new skills (research-ideation, results-analysis, citation-verification, review-response, paper-self-review, post-acceptance, daily-coding, frontend-design, ui-ux-pro-max, web-design-reviewer), 7 new agents, 8 research workflow commands, 2 new rules (security, experiment-reproducibility); restructured CLAUDE.md; 89 files changed
 - **2026-01-26**: Rewrote all Hooks to cross-platform Node.js; completely rewrote README; expanded ML paper writing knowledge base; merged PR #1 (cross-platform support)
 
@@ -334,7 +335,7 @@ claude-scholar/
 - `paper-self-review` - 6-item quality checklist for paper self-assessment
 - `post-acceptance` - Conference preparation: presentations, posters, promotion
 - `citation-verification` - Multi-layer citation validation to prevent hallucinations
-- `paper-figure-generator` - Generate conceptual academic figures (system overviews, pipelines, architectures) via Gemini/OpenAI
+- `paper-figure-generator` - Generate editable SVG academic figures (system overviews, pipelines, architectures) via AutoFigure-Edit
 
 **Development:**
 - `daily-coding` - Daily coding checklist (minimal, auto-triggered)

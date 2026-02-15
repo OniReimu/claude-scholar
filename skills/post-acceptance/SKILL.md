@@ -122,7 +122,7 @@ Paper accepted -> Write Twitter thread -> Create LinkedIn post -> Draft blog pos
 - Use concrete examples and demos when possible
 - Anticipate questions and prepare answers
 - Arrive early to test equipment
-- For conceptual diagrams in slides, use `paper-figure-generator` skill
+- For conceptual diagrams in slides, use `paper-figure-generator` skill (generates editable SVG via AutoFigure-Edit)
 
 ### Poster
 - Design for scanning, not reading
@@ -130,7 +130,7 @@ Paper accepted -> Write Twitter thread -> Create LinkedIn post -> Draft blog pos
 - Include a "elevator pitch" summary
 - Bring business cards or QR codes
 - Practice a 2-minute and 5-minute explanation
-- For key system/method figures, reuse or regenerate via `paper-figure-generator` skill
+- For key system/method figures, reuse or regenerate via `paper-figure-generator` skill (editable SVG output)
 
 ### Promotion
 - Post within 1-2 weeks of acceptance notification

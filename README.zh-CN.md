@@ -10,7 +10,8 @@
 
 ## News
 
-- **2026-02-13**: 新增 `paper-figure-generator` 技能，支持 AI 生成学术概念图（系统总览、Pipeline、架构图，基于 Gemini/OpenAI）；项目打包为 Claude Code 插件（`.claude-plugin/plugin.json`）；新增 `.env.example`；深度整合至 ml-paper-writing、results-analysis、post-acceptance、using-claude-scholar 工作流；共 34 个技能
+- **2026-02-15**: 迁移 `paper-figure-generator` 至 AutoFigure-Edit — 从方法文本生成可编辑 SVG 矢量图；替代 Gemini/OpenAI 光栅生成；支持风格迁移；使用 OpenRouter + Roboflow（免费 SAM3 API）
+- **2026-02-13**: 新增 `paper-figure-generator` 技能；项目打包为 Claude Code 插件（`.claude-plugin/plugin.json`）；新增 `.env.example`；深度整合至 ml-paper-writing、results-analysis、post-acceptance、using-claude-scholar 工作流；共 34 个技能
 - **2026-02-11**: 大版本更新，新增 10 个 skills（research-ideation、results-analysis、citation-verification、review-response、paper-self-review、post-acceptance、daily-coding、frontend-design、ui-ux-pro-max、web-design-reviewer）、7 个 agents、8 个研究工作流命令、2 条新规则（security、experiment-reproducibility）；重构 CLAUDE.md；涉及 89 个文件
 - **2026-01-26**: 所有 Hooks 重写为跨平台 Node.js 版本；README 完全重写；扩展 ML 论文写作知识库；合并 PR #1（跨平台支持）
 
@@ -334,7 +335,7 @@ claude-scholar/
 - `paper-self-review` - 6 项质量检查清单
 - `post-acceptance` - 会议准备：演讲、海报、推广
 - `citation-verification` - 多层引文验证，防止幻觉引用
-- `paper-figure-generator` - 学术论文概念图生成（系统总览、Pipeline、架构图等，支持 Gemini/OpenAI）
+- `paper-figure-generator` - 学术论文概念图生成（系统总览、Pipeline、架构图等，基于 AutoFigure-Edit，生成可编辑 SVG）
 
 **开发：**
 - `daily-coding` - 日常编码检查清单（极简模式，自动触发）

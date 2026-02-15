@@ -1,6 +1,6 @@
 # Provider 配置指南
 
-图像生成 API 的配置方法。至少需要配置其中一个 provider。
+AutoFigure-Edit 的后端服务配置。需要配置 LLM provider 和 SAM3 分割后端。
 
 ---
 
@@ -9,79 +9,121 @@
 在项目根目录创建 `.env` 文件（参考 `.env.example`）：
 
 ```bash
-# 至少配置一个 API key
-GOOGLE_API_KEY=your-google-api-key
-OPENAI_API_KEY=your-openai-api-key
+# LLM provider（必需）
+OPENROUTER_API_KEY=your-openrouter-api-key
 
-# 可选：指定默认 provider（默认自动检测，Google 优先）
-DEFAULT_PROVIDER=google
+# SAM3 分割后端（推荐 Roboflow，免费）
+ROBOFLOW_API_KEY=your-roboflow-api-key
+
+# 可选：替代 SAM3 后端
+# FAL_KEY=your-fal-key
 ```
 
 优先级：`process.env` > 项目根目录 `.env`
 
 ---
 
-## Google Gemini（推荐）
+## OpenRouter（LLM Provider，推荐）
 
-**模型**: `gemini-3-pro-image-preview`
+**默认 LLM provider**，通过 OpenRouter 聚合多种模型。
 
 ### 获取 API Key
 
-1. 访问 [Google AI Studio](https://aistudio.google.com/)
-2. 登录 Google 账号
-3. 点击 "Get API key" → "Create API key"
-4. 复制 API key 到 `.env` 的 `GOOGLE_API_KEY`
+1. 访问 [OpenRouter](https://openrouter.ai/)
+2. 注册/登录账号
+3. 进入 Keys 页面 → 创建新 key
+4. 复制 API key 到 `.env` 的 `OPENROUTER_API_KEY`
 
 ### 特点
-- 支持文本生成和图像生成混合输出
-- 支持参考图片输入（multimodal）
-- 生成速度较快
-- 免费层额度较充裕
+- 聚合多种 LLM 模型（GPT-4o, Claude, Gemini 等）
+- 按 token 计费，价格透明
+- 统一 API 格式，兼容 OpenAI SDK
+- 支持图像生成模型
 
-### 限制
-- 图像生成为 preview 功能，模型名称可能变更
-- 部分地区需要 VPN
+### 模型选择
+- 默认模型由 AutoFigure-Edit 内部配置
+- 可通过 `--image_model` 和 `--svg_model` 覆盖
 
 ---
 
-## OpenAI
+## Roboflow（SAM3 Backend，推荐）
 
-**模型**: `gpt-image-1`
+**默认 SAM3 分割后端**，免费 API 模式，无需本地安装 SAM3。
 
 ### 获取 API Key
 
-1. 访问 [OpenAI Platform](https://platform.openai.com/)
-2. 登录 → "API keys" → "Create new secret key"
-3. 复制 API key 到 `.env` 的 `OPENAI_API_KEY`
+1. 访问 [Roboflow](https://roboflow.com/)
+2. 注册免费账号
+3. 进入 Settings → API Keys
+4. 复制 API key 到 `.env` 的 `ROBOFLOW_API_KEY`
 
 ### 特点
-- 图像质量优秀
-- 支持文本生成（`/images/generations`）和参考图编辑（`/images/edits`）
-- 稳定的 API
+- 免费额度充裕
+- 无需本地安装 SAM3 或 PyTorch
+- API 模式，低资源占用
+- 分割质量满足学术图表需求
 
-### 宽高比映射
+### 使用
+```bash
+# 自动检测（脚本会根据环境变量选择后端）
+bash scripts/generate.sh --method_file method.txt --output_dir output/
 
-| 宽高比 | 像素尺寸 |
-|--------|---------|
-| 1:1 | 1024×1024 |
-| 16:9 | 1536×1024 |
-| 9:16 | 1024×1536 |
-| 4:3 | 1536×1024 |
+# 显式指定
+bash scripts/generate.sh --sam_backend roboflow --method_file method.txt --output_dir output/
+```
 
-### 限制
-- 按图片数量计费
-- `gpt-image-1` 质量最高但价格较高
+---
+
+## fal.ai（替代 SAM3 Backend）
+
+**替代 SAM3 后端**，提供更高精度的分割。
+
+### 获取 API Key
+
+1. 访问 [fal.ai](https://fal.ai/)
+2. 注册账号
+3. 进入 Dashboard → API Keys
+4. 复制 API key 到 `.env` 的 `FAL_KEY`
+
+### 特点
+- 高精度分割
+- 支持 `--sam_max_masks` 参数控制最大分割数
+- 按调用次数计费
+
+### 使用
+```bash
+bash scripts/generate.sh --sam_backend fal --method_file method.txt --output_dir output/
+```
+
+---
+
+## 本地 SAM3（高级）
+
+如果不想使用 API，可以本地安装 SAM3：
+
+### 要求
+- Python 3.12+
+- PyTorch 2.7+
+- 足够的 GPU 显存
+
+### 安装
+参考 [SAM3 官方仓库](https://github.com/facebookresearch/sam2) 进行本地安装。
+
+### 使用
+```bash
+bash scripts/generate.sh --sam_backend local --method_file method.txt --output_dir output/
+```
 
 ---
 
 ## Provider 选择建议
 
-| 场景 | 推荐 Provider | 原因 |
-|------|--------------|------|
-| 日常迭代 | Google Gemini | 速度快、免费额度多 |
-| 最终版图表 | OpenAI | 图像质量更高 |
-| 有参考图 | Google Gemini | multimodal 支持更自然 |
-| 需要精确尺寸 | OpenAI | 尺寸控制更精确 |
+| 场景 | LLM Provider | SAM3 Backend | 原因 |
+|------|-------------|-------------|------|
+| 日常使用 | OpenRouter | Roboflow | 免费、无需本地安装 |
+| 高精度分割 | OpenRouter | fal.ai | 分割质量更高 |
+| 离线使用 | OpenRouter | local | 无需网络（LLM 仍需网络） |
+| GPU 资源充裕 | OpenRouter | local | 无 API 调用限制 |
 
 ---
 
@@ -89,8 +131,8 @@ DEFAULT_PROVIDER=google
 
 | 错误 | 原因 | 解决方案 |
 |------|------|---------|
-| `status: 401` | API key 无效 | 检查 `.env` 中的 key 是否正确 |
-| `status: 403` | 权限不足 | 确认 API key 有图像生成权限 |
-| `status: 429` | 速率限制 | 等待后重试，或切换 provider |
-| `status: 400` | 请求格式错误 | 检查 prompt 内容和参数 |
-| 未找到 .env | 配置缺失 | 确认 `.env` 在项目根目录 |
+| `OPENROUTER_API_KEY not set` | 环境变量未配置 | 检查 `.env` 文件 |
+| `AutoFigure-Edit not found` | 未安装 | 运行 `bash scripts/setup.sh` |
+| SAM3 分割失败 | API key 无效或配额用尽 | 检查 API key，或切换后端 |
+| 生成图片质量差 | 方法文本描述不清晰 | 改进 method.txt，添加更具体的组件和关系描述 |
+| SVG 转 PDF 失败 | 缺少 cairosvg 或 inkscape | `uv pip install cairosvg` 或安装 Inkscape |

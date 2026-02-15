@@ -1,6 +1,8 @@
 # Academic Figure Layouts
 
-5 种学术论文常用图表布局，每种包含结构元素定义和 prompt 片段。
+5 种学术论文常用图表布局。这些布局用于指导如何构建 `method.txt` 输入文件 — AutoFigure-Edit 从方法文本生成图表，因此布局选择影响你如何描述系统。
+
+> **Note**: 以下 "Prompt 片段" 不再直接用于 API 调用，而是作为撰写 method.txt 时的参考指南 — 确保描述覆盖布局所需的所有结构元素。
 
 ---
 
