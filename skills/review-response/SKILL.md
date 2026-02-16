@@ -44,6 +44,15 @@ Use this skill when you need to:
 - **Respectfulness** - Respect the reviewers' opinions and time
 - **Evidence-based** - Support every response with sufficient reasoning and evidence
 - **Completeness** - Ensure all reviewer comments receive a response
+- **Manuscript consistency** - If rebuttal triggers manuscript edits, keep style conventions consistent (figures, notation, and LaTeX math format)
+
+## Revised Manuscript Math Conformance (When Applicable)
+
+If reviewer comments involve equations, notation, or algorithm descriptions, the revised manuscript must also satisfy:
+- Display equations use `\begin{equation}...\end{equation}`
+- Do not use `$$...$$` or `\[...\]` for display equations
+- Inline equations can use `$...$`
+- In math mode, variable-like tokens longer than 3 letters use `\text{}`
 
 ## Success Factors (Based on ICLR Spotlight Paper Analysis)
 

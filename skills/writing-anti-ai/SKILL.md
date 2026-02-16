@@ -75,6 +75,15 @@ If it sounds like a pull-quote, rewrite it.
 **Bad**: "This represents a major step in the right direction."
 **Good**: "The company plans to open two more locations."
 
+### 6. Preserve LaTeX Math Rules (Academic Manuscripts)
+When editing paper text, preserve math-style constraints instead of "humanizing" them away.
+
+**Required:**
+- Display equations must use `\begin{equation}...\end{equation}`
+- Do not rewrite display equations into `$$...$$` or `\[...\]`
+- Inline equations can use `$...$`
+- In math mode, variable-like tokens longer than 3 letters must use `\text{}`
+
 ## Common AI Patterns (常见 AI 模式)
 
 ### Content Patterns (内容模式)

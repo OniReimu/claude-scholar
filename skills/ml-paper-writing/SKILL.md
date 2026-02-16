@@ -433,7 +433,7 @@ The paper writing workflow orchestrates multiple skills at specific steps:
 | Step 8c | `results-analysis` | Statistical analysis, figure/table generation, visualization selection |
 | Step 8c | `figures4papers` reference | Publication-ready Python plotting style |
 | Step 5 | `citation-verification` | Validate references in Background & Related Work |
-| Step 11 | `paper-self-review` | 6-item quality checklist |
+| Step 11 | `paper-self-review` | Multi-item quality checklist (includes figure/title and LaTeX math conformance) |
 | Step 11 | `citation-verification` | Final reference validation |
 | Step 11 | `writing-anti-ai` | Remove AI writing patterns if needed |
 
@@ -1050,7 +1050,7 @@ NeurIPS, ICML, and ICLR all require paper checklists. See `references/checklists
 - **ACL**: Responsible NLP Research checklist, mandatory Limitations section
 
 **Final pass before submission:**
-- Use `paper-self-review` skill for 6-item quality checklist
+- Use `paper-self-review` skill for the latest multi-item quality checklist (including figure/title and LaTeX math conformance)
 - Use `citation-verification` skill for reference validation
 - Use `writing-anti-ai` skill if needed for natural voice
 - Verify claim-evidence-figure alignment from Step 8a

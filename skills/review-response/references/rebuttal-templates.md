@@ -4,6 +4,14 @@
 
 ## 基本结构
 
+### 论文改稿一致性检查（涉及公式时）
+
+在根据审稿意见修改公式或符号后，提交前请额外检查：
+- Display 公式使用 `\begin{equation}...\end{equation}`
+- 不使用 `$$...$$` 或 `\[...\]` 写 display 公式
+- Inline 公式使用 `$...$`
+- 数学模式中，变量名超过 3 个字母时使用 `\text{}`
+
 ### 标准Rebuttal结构
 
 ```markdown
@@ -477,4 +485,3 @@ We believe these revisions have significantly strengthened the manuscript and ad
 - 保持礼貌和专业的语气
 - 只承诺可行的改进
 - 回应所有意见，即使是小的typo
-

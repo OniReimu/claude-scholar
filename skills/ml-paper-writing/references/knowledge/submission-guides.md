@@ -305,6 +305,9 @@ Smith (2019) A. Smith. Another paper. Journal Name.
 - [ ] References complete and consistent
 - [ ] Figures/tables clear and readable
 - [ ] Equations numbered and referenced
+- [ ] Display equations use `\begin{equation}...\end{equation}` (not `$$...$$` / `\[...\]`)
+- [ ] Inline equations use `$...$`
+- [ ] Variable-like tokens >3 letters in math mode use `\text{}`
 - [ ] Supplementary material organized
 
 **Anonymity:**

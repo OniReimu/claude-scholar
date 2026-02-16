@@ -111,7 +111,7 @@ Claude Scholar 是一个面向 Claude Code CLI 的个人配置系统，提供丰
 - **写作润色**: 语法、清晰度、简洁性、学术语气
 - **合规性**: 页数限制、格式要求、伦理披露
 
-**6 项检查清单** → 系统化质量评估
+**多项检查清单** → 系统化质量评估（含图表标题与 LaTeX 数学公式规范）
 
 #### 6. 论文提交与 Rebuttal
 
@@ -234,7 +234,7 @@ claude-scholar/
 │   │       ├── rebuttal-templates.md       # 结构化回复模板
 │   │       └── tone-guidelines.md          # 专业语言
 │   │
-│   ├── paper-self-review/        # 6 项质量检查清单
+│   ├── paper-self-review/        # 多项质量检查清单
 │   ├── post-acceptance/          # 会议准备
 │   │   └── references/
 │   │       ├── presentation-templates/     # 幻灯片创建（15/20/30 分钟）
@@ -334,7 +334,7 @@ claude-scholar/
 - `research-ideation` - 研究启动：5W1H 头脑风暴、文献综述、Gap 分析
 - `results-analysis` - 实验分析：统计检验、可视化、消融实验
 - `review-response` - 系统化 rebuttal 写作，语气管理
-- `paper-self-review` - 6 项质量检查清单
+- `paper-self-review` - 多项质量检查清单（含图表与 LaTeX 数学公式规范）
 - `post-acceptance` - 会议准备：演讲、海报、推广
 - `citation-verification` - 多层引文验证，防止幻觉引用
 - `paper-figure-generator` - 学术论文概念图生成（系统总览、Pipeline、架构图等，基于 AutoFigure-Edit，生成可编辑 SVG）

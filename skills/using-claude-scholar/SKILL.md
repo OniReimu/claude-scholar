@@ -39,7 +39,7 @@ If the runtime already provided a skills list, do NOT treat the hardcoded list b
 **Paper Writing & Publication:**
 - `ml-paper-writing` — Full paper writing for NeurIPS, ICML, ICLR, ACL, AAAI, COLM, Nature, Science, Cell, PNAS
 - `writing-anti-ai` — Remove AI writing patterns, add human voice (bilingual EN/CN)
-- `paper-self-review` — 6-item quality checklist before submission
+- `paper-self-review` — multi-item quality checklist before submission (including figure/title and LaTeX math conformance)
 - `review-response` — Systematic rebuttal writing with tone management
 - `post-acceptance` — Conference preparation: presentations, posters, promotion
 - `doc-coauthoring` — Document collaboration workflow

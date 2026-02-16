@@ -116,6 +116,12 @@ Explain that the document will be built section by section. For each section:
 
 Start with whichever section has the most unknowns (usually the core decision/proposal), then work through the rest.
 
+**If the document is a LaTeX manuscript (paper/thesis/report), enforce these style constraints during drafting/refinement:**
+- Display equations use `\begin{equation}...\end{equation}`
+- Do not use `$$...$$` or `\[...\]` for display equations
+- Inline equations can use `$...$`
+- In math mode, variable-like tokens longer than 3 letters must use `\text{}`
+
 **Section ordering:**
 
 If the document structure is clear:
@@ -216,6 +222,10 @@ As user provides feedback:
 ### Quality Checking
 
 After 3 consecutive iterations with no substantial changes, ask if anything can be removed without losing important information.
+
+For LaTeX manuscripts, also run a style pass to verify:
+- No display math written as `$$...$$` or `\[...\]`
+- Long variable-like tokens in math mode are wrapped with `\text{}`
 
 When section is done, confirm [SECTION NAME] is complete. Ask if ready to move to the next section.
 

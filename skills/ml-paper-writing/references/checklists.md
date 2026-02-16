@@ -300,6 +300,9 @@ If applicable:
 - [ ] Font sizes not modified
 - [ ] Double-blind requirements met
 - [ ] Page numbers (for review) or none (camera-ready)
+- [ ] Display equations use `\begin{equation}...\end{equation}` (not `$$...$$` / `\[...\]`)
+- [ ] Inline equations use `$...$` where needed
+- [ ] Variable-like tokens >3 letters in math mode use `\text{}`
 
 #### Technical
 

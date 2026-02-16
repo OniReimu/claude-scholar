@@ -49,7 +49,7 @@ Before responding to ANY user message, you MUST evaluate whether any of your ins
 |-------|-------------------|
 | **ml-paper-writing** | Writing or editing academic papers for NeurIPS/ICML/ICLR/ACL/AAAI/COLM/Nature/Science/Cell/PNAS |
 | **writing-anti-ai** | Removing AI writing patterns, improving natural voice, bilingual (EN/CN) |
-| **paper-self-review** | Quality assurance before submission, 6-item checklist |
+| **paper-self-review** | Quality assurance before submission, multi-item checklist (figures + math conformance) |
 | **review-response** | Writing rebuttals, responding to reviewer comments |
 | **post-acceptance** | Creating presentations, posters, promotion content after paper acceptance |
 | **doc-coauthoring** | Collaborative document writing workflow |
@@ -225,6 +225,13 @@ Use `spawn_agent` for parallel execution of independent agent tasks.
 - Applies to AutoFigure-Edit diagrams, legacy image API diagrams, and Python experimental plots.
 - Put figure title/description in paper caption or surrounding text instead.
 - In matplotlib/seaborn, do not call `plt.title()`, `ax.set_title()`, or `fig.suptitle()`.
+
+### LaTeX Math Policy
+
+- Display equations must use `\begin{equation}...\end{equation}`.
+- Do **not** use `$$...$$` or `\[...\]` for display equations.
+- Inline equations can use `$...$`.
+- In math mode, variable-like tokens longer than 3 letters must use `\text{}`.
 
 ### Security
 

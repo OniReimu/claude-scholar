@@ -273,6 +273,8 @@ Create independent .tex files for each section, **containing only section conten
 - **Abstract** should be placed in main.tex preamble (before `\begin{document}`), after `\maketitle`
 - **Files in text/ contain only sections**, starting with `\section{...}`
 - Do not include `\begin{document}` or other wrappers in text/ files
+- For display math, use `\begin{equation}...\end{equation}`; do not use `$$...$$` or `\[...\]`
+- Inline math can use `$...$`; variable-like tokens longer than 3 letters in math mode should use `\text{}`
 
 ### Copy Style Files (styles/)
 
@@ -417,6 +419,7 @@ Add entries to `references.bib` and cite in text using `\cite{key}`.
 ## Notes
 - [Warnings extracted from template comments]
 - [Important notes extracted from website]
+- Math style default: display equations use `equation`; avoid `$$...$$` / `\[...\]`; inline uses `$...$`
 ```
 
 ### Extract Information from Website (if user provided a link)

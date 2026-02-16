@@ -58,6 +58,12 @@
 - 标题语义放在论文 caption 或正文，不放在图像画布内。
 - 对 matplotlib/seaborn，禁止使用 `plt.title()`、`ax.set_title()`、`fig.suptitle()`。
 
+### LaTeX 数学公式规则（全局）
+- Display 公式统一使用 `\begin{equation}...\end{equation}`。
+- 禁止使用 `$$...$$` 或 `\[...\]` 作为 display 公式写法。
+- Inline 公式可以使用 `$...$`。
+- 数学模式中，变量名长度超过 3 个字母时，必须使用 `\text{}` 包裹。
+
 ### 工作风格
 - **任务管理**: 使用 TodoWrite 跟踪进度，复杂任务先规划再执行，优先使用已有 skills
 - **沟通方式**: 不确定时主动询问，重要操作前先确认，遵循 hook 强制流程
@@ -107,7 +113,7 @@
   - 顶会：NeurIPS, ICML, ICLR, ACL, AAAI, COLM
   - 期刊：Nature, Science, Cell, PNAS
 - **writing-anti-ai**: 去除 AI 写作痕迹，支持中英文双语
-- **paper-self-review**: 论文自审（6 项质量检查清单）
+- **paper-self-review**: 论文自审（多项质量检查清单，含图表与数学公式规范）
 - **review-response**: 系统化 rebuttal 写作
 - **post-acceptance**: 录用后处理（演讲、海报、推广）
 - **doc-coauthoring**: 文档协作工作流

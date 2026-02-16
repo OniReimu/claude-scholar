@@ -111,7 +111,7 @@ Quality assurance before submission:
 - **Writing Polish**: Grammar, clarity, conciseness, academic tone
 - **Compliance**: Page limits, formatting requirements, ethical disclosures
 
-**6-item checklist** → systematic quality assessment
+**Multi-item checklist** → systematic quality assessment (including figure/title and LaTeX math conformance)
 
 #### 6. Submission & Rebuttal
 
@@ -234,7 +234,7 @@ claude-scholar/
 │   │       ├── rebuttal-templates.md       # Structured response templates
 │   │       └── tone-guidelines.md          # Professional language
 │   │
-│   ├── paper-self-review/        # 6-item quality checklist
+│   ├── paper-self-review/        # multi-item quality checklist
 │   ├── post-acceptance/          # Conference preparation
 │   │   └── references/
 │   │       ├── presentation-templates/     # Slide creation (15/20/30 min)
@@ -334,7 +334,7 @@ claude-scholar/
 - `research-ideation` - Research startup: 5W1H brainstorming, literature review, gap analysis
 - `results-analysis` - Experiment analysis: statistical testing, visualization, ablation studies
 - `review-response` - Systematic rebuttal writing with tone management
-- `paper-self-review` - 6-item quality checklist for paper self-assessment
+- `paper-self-review` - multi-item quality checklist for paper self-assessment (figures + LaTeX math conformance)
 - `post-acceptance` - Conference preparation: presentations, posters, promotion
 - `citation-verification` - Multi-layer citation validation to prevent hallucinations
 - `paper-figure-generator` - Generate editable SVG academic figures (system overviews, pipelines, architectures) via AutoFigure-Edit
