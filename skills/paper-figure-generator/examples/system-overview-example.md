@@ -67,7 +67,10 @@ bash skills/paper-figure-generator/scripts/generate.sh \
 ## Step 5: Finalize — SVG 转 PDF
 
 ```bash
-uv run python -c "import cairosvg; cairosvg.svg2pdf(url='figures/rag-framework/final.svg', write_to='figures/rag-framework/figure.pdf')"
+# 推荐：使用 paper-figure-generator skill 自带 venv + 脚本
+bash skills/paper-figure-generator/scripts/svg-to-pdf.sh \
+  --svg figures/rag-framework/final.svg \
+  --pdf figures/rag-framework/figure.pdf
 ```
 
 在 LaTeX 中使用:

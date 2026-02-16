@@ -1,11 +1,7 @@
 ---
 name: using-claude-scholar
 description: |
-  Meta-skill that ensures proper use of the Claude Scholar skill system. This skill ALWAYS applies — it governs how you evaluate and activate other skills.
-
-  ✅ This skill is ALWAYS active. It triggers on every user message.
-
-  Purpose: Enforce the discipline of checking all available skills before responding.
+  This skill should be used when starting any conversation or before responding to any user message, to enforce mandatory skill evaluation (Yes/No) and activation before implementation.
 version: 1.0.0
 tags: [Meta, System, Skills]
 ---
@@ -24,7 +20,14 @@ This is not optional. This is not a suggestion. This is a hard requirement.
 
 ### Step 1: Scan
 
-For every user message, scan the complete list of available skills:
+For every user message, scan the available skills list.
+
+**Source of truth (priority order):**
+1. **Runtime-provided list** (e.g., a hook/system instruction already printed an "Available skills:" list)
+2. **This repo's plugin skills** (`skills/` directory)
+3. **User-installed skills** (if the runtime exposes them)
+
+If the runtime already provided a skills list, do NOT treat the hardcoded list below as exhaustive.
 
 **Research & Analysis:**
 - `research-ideation` — Research startup: 5W1H brainstorming, literature review, gap analysis
@@ -70,6 +73,7 @@ For every user message, scan the complete list of available skills:
 - `frontend-design` — Production-grade frontend interfaces
 - `ui-ux-pro-max` — UI/UX design intelligence (50+ styles, 97 palettes)
 - `web-design-reviewer` — Visual inspection and design issue fixing
+- `using-claude-scholar` — Meta-skill: enforce skill evaluation + activation discipline
 
 ### Step 2: Decide
 
@@ -78,9 +82,16 @@ For each skill, make a **Yes/No decision**. There is no "maybe".
 - If the answer is Yes (even 1% likely), activate the skill
 - If multiple skills apply, activate all of them
 
+**Required output (must appear in your response, before implementation):**
+- `[skill] - Yes/No - one-line reason`
+
 ### Step 3: Activate
 
 Read the relevant SKILL.md file(s) before proceeding with your response.
+
+**Fallback rules (do not get stuck):**
+- If a skill is missing/unreadable: mark it as "No" with reason "unavailable", then proceed with next-best relevant skill(s).
+- If multiple skills conflict: follow process/discipline skills first, then domain skills; state the chosen precedence in one line.
 
 ## Red Flags Table
 

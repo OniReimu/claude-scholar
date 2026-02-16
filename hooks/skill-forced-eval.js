@@ -23,6 +23,7 @@ try {
 }
 
 const userPrompt = input.user_prompt || '';
+const cwd = input.cwd || process.cwd();
 
 // Check if it is a slash command (escape)
 if (userPrompt.startsWith('/')) {
@@ -44,29 +45,35 @@ const homeDir = os.homedir();
 // Dynamically collect skill list
 function collectSkills() {
   const skills = [];
-  const skillsDir = path.join(homeDir, '.claude', 'skills');
+  const userSkillsDir = path.join(homeDir, '.claude', 'skills');
+  const projectSkillsDir = path.join(cwd, '.claude', 'skills');
 
-  // 1. Collect local skills
-  if (fs.existsSync(skillsDir)) {
-    const skillDirs = fs.readdirSync(skillsDir, { withFileTypes: true })
+  function collectLocalSkills(skillsDirPath) {
+    if (!fs.existsSync(skillsDirPath)) return;
+    const skillDirs = fs.readdirSync(skillsDirPath, { withFileTypes: true })
       .filter(d => d.isDirectory())
       .map(d => d.name);
-
     for (const skillName of skillDirs) {
       skills.push(skillName);
     }
   }
 
-  // 2. Collect plugin skills
-  const pluginsCache = path.join(homeDir, '.claude', 'plugins', 'cache');
+  // 1. Collect local skills (user + project scope)
+  collectLocalSkills(userSkillsDir);
+  collectLocalSkills(projectSkillsDir);
 
-  if (fs.existsSync(pluginsCache)) {
-    const marketplaces = fs.readdirSync(pluginsCache, { withFileTypes: true })
+  // 2. Collect plugin skills
+  const userPluginsCache = path.join(homeDir, '.claude', 'plugins', 'cache');
+  const projectPluginsCache = path.join(cwd, '.claude', 'plugins', 'cache');
+
+  function collectPluginSkills(pluginsCachePath) {
+    if (!fs.existsSync(pluginsCachePath)) return;
+    const marketplaces = fs.readdirSync(pluginsCachePath, { withFileTypes: true })
       .filter(d => d.isDirectory())
       .map(d => d.name);
 
     for (const marketplace of marketplaces) {
-      const marketplacePath = path.join(pluginsCache, marketplace);
+      const marketplacePath = path.join(pluginsCachePath, marketplace);
       const plugins = fs.readdirSync(marketplacePath, { withFileTypes: true })
         .filter(d => d.isDirectory() && !d.name.startsWith('.'))
         .map(d => d.name);
@@ -94,6 +101,31 @@ function collectSkills() {
           }
         }
       }
+    }
+  }
+
+  // plugin skills (user + project scope)
+  collectPluginSkills(userPluginsCache);
+  collectPluginSkills(projectPluginsCache);
+
+  // If running inside a plugin repo, include repo skills with plugin-name prefix.
+  // This helps local project-scope usage when the plugin is checked out directly.
+  const pluginManifest = path.join(cwd, '.claude-plugin', 'plugin.json');
+  if (fs.existsSync(pluginManifest)) {
+    try {
+      const pluginJson = JSON.parse(fs.readFileSync(pluginManifest, 'utf8'));
+      const pluginName = pluginJson.name;
+      const repoSkillsDir = path.join(cwd, 'skills');
+      if (pluginName && fs.existsSync(repoSkillsDir)) {
+        const skillDirs = fs.readdirSync(repoSkillsDir, { withFileTypes: true })
+          .filter(d => d.isDirectory())
+          .map(d => d.name);
+        for (const skillName of skillDirs) {
+          skills.push(`${pluginName}:${skillName}`);
+        }
+      }
+    } catch {
+      // Ignore plugin.json parse errors
     }
   }
 

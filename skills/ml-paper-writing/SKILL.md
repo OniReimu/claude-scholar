@@ -485,7 +485,10 @@ Figure 1 deserves special attention—many readers skip directly to it.
 - Use vector graphics (PDF/EPS for plots)
 - Write captions that stand alone without main text
 - **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color
-- **MANDATORY for conceptual diagrams** (system overviews, pipelines, architectures): **activate `paper-figure-generator` skill NOW** to generate editable SVG figures via AutoFigure-Edit. Do NOT skip this step — Figure 1 is critical for reviewer first impressions.
+- **MANDATORY for conceptual diagrams** (system overviews, pipelines, architectures): **activate `paper-figure-generator` skill NOW** to generate editable SVG figures via AutoFigure-Edit.
+  - Recommended workflow: write `figures/{slug}/brief.md` (see `paper-figure-generator/references/figure-brief.md`) → write `figures/{slug}/method.txt` → run `bash skills/paper-figure-generator/scripts/doctor.sh` → run `bash skills/paper-figure-generator/scripts/generate.sh ...` → run `bash skills/paper-figure-generator/scripts/svg-to-pdf.sh ...`
+  - Keep `figures/{slug}/run.json` for reproducibility
+  - Do NOT skip this step — Figure 1 is critical for reviewer first impressions.
 
 ### Paper Section Structure
 
@@ -632,7 +635,7 @@ Best practices for the notation table:
 - For non-security papers, this section may be titled "Problem Setup" or "Problem Formulation"
 - If the system model is simple enough (e.g., standard supervised learning), it may be demoted to a subsection of §2 or §4
 
-> **MANDATORY: Generate a system architecture / workflow figure for this section.** Use `paper-figure-generator` skill to create the diagram via AutoFigure-Edit (write method text → generate SVG → convert to PDF). Select from `system-overview`, `pipeline`, `threat-model`, or `architecture` layout as appropriate. This figure typically becomes Figure 2 (after Figure 1 from Step 2) and is referenced in the System Model text. Do NOT proceed to Step 7 without producing this figure.
+> **MANDATORY: Generate a system architecture / workflow figure for this section.** Use `paper-figure-generator` skill to create the diagram via AutoFigure-Edit (brief.md → method.txt → generate SVG → convert to PDF). Select from `system-overview`, `pipeline`, `threat-model`, or `architecture` layout as appropriate. This figure typically becomes Figure 2 (after Figure 1 from Step 2) and is referenced in the System Model text. Do NOT proceed to Step 7 without producing this figure.
 >
 > **MANDATORY OUTPUT for Step 6:**
 > - [ ] Notation table (`Table~\ref{tab:notation}`) with all symbols used in the paper

@@ -52,10 +52,15 @@ Extract and validate the YAML frontmatter from SKILL.md.
 - `name` - Skill identifier
 - `description` - Trigger description with phrases
 
+**Optional fields (common in this repo):**
+- `version` - Skill version (e.g., `0.1.0`)
+- `tags` - Short taxonomy list for search and organization
+
 **Check for:**
 - Valid YAML syntax
-- No prohibited fields
-- Proper formatting
+- `name` and `description` present
+- Optional `version`/`tags` are well-formed if present
+- Any additional/unknown fields are explicitly justified (flag for review, not auto-fail)
 
 ### Step 3: Evaluate Description Quality (25%)
 
@@ -145,6 +150,7 @@ Verify the skill's physical structure and completeness.
 
 **Validate:**
 - YAML frontmatter contains `name` and `description`
+- If present, `version` and `tags` are valid and consistent
 - Directory structure follows conventions:
   ```
   skill-name/

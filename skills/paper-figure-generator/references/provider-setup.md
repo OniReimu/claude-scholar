@@ -12,6 +12,9 @@ AutoFigure-Edit 的后端服务配置。需要配置 LLM provider 和 SAM3 分�
 # LLM provider（必需）
 OPENROUTER_API_KEY=your-openrouter-api-key
 
+# 可选：替代 LLM provider（AutoFigure-Edit 支持）
+BIANXIE_API_KEY=your-bianxie-api-key
+
 # SAM3 分割后端（推荐 Roboflow，免费）
 ROBOFLOW_API_KEY=your-roboflow-api-key
 
@@ -124,6 +127,14 @@ bash scripts/generate.sh --sam_backend local --method_file method.txt --output_d
 | 高精度分割 | OpenRouter | fal.ai | 分割质量更高 |
 | 离线使用 | OpenRouter | local | 无需网络（LLM 仍需网络） |
 | GPU 资源充裕 | OpenRouter | local | 无 API 调用限制 |
+
+## 快速自检（推荐）
+
+在生成前先跑一次 doctor，快速发现环境问题：
+
+```bash
+bash skills/paper-figure-generator/scripts/doctor.sh
+```
 
 ---
 

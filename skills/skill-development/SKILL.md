@@ -41,7 +41,20 @@ skill-name/
 
 #### SKILL.md (required)
 
-**Metadata Quality:** The `name` and `description` in YAML frontmatter determine when Claude will use the skill. Be specific about what the skill does and when to use it. Use the third-person (e.g. "This skill should be used when..." instead of "Use this skill when...").
+**Metadata Quality:** The YAML frontmatter determines when Claude will load the skill. Keep it trigger-focused and searchable.
+
+**Required frontmatter fields:**
+- `name`
+- `description`
+
+**Optional fields (common in this repo):**
+- `version` (e.g., `0.1.0`)
+- `tags` (short taxonomy list)
+
+**Description rules (important):**
+- Use third-person trigger phrasing (e.g., "This skill should be used when the user asks to ...")
+- Prefer concrete trigger phrases and symptoms
+- Avoid summarizing the skill's workflow in the description (put workflow in the body)
 
 #### Bundled Resources (optional)
 

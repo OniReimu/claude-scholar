@@ -39,6 +39,10 @@ Read the user's paper sections (method, system model, architecture) and extract 
 
 Present the extracted structure to the user for confirmation before proceeding.
 
+**Recommended artifact (for repeatability):**
+- Create a brief at `figures/{topic-slug}/brief.md` using `references/figure-brief.md`.
+- Confirm the brief with the user before writing `method.txt`.
+
 **Layout guidance** (see `references/layouts.md`): Choose the most appropriate layout type based on the content:
 
 | Layout | Best For |
@@ -61,6 +65,12 @@ Check if the Python virtual environment is ready:
 
 ```bash
 ls skills/paper-figure-generator/scripts/.venv/bin/python
+```
+
+Run a quick environment check (recommended):
+
+```bash
+bash skills/paper-figure-generator/scripts/doctor.sh
 ```
 
 If not installed, run setup (one-time, installs Python dependencies only — source code is already in the repo):
@@ -104,9 +114,10 @@ After generation, display the output paths and ask if the user wants to:
 Convert the SVG to PDF for LaTeX inclusion:
 
 ```bash
-# Option 1: 使用 AutoFigure-Edit venv 中的 cairosvg（推荐）
-skills/paper-figure-generator/scripts/.venv/bin/python -c \
-  "import cairosvg; cairosvg.svg2pdf(url='figures/{slug}/final.svg', write_to='figures/{slug}/figure.pdf')"
+# Option 1: 使用 skill 自带脚本（推荐）
+bash skills/paper-figure-generator/scripts/svg-to-pdf.sh \
+  --svg figures/{slug}/final.svg \
+  --pdf figures/{slug}/figure.pdf
 
 # Option 2: 项目 venv 中安装 cairosvg
 uv pip install cairosvg
@@ -132,5 +143,5 @@ Embed in LaTeX:
 - This skill generates **conceptual/illustrative diagrams**, not data-driven plots or charts
 - For data visualization (bar charts, line plots, heatmaps), use the `results-analysis` skill instead
 - AutoFigure-Edit source code (`autofigure2.py`) is vendored in `scripts/`; only `.venv/` is gitignored
-- Requires `OPENROUTER_API_KEY` and `ROBOFLOW_API_KEY` (free) in `.env`
+- Requires LLM provider key (default `OPENROUTER_API_KEY`; optional `BIANXIE_API_KEY`) and a SAM3 backend key (`ROBOFLOW_API_KEY` recommended) in `.env`
 - Output SVG can be further edited with any SVG editor (Inkscape, Illustrator, AutoFigure-Edit's built-in editor)
