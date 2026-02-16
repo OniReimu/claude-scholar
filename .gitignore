@@ -31,7 +31,9 @@ telemetry/
 stats-cache.json
 statsig/
 
-# AutoFigure-Edit local installation
+# AutoFigure-Edit Python virtual environment
+skills/paper-figure-generator/scripts/.venv/
+# Legacy clone directory (if exists)
 skills/paper-figure-generator/.autofigure-edit/
 
 # Other temporary files

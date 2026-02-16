@@ -785,6 +785,20 @@ Concrete actions:
 - **Figures**: Sparse data, trends/distributions, < 20 data points per comparison
 - **Tables** (`booktabs` + `\resizebox`): Dense numerical results, many metrics (5+) and/or many baselines (5+), `table*` for large comparison matrices
 
+**Figure file rule: 1 file = 1 figure.** Do NOT use `plt.subplots()` to combine multiple plots into one image. Each individual plot must be saved as a separate file. Composite layouts (side-by-side comparison, multi-condition grids) are handled in LaTeX via `\subfigure` — not in Python.
+
+```python
+# CORRECT: one file per plot
+fig, ax = plt.subplots(1, 1, figsize=(4, 3))
+ax.plot(...)
+fig.savefig('imgs/runtime_batch32_ratio0p2.pdf', bbox_inches='tight')
+
+# WRONG: do NOT combine subplots in Python
+fig, axes = plt.subplots(1, 4, figsize=(16, 3))  # ← NEVER do this
+```
+
+**Shared legend**: If multiple sub-figures share the same legend, save the legend as a separate image file and include it above the subfigures in LaTeX (see subfigure template in Step 9).
+
 **Figure quality**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — consistent style, **font size ≥ 24pt in source** (critical: smaller fonts become unreadable after scaling to column width), colorblind-safe palettes (Okabe-Ito or Paul Tol), line width ≥ 2.5pt, PDF vector format. See `results-analysis` skill for recommended `plt.rcParams` template.
 
 > **MANDATORY OUTPUT for Step 8 (all three required before proceeding to Step 9):**
@@ -871,6 +885,45 @@ Figure~\ref{fig:convergence} shows ... [analysis] ...
 \end{minipage}}
 \end{center}
 ```
+
+**Subfigure template** — when a `\subsubsection` needs multiple related plots (e.g., varying a parameter), use `\subfigure` with separate image files (1 file = 1 plot, never Python subplots):
+
+```latex
+\begin{figure*}[!t]
+    \centering
+    % Shared legend (if applicable) — saved as a separate image file
+    \begin{minipage}[c]{1\textwidth}
+      \centering
+      \includegraphics[width=7in]{imgs/legend.pdf}
+    \end{minipage}
+    \vspace{-15pt}
+    \\
+    \subfigure[\shortstack{\small condition A}]{
+    \begin{minipage}[t]{0.235\textwidth}
+    \centering
+    \includegraphics[width=1.8in]{imgs/result_condA.pdf}
+    \end{minipage}
+    \label{fig:result_condA}
+    }
+    \subfigure[\shortstack{\small condition B}]{
+    \begin{minipage}[t]{0.235\textwidth}
+    \centering
+    \includegraphics[width=1.8in]{imgs/result_condB.pdf}
+    \end{minipage}
+    \label{fig:result_condB}
+    }
+    % Add more \subfigure blocks as needed
+    \caption{Description of what the figure shows across conditions.
+    The legend applies to all subgraphs.}
+    \label{fig:result_comparison}
+\end{figure*}
+```
+
+**Subfigure guidelines:**
+- Use `figure*` (double-column) when ≥ 3 subfigures, `figure` (single-column) for 1-2
+- Each subfigure has its own `\label` for individual `\ref` in text
+- Shared legend as a separate image file at the top, with `\vspace{-15pt}` to reduce gap
+- `\shortstack` in subfigure captions for multi-line condition labels
 
 **Rules:**
 - Quantitative tables use error bars (mean ± std, n runs) and complement the qualitative comparison table in Background & Related Work (same baselines, concrete numbers)
@@ -1306,7 +1359,7 @@ When cutting pages (e.g., NeurIPS 9 → AAAI 7):
 - Move detailed proofs to appendix
 - Condense related work (cite surveys instead of individual papers)
 - Combine similar experiments into unified tables
-- Use smaller figure sizes with subfigures
+- Use `\subfigure` with smaller individual plots (1 file = 1 plot, composed in LaTeX)
 - Tighten writing: eliminate redundancy, use active voice
 
 When expanding (e.g., ICML 8 → ICLR 9):

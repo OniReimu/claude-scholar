@@ -53,7 +53,7 @@ converting discrete tokens to continuous representations.
 ## Step 3: Setup
 
 ```bash
-ls skills/paper-figure-generator/.autofigure-edit/autofigure2.py
+ls skills/paper-figure-generator/scripts/.venv/bin/python
 ```
 
 ## Step 4: Generate

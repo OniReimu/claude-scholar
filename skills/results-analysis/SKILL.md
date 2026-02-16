@@ -150,6 +150,8 @@ plt.rcParams.update({
 - Verify **grayscale readability** (8% of men have color vision deficiency)
 - Differentiate lines by **style** (solid/dashed/dotted), not just color
 - Save as **PDF vector format**: `plt.savefig('fig.pdf', bbox_inches='tight')`
+- **1 file = 1 figure**: Do NOT use `plt.subplots()` to combine multiple plots. Each plot is a separate file. Composite layouts are handled in LaTeX via `\subfigure`.
+- If multiple plots share a legend, save the legend as a separate image file
 - Source font size ≥ 24pt, line width ≥ 2.5pt
 
 See `references/visualization-best-practices.md` for additional details.

@@ -55,18 +55,18 @@ Create `figures/{topic-slug}/method.txt` with the method description from Step 1
 
 **Style transfer** (optional): If the user provides a reference image or wants a specific visual style, note the path for the `--reference_image_path` flag. See `references/styles.md` for guidance on selecting reference images.
 
-### Step 3: Setup — Verify AutoFigure-Edit Installation
+### Step 3: Setup — Verify Dependencies
 
-Check if AutoFigure-Edit is installed:
+Check if the Python virtual environment is ready:
 
 ```bash
-ls ${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/.autofigure-edit/autofigure2.py
+ls skills/paper-figure-generator/scripts/.venv/bin/python
 ```
 
-If not installed, run setup:
+If not installed, run setup (one-time, installs Python dependencies only — source code is already in the repo):
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/scripts/setup.sh
+bash skills/paper-figure-generator/scripts/setup.sh
 ```
 
 ### Step 4: Generate — Run AutoFigure-Edit
@@ -74,7 +74,7 @@ bash ${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/scripts/setup.sh
 Execute the generation script:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/scripts/generate.sh \
+bash skills/paper-figure-generator/scripts/generate.sh \
   --method_file figures/{topic-slug}/method.txt \
   --output_dir figures/{topic-slug}
 ```
@@ -104,9 +104,9 @@ After generation, display the output paths and ask if the user wants to:
 Convert the SVG to PDF for LaTeX inclusion:
 
 ```bash
-# Option 1: 使用 AutoFigure-Edit 自带的 cairosvg（推荐，无需额外安装）
-AUTOFIGURE_PYTHON="${CLAUDE_PLUGIN_ROOT}/skills/paper-figure-generator/.autofigure-edit/.venv/bin/python"
-$AUTOFIGURE_PYTHON -c "import cairosvg; cairosvg.svg2pdf(url='figures/{slug}/final.svg', write_to='figures/{slug}/figure.pdf')"
+# Option 1: 使用 AutoFigure-Edit venv 中的 cairosvg（推荐）
+skills/paper-figure-generator/scripts/.venv/bin/python -c \
+  "import cairosvg; cairosvg.svg2pdf(url='figures/{slug}/final.svg', write_to='figures/{slug}/figure.pdf')"
 
 # Option 2: 项目 venv 中安装 cairosvg
 uv pip install cairosvg
@@ -131,6 +131,6 @@ Embed in LaTeX:
 
 - This skill generates **conceptual/illustrative diagrams**, not data-driven plots or charts
 - For data visualization (bar charts, line plots, heatmaps), use the `results-analysis` skill instead
-- AutoFigure-Edit is installed locally at `skills/paper-figure-generator/.autofigure-edit/` (gitignored)
+- AutoFigure-Edit source code (`autofigure2.py`) is vendored in `scripts/`; only `.venv/` is gitignored
 - Requires `OPENROUTER_API_KEY` and `ROBOFLOW_API_KEY` (free) in `.env`
 - Output SVG can be further edited with any SVG editor (Inkscape, Illustrator, AutoFigure-Edit's built-in editor)

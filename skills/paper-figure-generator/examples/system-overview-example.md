@@ -49,7 +49,7 @@ then Retriever → Context Builder → LLM Generator → Final Answer.
 
 ```bash
 # 检查 AutoFigure-Edit 是否已安装
-ls skills/paper-figure-generator/.autofigure-edit/autofigure2.py
+ls skills/paper-figure-generator/scripts/.venv/bin/python
 ```
 
 ## Step 4: Generate — 运行生成
