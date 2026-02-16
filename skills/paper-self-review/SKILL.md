@@ -38,7 +38,7 @@ Check the completeness and accuracy of citations:
 ### 4. Figure/Table Quality
 
 Evaluate the quality and effectiveness of figures and tables:
-- Do all figures/tables have clear titles and captions?
+- Do all figures/tables have clear captions + labels (no in-figure title text)?
 - Do figures/tables support the text narrative?
 - Are figures/tables clear and readable?
 - Do formats comply with journal/conference requirements?
@@ -62,7 +62,7 @@ Paper Quality Checklist:
 - [ ] Method is reproducible
 - [ ] Results support conclusions
 - [ ] Discussion addresses limitations
-- [ ] All figures/tables have captions
+- [ ] All figures/tables have captions + labels (no in-figure title text)
 - [ ] Citations are complete and accurate
 ```
 
@@ -116,7 +116,7 @@ Use the quality checklist for final verification.
 - Method lacks sufficient detail for reproduction
 - Results lack statistical significance tests
 - Discussion doesn't address research limitations
-- Figures/tables lack clear titles and captions
+- Figures/tables lack clear captions/labels, or contain in-figure title text
 - Inconsistent citation formatting
 
 ## Summary

@@ -177,3 +177,7 @@ CMD+=("${SAM_ARGS[@]}")
 CMD+=("$@")
 
 "${CMD[@]}"
+
+echo ""
+echo "[no-title-lint] Checking generated outputs for accidental in-figure title text..."
+"$PYTHON" "$SCRIPT_DIR/lint_no_title.py" --path "$OUTPUT_DIR" || true

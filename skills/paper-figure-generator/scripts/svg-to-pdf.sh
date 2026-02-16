@@ -46,3 +46,7 @@ mkdir -p "$(dirname "$PDF_PATH")"
 "$VENV_PY" -c "import cairosvg; cairosvg.svg2pdf(url='$SVG_PATH', write_to='$PDF_PATH')"
 echo "Wrote: $PDF_PATH"
 
+echo ""
+echo "[no-title-lint] Checking SVG/PDF for accidental in-figure title text..."
+"$VENV_PY" "$SCRIPT_DIR/lint_no_title.py" --path "$SVG_PATH" || true
+"$VENV_PY" "$SCRIPT_DIR/lint_no_title.py" --path "$PDF_PATH" || true

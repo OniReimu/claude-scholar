@@ -11,13 +11,14 @@ Preferred LaTeX formatting conventions based on CCS/TIFS/S&P and top AI conferen
 | 1st | `\section{}` | Numbered + ALL CAPS | `1 INTRODUCTION` |
 | 2nd | `\subsection{}` | Numbered + Title Case | `2.1 Proof-of-Anything` |
 | 3rd | `\subsubsection{}` | Numbered + Sentence case + period | `4.2.1 Generating proof.` |
-| 4th | `\noindent\textbf{}` | Bold inline heading + period | `Chained watermark generation.` |
+| 4th | `\smallskip\noindent\textbf{}` | Bold inline heading + period | `Chained watermark generation.` |
 
-### 4th-Level Heading Format (`\noindent\textbf{}`)
+### 4th-Level Heading Format (`\smallskip\noindent\textbf{}`)
 
 The 4th-level heading is the most commonly used paragraph-level structure for further subdividing content under `\subsubsection`.
 
 **Formatting Rules:**
+- `\smallskip` adds a compact visual separator before short paragraph-level headings
 - `\noindent` removes paragraph indentation
 - `\textbf{}` bolds the heading text
 - Heading ends with a **period** (not a colon, not a period followed by a blank line)
@@ -26,29 +27,29 @@ The 4th-level heading is the most commonly used paragraph-level structure for fu
 
 **Correct Usage:**
 ```latex
-\noindent\textbf{Chained watermark generation.} To ensure cryptographic
+\smallskip\noindent\textbf{Chained watermark generation.} To ensure cryptographic
 linkage between successive training phases, PoLO derives the watermark
 $\Lambda_x$ for shard $s_x$ from the final weights $W_{x-1}$.
 
-\noindent\textbf{Watermark embedding in model training.} During the
+\smallskip\noindent\textbf{Watermark embedding in model training.} During the
 training of $s_x$, the prover $\mathcal{P}$ selects specific layers
 in the model to embed a unique watermark $\Lambda_x$.
 
-\noindent\textbf{Obfuscation-based privacy protection and shard formation.}
+\smallskip\noindent\textbf{Obfuscation-based privacy protection and shard formation.}
 PoLO applies Gaussian noise by randomly selecting a subset of weights.
 ```
 
 **Incorrect Usage:**
 ```latex
 % Wrong: using colon instead of period
-\noindent\textbf{Watermark embedding:} During the training...
+\smallskip\noindent\textbf{Watermark embedding:} During the training...
 
 % Wrong: line break after heading, creating a separate paragraph
-\noindent\textbf{Watermark embedding.}
+\smallskip\noindent\textbf{Watermark embedding.}
 
 During the training...
 
-% Wrong: missing \noindent, causing paragraph indentation
+% Wrong: missing \smallskip and \noindent
 \textbf{Watermark embedding.} During the training...
 ```
 
@@ -129,19 +130,57 @@ verifiers must replay or retrain from recorded snapshots.
 Formatting for referencing figures, tables, and sections in body text:
 
 ```latex
-% Figure/table references (in parentheses, with cf.)
-(cf. Figs.~\ref{fig:design}--\ref{fig:verify})
-(cf. Tab.~\ref{tab:comparison})
+% Figure
+Fig.~\ref{fig:overview}
 
-% Section references (§ symbol)
-(\S\ref{sec:method}--\S\ref{sec:system})
+% Table
+Table~\ref{tab:main}
 
-% In-text references
-As shown in Tab.~\ref{tab:results}, our method achieves...
-Fig.~\ref{fig:overview} illustrates the overall architecture.
+% Section
+\S\ref{sec:method}
+
+% Appendix (bold style required by this project)
+\textbf{Appendix~\ref{app:proofs}}
+
+% Equation
+\eqref{eq:main_bound}
+
+% Algorithm
+Algorithm~\ref{alg:training}
+
+% Listing
+Listing~\ref{lst:config}
 ```
 
+Project convention:
+- Use exactly `Fig.~\ref{}` for figures (not `Figure~\ref{}` in running text)
+- Use exactly `Table~\ref{}` for tables
+- Use `\S\ref{}` for section references
+- Use `\textbf{Appendix~\ref{}}` for appendix references
+- Use `\eqref{}` for equations
+- Use `Algorithm~\ref{}` and `Listing~\ref{}` for algorithm/code listing references
+
 ---
+
+## Math Notation Hygiene
+
+Rules for variable names in math mode:
+- Use `\[...\]` for display equations (avoid raw `$$...$$` blocks).
+- Do not write long words as italic math identifiers in display equations.
+- If a variable-like token has more than 3 letters, wrap it in `\text{}`.
+- Keep symbolic variables short (e.g., `x`, `w_t`, `\Lambda_x`) and define all symbols in the notation table.
+
+```latex
+% Recommended
+\[
+\text{score} = \frac{\text{correct}}{\text{total}}
+\]
+
+% Avoid (long words in math italics)
+\[
+score = \frac{correct}{total}
+\]
+```
 
 ## Definition/Theorem Environments
 
@@ -292,6 +331,7 @@ Suitable for comparing frameworks, system designs, and multi-dimensional attribu
 \usepackage{hyperref}              % Hyperlinks
 
 % Common symbol definitions
-\newcommand{\cmark}{\ding{51}}     % checkmark
-\newcommand{\xmark}{\ding{55}}     % cross mark
+\newcommand{\cmark}{\textcolor{green!80!black}{\ding{51}}} % ✓
+\newcommand{\xmark}{\textcolor{red}{\ding{55}}}            % ✗
+\newcommand{\pmark}{\textcolor{blue!90}{\ding{109}}}       % ○ (partial)
 ```

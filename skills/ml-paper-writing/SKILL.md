@@ -631,6 +631,8 @@ Best practices for the notation table:
 
 **Guidelines:**
 - All notation in subsequent sections MUST match `Table~\ref{tab:notation}` — never introduce a symbol without defining it in the notation table first
+- Use `\[...\]` for display equations; avoid raw `$$...$$` blocks in manuscript LaTeX
+- In math mode, if a variable-like token has more than 3 letters, write it with `\text{}` (e.g., `\text{score}`, `\text{total_loss}`), not italic math identifiers
 - Keep the scope tight — this section defines the problem, NOT the solution (§4)
 - For non-security papers, this section may be titled "Problem Setup" or "Problem Formulation"
 - If the system model is simple enough (e.g., standard supervised learning), it may be demoted to a subsection of §2 or §4
@@ -665,6 +667,15 @@ Pseudocode guidelines:
 - Keep pseudocode at the right abstraction level — highlight what is **novel**, abstract away standard operations (e.g., "Train with SGD" not 10 lines of gradient update)
 - Use consistent notation: match variable names between math formulation, pseudocode, and prose
 - If the algorithm is short (< 5 lines), inline description may suffice; reserve `Algorithm` floats for procedures with ≥ 5 steps or non-obvious control flow
+
+**Cross-reference style (mandatory in manuscript text):**
+- Figure: `Fig.~\ref{...}`
+- Table: `Table~\ref{...}`
+- Section: `\S\ref{...}`
+- Appendix: `\textbf{Appendix~\ref{...}}`
+- Equation: `\eqref{...}`
+- Algorithm: `Algorithm~\ref{...}`
+- Listing: `Listing~\ref{...}`
 
 **Step 8: Experiment Workflow (Plan → Execute → Analyze)**
 
@@ -822,18 +833,18 @@ Summarize what experiments were conducted and why, before diving into details. T
 
 **\subsection{Experimental Settings}**
 
-Use `\noindent\textbf{}` fourth-level headings to organize (NOT `\subsubsection`):
+Use `\smallskip\noindent\textbf{}` fourth-level headings to organize (NOT `\subsubsection`):
 
 ```latex
 \subsection{Experimental Settings}
 
-\noindent\textbf{Datasets.} We evaluate on three benchmarks: ...
+\smallskip\noindent\textbf{Datasets.} We evaluate on three benchmarks: ...
 
-\noindent\textbf{Baselines.} We compare against five methods: ...
+\smallskip\noindent\textbf{Baselines.} We compare against five methods: ...
 
-\noindent\textbf{Metrics.} We report accuracy, F1 score, and ...
+\smallskip\noindent\textbf{Metrics.} We report accuracy, F1 score, and ...
 
-\noindent\textbf{Implementation Details.} All experiments use PyTorch ...
+\smallskip\noindent\textbf{Implementation Details.} All experiments use PyTorch ...
 We set the learning rate to ... Hyperparameter search ranges are in Appendix~\ref{app:hyperparams}.
 All experiments run on [GPU type] for [total hours]. Seeds: ...
 ```
@@ -843,7 +854,7 @@ All experiments run on [GPU type] for [total hours]. Seeds: ...
 **\subsection{Experimental Results}**
 
 Use `\subsubsection` for each experiment group. **Every** `\subsubsection` MUST:
-1. `\ref` to its corresponding figure or table (e.g., "as shown in Table~\ref{tab:main}" or "Figure~\ref{fig:convergence} shows...")
+1. `\ref` to its corresponding figure or table (e.g., "as shown in Table~\ref{tab:main}" or "Fig.~\ref{fig:convergence} shows...")
 2. End with a **Takeaway box** summarizing the key finding:
 
 ```latex
@@ -881,7 +892,7 @@ degrades performance by ...
 \end{center}
 
 \subsubsection{Convergence Analysis}
-Figure~\ref{fig:convergence} shows ... [analysis] ...
+Fig.~\ref{fig:convergence} shows ... [analysis] ...
 \begin{center}
 \fbox{\begin{minipage}{0.9\linewidth}
 \textbf{Takeaway (fast convergence).} Our method converges in ...
@@ -999,9 +1010,7 @@ Explain why limitations do not undermine core claims.
 **Conclusion (§6 or last numbered section):**
 
 Structure:
-- **Summary** (1 paragraph): Restate what was proposed, key technical insight, and main result
-- **Key findings** (2-3 sentences): Most important takeaways, grounded in experimental evidence
-- **Future work** (2-3 sentences): Concrete next steps, NOT vague aspirations
+- **Single paragraph only**: Include summary + key findings + future work in one cohesive paragraph
 
 Guidelines:
 - Do NOT introduce new information or results
