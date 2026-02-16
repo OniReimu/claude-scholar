@@ -485,33 +485,82 @@ def _call_openrouter_image_generation(
             error_msg = error_msg.get('message', str(error_msg))
         raise Exception(f'OpenRouter API 错误: {error_msg}')
 
-    # OpenRouter 返回图片在 message.images[] 数组中
+    def _image_from_url(url: str) -> Optional[Image.Image]:
+        if not url:
+            return None
+
+        if url.startswith('data:image/'):
+            match = re.match(r'data:image/(png|jpeg|jpg|webp);base64,(.+)', url)
+            if not match:
+                return None
+            image_data = base64.b64decode(match.group(2))
+            return Image.open(io.BytesIO(image_data))
+
+        if url.startswith('http://') or url.startswith('https://'):
+            try:
+                r = requests.get(url, timeout=300)
+                r.raise_for_status()
+                return Image.open(io.BytesIO(r.content))
+            except Exception:
+                return None
+
+        return None
+
+    def _first_image_url_from_images_field(images_field: Any) -> str:
+        if not isinstance(images_field, list) or not images_field:
+            return ""
+        first = images_field[0]
+        if isinstance(first, dict):
+            image_url_obj = first.get('image_url', {})
+            if isinstance(image_url_obj, dict):
+                return str(image_url_obj.get('url', '') or '')
+            return str(image_url_obj or '')
+        return str(first or '')
+
+    def _first_image_url_from_typed_content(content_field: Any) -> str:
+        if isinstance(content_field, list):
+            for part in content_field:
+                if not isinstance(part, dict):
+                    continue
+                if part.get("type") == "image_url" and isinstance(part.get("image_url"), dict):
+                    return str(part["image_url"].get("url", "") or "")
+                if isinstance(part.get("image_url"), dict):
+                    return str(part["image_url"].get("url", "") or "")
+        return ""
+
+    def _first_data_url_from_string(text: Any) -> str:
+        if not isinstance(text, str) or not text:
+            return ""
+        match = re.search(r'data:image/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=]+)', text)
+        return match.group(0) if match else ""
+
     choices = result.get('choices', [])
-    if not choices:
+    if not choices or not isinstance(choices[0], dict):
         return None
 
     message = choices[0].get('message', {})
-    images = message.get('images', [])
+    if not isinstance(message, dict):
+        return None
 
-    if images and len(images) > 0:
-        first_image = images[0]
+    # OpenRouter / OpenAI-compat responses vary by model/provider. Try common shapes:
+    # 1) message.images[] (OpenRouter convention)
+    url = _first_image_url_from_images_field(message.get('images'))
+    img = _image_from_url(url)
+    if img is not None:
+        return img
 
-        if isinstance(first_image, dict):
-            image_url_obj = first_image.get('image_url', {})
-            if isinstance(image_url_obj, dict):
-                image_url = image_url_obj.get('url', '')
-            else:
-                image_url = str(image_url_obj)
-        else:
-            image_url = str(first_image)
+    # 2) message.content[] typed parts (OpenAI-style)
+    content = message.get('content')
+    url = _first_image_url_from_typed_content(content)
+    img = _image_from_url(url)
+    if img is not None:
+        return img
 
-        if image_url.startswith('data:image/'):
-            pattern = r'data:image/(png|jpeg|jpg|webp);base64,(.+)'
-            match = re.match(pattern, image_url)
-            if match:
-                image_base64 = match.group(2)
-                image_data = base64.b64decode(image_base64)
-                return Image.open(io.BytesIO(image_data))
+    # 3) message.content as Markdown text containing data:image/...;base64,...
+    url = _first_data_url_from_string(content)
+    img = _image_from_url(url)
+    if img is not None:
+        return img
 
     return None
 
@@ -2497,8 +2546,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--provider",
         choices=["openrouter", "bianxie"],
-        default="bianxie",
-        help="API 提供商（默认: bianxie）"
+        default="openrouter",
+        help="API 提供商（默认: openrouter）"
     )
 
     # API 参数

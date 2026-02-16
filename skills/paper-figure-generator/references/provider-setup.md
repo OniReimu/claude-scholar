@@ -42,6 +42,7 @@ ROBOFLOW_API_KEY=your-roboflow-api-key
 - 按 token 计费，价格透明
 - 统一 API 格式，兼容 OpenAI SDK
 - 支持图像生成模型
+- **注意**：这里提到的 Gemini / OpenAI 是**模型名称**（由 OpenRouter 路由到对应上游），并不意味着你需要 `GOOGLE_API_KEY` 或 `OPENAI_API_KEY`。使用本项目的 `paper-figure-generator` 只需要 `OPENROUTER_API_KEY`（以及 SAM3 后端的 `ROBOFLOW_API_KEY` 等）。
 
 ### 模型选择
 - 默认模型由 AutoFigure-Edit 内部配置
