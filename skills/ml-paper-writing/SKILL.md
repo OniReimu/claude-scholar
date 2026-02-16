@@ -509,6 +509,12 @@ The final paper follows this structure. Strictly control to **6 top-level number
 - Same rule applies to `\subsubsection` — thin content uses `\noindent\textbf{}` instead
 - Never create a sub(sub)section containing only one paragraph or a single short list
 
+**Bibliography rules:**
+- **Default to BibTeX** (not BibLaTeX) — use `\bibliographystyle{...}` + `\bibliography{refs}` with `bibtex main` compilation. Most top venue templates (NeurIPS, ICML, ICLR, ACL) use BibTeX by default.
+- Store all entries in a single `.bib` file (e.g., `refs.bib` or `references.bib`)
+- NEVER generate BibTeX entries from memory — always fetch programmatically via DOI/Semantic Scholar (see citation-verification skill)
+- Compilation order: `pdflatex → bibtex → pdflatex → pdflatex`
+
 **Punctuation rules (anti-AI):**
 - **Em-dash (`---`)**: Do NOT use em-dashes for parenthetical insertions. Instead use: (1) a new sentence, (2) a relative clause (`, which...`), or (3) parenthetical commas. ≥ 2 em-dashes per paragraph is a strong AI signal. En-dash (`--`) for ranges/compounds is fine.
 - **Colon (`:`)**: Do NOT use colons to introduce 3+ item inline enumerations (e.g., "X: A, B, and C"). Instead break into separate sentences or use "such as"/"including". Exception: numbered step lists ("(1)...(2)...") and formal definitions are standard.
