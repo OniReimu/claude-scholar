@@ -219,6 +219,13 @@ Use `spawn_agent` for parallel execution of independent agent tasks.
 - Checkpoint naming: `best_model.pt`, `checkpoint_epoch_N.pt`, `checkpoint_latest.pt`
 - Record dataset hash or version tag
 
+### Figure Title Policy
+
+- For any generated figure, do **not** add an in-figure title text.
+- Applies to AutoFigure-Edit diagrams, legacy image API diagrams, and Python experimental plots.
+- Put figure title/description in paper caption or surrounding text instead.
+- In matplotlib/seaborn, do not call `plt.title()`, `ax.set_title()`, or `fig.suptitle()`.
+
 ### Security
 
 - Never store secrets in Git-tracked files

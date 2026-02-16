@@ -53,8 +53,8 @@ List directed edges in a machine-readable way:
 
 - Must include: (e.g., "Top-k retrieval", "privacy boundary", "two-stage training")
 - Must avoid: (e.g., "too many tiny blocks", "dense text")
+- Must avoid: in-figure title/top heading text (use caption outside the figure instead)
 
 ## Caption Draft (optional)
 
 One paragraph caption that can stand alone.
-

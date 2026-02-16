@@ -10,6 +10,7 @@
 
 ## News
 
+- **2026-02-16 (v1.2.1)**: 新增全局出图规则：任何生成图（AutoFigure-Edit 概念图、旧版生图链路、Python 实验图）都不添加图内标题；标题信息统一放在论文 caption/正文中。
 - **2026-02-16**: 强化 `paper-figure-generator` 执行优先级：默认先走 `AutoFigure-Edit + OpenRouter`，仅在默认链路失败后才回退到旧版 Gemini/OpenAI 流程；新增旧插件缓存提示（`GOOGLE_API_KEY` / `OPENAI_API_KEY`）排障说明。
 - **2026-02-15**: 迁移 `paper-figure-generator` 至 AutoFigure-Edit — 从方法文本生成可编辑 SVG 矢量图；替代 Gemini/OpenAI 光栅生成；支持风格迁移；使用 OpenRouter + Roboflow（免费 SAM3 API）
 - **2026-02-13**: 新增 `paper-figure-generator` 技能；项目打包为 Claude Code 插件（`.claude-plugin/plugin.json`）；新增 `.env.example`；深度整合至 ml-paper-writing、results-analysis、post-acceptance、using-claude-scholar 工作流；共 34 个技能

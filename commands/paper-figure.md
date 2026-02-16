@@ -30,6 +30,7 @@ Use `/paper-figure` when you want:
 - First priority is AutoFigure-Edit + OpenRouter (`OPENROUTER_API_KEY`)
 - Do not request Gemini/OpenAI provider selection before trying the default path
 - Fallback to legacy Gemini/OpenAI flow only after default generation fails and user explicitly asks to fallback
+- Do not add title text inside generated images; keep title/description in LaTeX caption or paper body
 
 ## Outputs
 

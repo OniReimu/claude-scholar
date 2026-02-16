@@ -53,6 +53,11 @@
 - 做好备份，不影响现有功能
 - 完成后及时删除临时文件
 
+### 图表标题规则（全局）
+- 任何生图都不加图内标题（包括 AutoFigure-Edit 系统图、旧版 API 生图链路、Python 实验图）。
+- 标题语义放在论文 caption 或正文，不放在图像画布内。
+- 对 matplotlib/seaborn，禁止使用 `plt.title()`、`ax.set_title()`、`fig.suptitle()`。
+
 ### 工作风格
 - **任务管理**: 使用 TodoWrite 跟踪进度，复杂任务先规划再执行，优先使用已有 skills
 - **沟通方式**: 不确定时主动询问，重要操作前先确认，遵循 hook 强制流程

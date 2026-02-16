@@ -122,7 +122,7 @@
 | 刻度标签 (tick labels) | 24-28 pt | 数值刻度 |
 | 图例文字 (legend) | 24-28 pt | 曲线/方法名称 |
 | 标注文字 (annotations) | 24-26 pt | 图内标注 |
-| 子图标题 (subplot title) | 28-32 pt | 如 (a), (b) 等 |
+| 子图标识 (subplot tags) | 24-28 pt | 如 (a), (b)；仅标识，不写标题 |
 
 **推荐的 matplotlib 全局配置** — 在每个绘图脚本开头设置:
 
@@ -132,11 +132,9 @@ import matplotlib.pyplot as plt
 plt.rcParams.update({
     'font.size': 28,
     'axes.labelsize': 30,
-    'axes.titlesize': 30,
     'xtick.labelsize': 26,
     'ytick.labelsize': 26,
     'legend.fontsize': 26,
-    'figure.titlesize': 32,
     'lines.linewidth': 3.0,
     'lines.markersize': 10,
     'axes.linewidth': 2.0,
@@ -174,7 +172,7 @@ plt.rcParams.update({
 
 ### 标题和标签
 
-**图标题**: 通常不在图内添加标题，使用 caption 代替
+**图标题（强制规则）**: 不在图内添加标题，统一使用 caption 代替。禁止使用 `plt.title()`、`ax.set_title()`、`fig.suptitle()`。
 
 **Caption**:
 - 独立完整，不依赖正文

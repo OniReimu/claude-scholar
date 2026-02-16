@@ -629,11 +629,13 @@ Specifically, match:
 - icon and shape style
 - arrow and connector aesthetics
 - typography feel
+- avoid adding any global figure title or top heading text
 
 The content structure, number of components, and layout may differ freely.
 Only the visual style should be consistent.
 
 The goal is that the figure looks like it was drawn by the same illustrator using the same visual design language as the reference figure.
+Hard constraint: Do NOT add any overall title/top heading text inside the figure.
 
 Below is the method section of the paper:
 \"\"\"
@@ -644,7 +646,8 @@ Below is the method section of the paper:
 
 {method_text}
 
-The figure should be engaging and using academic journal style with cute characters."""
+The figure should be engaging and using academic journal style with cute characters.
+Hard constraint: Do NOT add any overall title/top heading text inside the figure."""
 
     print(f"发送请求到: {base_url}")
 
@@ -1499,6 +1502,7 @@ CRITICAL DIMENSION REQUIREMENT:
   - Set viewBox="0 0 {figure_width} {figure_height}"
   - Set width="{figure_width}" height="{figure_height}"
 - DO NOT scale or resize the SVG
+- DO NOT include any global figure title or top heading text in the SVG
 """
 
     if placeholder_mode == "box":
@@ -2175,6 +2179,7 @@ Please carefully compare and check the following **TWO MAJOR ASPECTS with EIGHT 
 - Start with <svg and end with </svg>
 - Do NOT include markdown formatting or explanations
 - Keep all icon placeholder structures intact (the <g> elements with id like "AF01")
+- Never add any global figure title or top heading text
 - Focus on position and style corrections"""
 
         contents = [prompt, figure_img, samed_img, current_png_img]

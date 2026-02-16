@@ -11,7 +11,7 @@ description: |
   If the user is writing a paper and discusses a method/system/pipeline, proactively
   suggest generating a figure for it.
   Generates editable SVG academic figures using AutoFigure-Edit from method text descriptions.
-version: 0.2.0
+version: 0.2.1
 tags: [Research, Paper Writing, Figure Generation, Academic, SVG]
 ---
 
@@ -31,6 +31,7 @@ Generate publication-quality conceptual figures for academic papers using [AutoF
 2. **Do not ask Google/OpenAI first:** never start by asking the user to choose Gemini/OpenAI provider before attempting the AutoFigure-Edit path.
 3. **Fallback condition:** only fallback to legacy Gemini/OpenAI flow if AutoFigure-Edit generation actually fails and the user explicitly requests fallback.
 4. **Outdated-skill detection:** if the agent shows a prompt like “needs `GOOGLE_API_KEY` or `OPENAI_API_KEY`”, treat it as an outdated plugin cache and continue with this skill's AutoFigure-Edit command path.
+5. **No title in generated image:** never add a top title/heading text inside the generated figure; use paper caption instead.
 
 ## 5-Step Workflow
 
@@ -63,6 +64,8 @@ Present the extracted structure to the user for confirmation before proceeding.
 ### Step 2: Prepare — Write Method Text and Select Style
 
 Create `figures/{topic-slug}/method.txt` with the method description from Step 1. Write it as clear, structured prose describing the system — AutoFigure-Edit generates figures directly from this text.
+
+Hard constraint for `method.txt`: do not request an in-figure title (top heading text). Keep only component labels, arrows, and annotations.
 
 **Style transfer** (optional): If the user provides a reference image or wants a specific visual style, note the path for the `--reference_image_path` flag. See `references/styles.md` for guidance on selecting reference images.
 
@@ -153,6 +156,7 @@ Embed in LaTeX:
 ## Important Notes
 
 - This skill generates **conceptual/illustrative diagrams**, not data-driven plots or charts
+- Do not add title text inside the image canvas; keep title/description in caption or surrounding paper text
 - For data visualization (bar charts, line plots, heatmaps), use the `results-analysis` skill instead
 - AutoFigure-Edit source code (`autofigure2.py`) is vendored in `scripts/`; only `.venv/` is gitignored
 - Requires LLM provider key (default `OPENROUTER_API_KEY`; optional `BIANXIE_API_KEY`) and a SAM3 backend key (`ROBOFLOW_API_KEY` recommended) in `.env`

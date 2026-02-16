@@ -1,6 +1,6 @@
 {
   "name": "claude-scholar",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Academic research and software development skill system — covering the complete research lifecycle from ideation to publication, with 34 skills, 50+ commands, 14 agents, and 5 hooks. Includes ML paper writing, figure generation, rebuttal workflow, experiment analysis, and plugin development guides.",
   "author": {
     "name": "OniReimu",

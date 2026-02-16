@@ -2,7 +2,7 @@
 name: results-analysis
 description: This skill should be used when the user asks to "analyze experimental results", "generate results section", "statistical analysis of experiments", "compare model performance", "create results visualization", or mentions connecting experimental data to paper writing. Provides comprehensive guidance for analyzing ML/AI experimental results and generating paper-ready content.
 tags: [Research, Analysis, Statistics, Visualization, Paper Writing]
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Results Analysis for ML/AI Research
@@ -105,6 +105,7 @@ Systematically compare performance across different methods, ensuring fair compa
 - Colorblind-friendly palette
 - Clear labels and legends
 - Appropriate error bars
+- No in-figure title text (`plt.title` / `set_title` / `suptitle` forbidden)
 - Readable in black-and-white print
 
 **Visualization Selection Guide** — match data characteristics to the right figure type:
@@ -153,6 +154,7 @@ plt.rcParams.update({
 - **1 file = 1 figure**: Do NOT use `plt.subplots()` to combine multiple plots. Each plot is a separate file. Composite layouts are handled in LaTeX via `\subfigure`.
 - If multiple plots share a legend, save the legend as a separate image file
 - Source font size ≥ 24pt, line width ≥ 2.5pt
+- Put title semantics in caption/text, not inside the figure canvas
 
 See `references/visualization-best-practices.md` for additional details.
 
@@ -206,6 +208,7 @@ See `references/results-writing-guide.md` for the complete writing guide.
 - [ ] All values include error bars/confidence intervals
 - [ ] Statistical test methods are specified
 - [ ] Figures are clear and readable (including black-and-white print)
+- [ ] No in-figure title text is used
 - [ ] Hyperparameter search ranges are reported
 - [ ] Computational resources are specified (GPU type, time)
 - [ ] Random seed settings are specified (per `rules/experiment-reproducibility.md`)
@@ -235,12 +238,14 @@ See `references/results-writing-guide.md` for the complete writing guide.
 - Using non-colorblind-friendly palettes
 - Y-axis not starting from 0 (exaggerating differences)
 - Missing error bars
+- Adding chart titles inside figure canvas
 - Overly complex figures
 
 ✅ **Correct approach:**
 - Use Okabe-Ito or Paul Tol palettes
 - Set reasonable axis ranges
 - Include error bars and confidence intervals
+- Keep titles in caption/paper text, not in figure canvas
 - Keep figures clean and clear
 
 ### Writing Errors
