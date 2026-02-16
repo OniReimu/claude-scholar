@@ -51,6 +51,14 @@ Check writing clarity and readability:
 - Are sentence structures clear?
 - Is paragraph organization logical?
 
+### 6. LaTeX Math Conformance
+
+Check whether math notation follows project rules:
+- Are display equations written with `\begin{equation}...\end{equation}`?
+- Is raw `$$...$$` or `\[...\]` avoided for display equations?
+- Are inline equations written with `$...$` where appropriate?
+- Are variable-like tokens longer than 3 letters wrapped with `\text{}` in math mode?
+
 ## Quality Checklist
 
 Use this checklist for systematic paper self-review:
@@ -63,6 +71,8 @@ Paper Quality Checklist:
 - [ ] Results support conclusions
 - [ ] Discussion addresses limitations
 - [ ] All figures/tables have captions + labels (no in-figure title text)
+- [ ] Display equations use `equation`; no `$$...$$` or `\[...\]`
+- [ ] In math mode, variable-like tokens >3 letters use `\text{}`
 - [ ] Citations are complete and accurate
 ```
 
@@ -95,7 +105,10 @@ Check the quality and captions of all figures and tables.
 ### Step 5: Writing Quality
 Review language expression and writing clarity.
 
-### Step 6: Final Checklist
+### Step 6: Math Conformance Check
+Verify equation environment and variable naming style consistency.
+
+### Step 7: Final Checklist
 Use the quality checklist for final verification.
 
 ## Best Practices
@@ -117,6 +130,8 @@ Use the quality checklist for final verification.
 - Results lack statistical significance tests
 - Discussion doesn't address research limitations
 - Figures/tables lack clear captions/labels, or contain in-figure title text
+- Display equations use `$$...$$` or `\[...\]` instead of `equation`
+- Long variable-like tokens are not wrapped with `\text{}`
 - Inconsistent citation formatting
 
 ## Summary

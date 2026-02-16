@@ -631,7 +631,8 @@ Best practices for the notation table:
 
 **Guidelines:**
 - All notation in subsequent sections MUST match `Table~\ref{tab:notation}` — never introduce a symbol without defining it in the notation table first
-- Use `\[...\]` for display equations; avoid raw `$$...$$` blocks in manuscript LaTeX
+- Use `\begin{equation}...\end{equation}` for display equations; do not use raw `$$...$$` or `\[...\]`
+- Inline equations can use `$...$`
 - In math mode, if a variable-like token has more than 3 letters, write it with `\text{}` (e.g., `\text{score}`, `\text{total_loss}`), not italic math identifiers
 - Keep the scope tight — this section defines the problem, NOT the solution (§4)
 - For non-security papers, this section may be titled "Problem Setup" or "Problem Formulation"

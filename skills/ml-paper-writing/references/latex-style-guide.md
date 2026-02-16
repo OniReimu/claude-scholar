@@ -165,21 +165,26 @@ Project convention:
 ## Math Notation Hygiene
 
 Rules for variable names in math mode:
-- Use `\[...\]` for display equations (avoid raw `$$...$$` blocks).
+- Use `\begin{equation}...\end{equation}` for display equations.
+- Do not use raw `$$...$$` or `\[...\]` for display equations.
+- Inline equations can use `$...$`.
 - Do not write long words as italic math identifiers in display equations.
 - If a variable-like token has more than 3 letters, wrap it in `\text{}`.
 - Keep symbolic variables short (e.g., `x`, `w_t`, `\Lambda_x`) and define all symbols in the notation table.
 
 ```latex
 % Recommended
-\[
+\begin{equation}
 \text{score} = \frac{\text{correct}}{\text{total}}
-\]
+\end{equation}
 
 % Avoid (long words in math italics)
-\[
+\begin{equation}
 score = \frac{correct}{total}
-\]
+\end{equation}
+
+% Inline is allowed
+$\text{score}_t = x_t + y_t$
 ```
 
 ## Definition/Theorem Environments
