@@ -144,6 +144,7 @@ bash skills/paper-figure-generator/scripts/doctor.sh
 | 错误 | 原因 | 解决方案 |
 |------|------|---------|
 | `OPENROUTER_API_KEY not set` | 环境变量未配置 | 检查 `.env` 文件 |
+| 弹出 “needs GOOGLE_API_KEY or OPENAI_API_KEY” 选择框 | 命中旧版 skill/plugin 缓存（非 AutoFigure-Edit 默认流） | 继续使用本 skill 的 `generate.sh` 路径；更新插件后重试 |
 | `AutoFigure-Edit not found` | 未安装 | 运行 `bash scripts/setup.sh` |
 | SAM3 分割失败 | API key 无效或配额用尽 | 检查 API key，或切换后端 |
 | 生成图片质量差 | 方法文本描述不清晰 | 改进 method.txt，添加更具体的组件和关系描述 |

@@ -25,6 +25,13 @@ Generate publication-quality conceptual figures for academic papers using [AutoF
 - Supports style transfer via reference images
 - Includes icon detection, segmentation, and SVG template generation
 
+## Execution Priority (Mandatory)
+
+1. **Default path (first priority):** always run AutoFigure-Edit via `scripts/generate.sh` with OpenRouter (`OPENROUTER_API_KEY`).
+2. **Do not ask Google/OpenAI first:** never start by asking the user to choose Gemini/OpenAI provider before attempting the AutoFigure-Edit path.
+3. **Fallback condition:** only fallback to legacy Gemini/OpenAI flow if AutoFigure-Edit generation actually fails and the user explicitly requests fallback.
+4. **Outdated-skill detection:** if the agent shows a prompt like “needs `GOOGLE_API_KEY` or `OPENAI_API_KEY`”, treat it as an outdated plugin cache and continue with this skill's AutoFigure-Edit command path.
+
 ## 5-Step Workflow
 
 ### Step 1: Analyze — Extract Method Description
@@ -84,6 +91,7 @@ bash skills/paper-figure-generator/scripts/setup.sh
 Execute the generation script:
 
 ```bash
+AUTOFIGURE_PROVIDER=openrouter \
 bash skills/paper-figure-generator/scripts/generate.sh \
   --method_file figures/{topic-slug}/method.txt \
   --output_dir figures/{topic-slug}
@@ -108,6 +116,10 @@ After generation, display the output paths and ask if the user wants to:
 - Regenerate with adjustments (modify method.txt or add reference image)
 - Try a different style via reference image
 - Manually edit the SVG
+
+If Step 4 fails:
+- First diagnose with `bash skills/paper-figure-generator/scripts/doctor.sh`
+- Keep AutoFigure-Edit as default; only switch to legacy Gemini/OpenAI flow when the user explicitly asks for fallback
 
 ### Step 5: Finalize — Convert SVG to PDF for LaTeX
 
