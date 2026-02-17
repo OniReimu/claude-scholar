@@ -19,6 +19,15 @@ tags: [Research, Paper Writing, Figure Generation, Academic, SVG]
 
 Generate publication-quality conceptual figures for academic papers using [AutoFigure-Edit](https://github.com/ResearAI/AutoFigure-Edit). Produces **editable SVG vector graphics** from method text descriptions. Covers common figure types: system overviews, pipelines, threat models, comparisons, and architecture diagrams.
 
+## Policy Rules
+
+> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
+> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+
+| Rule ID | 摘要 |
+|---------|------|
+| `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
+
 **Key advantages over generic image APIs:**
 - Output is SVG (editable), not just raster PNG
 - Designed specifically for scientific paper figures
@@ -31,7 +40,7 @@ Generate publication-quality conceptual figures for academic papers using [AutoF
 2. **Do not ask Google/OpenAI first:** never start by asking the user to choose Gemini/OpenAI provider before attempting the AutoFigure-Edit path.
 3. **Fallback condition:** only fallback to legacy Gemini/OpenAI flow if AutoFigure-Edit generation actually fails and the user explicitly requests fallback.
 4. **Outdated-skill detection:** if the agent shows a prompt like “needs `GOOGLE_API_KEY` or `OPENAI_API_KEY`”, treat it as an outdated plugin cache and continue with this skill's AutoFigure-Edit command path.
-5. **No title in generated image:** never add a top title/heading text inside the generated figure; use paper caption instead.
+5. **No title in generated image:** never add a top title/heading text inside the generated figure; use paper caption instead. <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 
 ## 5-Step Workflow
 
@@ -65,7 +74,7 @@ Present the extracted structure to the user for confirmation before proceeding.
 
 Create `figures/{topic-slug}/method.txt` with the method description from Step 1. Write it as clear, structured prose describing the system — AutoFigure-Edit generates figures directly from this text.
 
-Hard constraint for `method.txt`: do not request an in-figure title (top heading text). Keep only component labels, arrows, and annotations.
+Hard constraint for `method.txt`: do not request an in-figure title (top heading text). Keep only component labels, arrows, and annotations. <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 
 **Style transfer** (optional): If the user provides a reference image or wants a specific visual style, note the path for the `--reference_image_path` flag. See `references/styles.md` for guidance on selecting reference images.
 
@@ -156,7 +165,7 @@ Embed in LaTeX:
 ## Important Notes
 
 - This skill generates **conceptual/illustrative diagrams**, not data-driven plots or charts
-- Do not add title text inside the image canvas; keep title/description in caption or surrounding paper text
+- Do not add title text inside the image canvas; keep title/description in caption or surrounding paper text <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 - For data visualization (bar charts, line plots, heatmaps), use the `results-analysis` skill instead
 - AutoFigure-Edit source code (`autofigure2.py`) is vendored in `scripts/`; only `.venv/` is gitignored
 - Requires LLM provider key (default `OPENROUTER_API_KEY`; optional `BIANXIE_API_KEY`) and a SAM3 backend key (`ROBOFLOW_API_KEY` recommended) in `.env`

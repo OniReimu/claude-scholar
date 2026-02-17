@@ -10,6 +10,43 @@ tags: [Meta, System, Skills]
 
 You are equipped with **Claude Scholar**, a comprehensive skill system for academic research and software development. This meta-skill ensures you use the system correctly.
 
+## Policy Rules
+
+> 论文写作规则统一定义在 `policy/rules/`（单一真相源）。
+> 各 skill 通过 HTML 注释标记引用规则。**冲突时以 `policy/rules/` 为准。**
+> 领域+会议组合见 `policy/profiles/`（如 `security-neurips.md`）。
+
+| Rule ID | 摘要 |
+|---------|------|
+| `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
+| `FIG.FONT_GE_24PT` | 图表字号 ≥ 24pt |
+| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
+| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式 |
+| `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色 |
+| `FIG.SELF_CONTAINED_CAPTION` | Caption三要素 |
+| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
+| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
+| `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
+| `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
+| `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
+| `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |
+| `EXP.TAKEAWAY_BOX` | 实验结果附 takeaway box |
+| `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
+| `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
+| `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
+| `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
+| `CITE.VERIFY_VIA_API` | 引文API验证 |
+| `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
+| `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
+| `REPRO.COMPUTE_RESOURCES_DOCUMENTED` | 计算资源文档 |
+| `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
+| `PROSE.EM_DASH_RESTRICTION` | 限制em-dash |
+| `SUBMIT.SECTION_NUMBERING_CONSISTENCY` | Section编号一致 |
+| `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
+| `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
+| `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
+
 ## The #1 Rule
 
 **Before responding to any user message, you MUST evaluate all available skills.**

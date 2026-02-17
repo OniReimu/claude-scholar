@@ -8,6 +8,16 @@ version: 0.1.0
 
 This skill provides a structured workflow for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: Context Gathering, Refinement & Structure, and Reader Testing.
 
+## Policy Rules
+
+> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
+> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+
+| Rule ID | 摘要 |
+|---------|------|
+| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
+| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
+
 ## When to Offer This Workflow
 
 **Trigger conditions:**
@@ -117,10 +127,10 @@ Explain that the document will be built section by section. For each section:
 Start with whichever section has the most unknowns (usually the core decision/proposal), then work through the rest.
 
 **If the document is a LaTeX manuscript (paper/thesis/report), enforce these style constraints during drafting/refinement:**
-- Display equations use `\begin{equation}...\end{equation}`
+- Display equations use `\begin{equation}...\end{equation}` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 - Do not use `$$...$$` or `\[...\]` for display equations
 - Inline equations can use `$...$`
-- In math mode, variable-like tokens longer than 3 letters must use `\text{}`
+- In math mode, variable-like tokens longer than 3 letters must use `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 **Section ordering:**
 
@@ -224,8 +234,8 @@ As user provides feedback:
 After 3 consecutive iterations with no substantial changes, ask if anything can be removed without losing important information.
 
 For LaTeX manuscripts, also run a style pass to verify:
-- No display math written as `$$...$$` or `\[...\]`
-- Long variable-like tokens in math mode are wrapped with `\text{}`
+- No display math written as `$$...$$` or `\[...\]` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- Long variable-like tokens in math mode are wrapped with `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 When section is done, confirm [SECTION NAME] is complete. Ask if ready to move to the next section.
 

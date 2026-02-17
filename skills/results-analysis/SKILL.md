@@ -9,6 +9,26 @@ version: 0.1.1
 
 A systematic experimental results analysis workflow connecting experimental data to paper writing.
 
+## Policy Rules
+
+> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
+> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+
+| Rule ID | 摘要 |
+|---------|------|
+| `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
+| `FIG.FONT_GE_24PT` | 图表字号 ≥ 24pt |
+| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
+| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式 |
+| `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色 |
+| `FIG.SELF_CONTAINED_CAPTION` | Caption三要素 |
+| `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
+| `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
+| `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
+| `EXP.TAKEAWAY_BOX` | 实验结果Takeaway |
+| `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
+| `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+
 ## Core Features
 
 This skill provides three core capabilities:
@@ -101,11 +121,12 @@ Systematically compare performance across different methods, ensuring fair compa
 ### Step 4: Visualization
 
 **Publication-Quality Visualization Requirements:**
-- Vector format (PDF/EPS)
-- Colorblind-friendly palette
+- Vector format (PDF/EPS) <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
+- Colorblind-friendly palette <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - Clear labels and legends
-- Appropriate error bars
-- No in-figure title text (`plt.title` / `set_title` / `suptitle` forbidden)
+- Appropriate error bars <!-- policy:EXP.ERROR_BARS_REQUIRED -->
+- No in-figure title text (`plt.title` / `set_title` / `suptitle` forbidden) <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+- Self-contained captions (what, how, takeaway) <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
 - Readable in black-and-white print
 
 **Visualization Selection Guide** — match data characteristics to the right figure type:
@@ -124,7 +145,7 @@ Systematically compare performance across different methods, ensuring fair compa
 
 **When to use figures vs tables:**
 - **Figures (Python plots)**: Data is sparse, need to show trends/distributions/relationships, fewer than ~20 data points per comparison, spatial encoding adds meaning
-- **Tables (`booktabs` + `\resizebox`)**: Dense numerical results, many metrics (5+) AND/OR many baselines (5+), readers need exact numbers, double-column (`table*`) for large comparison matrices
+- **Tables (`booktabs` + `\resizebox`)**: Dense numerical results, many metrics (5+) AND/OR many baselines (5+), readers need exact numbers, double-column (`table*`) for large comparison matrices <!-- policy:TABLE.BOOKTABS_FORMAT --> <!-- policy:TABLE.DIRECTION_INDICATORS -->
 
 **Figure quality reference**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) for publication-ready Python plotting — consistent style, proper font sizes, colorblind-safe palettes (Okabe-Ito or Paul Tol), no chart junk. Always save as PDF vector format.
 
@@ -144,14 +165,14 @@ plt.rcParams.update({
 })
 ```
 
-**所有文字必须 ≥ 24pt**（源文件中的 matplotlib pt 值，非打印尺寸）。
+**所有文字必须 ≥ 24pt**（源文件中的 matplotlib pt 值，非打印尺寸）。 <!-- policy:FIG.FONT_GE_24PT -->
 
 **Accessibility requirements:**
 - Use **colorblind-safe palettes**: Okabe-Ito (8 colors) or Paul Tol (up to 12 colors)
 - Verify **grayscale readability** (8% of men have color vision deficiency)
 - Differentiate lines by **style** (solid/dashed/dotted), not just color
 - Save as **PDF vector format**: `plt.savefig('fig.pdf', bbox_inches='tight')`
-- **1 file = 1 figure**: Do NOT use `plt.subplots()` to combine multiple plots. Each plot is a separate file. Composite layouts are handled in LaTeX via `\subfigure`.
+- **1 file = 1 figure**: Do NOT use `plt.subplots()` to combine multiple plots. Each plot is a separate file. Composite layouts are handled in LaTeX via `\subfigure`. <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
 - If multiple plots share a legend, save the legend as a separate image file
 - Source font size ≥ 24pt, line width ≥ 2.5pt
 - Put title semantics in caption/text, not inside the figure canvas
@@ -174,7 +195,7 @@ See `references/visualization-best-practices.md` for additional details.
 ### Performance Comparison
 [Comparison with baseline methods, including tables and figures]
 
-### Ablation Study
+### Ablation Study <!-- policy:EXP.ABLATION_IN_RESULTS -->
 [Validate contributions of each component]
 
 ### Statistical Significance
@@ -205,7 +226,7 @@ See `references/results-writing-guide.md` for the complete writing guide.
 ### Step 6: Quality Check
 
 **Checklist:**
-- [ ] All values include error bars/confidence intervals
+- [ ] All values include error bars/confidence intervals <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 - [ ] Statistical test methods are specified
 - [ ] Figures are clear and readable (including black-and-white print)
 - [ ] No in-figure title text is used

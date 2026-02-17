@@ -125,7 +125,7 @@ verifiers must replay or retrain from recorded snapshots.
 
 ---
 
-## Cross-Reference Format
+## Cross-Reference Format <!-- policy:REF.CROSS_REFERENCE_STYLE -->
 
 Formatting for referencing figures, tables, and sections in body text:
 
@@ -162,7 +162,7 @@ Project convention:
 
 ---
 
-## Math Notation Hygiene
+## Math Notation Hygiene <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 
 Rules for variable names in math mode:
 - Use `\begin{equation}...\end{equation}` for display equations.

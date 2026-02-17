@@ -6,6 +6,16 @@ version: 0.1.0
 
 # LaTeX Conference Template Organizer
 
+## Policy Rules
+
+> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
+> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+
+| Rule ID | 摘要 |
+|---------|------|
+| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
+| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
+
 ## Overview
 
 Transform messy conference LaTeX template .zip files into clean, Overleaf-ready submission templates. Official conference templates often contain excessive example content, instructional comments, and disorganized file structures. This skill converts them into templates ready for writing.
@@ -273,8 +283,8 @@ Create independent .tex files for each section, **containing only section conten
 - **Abstract** should be placed in main.tex preamble (before `\begin{document}`), after `\maketitle`
 - **Files in text/ contain only sections**, starting with `\section{...}`
 - Do not include `\begin{document}` or other wrappers in text/ files
-- For display math, use `\begin{equation}...\end{equation}`; do not use `$$...$$` or `\[...\]`
-- Inline math can use `$...$`; variable-like tokens longer than 3 letters in math mode should use `\text{}`
+- For display math, use `\begin{equation}...\end{equation}`; do not use `$$...$$` or `\[...\]` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- Inline math can use `$...$`; variable-like tokens longer than 3 letters in math mode should use `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 ### Copy Style Files (styles/)
 

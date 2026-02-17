@@ -381,7 +381,7 @@ Figures should tell a coherent story even if the reader skips the text. Many rea
 
 1. **Figure 1 is crucial**: Often the first thing readers examine after abstract
 2. **Self-contained captions**: Reader should understand figure without main text
-3. **No title inside figure**: The caption serves this function (ICML/NeurIPS rule)
+3. **No title inside figure**: The caption serves this function (ICML/NeurIPS rule) <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 4. **Vector graphics**: PDF/EPS for plots, PNG (600 DPI) only for photographs
 
 ### Accessibility Requirements

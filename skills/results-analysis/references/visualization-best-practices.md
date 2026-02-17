@@ -114,7 +114,7 @@
 
 **重要**: matplotlib 中的字体大小指的是 **源文件中的 pt 值**，不是最终打印尺寸。由于论文图表会被缩放到单栏（~3.5 inches）或双栏（~7 inches）宽度，源文件中的字体必须足够大才能在缩放后保持可读。
 
-**最低要求: 所有文字 ≥ 24pt**
+**最低要求: 所有文字 ≥ 24pt** <!-- policy:FIG.FONT_GE_24PT -->
 
 | 元素 | 推荐字体大小 | 说明 |
 |------|------------|------|
@@ -172,7 +172,7 @@ plt.rcParams.update({
 
 ### 标题和标签
 
-**图标题（强制规则）**: 不在图内添加标题，统一使用 caption 代替。禁止使用 `plt.title()`、`ax.set_title()`、`fig.suptitle()`。
+**图标题（强制规则）**: 不在图内添加标题，统一使用 caption 代替。禁止使用 `plt.title()`、`ax.set_title()`、`fig.suptitle()`。 <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 
 **Caption**:
 - 独立完整，不依赖正文

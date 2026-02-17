@@ -8,6 +8,42 @@ version: 0.1.0
 
 A systematic paper quality checking tool that helps researchers conduct comprehensive self-review before submission.
 
+## Policy Rules
+
+> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
+> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+
+| Rule ID | 摘要 |
+|---------|------|
+| `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
+| `FIG.FONT_GE_24PT` | 图表字号 ≥ 24pt |
+| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
+| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式 |
+| `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色 |
+| `FIG.SELF_CONTAINED_CAPTION` | Caption三要素 |
+| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
+| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
+| `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
+| `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
+| `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
+| `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |
+| `EXP.TAKEAWAY_BOX` | 实验结果附 takeaway box |
+| `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
+| `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
+| `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
+| `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
+| `CITE.VERIFY_VIA_API` | 引文API验证 |
+| `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
+| `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
+| `REPRO.COMPUTE_RESOURCES_DOCUMENTED` | 计算资源文档 |
+| `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
+| `PROSE.EM_DASH_RESTRICTION` | 限制em-dash |
+| `SUBMIT.SECTION_NUMBERING_CONSISTENCY` | Section编号一致 |
+| `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
+| `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
+| `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
+
 ## Core Features
 
 ### 1. Structure Review
@@ -30,15 +66,20 @@ Verify the logical coherence of the paper:
 ### 3. Citation Completeness
 
 Check the completeness and accuracy of citations:
-- Are all citations present in the references?
-- Is the reference format consistent?
+- Are all citations present in the references? <!-- policy:CITE.VERIFY_VIA_API -->
+- Is the reference format consistent? <!-- policy:BIBTEX.CONSISTENT_CITATION_KEY_FORMAT -->
 - Are key related works cited?
 - Do citations accurately reflect the original content?
 
 ### 4. Figure/Table Quality
 
 Evaluate the quality and effectiveness of figures and tables:
-- Do all figures/tables have clear captions + labels (no in-figure title text)?
+- Do all figures/tables have clear captions + labels (no in-figure title text)? <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+- Are figures in vector format (PDF/EPS)? <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
+- Are colorblind-safe palettes used? <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
+- Are captions self-contained (what, how, takeaway)? <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- Do tables use booktabs format? <!-- policy:TABLE.BOOKTABS_FORMAT -->
+- Do table headers include direction indicators (↑/↓)? <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - Do figures/tables support the text narrative?
 - Are figures/tables clear and readable?
 - Do formats comply with journal/conference requirements?
@@ -47,6 +88,8 @@ Evaluate the quality and effectiveness of figures and tables:
 
 Check writing clarity and readability:
 - Is the language concise and clear?
+- Are empty intensifiers removed? <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
+- Are em-dashes used sparingly? <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Is technical terminology used appropriately?
 - Are sentence structures clear?
 - Is paragraph organization logical?
@@ -54,10 +97,29 @@ Check writing clarity and readability:
 ### 6. LaTeX Math Conformance
 
 Check whether math notation follows project rules:
-- Are display equations written with `\begin{equation}...\end{equation}`?
-- Is raw `$$...$$` or `\[...\]` avoided for display equations?
+- Are display equations written with `\begin{equation}...\end{equation}`? <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- Is raw `$$...$$` or `\[...\]` avoided for display equations? <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 - Are inline equations written with `$...$` where appropriate?
-- Are variable-like tokens longer than 3 letters wrapped with `\text{}` in math mode?
+- Are variable-like tokens longer than 3 letters wrapped with `\text{}` in math mode? <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
+- Are symbols consistent throughout the paper? <!-- policy:LATEX.NOTATION_CONSISTENCY -->
+
+### 7. Experiment Structure
+
+Check experiment section completeness:
+- Do experiment results include error bars? <!-- policy:EXP.ERROR_BARS_REQUIRED -->
+- Are ablation studies in the Results section (not Discussion)? <!-- policy:EXP.ABLATION_IN_RESULTS -->
+- Does each experiment subsection follow the required structure? <!-- policy:EXP.RESULTS_SUBSECTION_STRUCTURE -->
+- Are random seeds documented? <!-- policy:REPRO.RANDOM_SEED_DOCUMENTATION -->
+- Are compute resources documented? <!-- policy:REPRO.COMPUTE_RESOURCES_DOCUMENTED -->
+
+### 8. Submission Compliance
+
+Check submission requirements:
+- Are top-level sections ≤ 6? <!-- policy:PAPER.SECTION_HEADINGS_MAX_6 -->
+- Is section numbering consistent? <!-- policy:SUBMIT.SECTION_NUMBERING_CONSISTENCY -->
+- Does the paper meet the page limit? <!-- policy:SUBMIT.PAGE_LIMIT_STRICT -->
+- Is double-blind anonymization correct? <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION -->
+- Is there a Limitations section? <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
 
 ## Quality Checklist
 
@@ -70,15 +132,34 @@ Paper Quality Checklist:
 - [ ] Method is reproducible
 - [ ] Results support conclusions
 - [ ] Discussion addresses limitations
-- [ ] All figures/tables have captions + labels (no in-figure title text)
-- [ ] Display equations use `equation`; no `$$...$$` or `\[...\]`
-- [ ] In math mode, variable-like tokens >3 letters use `\text{}`
-- [ ] Citations are complete and accurate
-- [ ] Cross-references use correct prefix: Fig.~\ref, Table~\ref, Section~\ref, Eq.~\eqref, Algorithm~\ref
-- [ ] Conclusion is a single dense paragraph (no subsections)
-- [ ] Figure source font ≥ 24pt (readable after LaTeX scaling)
-- [ ] Each Python plot = 1 file → 1 figure (no subplots); composite via LaTeX \subfigure
-- [ ] Experiment results subsections each end with \fbox Takeaway box
+- [ ] All figures/tables have captions + labels (no in-figure title text) <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+- [ ] Display equations use `equation`; no `$$...$$` or `\[...\]` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- [ ] In math mode, variable-like tokens >3 letters use `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
+- [ ] Citations are complete and accurate <!-- policy:CITE.VERIFY_VIA_API -->
+- [ ] BibTeX key format is consistent <!-- policy:BIBTEX.CONSISTENT_CITATION_KEY_FORMAT -->
+- [ ] Cross-references use correct prefix: Fig.~\ref, Table~\ref, \S\ref, \eqref, \textbf{Appendix~\ref}, Algorithm~\ref, Listing~\ref <!-- policy:REF.CROSS_REFERENCE_STYLE -->
+- [ ] Conclusion is a single dense paragraph (no subsections) <!-- policy:PAPER.CONCLUSION_SINGLE_PARAGRAPH -->
+- [ ] Figure source font ≥ 24pt (readable after LaTeX scaling) <!-- policy:FIG.FONT_GE_24PT -->
+- [ ] Figures use vector format (PDF/EPS) <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
+- [ ] Colorblind-safe palettes used <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
+- [ ] Figure captions are self-contained <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- [ ] Each Python plot = 1 file → 1 figure (no subplots); composite via LaTeX \subfigure <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
+- [ ] Tables use booktabs format <!-- policy:TABLE.BOOKTABS_FORMAT -->
+- [ ] Table headers include direction indicators (↑/↓) <!-- policy:TABLE.DIRECTION_INDICATORS -->
+- [ ] Symbols consistent throughout paper <!-- policy:LATEX.NOTATION_CONSISTENCY -->
+- [ ] Empty intensifiers removed <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
+- [ ] Em-dashes used sparingly <!-- policy:PROSE.EM_DASH_RESTRICTION -->
+- [ ] Experiment results include error bars <!-- policy:EXP.ERROR_BARS_REQUIRED -->
+- [ ] Experiment results subsections each end with \fbox Takeaway box <!-- policy:EXP.TAKEAWAY_BOX -->
+- [ ] Ablation studies in Results section <!-- policy:EXP.ABLATION_IN_RESULTS -->
+- [ ] Experiment subsections follow required structure <!-- policy:EXP.RESULTS_SUBSECTION_STRUCTURE -->
+- [ ] Random seeds documented <!-- policy:REPRO.RANDOM_SEED_DOCUMENTATION -->
+- [ ] Compute resources documented <!-- policy:REPRO.COMPUTE_RESOURCES_DOCUMENTED -->
+- [ ] Top-level sections ≤ 6 <!-- policy:PAPER.SECTION_HEADINGS_MAX_6 -->
+- [ ] Section numbering consistent <!-- policy:SUBMIT.SECTION_NUMBERING_CONSISTENCY -->
+- [ ] Page limit met <!-- policy:SUBMIT.PAGE_LIMIT_STRICT -->
+- [ ] Double-blind anonymization correct <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION -->
+- [ ] Limitations section present <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
 ```
 
 ## When to Use
@@ -113,7 +194,13 @@ Review language expression and writing clarity.
 ### Step 6: Math Conformance Check
 Verify equation environment and variable naming style consistency.
 
-### Step 7: Final Checklist
+### Step 7: Experiment Structure Check
+Verify error bars, ablation placement, subsection structure, reproducibility documentation.
+
+### Step 8: Submission Compliance Check
+Verify section count, numbering, page limits, anonymization, and limitations section.
+
+### Step 9: Final Checklist
 Use the quality checklist for final verification.
 
 ## Best Practices

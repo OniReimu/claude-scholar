@@ -11,6 +11,18 @@ tags: [Writing, AI, Anti-AI, Humanizer]
 
 Remove AI-generated writing patterns from text to make it sound natural and human-written. Supports both English and Chinese.
 
+## Policy Rules
+
+> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
+> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+
+| Rule ID | 摘要 |
+|---------|------|
+| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
+| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
+| `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
+| `PROSE.EM_DASH_RESTRICTION` | 限制em-dash |
+
 ## Overview
 
 This skill identifies and eliminates predictable AI writing patterns from prose, based on [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), maintained by WikiProject AI Cleanup.
@@ -34,7 +46,7 @@ This skill identifies and eliminates predictable AI writing patterns from prose,
 
 ## Core Rules (快速检查清单)
 
-### 1. Cut Filler Phrases
+### 1. Cut Filler Phrases <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
 Remove throat-clearing openers and emphasis crutches.
 
 **English examples**:
@@ -53,7 +65,7 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 **Patterns to avoid**:
 - Negative parallelisms: "It's not just X, it's Y"
 - Rule of three: "A, B, and C" (prefer two or four items)
-- Em-dash overuse: "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence)
+- Em-dash overuse: "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including")
 
 ### 3. Vary Rhythm
@@ -79,10 +91,10 @@ If it sounds like a pull-quote, rewrite it.
 When editing paper text, preserve math-style constraints instead of "humanizing" them away.
 
 **Required:**
-- Display equations must use `\begin{equation}...\end{equation}`
+- Display equations must use `\begin{equation}...\end{equation}` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 - Do not rewrite display equations into `$$...$$` or `\[...\]`
 - Inline equations can use `$...$`
-- In math mode, variable-like tokens longer than 3 letters must use `\text{}`
+- In math mode, variable-like tokens longer than 3 letters must use `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 ## Common AI Patterns (常见 AI 模式)
 
@@ -102,7 +114,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 |---------|-------------|----------|
 | **AI vocabulary** | Additionally, crucial, delve, enhance, landscape | 此外，至关重要，深入探讨，增强，格局 |
 | **Copula avoidance** | "serves as", "stands for", "represents" | "作为"，"代表"，"充当" |
-| **Em dash overuse** | "X---Y---Z" parenthetical insertions | 过度使用破折号做插入语 |
+| **Em dash overuse** | "X---Y---Z" parenthetical insertions | 过度使用破折号做插入语 | <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 | **Colon-list overuse** | "X: A, B, and C" inline enumeration | 冒号引出内联列表 |
 | **Rule of three** | Forcing ideas into groups of three | 强行三段式 |
 | **Elegant variation** | Excessive synonym substitution | 过度换词 |

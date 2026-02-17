@@ -12,6 +12,42 @@ dependencies: [semanticscholar, arxiv, habanero, requests]
 
 Expert-level guidance for writing publication-ready papers targeting **NeurIPS, ICML, ICLR, ACL, AAAI, and COLM**. This skill combines writing philosophy from top researchers (Nanda, Farquhar, Karpathy, Lipton, Steinhardt) with practical tools: LaTeX templates, citation verification APIs, and conference checklists.
 
+## Policy Rules
+
+> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
+> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+
+| Rule ID | 摘要 |
+|---------|------|
+| `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
+| `FIG.FONT_GE_24PT` | 图表字号 ≥ 24pt |
+| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
+| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式 |
+| `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色 |
+| `FIG.SELF_CONTAINED_CAPTION` | Caption三要素 |
+| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
+| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
+| `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
+| `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
+| `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
+| `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |
+| `EXP.TAKEAWAY_BOX` | 实验结果附 takeaway box |
+| `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
+| `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
+| `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
+| `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
+| `CITE.VERIFY_VIA_API` | 引文API验证 |
+| `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
+| `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
+| `REPRO.COMPUTE_RESOURCES_DOCUMENTED` | 计算资源文档 |
+| `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
+| `PROSE.EM_DASH_RESTRICTION` | 限制em-dash |
+| `SUBMIT.SECTION_NUMBERING_CONSISTENCY` | Section编号一致 |
+| `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
+| `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
+| `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
+
 ## Core Philosophy: Collaborative Writing
 
 **Paper writing is collaborative, but Claude should be proactive in delivering drafts.**
@@ -36,7 +72,7 @@ The typical workflow starts with a research repository containing code, results,
 AI-generated citations have a **~40% error rate**. Hallucinated references—papers that don't exist, wrong authors, incorrect years, fabricated DOIs—are a serious form of academic misconduct that can result in desk rejection or retraction.
 
 ### The Rule
-**NEVER generate BibTeX entries from memory. ALWAYS fetch programmatically.**
+**NEVER generate BibTeX entries from memory. ALWAYS fetch programmatically.** <!-- policy:CITE.VERIFY_VIA_API -->
 
 | Action | ✅ Correct | ❌ Wrong |
 |--------|-----------|----------|
@@ -482,9 +518,9 @@ Before writing anything, articulate and verify:
 
 Figure 1 deserves special attention—many readers skip directly to it.
 - Convey core idea, approach, or most compelling result
-- Use vector graphics (PDF/EPS for plots)
-- Write captions that stand alone without main text
-- **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color
+- Use vector graphics (PDF/EPS for plots) <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
+- Write captions that stand alone without main text <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - **MANDATORY for conceptual diagrams** (system overviews, pipelines, architectures): **activate `paper-figure-generator` skill NOW** to generate editable SVG figures via AutoFigure-Edit.
   - Recommended workflow: write `figures/{slug}/brief.md` (see `paper-figure-generator/references/figure-brief.md`) → write `figures/{slug}/method.txt` → run `bash skills/paper-figure-generator/scripts/doctor.sh` → run `bash skills/paper-figure-generator/scripts/generate.sh ...` → run `bash skills/paper-figure-generator/scripts/svg-to-pdf.sh ...`
   - Keep `figures/{slug}/run.json` for reproducibility
@@ -506,7 +542,7 @@ The final paper follows this structure. Strictly control to **6 top-level number
 | — | Acknowledgments | Funding, collaborators (remove during anonymous review, restore for camera-ready) |
 
 **Section management rules:**
-- **Maximum 6 numbered sections** — do not proliferate top-level headings
+- **Maximum 6 numbered sections** — do not proliferate top-level headings <!-- policy:PAPER.SECTION_HEADINGS_MAX_6 -->
 - Each `\subsection` must justify its existence with ≥ 2 substantive paragraphs of content
 - If a subsection is thin (< 2 paragraphs), demote to inline heading: `\noindent\textbf{Heading.}` followed by text on the same line
 - Same rule applies to `\subsubsection` — thin content uses `\noindent\textbf{}` instead
@@ -515,11 +551,11 @@ The final paper follows this structure. Strictly control to **6 top-level number
 **Bibliography rules:**
 - **Default to BibTeX** (not BibLaTeX) — use `\bibliographystyle{...}` + `\bibliography{refs}` with `bibtex main` compilation. Most top venue templates (NeurIPS, ICML, ICLR, ACL) use BibTeX by default.
 - Store all entries in a single `.bib` file (e.g., `refs.bib` or `references.bib`)
-- NEVER generate BibTeX entries from memory — always fetch programmatically via DOI/Semantic Scholar (see citation-verification skill)
+- NEVER generate BibTeX entries from memory — always fetch programmatically via DOI/Semantic Scholar (see citation-verification skill) <!-- policy:CITE.VERIFY_VIA_API --> <!-- policy:BIBTEX.CONSISTENT_CITATION_KEY_FORMAT -->
 - Compilation order: `pdflatex → bibtex → pdflatex → pdflatex`
 
 **Punctuation rules (anti-AI):**
-- **Em-dash (`---`)**: Do NOT use em-dashes for parenthetical insertions. Instead use: (1) a new sentence, (2) a relative clause (`, which...`), or (3) parenthetical commas. ≥ 2 em-dashes per paragraph is a strong AI signal. En-dash (`--`) for ranges/compounds is fine.
+- **Em-dash (`---`)**: Do NOT use em-dashes for parenthetical insertions. Instead use: (1) a new sentence, (2) a relative clause (`, which...`), or (3) parenthetical commas. ≥ 2 em-dashes per paragraph is a strong AI signal. En-dash (`--`) for ranges/compounds is fine. <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - **Colon (`:`)**: Do NOT use colons to introduce 3+ item inline enumerations (e.g., "X: A, B, and C"). Instead break into separate sentences or use "such as"/"including". Exception: numbered step lists ("(1)...(2)...") and formal definitions are standard.
 - See `writing-anti-ai` skill, Patterns #13 and #13b for detailed examples and fix strategies.
 
@@ -583,7 +619,7 @@ This section combines foundational knowledge and positioning against existing wo
 
 This section formally defines **what you are solving** and **under what assumptions**.
 
-**MANDATORY: Notation Table.** This section MUST open with a notation table (`Table~\ref{tab:notation}`) that defines all symbols used throughout the paper. This table is the single source of truth — all subsequent sections (Methods, Experiments, Discussion) must use notation consistent with this table.
+**MANDATORY: Notation Table.** This section MUST open with a notation table (`Table~\ref{tab:notation}`) that defines all symbols used throughout the paper. This table is the single source of truth — all subsequent sections (Methods, Experiments, Discussion) must use notation consistent with this table. <!-- policy:LATEX.NOTATION_CONSISTENCY -->
 
 Best practices for the notation table:
 - Use `threeparttable` + `\resizebox{\linewidth}{!}` for clean formatting
@@ -631,9 +667,9 @@ Best practices for the notation table:
 
 **Guidelines:**
 - All notation in subsequent sections MUST match `Table~\ref{tab:notation}` — never introduce a symbol without defining it in the notation table first
-- Use `\begin{equation}...\end{equation}` for display equations; do not use raw `$$...$$` or `\[...\]`
+- Use `\begin{equation}...\end{equation}` for display equations; do not use raw `$$...$$` or `\[...\]` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 - Inline equations can use `$...$`
-- In math mode, if a variable-like token has more than 3 letters, write it with `\text{}` (e.g., `\text{score}`, `\text{total_loss}`), not italic math identifiers
+- In math mode, if a variable-like token has more than 3 letters, write it with `\text{}` (e.g., `\text{score}`, `\text{total_loss}`), not italic math identifiers <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 - Keep the scope tight — this section defines the problem, NOT the solution (§4)
 - For non-security papers, this section may be titled "Problem Setup" or "Problem Formulation"
 - If the system model is simple enough (e.g., standard supervised learning), it may be demoted to a subsection of §2 or §4
@@ -669,7 +705,7 @@ Pseudocode guidelines:
 - Use consistent notation: match variable names between math formulation, pseudocode, and prose
 - If the algorithm is short (< 5 lines), inline description may suffice; reserve `Algorithm` floats for procedures with ≥ 5 steps or non-obvious control flow
 
-**Cross-reference style (mandatory in manuscript text):**
+**Cross-reference style (mandatory in manuscript text):** <!-- policy:REF.CROSS_REFERENCE_STYLE -->
 - Figure: `Fig.~\ref{...}`
 - Table: `Table~\ref{...}`
 - Section: `\S\ref{...}`
@@ -798,9 +834,9 @@ Concrete actions:
 
 **Figures vs tables:**
 - **Figures**: Sparse data, trends/distributions, < 20 data points per comparison
-- **Tables** (`booktabs` + `\resizebox`): Dense numerical results, many metrics (5+) and/or many baselines (5+), `table*` for large comparison matrices
+- **Tables** (`booktabs` + `\resizebox`): Dense numerical results, many metrics (5+) and/or many baselines (5+), `table*` for large comparison matrices <!-- policy:TABLE.BOOKTABS_FORMAT -->
 
-**Figure file rule: 1 file = 1 figure.** Do NOT use `plt.subplots()` to combine multiple plots into one image. Each individual plot must be saved as a separate file. Composite layouts (side-by-side comparison, multi-condition grids) are handled in LaTeX via `\subfigure` — not in Python.
+**Figure file rule: 1 file = 1 figure.** Do NOT use `plt.subplots()` to combine multiple plots into one image. Each individual plot must be saved as a separate file. Composite layouts (side-by-side comparison, multi-condition grids) are handled in LaTeX via `\subfigure` — not in Python. <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
 
 ```python
 # CORRECT: one file per plot
@@ -814,7 +850,7 @@ fig, axes = plt.subplots(1, 4, figsize=(16, 3))  # ← NEVER do this
 
 **Shared legend**: If multiple sub-figures share the same legend, save the legend as a separate image file and include it above the subfigures in LaTeX (see subfigure template in Step 9).
 
-**Figure quality**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — consistent style, **font size ≥ 24pt in source** (critical: smaller fonts become unreadable after scaling to column width), colorblind-safe palettes (Okabe-Ito or Paul Tol), line width ≥ 2.5pt, PDF vector format. See `results-analysis` skill for recommended `plt.rcParams` template.
+**Figure quality**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — consistent style, **font size ≥ 24pt in source** (critical: smaller fonts become unreadable after scaling to column width), colorblind-safe palettes (Okabe-Ito or Paul Tol), line width ≥ 2.5pt, PDF vector format. See `results-analysis` skill for recommended `plt.rcParams` template. <!-- policy:FIG.FONT_GE_24PT --> <!-- policy:FIG.VECTOR_FORMAT_REQUIRED --> <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 
 > **MANDATORY OUTPUT for Step 8 (all three required before proceeding to Step 9):**
 > - [ ] Experiment plan document (confirmed by user in 8a)
@@ -847,16 +883,16 @@ Use `\smallskip\noindent\textbf{}` fourth-level headings to organize (NOT `\subs
 
 \smallskip\noindent\textbf{Implementation Details.} All experiments use PyTorch ...
 We set the learning rate to ... Hyperparameter search ranges are in Appendix~\ref{app:hyperparams}.
-All experiments run on [GPU type] for [total hours]. Seeds: ...
+All experiments run on [GPU type] for [total hours]. Seeds: ... <!-- policy:REPRO.COMPUTE_RESOURCES_DOCUMENTED --> <!-- policy:REPRO.RANDOM_SEED_DOCUMENTATION -->
 ```
 
 ---
 
-**\subsection{Experimental Results}**
+**\subsection{Experimental Results}** <!-- policy:EXP.RESULTS_SUBSECTION_STRUCTURE -->
 
 Use `\subsubsection` for each experiment group. **Every** `\subsubsection` MUST:
 1. `\ref` to its corresponding figure or table (e.g., "as shown in Table~\ref{tab:main}" or "Fig.~\ref{fig:convergence} shows...")
-2. End with a **Takeaway box** summarizing the key finding:
+2. End with a **Takeaway box** summarizing the key finding: <!-- policy:EXP.TAKEAWAY_BOX -->
 
 ```latex
 \begin{center}
@@ -941,9 +977,9 @@ Fig.~\ref{fig:convergence} shows ... [analysis] ...
 - `\shortstack` in subfigure captions for multi-line condition labels
 
 **Rules:**
-- Quantitative tables use error bars (mean ± std, n runs) and complement the qualitative comparison table in Background & Related Work (same baselines, concrete numbers)
-- **Ablation studies belong HERE** (as a `\subsubsection` of Results), NOT in Discussion
-- Each `\subsubsection` must have enough content (≥ 2 paragraphs + takeaway box)
+- Quantitative tables use error bars (mean ± std, n runs) and complement the qualitative comparison table in Background & Related Work (same baselines, concrete numbers) <!-- policy:EXP.ERROR_BARS_REQUIRED -->
+- **Ablation studies belong HERE** (as a `\subsubsection` of Results), NOT in Discussion <!-- policy:EXP.ABLATION_IN_RESULTS -->
+- Each `\subsubsection` must have enough content (≥ 2 paragraphs + takeaway box) <!-- policy:EXP.TAKEAWAY_BOX -->
 
 ---
 
@@ -998,11 +1034,11 @@ Explain why limitations do not undermine core claims.
 
 ---
 
-**Page limit notes** (critical — some venues treat limitations specially):
-- **NeurIPS**: Limitations section does NOT count toward page limit (can be extracted as standalone after Conclusion)
+**Page limit notes** (critical — some venues treat limitations specially): <!-- policy:SUBMIT.PAGE_LIMIT_STRICT -->
+- **NeurIPS**: Limitations section does NOT count toward page limit (can be extracted as standalone after Conclusion) <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
 - **ICML**: Broader Impact Statement required after conclusion, outside page limit
-- **ICLR**: Mandatory Limitations section (can stay as subsection or standalone)
-- **ACL**: Mandatory Limitations section, does NOT count toward page limit
+- **ICLR**: Mandatory Limitations section (can stay as subsection or standalone) <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
+- **ACL**: Mandatory Limitations section, does NOT count toward page limit <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
 
 > If a venue **requires** a standalone Limitations section, extract it from Discussion and place after Conclusion. This does not add to the section count since it's typically unnumbered or outside the page limit.
 
@@ -1011,7 +1047,7 @@ Explain why limitations do not undermine core claims.
 **Conclusion (§6 or last numbered section):**
 
 Structure:
-- **Single paragraph only**: Include summary + key findings + future work in one cohesive paragraph
+- **Single paragraph only**: Include summary + key findings + future work in one cohesive paragraph <!-- policy:PAPER.CONCLUSION_SINGLE_PARAGRAPH -->
 
 Guidelines:
 - Do NOT introduce new information or results
@@ -1054,7 +1090,7 @@ NeurIPS, ICML, and ICLR all require paper checklists. See `references/checklists
 - Use `citation-verification` skill for reference validation
 - Use `writing-anti-ai` skill if needed for natural voice
 - Verify claim-evidence-figure alignment from Step 8a
-- Check page limits, anonymization, supplementary materials
+- Check page limits, anonymization, supplementary materials <!-- policy:SUBMIT.PAGE_LIMIT_STRICT --> <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION --> <!-- policy:SUBMIT.SECTION_NUMBERING_CONSISTENCY -->
 
 ---
 
@@ -1126,7 +1162,7 @@ These small changes accumulate into significantly clearer prose:
 - **Be specific**: ❌ "performance" → ✅ "accuracy" or "latency" (say what you mean)
 - **Eliminate hedging**: Drop "may" and "can" unless genuinely uncertain
 - **Avoid incremental vocabulary**: ❌ "combine," "modify," "expand" → ✅ "develop," "propose," "introduce"
-- **Delete intensifiers**: ❌ "provides *very* tight approximation" → ✅ "provides tight approximation"
+- **Delete intensifiers**: ❌ "provides *very* tight approximation" → ✅ "provides tight approximation" <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
 
 #### Precision Over Brevity (Jacob Steinhardt)
 
@@ -1162,8 +1198,8 @@ Understanding reviewer behavior helps prioritize your effort:
 | **COLM 2025** | 9 pages | +1 | Focus on language models |
 
 **Universal Requirements:**
-- Double-blind review (anonymize submissions)
-- References don't count toward page limit
+- Double-blind review (anonymize submissions) <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION -->
+- References don't count toward page limit <!-- policy:SUBMIT.PAGE_LIMIT_STRICT -->
 - Appendices unlimited but reviewers not required to read
 - LaTeX required for all venues
 
@@ -1649,7 +1685,7 @@ Add sentence before each experiment: "This experiment tests whether [specific cl
 **Issue: Missing statistical significance**
 
 Always include:
-- Error bars (specify: std dev or std error)
+- Error bars (specify: std dev or std error) <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 - Number of runs
 - Statistical tests if comparing methods
 
@@ -1682,7 +1718,7 @@ See [references/reviewer-guidelines.md](references/reviewer-guidelines.md) for d
 
 ### Tables
 
-Use `booktabs` LaTeX package for professional tables. Always wrap tables in `\resizebox` to fit column/page width:
+Use `booktabs` LaTeX package for professional tables. Always wrap tables in `\resizebox` to fit column/page width: <!-- policy:TABLE.BOOKTABS_FORMAT -->
 
 ```latex
 \usepackage{booktabs}
@@ -1720,7 +1756,7 @@ Baseline & 85.2 & 45ms \\
 
 **Rules:**
 - Bold best value per metric
-- Include direction symbols (↑ higher is better, ↓ lower is better)
+- Include direction symbols (↑ higher is better, ↓ lower is better) <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - Right-align numerical columns
 - Consistent decimal precision
 - Always use `\resizebox{\columnwidth}{!}` (or `\textwidth` for `table*`)
@@ -1731,12 +1767,12 @@ Baseline & 85.2 & 45ms \\
 
 ### Figures
 
-- **Vector graphics** (PDF, EPS) for all plots and diagrams
+- **Vector graphics** (PDF, EPS) for all plots and diagrams <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
 - **Raster** (PNG 600 DPI) only for photographs
-- Use **colorblind-safe palettes** (Okabe-Ito or Paul Tol)
+- Use **colorblind-safe palettes** (Okabe-Ito or Paul Tol) <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - Verify **grayscale readability** (8% of men have color vision deficiency)
-- **No title inside figure**—the caption serves this function
-- **Self-contained captions**—reader should understand without main text
+- **No title inside figure**—the caption serves this function <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+- **Self-contained captions**—reader should understand without main text <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
 
 **Figure type distinction:**
 - **Data-driven plots** (bar charts, line plots, heatmaps, scatter plots): use `results-analysis` skill with matplotlib/seaborn

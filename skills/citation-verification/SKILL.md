@@ -9,6 +9,16 @@ version: 0.1.0
 
 A reference guide for citation verification in academic paper writing, providing verification principles and best practices.
 
+## Policy Rules
+
+> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
+> 行内出现处标记为 `<!-- policy:{id} -->`。**冲突时以 `policy/rules/` 为准。**
+
+| Rule ID | 摘要 |
+|---------|------|
+| `CITE.VERIFY_VIA_API` | 引文API验证 |
+| `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
+
 **Core Principle**: Proactively verify every citation during the writing process using WebSearch and Google Scholar.
 
 ## Core Problems
@@ -51,7 +61,7 @@ This skill provides verification principles based on WebSearch and Google Schola
 1. WebSearch query: `"site:scholar.google.com [paper title] [first author]"`
 2. Confirm the paper appears in results
 3. Check citation count (abnormally low counts may indicate issues)
-4. Click "Cite" to get BibTeX
+4. Click "Cite" to get BibTeX <!-- policy:BIBTEX.CONSISTENT_CITATION_KEY_FORMAT -->
 
 ### 3. Information Matching Verification
 
@@ -152,7 +162,7 @@ Step 5: Add to bibliography
 
 ### Preventing Fake Citations
 
-1. **Never generate citations from memory** - AI-generated citations have 40% error rate
+1. **Never generate citations from memory** - AI-generated citations have 40% error rate <!-- policy:CITE.VERIFY_VIA_API -->
 2. **Use WebSearch to find** - Verify every citation through WebSearch
 3. **Confirm on Google Scholar** - Verify paper existence on Google Scholar
 4. **Verify promptly** - Verify when adding citations, don't wait until finished
