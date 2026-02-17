@@ -129,6 +129,21 @@ api_key_arg_present = sys.argv[6] == "1"
 method_file = sys.argv[7]
 raw_args = sys.argv[8:]
 
+# Filter out --api_key and its value to prevent secret leakage
+_filtered_args: list[str] = []
+_skip_next = False
+for _a in raw_args:
+    if _skip_next:
+        _skip_next = False
+        continue
+    if _a == "--api_key":
+        _skip_next = True
+        continue
+    if _a.startswith("--api_key="):
+        continue
+    _filtered_args.append(_a)
+raw_args = _filtered_args
+
 def _git_rev(root: Path) -> str | None:
     try:
         import subprocess
@@ -180,4 +195,4 @@ CMD+=("$@")
 
 echo ""
 echo "[no-title-lint] Checking generated outputs for accidental in-figure title text..."
-"$PYTHON" "$SCRIPT_DIR/lint_no_title.py" --path "$OUTPUT_DIR" || true
+"$PYTHON" "$SCRIPT_DIR/lint_no_title.py" --strict --path "$OUTPUT_DIR"

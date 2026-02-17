@@ -48,5 +48,5 @@ echo "Wrote: $PDF_PATH"
 
 echo ""
 echo "[no-title-lint] Checking SVG/PDF for accidental in-figure title text..."
-"$VENV_PY" "$SCRIPT_DIR/lint_no_title.py" --path "$SVG_PATH" || true
-"$VENV_PY" "$SCRIPT_DIR/lint_no_title.py" --path "$PDF_PATH" || true
+"$VENV_PY" "$SCRIPT_DIR/lint_no_title.py" --strict --path "$SVG_PATH"
+"$VENV_PY" "$SCRIPT_DIR/lint_no_title.py" --strict --path "$PDF_PATH"

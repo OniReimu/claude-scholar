@@ -2263,10 +2263,10 @@ def method_to_svg(
     output_dir: str = "./output",
     api_key: str = None,
     base_url: str = None,
-    provider: ProviderType = "bianxie",
+    provider: ProviderType = "openrouter",
     image_gen_model: str = None,
     svg_gen_model: str = None,
-    sam_prompts: str = "icon",
+    sam_prompts: str = "icon,robot,animal,person",
     min_score: float = 0.5,
     sam_backend: Literal["local", "fal", "roboflow", "api"] = "local",
     sam_api_key: Optional[str] = None,
@@ -2620,7 +2620,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--merge_threshold",
         type=float,
-        default=0.001,
+        default=0.9,
         help="Box合并阈值，重叠比例超过此值则合并（0表示不合并，默认: 0.9）"
     )
 

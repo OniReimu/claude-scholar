@@ -74,6 +74,11 @@ Paper Quality Checklist:
 - [ ] Display equations use `equation`; no `$$...$$` or `\[...\]`
 - [ ] In math mode, variable-like tokens >3 letters use `\text{}`
 - [ ] Citations are complete and accurate
+- [ ] Cross-references use correct prefix: Fig.~\ref, Table~\ref, Section~\ref, Eq.~\eqref, Algorithm~\ref
+- [ ] Conclusion is a single dense paragraph (no subsections)
+- [ ] Figure source font ≥ 24pt (readable after LaTeX scaling)
+- [ ] Each Python plot = 1 file → 1 figure (no subplots); composite via LaTeX \subfigure
+- [ ] Experiment results subsections each end with \fbox Takeaway box
 ```
 
 ## When to Use

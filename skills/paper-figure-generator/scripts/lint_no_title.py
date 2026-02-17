@@ -238,8 +238,8 @@ def lint_pdf(pdf_path: Path) -> list[Finding]:
 
     # Heuristic: longest early line with multiple words is often a title.
     first_lines = lines[:15]
-    candidate = max(first_lines, key=lambda s: len(re.sub(r"\\s+", "", s)), default="")
-    normalized_len = len(re.sub(r"\\s+", "", candidate))
+    candidate = max(first_lines, key=lambda s: len(re.sub(r"\s+", "", s)), default="")
+    normalized_len = len(re.sub(r"\s+", "", candidate))
     if normalized_len >= 14 and " " in candidate and len(candidate) >= 12:
         return [
             Finding(

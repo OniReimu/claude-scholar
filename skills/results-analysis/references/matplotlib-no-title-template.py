@@ -16,21 +16,23 @@ import matplotlib.pyplot as plt
 
 
 def apply_paper_style() -> None:
-    # 以双栏论文为默认（可按会议模板微调 figsize）
+    # 创建 2x 目标尺寸的图，由 LaTeX 缩放到 column width
+    # 7" 宽 → LaTeX 缩放至 3.4" (single column) 时，24pt 字变为 ~12pt，仍可读
+    # 规则：font ≥ 24pt in source（figures4papers 规范）
     mpl.rcParams.update(
         {
             "figure.dpi": 200,
             "savefig.dpi": 300,
-            "font.size": 9,
-            "axes.labelsize": 9,
-            "axes.titlesize": 9,
-            "legend.fontsize": 8,
-            "xtick.labelsize": 8,
-            "ytick.labelsize": 8,
-            "lines.linewidth": 1.6,
-            "lines.markersize": 5,
-            "axes.linewidth": 0.8,
-            "grid.linewidth": 0.6,
+            "font.size": 24,
+            "axes.labelsize": 26,
+            "axes.titlesize": 24,
+            "legend.fontsize": 22,
+            "xtick.labelsize": 22,
+            "ytick.labelsize": 22,
+            "lines.linewidth": 3.0,
+            "lines.markersize": 10,
+            "axes.linewidth": 1.5,
+            "grid.linewidth": 1.0,
             "grid.alpha": 0.35,
             # Vector-friendly: embed TrueType fonts in PDF
             "pdf.fonttype": 42,
@@ -41,7 +43,7 @@ def apply_paper_style() -> None:
 
 def plot_demo(out_path: Path) -> None:
     # 示例：折线图（无 title，仅 axis labels + legend）
-    fig, ax = plt.subplots(figsize=(3.4, 2.2))
+    fig, ax = plt.subplots(figsize=(7, 4.5))
 
     x = [1, 2, 3, 4, 5]
     y_a = [62.1, 66.4, 68.9, 70.3, 71.0]
