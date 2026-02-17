@@ -15,7 +15,7 @@ conflicts_with: []
 lint_patterns:
   - pattern: "\\$\\$"
     mode: match
-  - pattern: "\\\\\\[(?![\\d.])"
+  - pattern: "(?<!\\\\)\\\\\\["
     mode: match
 lint_targets: "**/*.tex"
 ---

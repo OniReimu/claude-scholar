@@ -117,13 +117,13 @@ regex_match() {
   esac
 }
 
-# Returns count of matching lines
+# Returns count of individual matches (not matching lines)
 regex_count() {
   local pattern="$1" file="$2"
   case "$GREP_MODE" in
-    ggrep) ggrep -Pc "$pattern" "$file" 2>/dev/null || echo 0 ;;
-    grep)  grep -Pc "$pattern" "$file" 2>/dev/null || echo 0 ;;
-    perl)  LINT_PAT="$pattern" perl -ne '$c++ if /$ENV{LINT_PAT}/; END{print $c//0}' "$file" 2>/dev/null || echo 0 ;;
+    ggrep) (ggrep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
+    grep)  (grep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
+    perl)  LINT_PAT="$pattern" perl -ne '$c++ while /$ENV{LINT_PAT}/g; END{print $c//0}' "$file" 2>/dev/null || echo 0 ;;
   esac
 }
 

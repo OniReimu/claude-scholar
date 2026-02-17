@@ -217,7 +217,7 @@ for profile in "$PROFILES_DIR"/*.md; do
         # Check params.* key exists in rule card
         if [[ "$field" == params.* ]]; then
           param_key="${field#params.}"
-          if ! get_fm "$rule_file" | grep -q "$param_key"; then
+          if ! get_fm "$rule_file" | grep -q "${param_key}:"; then
             err "$pname: overrides $rid.$field but rule card lacks param '$param_key'"
           fi
         fi
