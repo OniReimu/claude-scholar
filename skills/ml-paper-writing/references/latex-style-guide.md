@@ -338,3 +338,5 @@ Suitable for comparing frameworks, system designs, and multi-dimensional attribu
 \newcommand{\xmark}{\textcolor{red}{\ding{55}}}            % ✗
 \newcommand{\pmark}{\textcolor{blue!90}{\ding{109}}}       % ○ (partial)
 ```
+
+If a template or package has pre-defined `\cmark/\xmark/\pmark` and raises redefinition errors, use `\renewcommand` with the same symbol/color mapping above instead of switching to package-specific alternatives. <!-- policy:LATEX.CMARK_XMARK_PMARK_MACROS -->

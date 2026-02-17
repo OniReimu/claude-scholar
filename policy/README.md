@@ -113,6 +113,7 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 | FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required | core | error | false | doc |
 | TABLE.BOOKTABS_FORMAT | table-booktabs-format | core | warn | false | lint_script |
 | TABLE.DIRECTION_INDICATORS | table-direction-indicators | core | warn | false | doc |
+| LATEX.CMARK_XMARK_PMARK_MACROS | latex-cmark-xmark-pmark-macros | core | error | false | doc |
 | LATEX.EQ.DISPLAY_STYLE | latex-eq-display-style | core | error | true | doc |
 | LATEX.VAR.LONG_TOKEN_USE_TEXT | latex-var-long-token-use-text | core | warn | false | doc |
 | LATEX.NOTATION_CONSISTENCY | latex-notation-consistency | core | error | true | doc |

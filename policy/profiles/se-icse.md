@@ -15,6 +15,7 @@ venue: icse
 - `policy/rules/table-booktabs-format.md`
 - `policy/rules/table-direction-indicators.md`
 - `policy/rules/latex-eq-display-style.md`
+- `policy/rules/latex-cmark-xmark-pmark-macros.md`
 - `policy/rules/latex-var-long-token-use-text.md`
 - `policy/rules/latex-notation-consistency.md`
 - `policy/rules/ref-cross-reference-style.md`

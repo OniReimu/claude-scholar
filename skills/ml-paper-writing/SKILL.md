@@ -612,6 +612,7 @@ This section combines foundational knowledge and positioning against existing wo
 **REQUIRED: Include a qualitative comparison table.** This table uses **symbols** (✓ / ✗ / ◐) or qualitative labels (High / Medium / Low) to compare features/properties — **NOT numerical values**. Numerical results belong in §5 Experiments. Use templates from `references/latex-style-guide.md`:
 - **Feature Comparison Matrix** (✓/✗/◐ style) — for binary or ternary feature comparison
 - **Qualitative Comparison Table** (multi-column text descriptions) — for nuanced differences
+- For ✓/✗/◐ style matrices, define `\cmark/\xmark/\pmark` with `pifont` + `xcolor` in preamble (avoid template/package-default symbol commands that can conflict) <!-- policy:LATEX.CMARK_XMARK_PMARK_MACROS -->
 
 > **Table scope separation**: §2 comparison table = qualitative properties (supports X? has property Y?). §5 experiment tables = quantitative metrics (accuracy, F1, latency). Both cover the same baselines and dimensions, but at different granularity levels.
 

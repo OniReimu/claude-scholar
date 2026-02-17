@@ -27,6 +27,7 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
 | `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
 | `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
+| `LATEX.CMARK_XMARK_PMARK_MACROS` | 定性比较表统一 cmark/xmark/pmark 宏 |
 | `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
 | `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
 | `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |

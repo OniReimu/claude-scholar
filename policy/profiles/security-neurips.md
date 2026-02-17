@@ -10,6 +10,7 @@ venue: neurips
 - `policy/rules/fig-font-ge-24pt.md`
 - `policy/rules/fig-one-file-one-figure.md`
 - `policy/rules/latex-eq-display-style.md`
+- `policy/rules/latex-cmark-xmark-pmark-macros.md`
 - `policy/rules/latex-var-long-token-use-text.md`
 - `policy/rules/ref-cross-reference-style.md`
 - `policy/rules/paper-conclusion-single-paragraph.md`

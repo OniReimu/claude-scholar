@@ -224,6 +224,7 @@ Use the quality checklist for final verification.
 - Figures/tables lack clear captions/labels, or contain in-figure title text <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 - Display equations use `$$...$$` or `\[...\]` instead of `equation` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 - Long variable-like tokens are not wrapped with `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
+- Related Work comparison table uses `\cmark/\xmark/\pmark` without `pifont` + `xcolor` and unified macro definitions <!-- policy:LATEX.CMARK_XMARK_PMARK_MACROS -->
 - Inconsistent citation formatting
 
 ## Summary
