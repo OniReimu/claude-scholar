@@ -92,7 +92,7 @@
 
 ---
 
-## 技能目录（34 skills）
+## 技能目录（35 skills）
 
 ### 🔬 研究与分析 (5 skills)
 
@@ -147,9 +147,10 @@
 - **ui-ux-pro-max**: UI/UX 设计智能（50+ 风格、97 色板、57 字体配对、9 技术栈）
 - **web-design-reviewer**: 网站设计视觉检查，识别并修复响应式、可访问性、布局问题
 
-### 🔧 系统 (1 skill)
+### 🔧 系统 (2 skills)
 
 - **using-claude-scholar**: 元技能，确保正确使用 Claude Scholar 技能系统，强制技能评估纪律
+- **policy-rule-creator**: Policy Engine 规则创建向导（需求收集→Rule Card→Registry→Integration Marker→Lint→验证）
 
 ---
 
@@ -307,7 +308,7 @@ Claude Scholar 支持两个运行时环境：
 
 - **安装方式**: 克隆到 `~/.claude` 或作为 plugin 安装
 - **Hooks**: 5 个自动化钩子（session-start, skill-forced-eval, session-summary, stop-summary, security-guard）
-- **Skills**: 全部 34 个技能（含 `using-claude-scholar` 元技能）
+- **Skills**: 全部 35 个技能（含 `using-claude-scholar` 元技能）
 - **Commands**: 50+ 斜杠命令
 - **Agents**: 14 个专业代理
 
