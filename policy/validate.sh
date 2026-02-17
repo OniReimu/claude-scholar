@@ -203,9 +203,9 @@ for profile in "$PROFILES_DIR"/*.md; do
     fi
   done < <(awk '/^## Includes/,/^## [^I]/' "$profile")
 
-  # Check override locked rules
+  # Check override locked rules + params key existence
   while IFS= read -r line; do
-    if [[ "$line" =~ ^\|\ *([A-Z][A-Z._]+)\ *\|\ *(severity|params\.[a-z_]+)\ *\| ]]; then
+    if [[ "$line" =~ ^\|\ *([A-Z][A-Z._0-9]+)\ *\|\ *(severity|params\.[a-z_]+)\ *\| ]]; then
       rid="${BASH_REMATCH[1]}"
       field="${BASH_REMATCH[2]}"
       rule_file=$(awk -v id="$rid" '/^id: /{if($2==id){found=1}} found{print FILENAME; exit}' "$RULES_DIR"/*.md 2>/dev/null || true)
@@ -214,6 +214,15 @@ for profile in "$PROFILES_DIR"/*.md; do
         if [[ "$locked" == "true" ]]; then
           err "$pname: overrides locked rule $rid ($field)"
         fi
+        # Check params.* key exists in rule card
+        if [[ "$field" == params.* ]]; then
+          param_key="${field#params.}"
+          if ! get_fm "$rule_file" | grep -q "$param_key"; then
+            err "$pname: overrides $rid.$field but rule card lacks param '$param_key'"
+          fi
+        fi
+      else
+        err "$pname: overrides unknown rule $rid"
       fi
     fi
   done < <(awk '/^## Overrides/,/^## [^O]/' "$profile")

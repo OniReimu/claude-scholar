@@ -29,7 +29,8 @@ lint_targets: "**/*.py"
 ## Check
 
 - **Regex 检查**: Python 脚本中 `.savefig()` 是否输出 `.png`/`.jpg`/`.jpeg` 格式
-- **LLM 审查**: 图像文件是否为矢量格式
+- **已知误报**: 截图/照片使用 `dpi=600` 的 `.savefig("screenshot.png", dpi=600)` 会被 regex 命中，属于合法豁免，需人工确认
+- **LLM 审查**: 图像文件是否为矢量格式，截图/照片需确认 DPI ≥ 600
 
 ## Examples
 

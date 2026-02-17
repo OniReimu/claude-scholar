@@ -174,7 +174,7 @@ parse_profile() {
       [[ "$line" =~ Rule\ ID ]] && continue
       [[ "$line" =~ ^\|\ *-+ ]] && continue
       # Parse: | RULE_ID | field | value | reason |
-      if [[ "$line" =~ ^\|\ *([A-Z][A-Z._]+)\ *\|\ *([a-z._]+)\ *\|\ *([^|]+)\ *\| ]]; then
+      if [[ "$line" =~ ^\|\ *([A-Z][A-Z._0-9]+)\ *\|\ *([a-z._]+)\ *\|\ *([^|]+)\ *\| ]]; then
         local rid="${BASH_REMATCH[1]}"
         local field="${BASH_REMATCH[2]}"
         local value="${BASH_REMATCH[3]}"

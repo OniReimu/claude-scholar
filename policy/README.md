@@ -29,7 +29,7 @@ phases: [ideation, writing-background, writing-system-model, writing-methods,
 domains: [core] | [security, hci, se, is]
 venues: [all] | [neurips, icml, iclr, chi, icse, ...]
 check_kind: regex | ast | llm_semantic | llm_style | manual
-enforcement: doc | lint_script       # doc=仅文档约束, lint_script=已有脚本执行
+enforcement: doc | lint_script       # doc=M1 无独立脚本, lint_script=M1 已有脚本。lint.sh 按 check_kind=regex 运行，不区分 enforcement
 params: {}                           # 可选，profile 可覆盖（locked=false 时）
 conflicts_with: []                   # 可选
 lint_patterns: []                    # M2 新增：机器可读 regex（仅 check_kind=regex 时）

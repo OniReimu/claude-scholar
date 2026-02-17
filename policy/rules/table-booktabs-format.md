@@ -13,7 +13,7 @@ enforcement: lint_script
 params: {}
 conflicts_with: []
 lint_patterns:
-  - pattern: "\\\\begin\\{tabular\\}"
+  - pattern: "\\\\hline"
     mode: match
   - pattern: "\\\\toprule"
     mode: negative
@@ -30,8 +30,8 @@ booktabs 是学术出版的标准表格格式，提供专业的线条间距。`\
 
 ## Check
 
-- **Regex 检测**: `.tex` 文件中是否有 `\begin{tabular}` 但缺少 `\toprule`
-- **Hline 检测**: 是否使用了 `\hline`
+- **Regex match**: `.tex` 文件中检测 `\hline`（直接违规）
+- **Regex negative**: 含 `\hline` 的文件中检测是否缺少 `\toprule`（未迁移到 booktabs）
 
 ## Examples
 

@@ -15,7 +15,7 @@ conflicts_with: []
 lint_patterns:
   - pattern: "---"
     mode: count
-    threshold: 2
+    threshold: 1
 lint_targets: "**/*.tex"
 ---
 
