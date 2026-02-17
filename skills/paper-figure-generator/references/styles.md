@@ -2,6 +2,10 @@
 
 AutoFigure-Edit 支持通过 `--reference_image_path` 进行风格迁移。提供一张参考图片，生成的图表会模仿其视觉风格。
 
+当前内置默认参考图（`generate.sh` 自动使用）：
+- `skills/paper-figure-generator/.autofigure-edit/img/reference/sample3.png`（primary）
+- `skills/paper-figure-generator/.autofigure-edit/img/reference/sample2.png`（fallback）
+
 ---
 
 ## 如何使用风格迁移

@@ -22,6 +22,8 @@ Use `/paper-figure` when you want:
    - `bash skills/paper-figure-generator/scripts/doctor.sh`
 4. Generate:
    - `AUTOFIGURE_PROVIDER=openrouter bash skills/paper-figure-generator/scripts/generate.sh --method_file figures/{slug}/method.txt --output_dir figures/{slug}`
+   - 默认会自动启用内置风格参考图：`skills/paper-figure-generator/.autofigure-edit/img/reference/sample3.png`（primary）和 `sample2.png`（fallback）
+   - 如需自定义风格：追加 `--use_reference_image --reference_image_path <path>`
 5. Convert SVG to PDF for LaTeX:
    - `bash skills/paper-figure-generator/scripts/svg-to-pdf.sh --svg figures/{slug}/final.svg --pdf figures/{slug}/figure.pdf`
 

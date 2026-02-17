@@ -11,7 +11,7 @@ description: |
   If the user is writing a paper and discusses a method/system/pipeline, proactively
   suggest generating a figure for it.
   Generates editable SVG academic figures using AutoFigure-Edit from method text descriptions.
-version: 0.2.1
+version: 0.2.2
 tags: [Research, Paper Writing, Figure Generation, Academic, SVG]
 ---
 
@@ -76,7 +76,7 @@ Create `figures/{topic-slug}/method.txt` with the method description from Step 1
 
 Hard constraint for `method.txt`: do not request an in-figure title (top heading text). Keep only component labels, arrows, and annotations. <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 
-**Style transfer** (optional): If the user provides a reference image or wants a specific visual style, note the path for the `--reference_image_path` flag. See `references/styles.md` for guidance on selecting reference images.
+**Style transfer** (default enabled): `generate.sh` will automatically use built-in style references in `skills/paper-figure-generator/.autofigure-edit/img/reference/` (`sample3.png` primary, `sample2.png` secondary) when `--reference_image_path` is not provided. If the user wants a specific style, pass `--reference_image_path` explicitly. See `references/styles.md`.
 
 ### Step 3: Setup — Verify Dependencies
 
@@ -118,6 +118,11 @@ bash skills/paper-figure-generator/scripts/generate.sh \
 - `--sam_backend <local|fal|roboflow>` — Override SAM3 backend (default: auto-detected from env)
 - `--optimize_iterations <n>` — SVG refinement iterations (0 to disable)
 - `--merge_threshold <n>` — Region merging threshold (0 to disable)
+
+**Default reference behavior:**
+- If `--reference_image_path` is omitted, wrapper auto-adds reference style from:
+  - `skills/paper-figure-generator/.autofigure-edit/img/reference/sample3.png` (primary)
+  - fallback: `skills/paper-figure-generator/.autofigure-edit/img/reference/sample2.png`
 
 **Output files:**
 - `figures/{topic-slug}/figure.png` — Raster preview

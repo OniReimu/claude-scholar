@@ -20,8 +20,11 @@ OUTPUT_DIR=""
 PROVIDER_ARG_PRESENT=0
 API_KEY_ARG_PRESENT=0
 SAM_BACKEND_ARG_PRESENT=0
+USE_REFERENCE_IMAGE_ARG_PRESENT=0
+REFERENCE_IMAGE_PATH_ARG_PRESENT=0
 PROVIDER=""
 SAM_BACKEND=""
+REFERENCE_IMAGE_PATH_ARG=""
 
 args=("$@")
 for ((i=0; i<${#args[@]}; i++)); do
@@ -42,6 +45,17 @@ for ((i=0; i<${#args[@]}; i++)); do
     --sam_backend)
       SAM_BACKEND_ARG_PRESENT=1
       SAM_BACKEND="${args[i+1]:-}"
+      ;;
+    --use_reference_image)
+      USE_REFERENCE_IMAGE_ARG_PRESENT=1
+      ;;
+    --reference_image_path)
+      REFERENCE_IMAGE_PATH_ARG_PRESENT=1
+      REFERENCE_IMAGE_PATH_ARG="${args[i+1]:-}"
+      ;;
+    --reference_image_path=*)
+      REFERENCE_IMAGE_PATH_ARG_PRESENT=1
+      REFERENCE_IMAGE_PATH_ARG="${args[i]#*=}"
       ;;
   esac
 done
@@ -111,8 +125,40 @@ fi
 
 mkdir -p "$OUTPUT_DIR"
 
+# 默认参考图策略（用户未显式提供 reference_image_path 时启用）
+FINAL_ARGS=("${args[@]}")
+DEFAULT_REFERENCE_DIR="$SKILL_DIR/.autofigure-edit/img/reference"
+DEFAULT_REFERENCE_PATH=""
+for candidate in \
+  "$DEFAULT_REFERENCE_DIR/sample3.png" \
+  "$DEFAULT_REFERENCE_DIR/sample2.png"; do
+  if [ -f "$candidate" ]; then
+    DEFAULT_REFERENCE_PATH="$candidate"
+    break
+  fi
+done
+
+if [ "$REFERENCE_IMAGE_PATH_ARG_PRESENT" -eq 0 ]; then
+  if [ -n "$DEFAULT_REFERENCE_PATH" ]; then
+    if [ "$USE_REFERENCE_IMAGE_ARG_PRESENT" -eq 0 ]; then
+      FINAL_ARGS+=(--use_reference_image)
+    fi
+    FINAL_ARGS+=(--reference_image_path "$DEFAULT_REFERENCE_PATH")
+    echo "Reference style: default ($DEFAULT_REFERENCE_PATH)"
+  elif [ "$USE_REFERENCE_IMAGE_ARG_PRESENT" -eq 1 ]; then
+    echo "Error: --use_reference_image provided but no --reference_image_path."
+    echo "Also no default reference image found in:"
+    echo "  $DEFAULT_REFERENCE_DIR"
+    exit 1
+  else
+    echo "Reference style: none (no default reference found)"
+  fi
+else
+  echo "Reference style: user-provided ($REFERENCE_IMAGE_PATH_ARG)"
+fi
+
 # 记录本次运行参数（不写入任何 secret value）
-"$PYTHON" - <<'PY' "$OUTPUT_DIR" "$PROJECT_ROOT" "$PROVIDER" "$SAM_BACKEND" "$KEY_VAR" "$API_KEY_ARG_PRESENT" "$METHOD_FILE" "${args[@]}"
+"$PYTHON" - <<'PY' "$OUTPUT_DIR" "$PROJECT_ROOT" "$PROVIDER" "$SAM_BACKEND" "$KEY_VAR" "$API_KEY_ARG_PRESENT" "$METHOD_FILE" "${FINAL_ARGS[@]}"
 import json
 import os
 import platform
@@ -189,7 +235,7 @@ else
   echo "Warning: --api_key provided via CLI args; prefer using .env to avoid shell history leakage."
 fi
 CMD+=("${SAM_ARGS[@]}")
-CMD+=("$@")
+CMD+=("${FINAL_ARGS[@]}")
 
 "${CMD[@]}"
 

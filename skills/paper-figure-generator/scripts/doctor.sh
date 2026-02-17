@@ -81,6 +81,19 @@ else
 fi
 echo ""
 
+DEFAULT_REF_DIR="$SKILL_DIR/.autofigure-edit/img/reference"
+DEFAULT_REF_PRIMARY="$DEFAULT_REF_DIR/sample3.png"
+DEFAULT_REF_SECONDARY="$DEFAULT_REF_DIR/sample2.png"
+echo "Default style references:"
+if [ -f "$DEFAULT_REF_PRIMARY" ] || [ -f "$DEFAULT_REF_SECONDARY" ]; then
+  [ -f "$DEFAULT_REF_PRIMARY" ] && echo "  primary:   $DEFAULT_REF_PRIMARY"
+  [ -f "$DEFAULT_REF_SECONDARY" ] && echo "  secondary: $DEFAULT_REF_SECONDARY"
+  echo "  (generate.sh will auto-use primary when --reference_image_path is not provided)"
+else
+  echo "  none found in $DEFAULT_REF_DIR"
+fi
+echo ""
+
 if "$VENV_PY" -c "import cairosvg" >/dev/null 2>&1; then
   echo "SVG->PDF:"
   echo "  cairosvg: OK (in skill venv)"
@@ -94,4 +107,3 @@ echo ""
 
 echo "Next:"
 echo "  bash $SCRIPT_DIR/generate.sh --method_file figures/{slug}/method.txt --output_dir figures/{slug}"
-
