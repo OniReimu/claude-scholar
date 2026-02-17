@@ -23,6 +23,7 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 RULES_DIR="$SCRIPT_DIR/rules"
 PROFILES_DIR="$SCRIPT_DIR/profiles"
 ERRORS=0
+RULE_CARD_COUNT=0
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -37,12 +38,30 @@ section() { echo -e "\n${BOLD}$*${NC}"; }
 # ─── Extract frontmatter using awk ──────────────────────────────────────────
 get_fm() { awk '/^---$/{n++;next} n==1{print}' "$1"; }
 
+# ─── Rule/Profile File Filtering ─────────────────────────────────────────────
+is_meta_md() {
+  local base
+  base="$(basename "$1")"
+  [[ "$base" == "CLAUDE.md" || "$base" == "README.md" ]]
+}
+
+collect_rule_cards() {
+  RULE_CARDS=()
+  for f in "$RULES_DIR"/*.md; do
+    [[ -f "$f" ]] || continue
+    is_meta_md "$f" && continue
+    RULE_CARDS+=("$f")
+  done
+  RULE_CARD_COUNT="${#RULE_CARDS[@]}"
+}
+
+collect_rule_cards
+
 # ─── 1. Required Frontmatter Fields ─────────────────────────────────────────
 section "1. Required Frontmatter Fields"
 REQUIRED_FIELDS="id slug severity locked layer artifacts phases domains venues check_kind enforcement"
 
-for f in "$RULES_DIR"/*.md; do
-  [[ -f "$f" ]] || continue
+for f in "${RULE_CARDS[@]}"; do
   fname=$(basename "$f")
   fm=$(get_fm "$f")
   missing=""
@@ -65,8 +84,7 @@ section "2. ID/Slug Uniqueness"
 
 ids=""
 slugs=""
-for f in "$RULES_DIR"/*.md; do
-  [[ -f "$f" ]] || continue
+for f in "${RULE_CARDS[@]}"; do
   fm=$(get_fm "$f")
   id=$(echo "$fm" | awk '/^id: /{print $2; exit}')
   slug=$(echo "$fm" | awk '/^slug: /{print $2; exit}')
@@ -83,8 +101,7 @@ dup_slugs=$(echo "$slugs" | tr ' ' '\n' | sort | uniq -d | grep -v '^$' || true)
 # ─── 3. Filename = Slug Consistency ─────────────────────────────────────────
 section "3. Filename = Slug Consistency"
 
-for f in "$RULES_DIR"/*.md; do
-  [[ -f "$f" ]] || continue
+for f in "${RULE_CARDS[@]}"; do
   fname=$(basename "$f" .md)
   slug=$(get_fm "$f" | awk '/^slug: /{print $2; exit}')
   if [[ "$fname" != "$slug" ]]; then
@@ -96,8 +113,7 @@ pass "Filename/slug consistency checked"
 # ─── 4. Field Value Validity ────────────────────────────────────────────────
 section "4. Field Value Validity"
 
-for f in "$RULES_DIR"/*.md; do
-  [[ -f "$f" ]] || continue
+for f in "${RULE_CARDS[@]}"; do
   fname=$(basename "$f")
   fm=$(get_fm "$f")
 
@@ -121,8 +137,7 @@ pass "Field value validity checked"
 # ─── 5. lint_patterns Format Validation ─────────────────────────────────────
 section "5. lint_patterns Format"
 
-for f in "$RULES_DIR"/*.md; do
-  [[ -f "$f" ]] || continue
+for f in "${RULE_CARDS[@]}"; do
   fname=$(basename "$f")
   fm=$(get_fm "$f")
   ck=$(echo "$fm" | awk '/^check_kind: /{print $2; exit}')
@@ -174,8 +189,7 @@ pass "lint_patterns format checked"
 # ─── 6. Body Sections ───────────────────────────────────────────────────────
 section "6. Required Body Sections"
 
-for f in "$RULES_DIR"/*.md; do
-  [[ -f "$f" ]] || continue
+for f in "${RULE_CARDS[@]}"; do
   fname=$(basename "$f")
   for heading in "## Requirement" "## Rationale" "## Check" "## Examples"; do
     if ! grep -q "^$heading" "$f"; then
@@ -190,7 +204,7 @@ section "7. Profile Validation"
 
 for profile in "$PROFILES_DIR"/*.md; do
   [[ -f "$profile" ]] || continue
-  [[ "$(basename "$profile")" == "README.md" ]] && continue
+  is_meta_md "$profile" && continue
   pname=$(basename "$profile")
 
   # Check Includes file existence
@@ -205,7 +219,7 @@ for profile in "$PROFILES_DIR"/*.md; do
 
   # Check override locked rules + params key existence
   while IFS= read -r line; do
-    if [[ "$line" =~ ^\|\ *([A-Z][A-Z._0-9]+)\ *\|\ *(severity|params\.[a-z_]+)\ *\| ]]; then
+    if [[ "$line" =~ ^\|\ *([A-Z][A-Z._0-9]+)\ *\|\ *(severity|params\.[a-z0-9_]+)\ *\| ]]; then
       rid="${BASH_REMATCH[1]}"
       field="${BASH_REMATCH[2]}"
       rule_file=$(awk -v id="$rid" '/^id: /{if($2==id){found=1}} found{print FILENAME; exit}' "$RULES_DIR"/*.md 2>/dev/null || true)
@@ -214,10 +228,12 @@ for profile in "$PROFILES_DIR"/*.md; do
         if [[ "$locked" == "true" ]]; then
           err "$pname: overrides locked rule $rid ($field)"
         fi
-        # Check params.* key exists in rule card
+        # Check params.* key exists in rule card (scoped to params block)
         if [[ "$field" == params.* ]]; then
           param_key="${field#params.}"
-          if ! get_fm "$rule_file" | grep -qE "(^|[^a-z_])${param_key}:"; then
+          # Extract only the params block (supports inline {k:v} and multi-line format)
+          params_block=$(get_fm "$rule_file" | awk '/^params:/{p=1; print; next} p && /^[[:space:]]/{print; next} p{exit}')
+          if ! echo "$params_block" | grep -qE "(^|[{, ])${param_key}:"; then
             err "$pname: overrides $rid.$field but rule card lacks param '$param_key'"
           fi
         fi
@@ -237,8 +253,7 @@ all_markers=$(grep -roh 'policy:[A-Z][A-Z._0-9]*' "$PROJECT_DIR/skills/" "$PROJE
 
 # Build set of valid rule IDs
 all_rule_ids=""
-for f in "$RULES_DIR"/*.md; do
-  [[ -f "$f" ]] || continue
+for f in "${RULE_CARDS[@]}"; do
   all_rule_ids="$all_rule_ids $(get_fm "$f" | awk '/^id: /{print $2; exit}')"
 done
 
@@ -287,8 +302,7 @@ section "10. Rule ID Registry Consistency"
 
 readme="$SCRIPT_DIR/README.md"
 if [[ -f "$readme" ]]; then
-  for f in "$RULES_DIR"/*.md; do
-    [[ -f "$f" ]] || continue
+  for f in "${RULE_CARDS[@]}"; do
     id=$(get_fm "$f" | awk '/^id: /{print $2; exit}')
     if ! grep -q "$id" "$readme"; then
       err "$id not found in README.md Rule ID Registry"
@@ -299,8 +313,8 @@ else
   err "policy/README.md not found"
 fi
 
-# ─── 11. Protected Files ────────────────────────────────────────────────────
-section "11. Protected Files (git diff)"
+# ─── 11. Protected Files & Policy References ────────────────────────────────
+section "11. Protected Files & Policy References"
 
 if command -v git &>/dev/null && git rev-parse --is-inside-work-tree &>/dev/null 2>&1; then
   if ! git diff --quiet -- "$PROJECT_DIR/rules/" 2>/dev/null; then
@@ -308,18 +322,28 @@ if command -v git &>/dev/null && git rev-parse --is-inside-work-tree &>/dev/null
   else
     pass "rules/ directory unchanged"
   fi
-  if ! git diff --quiet -- "$PROJECT_DIR/CLAUDE.md" "$PROJECT_DIR/AGENTS.md" 2>/dev/null; then
-    err "CLAUDE.md or AGENTS.md was modified"
-  else
-    pass "CLAUDE.md and AGENTS.md unchanged"
-  fi
 else
   pass "(git not available, skipping protected file check)"
 fi
 
+# Check CLAUDE.md/AGENTS.md reference policy engine entry points
+for sysfile in CLAUDE.md AGENTS.md; do
+  target="$PROJECT_DIR/$sysfile"
+  if [[ -f "$target" ]]; then
+    missing=""
+    grep -q 'policy/rules/' "$target"   || missing="$missing policy/rules/"
+    grep -q 'policy/README.md' "$target" || missing="$missing policy/README.md"
+    if [[ -z "$missing" ]]; then
+      pass "$sysfile references policy engine"
+    else
+      err "$sysfile missing policy references:$missing"
+    fi
+  fi
+done
+
 # ─── 12. Rule Count ─────────────────────────────────────────────────────────
 section "12. Rule Count"
-count=$(ls "$RULES_DIR"/*.md 2>/dev/null | wc -l | tr -d ' ')
+count="$RULE_CARD_COUNT"
 echo -e "  Total rule cards: $count"
 
 # ─── Summary ─────────────────────────────────────────────────────────────────

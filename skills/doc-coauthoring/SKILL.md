@@ -127,9 +127,7 @@ Explain that the document will be built section by section. For each section:
 Start with whichever section has the most unknowns (usually the core decision/proposal), then work through the rest.
 
 **If the document is a LaTeX manuscript (paper/thesis/report), enforce these style constraints during drafting/refinement:**
-- Display equations use `\begin{equation}...\end{equation}` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
-- Do not use `$$...$$` or `\[...\]` for display equations
-- Inline equations can use `$...$`
+- Display equations use `\begin{equation}...\end{equation}` (not `$$` or `\[...\]`); inline uses `$...$` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 - In math mode, variable-like tokens longer than 3 letters must use `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 **Section ordering:**

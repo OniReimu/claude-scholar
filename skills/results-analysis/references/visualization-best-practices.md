@@ -20,7 +20,7 @@
 | PNG | 位图 | 照片、截图 | ⚠️ 需高分辨率（≥600 DPI） |
 | JPG | 位图 | 照片 | ❌ 避免用于图表 |
 
-**规则**: 所有图表使用矢量图格式（PDF/EPS），照片使用高分辨率位图（PNG ≥600 DPI）。
+**规则**: 所有图表使用矢量图格式（PDF/EPS），照片使用高分辨率位图（PNG ≥600 DPI）。 <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
 
 ## 配色方案
 
@@ -262,14 +262,14 @@ plt.rcParams.update({
 
 提交前检查：
 
-- [ ] 使用矢量图格式（PDF/EPS）
-- [ ] 配色色盲友好（Okabe-Ito 或 Paul Tol）
+- [ ] 使用矢量图格式（PDF/EPS） <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
+- [ ] 配色色盲友好（Okabe-Ito 或 Paul Tol） <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - [ ] 黑白打印可读（测试过）
-- [ ] 包含误差条/误差带
+- [ ] 包含误差条/误差带 <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 - [ ] Caption 中说明误差类型
 - [ ] 坐标轴标签清晰（包含单位）
 - [ ] 图例不遮挡数据
-- [ ] 源文件字体大小 ≥ 24 pt（缩放后仍可读）
+- [ ] 源文件字体大小 ≥ 24 pt（缩放后仍可读） <!-- policy:FIG.FONT_GE_24PT -->
 - [ ] 线宽适当（2.5-3.0 pt）
 - [ ] Caption 独立完整
 

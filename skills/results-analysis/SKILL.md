@@ -168,14 +168,14 @@ plt.rcParams.update({
 **所有文字必须 ≥ 24pt**（源文件中的 matplotlib pt 值，非打印尺寸）。 <!-- policy:FIG.FONT_GE_24PT -->
 
 **Accessibility requirements:**
-- Use **colorblind-safe palettes**: Okabe-Ito (8 colors) or Paul Tol (up to 12 colors)
+- Use **colorblind-safe palettes**: Okabe-Ito (8 colors) or Paul Tol (up to 12 colors) <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - Verify **grayscale readability** (8% of men have color vision deficiency)
 - Differentiate lines by **style** (solid/dashed/dotted), not just color
-- Save as **PDF vector format**: `plt.savefig('fig.pdf', bbox_inches='tight')`
+- Save as **PDF vector format**: `plt.savefig('fig.pdf', bbox_inches='tight')` <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
 - **1 file = 1 figure**: Do NOT use `plt.subplots()` to combine multiple plots. Each plot is a separate file. Composite layouts are handled in LaTeX via `\subfigure`. <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
 - If multiple plots share a legend, save the legend as a separate image file
 - Source font size ≥ 24pt, line width ≥ 2.5pt
-- Put title semantics in caption/text, not inside the figure canvas
+- Put title semantics in caption/text, not inside the figure canvas <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 
 See `references/visualization-best-practices.md` for additional details.
 
@@ -229,10 +229,10 @@ See `references/results-writing-guide.md` for the complete writing guide.
 - [ ] All values include error bars/confidence intervals <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 - [ ] Statistical test methods are specified
 - [ ] Figures are clear and readable (including black-and-white print)
-- [ ] No in-figure title text is used
+- [ ] No in-figure title text is used <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 - [ ] Hyperparameter search ranges are reported
-- [ ] Computational resources are specified (GPU type, time)
-- [ ] Random seed settings are specified (per `rules/experiment-reproducibility.md`)
+- [ ] Computational resources are specified (GPU type, time) <!-- policy:REPRO.COMPUTE_RESOURCES_DOCUMENTED -->
+- [ ] Random seed settings are specified (per `rules/experiment-reproducibility.md`) <!-- policy:REPRO.RANDOM_SEED_DOCUMENTATION -->
 - [ ] Config file saved alongside results (Hydra / OmegaConf snapshot)
 - [ ] Environment recorded (Python version, GPU driver, key library versions)
 - [ ] Results are reproducible (code/data available)
@@ -256,17 +256,17 @@ See `references/results-writing-guide.md` for the complete writing guide.
 ### Visualization Errors
 
 ❌ **Wrong approach:**
-- Using non-colorblind-friendly palettes
+- Using non-colorblind-friendly palettes <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - Y-axis not starting from 0 (exaggerating differences)
-- Missing error bars
-- Adding chart titles inside figure canvas
+- Missing error bars <!-- policy:EXP.ERROR_BARS_REQUIRED -->
+- Adding chart titles inside figure canvas <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 - Overly complex figures
 
 ✅ **Correct approach:**
-- Use Okabe-Ito or Paul Tol palettes
+- Use Okabe-Ito or Paul Tol palettes <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - Set reasonable axis ranges
-- Include error bars and confidence intervals
-- Keep titles in caption/paper text, not in figure canvas
+- Include error bars and confidence intervals <!-- policy:EXP.ERROR_BARS_REQUIRED -->
+- Keep titles in caption/paper text, not in figure canvas <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 - Keep figures clean and clear
 
 ### Writing Errors

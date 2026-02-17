@@ -300,9 +300,8 @@ If applicable:
 - [ ] Font sizes not modified
 - [ ] Double-blind requirements met
 - [ ] Page numbers (for review) or none (camera-ready)
-- [ ] Display equations use `\begin{equation}...\end{equation}` (not `$$...$$` / `\[...\]`)
-- [ ] Inline equations use `$...$` where needed
-- [ ] Variable-like tokens >3 letters in math mode use `\text{}`
+- [ ] Display equations use `equation` environment (not `$$` / `\[...\]`) <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- [ ] Variable-like tokens >3 letters in math use `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 #### Technical
 

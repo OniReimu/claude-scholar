@@ -49,10 +49,8 @@ Use this skill when you need to:
 ## Revised Manuscript Math Conformance (When Applicable)
 
 If reviewer comments involve equations, notation, or algorithm descriptions, the revised manuscript must also satisfy:
-- Display equations use `\begin{equation}...\end{equation}`
-- Do not use `$$...$$` or `\[...\]` for display equations
-- Inline equations can use `$...$`
-- In math mode, variable-like tokens longer than 3 letters use `\text{}`
+- Display equations use `\begin{equation}` (not `$$` or `\[...\]`). <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- Variable-like tokens >3 letters in math mode use `\text{}`. <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 ## Success Factors (Based on ICLR Spotlight Paper Analysis)
 

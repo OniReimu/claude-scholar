@@ -528,7 +528,7 @@ Figure 1 deserves special attention—many readers skip directly to it.
 
 ### Paper Section Structure
 
-The final paper follows this structure. Strictly control to **6 top-level numbered sections** (+ Abstract).
+The final paper follows this structure. Strictly control to **6 top-level numbered sections** (+ Abstract). <!-- policy:PAPER.SECTION_HEADINGS_MAX_6 -->
 
 | § | Section | Core Content |
 |---|---------|-------------|
@@ -1029,7 +1029,7 @@ Explain why limitations do not undermine core claims.
 **What belongs here:** Security analysis, complexity analysis, limitations, real-world applicability, failure mode analysis, scalability discussion.
 
 **What does NOT belong here:**
-- Ablation studies → go in Experimental Results
+- Ablation studies → go in Experimental Results <!-- policy:EXP.ABLATION_IN_RESULTS -->
 - Ethics considerations, open science, GenAI tools usage → go AFTER Conclusion (see Step 10)
 
 ---
@@ -1454,7 +1454,7 @@ When resubmitting after rejection:
 
 ## Citation Workflow (Hallucination Prevention)
 
-**⚠️ CRITICAL**: AI-generated citations have ~40% error rate. **Never write BibTeX from memory.**
+**⚠️ CRITICAL**: AI-generated citations have ~40% error rate. **Never write BibTeX from memory.** <!-- policy:CITE.VERIFY_VIA_API -->
 
 ### The Golden Rule
 

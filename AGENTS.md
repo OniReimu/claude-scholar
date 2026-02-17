@@ -219,19 +219,12 @@ Use `spawn_agent` for parallel execution of independent agent tasks.
 - Checkpoint naming: `best_model.pt`, `checkpoint_epoch_N.pt`, `checkpoint_latest.pt`
 - Record dataset hash or version tag
 
-### Figure Title Policy
+### Paper Writing Rules (Policy Engine)
 
-- For any generated figure, do **not** add an in-figure title text.
-- Applies to AutoFigure-Edit diagrams, legacy image API diagrams, and Python experimental plots.
-- Put figure title/description in paper caption or surrounding text instead.
-- In matplotlib/seaborn, do not call `plt.title()`, `ax.set_title()`, or `fig.suptitle()`.
-
-### LaTeX Math Policy
-
-- Display equations must use `\begin{equation}...\end{equation}`.
-- Do **not** use `$$...$$` or `\[...\]` for display equations.
-- Inline equations can use `$...$`.
-- In math mode, variable-like tokens longer than 3 letters must use `\text{}`.
+Paper writing rules (28 rule cards) are defined in `policy/rules/`.
+See `policy/README.md` for the full Rule ID Registry and rule card specification.
+Skills reference rules via `<!-- policy:RULE_ID -->` markers. In case of conflict, `policy/rules/` is the single source of truth.
+**Writing tasks must first read `policy/README.md` + relevant rule cards.**
 
 ### Security
 

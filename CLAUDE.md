@@ -53,16 +53,11 @@
 - 做好备份，不影响现有功能
 - 完成后及时删除临时文件
 
-### 图表标题规则（全局）
-- 任何生图都不加图内标题（包括 AutoFigure-Edit 系统图、旧版 API 生图链路、Python 实验图）。
-- 标题语义放在论文 caption 或正文，不放在图像画布内。
-- 对 matplotlib/seaborn，禁止使用 `plt.title()`、`ax.set_title()`、`fig.suptitle()`。
+### 论文写作规则（全局）
 
-### LaTeX 数学公式规则（全局）
-- Display 公式统一使用 `\begin{equation}...\end{equation}`。
-- 禁止使用 `$$...$$` 或 `\[...\]` 作为 display 公式写法。
-- Inline 公式可以使用 `$...$`。
-- 数学模式中，变量名长度超过 3 个字母时，必须使用 `\text{}` 包裹。
+论文写作规则统一定义在 `policy/rules/`（28 条规则卡片），覆盖图表格式、LaTeX 数学公式、实验结构、引文验证、投稿合规等。
+规则规范和完整注册表见 `policy/README.md`。技能文件通过 `<!-- policy:RULE_ID -->` 标记引用规则。
+**写作任务必须先读 `policy/README.md` + 相关 rule card，以 `policy/rules/` 为唯一真相源。**
 
 ### 工作风格
 - **任务管理**: 使用 TodoWrite 跟踪进度，复杂任务先规划再执行，优先使用已有 skills
@@ -265,7 +260,9 @@
 
 ---
 
-## 规则（4 Rules）
+## 规则
+
+### 开发运维规则（4 Rules，`rules/` 目录）
 
 全局约束，始终生效：
 
@@ -275,6 +272,11 @@
 | `agents.md` | 代理编排：自动调用时机、并行执行、多视角分析 |
 | `security.md` | 安全规范：密钥管理、敏感文件保护、提交前安全检查 |
 | `experiment-reproducibility.md` | 实验可复现性：随机种子、配置记录、环境记录、检查点管理 |
+
+### 论文写作规则（28 Rules，`policy/rules/` 目录）
+
+论文写作规则由 Policy Engine 管理，覆盖 core/domain/venue 三层。
+规则规范和注册表见 `policy/README.md`。
 
 ---
 

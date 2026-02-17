@@ -174,7 +174,7 @@ parse_profile() {
       [[ "$line" =~ Rule\ ID ]] && continue
       [[ "$line" =~ ^\|\ *-+ ]] && continue
       # Parse: | RULE_ID | field | value | reason |
-      if [[ "$line" =~ ^\|\ *([A-Z][A-Z._0-9]+)\ *\|\ *([a-z._]+)\ *\|\ *([^|]+)\ *\| ]]; then
+      if [[ "$line" =~ ^\|\ *([A-Z][A-Z._0-9]+)\ *\|\ *([a-z0-9._]+)\ *\|\ *([^|]+)\ *\| ]]; then
         local rid="${BASH_REMATCH[1]}"
         local field="${BASH_REMATCH[2]}"
         local value="${BASH_REMATCH[3]}"
@@ -201,6 +201,23 @@ get_effective_severity() {
   echo "$default_sev"
 }
 
+# Returns effective threshold after profile params override (respects locked)
+get_effective_threshold() {
+  local rule_id="$1" locked="$2" thresh_param="$3" default_thresh="$4"
+  [[ -z "$thresh_param" ]] && { echo "$default_thresh"; return; }
+  for override in "${PROFILE_OVERRIDES[@]}"; do
+    IFS='|' read -r oid field value <<< "$override"
+    if [[ "$oid" == "$rule_id" && "$field" == "params.$thresh_param" ]]; then
+      if [[ "$locked" == "true" ]]; then
+        $QUIET || echo -e "  ${DIM}(profile params.$thresh_param override ignored: $rule_id is locked)${NC}" >&2
+        echo "$default_thresh"; return
+      fi
+      echo "$value"; return
+    fi
+  done
+  echo "$default_thresh"
+}
+
 # ─── Frontmatter Parser ─────────────────────────────────────────────────────
 # Single-pass parser using pure bash (no grep/sed in pipelines).
 # Sets: RULE_ID, RULE_SEVERITY, RULE_LOCKED, RULE_LAYER, RULE_CHECK_KIND,
@@ -222,20 +239,22 @@ parse_rule() {
 
   # Single-pass: parse simple fields and lint_patterns block together
   local in_lp=false
-  local cur_pat="" cur_mode="match" cur_thresh=""
+  local cur_pat="" cur_mode="match" cur_thresh="" cur_thresh_param=""
 
   while IFS= read -r line; do
     if $in_lp; then
       if [[ "$line" =~ ^\ \ -\ pattern:\ \"(.+)\" ]]; then
-        [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}")
-        cur_pat="${BASH_REMATCH[1]}"; cur_mode="match"; cur_thresh=""
+        [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}"$'\t'"${cur_thresh_param}")
+        cur_pat="${BASH_REMATCH[1]}"; cur_mode="match"; cur_thresh=""; cur_thresh_param=""
       elif [[ "$line" =~ ^\ \ \ \ mode:\ (.+) ]]; then
         cur_mode="${BASH_REMATCH[1]}"
       elif [[ "$line" =~ ^\ \ \ \ threshold:\ ([0-9]+) ]]; then
         cur_thresh="${BASH_REMATCH[1]}"
+      elif [[ "$line" =~ ^\ \ \ \ threshold_param:\ ([a-z0-9_]+) ]]; then
+        cur_thresh_param="${BASH_REMATCH[1]}"
       else
         # Non-indented line ends the block; save last entry
-        [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}")
+        [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}"$'\t'"${cur_thresh_param}")
         cur_pat=""; in_lp=false
         # Fall through to parse this line as a regular key
       fi
@@ -254,7 +273,7 @@ parse_rule() {
   done <<< "$frontmatter"
 
   # Save last pattern entry if block was at end of frontmatter
-  [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}")
+  [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}"$'\t'"${cur_thresh_param}")
   return 0
 }
 
@@ -276,12 +295,12 @@ lint_rule() {
   local findings=0
 
   # Categorize patterns by mode
-  local -a m_pats=() c_pats=() c_threshs=() n_pats=()
+  local -a m_pats=() c_pats=() c_threshs=() c_thresh_params=() n_pats=()
   for entry in "${PATTERNS[@]}"; do
-    IFS=$'\t' read -r pat mode thresh <<< "$entry"
+    IFS=$'\t' read -r pat mode thresh thresh_param <<< "$entry"
     case "$mode" in
       match)    m_pats+=("$pat") ;;
-      count)    c_pats+=("$pat"); c_threshs+=("$thresh") ;;
+      count)    c_pats+=("$pat"); c_threshs+=("$thresh"); c_thresh_params+=("$thresh_param") ;;
       negative) n_pats+=("$pat") ;;
     esac
   done
@@ -318,14 +337,17 @@ lint_rule() {
   for i in "${!c_pats[@]}"; do
     local raw_pat="${c_pats[$i]}"
     local thresh="${c_threshs[$i]:-0}"
+    local thresh_param="${c_thresh_params[$i]:-}"
+    local effective_thresh
+    effective_thresh=$(get_effective_threshold "$RULE_ID" "$RULE_LOCKED" "$thresh_param" "$thresh")
     local pat
     pat=$(yaml_unescape "$raw_pat")
     for file in "${tfiles[@]}"; do
       local cnt
       cnt=$(regex_count "$pat" "$file")
-      if (( cnt > thresh )); then
+      if (( cnt > effective_thresh )); then
         ((findings++)) || true
-        report_finding "$severity" "$RULE_ID" "${file}: count=${cnt} > threshold=${thresh}"
+        report_finding "$severity" "$RULE_ID" "${file}: count=${cnt} > threshold=${effective_thresh}"
       fi
     done
   done

@@ -162,15 +162,13 @@ Project convention:
 
 ---
 
-## Math Notation Hygiene <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+## Math Notation Hygiene <!-- policy:LATEX.EQ.DISPLAY_STYLE --> <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
-Rules for variable names in math mode:
-- Use `\begin{equation}...\end{equation}` for display equations.
-- Do not use raw `$$...$$` or `\[...\]` for display equations.
-- Inline equations can use `$...$`.
-- Do not write long words as italic math identifiers in display equations.
-- If a variable-like token has more than 3 letters, wrap it in `\text{}`.
-- Keep symbolic variables short (e.g., `x`, `w_t`, `\Lambda_x`) and define all symbols in the notation table.
+> **Policy**: 详见 `policy/rules/latex-eq-display-style.md` 和 `policy/rules/latex-var-long-token-use-text.md`。
+
+要点：
+- Display equations: `\begin{equation}...\end{equation}`（禁止 `$$` 和 `\[...\]`）
+- Variable-like tokens >3 letters: 用 `\text{}` 包裹
 
 ```latex
 % Recommended

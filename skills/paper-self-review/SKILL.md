@@ -221,9 +221,9 @@ Use the quality checklist for final verification.
 - Method lacks sufficient detail for reproduction
 - Results lack statistical significance tests
 - Discussion doesn't address research limitations
-- Figures/tables lack clear captions/labels, or contain in-figure title text
-- Display equations use `$$...$$` or `\[...\]` instead of `equation`
-- Long variable-like tokens are not wrapped with `\text{}`
+- Figures/tables lack clear captions/labels, or contain in-figure title text <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+- Display equations use `$$...$$` or `\[...\]` instead of `equation` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- Long variable-like tokens are not wrapped with `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 - Inconsistent citation formatting
 
 ## Summary

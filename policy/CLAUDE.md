@@ -5,7 +5,7 @@
 ## 权威定义优先级
 
 ```
-policy/rules/ (单一真相源) > CLAUDE.md/AGENTS.md (历史权威) > skills/*/SKILL.md (历史副本)
+policy/rules/ (单一真相源) > CLAUDE.md/AGENTS.md (指引入口) > skills/*/SKILL.md (上下文引用)
 ```
 
 ## 目录结构
@@ -17,3 +17,7 @@ policy/rules/ (单一真相源) > CLAUDE.md/AGENTS.md (历史权威) > skills/*/
 ## 使用方式
 
 LLM 直读 `policy/` 目录，无需运行时解析脚本。技能文件中通过 HTML 注释标记（如 `<!-- policy:FIG.NO_IN_FIGURE_TITLE -->`）引用规则。
+
+<claude-mem-context>
+
+</claude-mem-context>

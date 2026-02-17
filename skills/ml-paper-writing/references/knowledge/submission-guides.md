@@ -305,9 +305,8 @@ Smith (2019) A. Smith. Another paper. Journal Name.
 - [ ] References complete and consistent
 - [ ] Figures/tables clear and readable
 - [ ] Equations numbered and referenced
-- [ ] Display equations use `\begin{equation}...\end{equation}` (not `$$...$$` / `\[...\]`)
-- [ ] Inline equations use `$...$`
-- [ ] Variable-like tokens >3 letters in math mode use `\text{}`
+- [ ] Display equations use `equation` environment (not `$$` / `\[...\]`) <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- [ ] Variable-like tokens >3 letters in math use `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 - [ ] Supplementary material organized
 
 **Anonymity:**

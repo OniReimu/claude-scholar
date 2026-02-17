@@ -35,7 +35,7 @@ These issues can lead to:
 - Damage to academic reputation
 - Reviewers questioning research rigor
 
-**Special risk with AI-assisted writing**: AI-generated citations have approximately 40% error rate; every citation must be verified via WebSearch.
+**Special risk with AI-assisted writing**: AI-generated citations have approximately 40% error rate; every citation must be verified via WebSearch. <!-- policy:CITE.VERIFY_VIA_API -->
 
 ## Verification Principles
 

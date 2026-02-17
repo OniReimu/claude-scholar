@@ -36,6 +36,12 @@ skills/paper-figure-generator/scripts/.venv/
 # Legacy clone directory (if exists)
 skills/paper-figure-generator/.autofigure-edit/
 
+# claude-mem auto-generated CLAUDE.md files (can appear in any subdirectory)
+# Broad ignore + explicit whitelist for intentional CLAUDE.md files
+**/CLAUDE.md
+!/CLAUDE.md
+!/policy/CLAUDE.md
+
 # Other temporary files
 docs/
 plan/

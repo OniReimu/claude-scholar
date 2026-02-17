@@ -3,10 +3,10 @@
 ## 权威定义优先级
 
 ```
-policy/rules/ (单一真相源) > CLAUDE.md/AGENTS.md (历史权威，参考用) > skills/*/SKILL.md (历史副本)
+policy/rules/ (单一真相源) > CLAUDE.md/AGENTS.md (指引入口) > skills/*/SKILL.md (上下文引用)
 ```
 
-M1 期间历史文本保留但加 HTML 注释标记（如 `<!-- policy:FIG.NO_IN_FIGURE_TITLE -->`）；M3 清理时以 `policy/rules/` 为准。
+技能文件通过 `<!-- policy:RULE_ID -->` 标记引用规则。M3 已完成去重，`policy/rules/` 为唯一真相源。
 
 ---
 
@@ -27,7 +27,7 @@ artifacts: [figure, equation, text, table, code, bibtex]
 phases: [ideation, writing-background, writing-system-model, writing-methods,
          writing-experiments, writing-conclusion, self-review, revision, camera-ready]
 domains: [core] | [security, hci, se, is]
-venues: [all] | [neurips, icml, iclr, chi, icse, ...]
+venues: [all] | [neurips, icml, iclr, ccs, usenix, ndss, sp, chi, icse, fse, ase, misq, isr, ...]
 check_kind: regex | ast | llm_semantic | llm_style | manual
 enforcement: doc | lint_script       # doc=M1 无独立脚本, lint_script=M1 已有脚本。lint.sh 按 check_kind=regex 运行，不区分 enforcement
 params: {}                           # 可选，profile 可覆盖（locked=false 时）
@@ -60,6 +60,7 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
   - `pattern`: 正则表达式
   - `mode`: `match`（匹配即违规）| `count`（超阈值违规）| `negative`（缺失即违规）
   - `threshold`: count 模式时的阈值（可选）
+  - `threshold_param`: 关联的 `params` 键名（可选，Profile 可通过 `params.<key>` 覆盖阈值）
 - **lint_targets**: glob pattern 指定检查目标文件（如 `**/*.tex`、`**/*.bib`、`**/*.py`）
 
 ---
@@ -116,7 +117,7 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 | LATEX.VAR.LONG_TOKEN_USE_TEXT | latex-var-long-token-use-text | core | warn | false | doc |
 | LATEX.NOTATION_CONSISTENCY | latex-notation-consistency | core | error | true | doc |
 | REF.CROSS_REFERENCE_STYLE | ref-cross-reference-style | core | warn | false | doc |
-| PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | true | lint_script |
+| PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | false | lint_script |
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc |
 | CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | doc |
 | EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc |
@@ -140,3 +141,16 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 - `rules/` = 开发运维规则（代码风格、安全、agent 编排、实验可复现性）
 - `policy/` = 论文写作规则（LaTeX 格式、图表规范、论文结构）
 - `rules/experiment-reproducibility.md` 保留原位，profile 中用 Cross-References 引用
+
+---
+
+## 去重状态（M3）
+
+M3 清理了 CLAUDE.md、AGENTS.md 和 skill 文件中的重复规则文本。
+`policy/rules/` 现在是所有论文写作规则的唯一真相源。
+
+**引用约定**：
+- **CLAUDE.md / AGENTS.md**: 仅包含 policy engine 入口指引 + 强约束语句
+- **SKILL.md**: 工作流内使用 one-liner + `<!-- policy:RULE_ID -->` 标记
+- **references/*.md**: 使用 blockquote pointer 指向 `policy/rules/`
+- **硬规则**：只删规则定义重复文本，不删模板示例/可执行参数/具体颜色值

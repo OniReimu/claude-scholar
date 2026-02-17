@@ -6,11 +6,9 @@
 
 ### 论文改稿一致性检查（涉及公式时）
 
-在根据审稿意见修改公式或符号后，提交前请额外检查：
-- Display 公式使用 `\begin{equation}...\end{equation}`
-- 不使用 `$$...$$` 或 `\[...\]` 写 display 公式
-- Inline 公式使用 `$...$`
-- 数学模式中，变量名超过 3 个字母时使用 `\text{}`
+> **Policy**: 修改公式后确保符合 LaTeX 数学公式规则。
+> 详见 `policy/rules/latex-eq-display-style.md` 和 `policy/rules/latex-var-long-token-use-text.md`。
+> <!-- policy:LATEX.EQ.DISPLAY_STYLE --> <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 ### 标准Rebuttal结构
 
