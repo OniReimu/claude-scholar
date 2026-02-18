@@ -95,7 +95,11 @@ bash skills/paper-figure-generator/scripts/doctor.sh
 If not installed, run setup (one-time, installs Python dependencies only — source code is already in the repo):
 
 ```bash
+# 1) 安装依赖并创建 venv
 bash skills/paper-figure-generator/scripts/setup.sh
+
+# 2) 登录 HuggingFace（部分模型需要认证访问，交互式输入 access token）
+skills/paper-figure-generator/scripts/.venv/bin/hf auth login
 ```
 
 ### Step 4: Generate — Run AutoFigure-Edit
@@ -174,4 +178,5 @@ Embed in LaTeX:
 - For data visualization (bar charts, line plots, heatmaps), use the `results-analysis` skill instead
 - AutoFigure-Edit source code (`autofigure2.py`) is vendored in `scripts/`; only `.venv/` is gitignored
 - Requires LLM provider key (default `OPENROUTER_API_KEY`; optional `BIANXIE_API_KEY`) and a SAM3 backend key (`ROBOFLOW_API_KEY` recommended) in `.env`
+- Some models require HuggingFace authentication; run `hf auth login` in the project venv (see Step 3)
 - Output SVG can be further edited with any SVG editor (Inkscape, Illustrator, AutoFigure-Edit's built-in editor)
