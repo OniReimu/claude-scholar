@@ -191,7 +191,7 @@ skill-development → skill-quality-reviewer → skill-improver
 
 ```
 claude-scholar/
-├── AGENTS.md            # Codex runtime instructions (equivalent to CLAUDE.md + hooks)
+├── AGENTS.md            # Codex behavioral reference (kept in repo; no longer copied)
 ├── .codex/              # Codex-specific files
 │   └── INSTALL.md               # Codex installation guide
 │
@@ -202,7 +202,7 @@ claude-scholar/
 │   ├── stop-summary.js          # Session stop - quick status check, temp file detection
 │   └── security-guard.js        # Security validation for file operations
 │
-├── skills/              # 34 specialized skills (domain knowledge + workflows)
+├── skills/              # 35 specialized skills (domain knowledge + workflows)
 │   ├── ml-paper-writing/        # Full paper writing: NeurIPS, ICML, ICLR, ACL, AAAI, COLM
 │   │   └── references/
 │   │       └── knowledge/        # Extracted patterns from successful papers
@@ -418,11 +418,11 @@ Claude Scholar supports two runtimes:
 
 | | Claude Code | Codex |
 |---|------------|-------|
-| **Skills** | 34 (full) | 27 universal + 6 reference |
-| **Hooks** | 5 automated | N/A (AGENTS.md replaces) |
+| **Skills** | 35 (full) | 27 universal + 6 reference |
+| **Hooks** | 5 automated | N/A (using-claude-scholar skill replaces) |
 | **Commands** | 50+ slash commands | N/A (use skills directly) |
 | **Agents** | 14 specialized | 14 (via `spawn_agent`) |
-| **Install** | Clone / Plugin | Symlink + AGENTS.md |
+| **Install** | Clone / Plugin | Symlink only (native skill discovery) |
 
 ### Installation Options
 
@@ -444,7 +444,7 @@ claude plugin install claude-scholar@claude-scholar
 
 **Benefits**: Automatic component discovery, version tracking, easy updates via `claude plugin update`.
 
-**Includes**: All 34 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
+**Includes**: All 35 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
 
 ##### Option 2: Full Installation (Git Clone)
 
@@ -457,7 +457,7 @@ git clone https://github.com/OniReimu/claude-scholar.git ~/.claude
 # Restart Claude Code CLI
 ```
 
-**Includes**: All 34 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
+**Includes**: All 35 skills, 50+ commands, 14 agents, 5 hooks, and project rules.
 
 ##### Option 3: Minimal Installation
 
@@ -517,7 +517,7 @@ cp rules/agents.md ~/.claude/rules/
 # Clone the repository
 git clone https://github.com/OniReimu/claude-scholar.git ~/claude-scholar
 
-# Run the install script (creates symlinks, copies AGENTS.md)
+# Run the install script (creates symlinks, migrates legacy AGENTS.md)
 chmod +x ~/claude-scholar/scripts/install-codex.sh
 ~/claude-scholar/scripts/install-codex.sh
 ```
@@ -530,7 +530,7 @@ git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 
 **What it does:**
 - Creates symlink: `~/.agents/skills/claude-scholar` → `skills/`
-- Copies `AGENTS.md` → `~/.codex/AGENTS.md`
+- Detects and migrates legacy `~/.codex/AGENTS.md`
 - Updates via `git pull` — no re-install needed
 
 See [.codex/INSTALL.md](.codex/INSTALL.md) for detailed Codex installation guide.

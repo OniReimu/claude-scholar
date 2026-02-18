@@ -1,5 +1,5 @@
 # Claude Scholar — Codex Installation Script for Windows
-# Creates junction for skill discovery and copies AGENTS.md
+# Creates junction for native skill discovery
 #
 # Usage: .\scripts\install-codex-windows.ps1 [-RepoPath C:\path\to\claude-scholar]
 # Note: Run as Administrator for junction creation
@@ -22,11 +22,8 @@ if (-not $RepoPath) {
 }
 
 # Validate repo
-if (-not (Test-Path "$RepoPath\AGENTS.md")) {
-    Write-Err "AGENTS.md not found in $RepoPath. Is this the claude-scholar repository?"
-}
 if (-not (Test-Path "$RepoPath\skills")) {
-    Write-Err "skills\ directory not found in $RepoPath."
+    Write-Err "skills\ directory not found in $RepoPath. Is this the claude-scholar repository?"
 }
 
 Write-Host ""
@@ -40,7 +37,7 @@ Write-Host ""
 # --- Step 1: Create skills junction ---
 $SkillsTarget = "$HOME\.agents\skills\claude-scholar"
 
-Write-Info "Step 1: Creating skills junction..."
+Write-Info "Creating skills junction..."
 
 $SkillsParent = "$HOME\.agents\skills"
 if (-not (Test-Path $SkillsParent)) {
@@ -62,29 +59,15 @@ if (Test-Path $SkillsTarget) {
 cmd /c mklink /J "$SkillsTarget" "$RepoPath\skills" | Out-Null
 Write-Ok "Junction created: $SkillsTarget -> $RepoPath\skills"
 
-# --- Step 2: Copy AGENTS.md ---
-$CodexDir = "$HOME\.codex"
-$AgentsTarget = "$CodexDir\AGENTS.md"
-
-Write-Info "Step 2: Installing AGENTS.md..."
-
-if (-not (Test-Path $CodexDir)) {
-    New-Item -ItemType Directory -Path $CodexDir -Force | Out-Null
-}
-
-if (Test-Path $AgentsTarget) {
-    $content = Get-Content $AgentsTarget -Raw -ErrorAction SilentlyContinue
+# --- Cleanup: remove legacy AGENTS.md if present ---
+$AgentsLegacy = "$HOME\.codex\AGENTS.md"
+if (Test-Path $AgentsLegacy) {
+    $content = Get-Content $AgentsLegacy -Raw -ErrorAction SilentlyContinue
     if ($content -match "Claude Scholar") {
-        Write-Info "Updating Claude Scholar AGENTS.md..."
-    } else {
-        Write-Warn "Existing AGENTS.md is not from Claude Scholar."
-        Write-Warn "Backing up to ${AgentsTarget}.bak"
-        Copy-Item $AgentsTarget "${AgentsTarget}.bak"
+        Remove-Item $AgentsLegacy
+        Write-Ok "Removed legacy $AgentsLegacy (no longer needed)."
     }
 }
-
-Copy-Item "$RepoPath\AGENTS.md" $AgentsTarget -Force
-Write-Ok "AGENTS.md installed to $AgentsTarget"
 
 # --- Summary ---
 Write-Host ""
@@ -93,7 +76,7 @@ Write-Host "  Installation Complete"
 Write-Host "=========================================="
 Write-Host ""
 Write-Ok "Skills junction: $SkillsTarget"
-Write-Ok "AGENTS.md: $AgentsTarget"
+Write-Info "Codex will natively discover skills from the junction directory."
 Write-Host ""
 Write-Info "To verify, start a Codex session:"
 Write-Host "  codex"
@@ -103,5 +86,4 @@ Write-Host "  cd $RepoPath; git pull"
 Write-Host ""
 Write-Info "To uninstall:"
 Write-Host "  Remove-Item '$SkillsTarget' -Force"
-Write-Host "  Remove-Item '$AgentsTarget' -Force"
 Write-Host ""

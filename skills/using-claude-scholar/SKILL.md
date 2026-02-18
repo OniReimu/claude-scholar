@@ -1,9 +1,13 @@
 ---
 name: using-claude-scholar
 description: |
-  This skill should be used when starting any conversation or before responding to any user message, to enforce mandatory skill evaluation (Yes/No) and activation before implementation.
-version: 1.0.0
-tags: [Meta, System, Skills]
+  This skill should be used when working on academic papers, research
+  projects, or scientific writing — enforces skill evaluation and
+  policy rule compliance for the claude-scholar framework. Also
+  provides tool mapping, session behavior, security rules, and user
+  preferences for multi-runtime environments (Claude Code + Codex).
+version: 2.0.0
+tags: [Meta, System, Skills, Academic]
 ---
 
 # Using Claude Scholar
@@ -48,6 +52,8 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
 | `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
 
+---
+
 ## The #1 Rule
 
 **Before responding to any user message, you MUST evaluate all available skills.**
@@ -67,51 +73,7 @@ For every user message, scan the available skills list.
 
 If the runtime already provided a skills list, do NOT treat the hardcoded list below as exhaustive.
 
-**Research & Analysis:**
-- `research-ideation` — Research startup: 5W1H brainstorming, literature review, gap analysis
-- `results-analysis` — Experiment analysis: statistical testing, visualization, ablation studies
-- `citation-verification` — Multi-layer citation validation (Format → API → Info → Content)
-- `daily-paper-generator` — Automated daily paper generation for research tracking
-- `paper-figure-generator` — **AUTO-ACTIVATE during paper writing**: Generate editable SVG figures via AutoFigure-Edit when writing Figure 1, system model, method overview, or any section describing a system/pipeline/architecture. Also triggers on explicit requests for diagrams.
-
-**Paper Writing & Publication:**
-- `ml-paper-writing` — Full paper writing for NeurIPS, ICML, ICLR, ACL, AAAI, COLM, Nature, Science, Cell, PNAS
-- `writing-anti-ai` — Remove AI writing patterns, add human voice (bilingual EN/CN)
-- `paper-self-review` — multi-item quality checklist before submission (including figure/title and LaTeX math conformance)
-- `review-response` — Systematic rebuttal writing with tone management
-- `post-acceptance` — Conference preparation: presentations, posters, promotion
-- `doc-coauthoring` — Document collaboration workflow
-- `latex-conference-template-organizer` — LaTeX template cleanup for Overleaf
-
-**Development:**
-- `daily-coding` — Daily coding checklist (auto-triggers on any code modification)
-- `git-workflow` — Git best practices: Conventional Commits, branching strategy
-- `code-review-excellence` — Code review: security, performance, maintainability
-- `bug-detective` — Debugging for Python, Bash, JS/TS error patterns
-- `architecture-design` — ML project patterns: Factory, Registry, config-driven
-- `verification-loop` — Testing and validation cycles
-
-**Plugin Development:**
-- `skill-development` — Skill creation guide
-- `skill-quality-reviewer` — 4-dimension quality assessment
-- `skill-improver` — Skill optimization and improvement
-- `command-development` — Slash command creation
-- `command-name` — Plugin structure and naming
-- `agent-identifier` — Agent development configuration
-- `hook-development` — Hook event handling
-- `mcp-integration` — MCP server integration
-
-**Tools & Utilities:**
-- `planning-with-files` — Markdown-based planning and progress tracking
-- `uv-package-manager` — Modern Python package management with uv
-- `webapp-testing` — Local web application testing
-- `kaggle-learner` — Learn from Kaggle competition solutions
-
-**Web Design:**
-- `frontend-design` — Production-grade frontend interfaces
-- `ui-ux-pro-max` — UI/UX design intelligence (50+ styles, 97 palettes)
-- `web-design-reviewer` — Visual inspection and design issue fixing
-- `using-claude-scholar` — Meta-skill: enforce skill evaluation + activation discipline
+**Full skill catalog**: See `references/skill-catalog.md` for the complete 35-skill list with trigger conditions, organized by category (Research & Analysis, Paper Writing & Publication, Development, Plugin Development, Tools & Utilities, Web Design, System).
 
 ### Step 2: Decide
 
@@ -143,10 +105,146 @@ If you catch yourself thinking any of these, **STOP** and re-evaluate:
 | "I already know this" | Your training data doesn't include this project's specific patterns. |
 | "The user didn't ask for a skill" | Skill evaluation is automatic, not user-initiated. |
 
+---
+
 ## Available Agents
 
-When a task requires delegation, use these specialized agents:
+When a task requires delegation, use specialized agents.
 
-**Research:** literature-reviewer, data-analyst, rebuttal-writer, paper-miner, kaggle-miner
-**Development:** architect, build-error-resolver, code-reviewer, refactor-cleaner, tdd-guide, bug-analyzer, dev-planner
-**Design:** ui-sketcher, story-generator
+**Full agent catalog**: See `references/agent-catalog.md` for the complete 14-agent list with auto-invocation rules.
+
+**Quick reference:**
+- **Research:** literature-reviewer, data-analyst, rebuttal-writer, paper-miner, kaggle-miner
+- **Development:** architect, build-error-resolver, code-reviewer, refactor-cleaner, tdd-guide, bug-analyzer, dev-planner
+- **Design:** ui-sketcher, story-generator
+
+---
+
+## Tool Mapping (Claude Code → Codex)
+
+> **Runtime guard**: This section applies **only on Codex**. On Claude Code, use the native tools directly (`Edit`, `Write`, `Grep`, `Glob`, `Task`, etc.) — do NOT substitute Codex equivalents.
+
+When running on Codex and skills reference Claude Code-specific tools, use the Codex equivalents.
+
+**Full mapping table**: See `references/tool-mapping.md`.
+
+**Quick reference:**
+| Claude Code | Codex |
+|------------|-------|
+| `TodoWrite` | `plan` tool |
+| `Skill` tool | Native skill discovery |
+| `Task` subagent | `spawn_agent` |
+| `Edit` / `Write` | `apply_patch` |
+| `Grep` / `Glob` | `rg` / `rg --files` |
+| `EnterPlanMode` | `plan` tool |
+
+---
+
+## Session Behavior
+
+### Session Start
+
+At the beginning of each conversation, perform these steps:
+
+1. **Git Status**: Run `git status` and `git log --oneline -5` to understand the current project state
+2. **Check TODOs**: Look for TODO.md, docs/todo.md, or plan/ directory files
+3. **Report Context**: Briefly summarize branch, pending changes, and any active tasks
+
+### Task Completion Summary
+
+After completing each task, provide a structured summary:
+
+```
+--- Task Summary ---
+1. [Main operations performed]
+2. [Files modified]
+
+Current Status:
+- [Git/filesystem/runtime state]
+
+Next Steps:
+1. [Actionable suggestions]
+```
+
+---
+
+## Security Awareness
+
+### Dangerous Command Blacklist
+
+NEVER execute these commands without explicit user confirmation:
+
+- `rm -rf /` or any recursive deletion of system directories
+- `dd` writing to block devices
+- `mkfs.*` or `format` commands
+- `DROP DATABASE/TABLE`, `DELETE FROM`, `TRUNCATE TABLE`
+- Recursive deletion of `/etc/`, `/usr/`, `/bin/`, `/home/`, `/Users/`
+
+### Warning Commands (proceed with caution)
+
+- `rm`, `mv` (verify target paths first)
+- `chmod`, `chown` (verify permissions scope)
+- `wget`, `curl` piped to shell
+- `npm install -g`, `pip install` outside virtual env
+
+### Sensitive File Protection
+
+NEVER read, write, or commit:
+
+| Pattern | Reason |
+|---------|--------|
+| `.env`, `.env.*` | Environment secrets |
+| `*.pem`, `*.key` | Private keys |
+| `credentials.json` | Service account credentials |
+| `*_secret*`, `*_token*` | Named secret files |
+| `settings.json` | API tokens |
+
+### Code Security
+
+- No hardcoded passwords or API keys
+- No `eval()` / `exec()` with user input
+- Use parameterized SQL queries, never string concatenation
+- No disabled SSL verification without justification
+
+---
+
+## Rules Summary
+
+### Coding Style (ML Projects)
+
+- **File size**: 200-400 lines maximum, split when exceeding 400
+- **Immutability**: Use `@dataclass(frozen=True)` for configurations
+- **Type hints**: Required for all function signatures
+- **Patterns**: Factory & Registry for all ML modules
+- **Config-driven**: Models accept only `cfg` parameter
+- **Nesting**: Maximum 3 levels deep
+- **Imports**: Standard library → third-party → local
+
+### Experiment Reproducibility
+
+- Always set random seeds (Python: `random`, `numpy`, `torch`, `torch.cuda`)
+- Record configurations via Hydra auto-save
+- Track environment info (Python version, torch version, CUDA, GPU)
+- Checkpoint naming: `best_model.pt`, `checkpoint_epoch_N.pt`, `checkpoint_latest.pt`
+- Record dataset hash or version tag
+
+### Paper Writing Rules (Policy Engine)
+
+Paper writing rules (28 rule cards) are defined in `policy/rules/`.
+See `policy/README.md` for the full Rule ID Registry and rule card specification.
+Skills reference rules via HTML comment markers. In case of conflict, `policy/rules/` is the single source of truth.
+**Writing tasks must first read `policy/README.md` + relevant rule cards.**
+
+---
+
+## User Preferences
+
+- **Language**: Respond in Chinese (中文); keep technical terms in English (NeurIPS, RLHF, TDD, Git)
+- **Git**: Follow Conventional Commits (`feat/fix/docs/style/refactor/perf/test/chore`)
+- **Branch strategy**: master/develop/feature/bugfix/hotfix/release
+- **Merge strategy**: Rebase to sync feature branches, merge with `--no-ff`
+- **Package manager**: `uv` for Python projects
+- **Config stack**: Hydra + OmegaConf
+- **Training**: Transformers Trainer
+- **Working directories**: Plans in `/plan`, temporary files in `/temp` (auto-create if missing)
+- **Comments**: Chinese in code, English for naming

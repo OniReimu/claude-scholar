@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Claude Scholar — Codex Installation Script
-# Creates symlinks for skill discovery and copies AGENTS.md
+# Creates symlinks for native skill discovery
 #
 # Usage: ./scripts/install-codex.sh [--repo-path /path/to/claude-scholar]
 
@@ -39,12 +39,8 @@ if [[ -z "$REPO_PATH" ]]; then
 fi
 
 # Validate repo
-if [[ ! -f "$REPO_PATH/AGENTS.md" ]]; then
-  error "AGENTS.md not found in $REPO_PATH. Is this the claude-scholar repository?"
-fi
-
 if [[ ! -d "$REPO_PATH/skills" ]]; then
-  error "skills/ directory not found in $REPO_PATH."
+  error "skills/ directory not found in $REPO_PATH. Is this the claude-scholar repository?"
 fi
 
 echo ""
@@ -58,7 +54,7 @@ echo ""
 # --- Step 1: Create skills symlink ---
 SKILLS_TARGET="$HOME/.agents/skills/claude-scholar"
 
-info "Step 1: Creating skills symlink..."
+info "Creating skills symlink..."
 
 mkdir -p "$HOME/.agents/skills"
 
@@ -80,31 +76,11 @@ else
   ok "Symlink created: $SKILLS_TARGET → $REPO_PATH/skills"
 fi
 
-# --- Step 2: Copy AGENTS.md ---
-CODEX_DIR="$HOME/.codex"
-AGENTS_TARGET="$CODEX_DIR/AGENTS.md"
-
-info "Step 2: Installing AGENTS.md..."
-
-mkdir -p "$CODEX_DIR"
-
-if [[ -f "$AGENTS_TARGET" ]]; then
-  warn "Existing AGENTS.md found at $AGENTS_TARGET"
-  # Check if it's from claude-scholar
-  if grep -q "Claude Scholar" "$AGENTS_TARGET" 2>/dev/null; then
-    info "Updating Claude Scholar AGENTS.md..."
-    cp "$REPO_PATH/AGENTS.md" "$AGENTS_TARGET"
-    ok "AGENTS.md updated."
-  else
-    warn "Existing AGENTS.md is not from Claude Scholar."
-    warn "Backing up to ${AGENTS_TARGET}.bak"
-    cp "$AGENTS_TARGET" "${AGENTS_TARGET}.bak"
-    cp "$REPO_PATH/AGENTS.md" "$AGENTS_TARGET"
-    ok "AGENTS.md installed (backup saved)."
-  fi
-else
-  cp "$REPO_PATH/AGENTS.md" "$AGENTS_TARGET"
-  ok "AGENTS.md installed to $AGENTS_TARGET"
+# --- Cleanup: remove legacy AGENTS.md if present ---
+AGENTS_LEGACY="$HOME/.codex/AGENTS.md"
+if [[ -f "$AGENTS_LEGACY" ]] && grep -q "Claude Scholar" "$AGENTS_LEGACY" 2>/dev/null; then
+  rm "$AGENTS_LEGACY"
+  ok "Removed legacy ~/.codex/AGENTS.md (no longer needed)."
 fi
 
 # --- Summary ---
@@ -114,7 +90,7 @@ echo "  Installation Complete"
 echo "=========================================="
 echo ""
 ok "Skills symlink: $SKILLS_TARGET"
-ok "AGENTS.md: $AGENTS_TARGET"
+info "Codex will natively discover skills from the symlinked directory."
 echo ""
 info "To verify, start a Codex session:"
 echo "  codex"
@@ -124,5 +100,4 @@ echo "  cd $REPO_PATH && git pull"
 echo ""
 info "To uninstall:"
 echo "  rm $SKILLS_TARGET"
-echo "  rm $AGENTS_TARGET"
 echo ""

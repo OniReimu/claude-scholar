@@ -312,13 +312,13 @@ Claude Scholar supports two runtime environments:
 - **Commands**: 50+ slash commands
 - **Agents**: 14 specialized agents
 
-### Codex (Skills + AGENTS.md)
+### Codex (Native Skill Discovery)
 
 - **Installation**: `scripts/install-codex.sh` creates symlink to `~/.agents/skills/`
 - **Hooks**: N/A (Codex does not support hooks)
 - **Skills**: 27 universal skills + 6 Claude Code-specific skills (marked `platform: claude-code`, serve as reference documentation)
-- **Commands**: N/A (Codex does not support slash commands; use skills and AGENTS.md directives instead)
-- **AGENTS.md**: Encodes all hook behaviors as natural language instructions (skill evaluation, security awareness, session behavior)
+- **Commands**: N/A (Codex does not support slash commands; use skills directly)
+- **Meta Skill**: `using-claude-scholar` provides all runtime instructions (skill evaluation, security awareness, session behavior, tool mapping, user preferences) via native skill discovery — replaces the previous `AGENTS.md` copy approach
 
 ### Tool Mapping
 

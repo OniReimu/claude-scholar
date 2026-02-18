@@ -191,7 +191,7 @@ skill-development → skill-quality-reviewer → skill-improver
 
 ```
 claude-scholar/
-├── AGENTS.md            # Codex 运行时指令（等效于 CLAUDE.md + hooks）
+├── AGENTS.md            # Codex 行为参考（保留在仓库中；不再复制）
 ├── .codex/              # Codex 专用文件
 │   └── INSTALL.md               # Codex 安装指南
 │
@@ -202,7 +202,7 @@ claude-scholar/
 │   ├── stop-summary.js          # 会话停止 - 快速状态检查、临时文件检测
 │   └── security-guard.js        # 文件操作的安全验证
 │
-├── skills/              # 34 个专业技能（领域知识 + 工作流）
+├── skills/              # 35 个专业技能（领域知识 + 工作流）
 │   ├── ml-paper-writing/        # 完整论文写作：NeurIPS, ICML, ICLR, ACL, AAAI, COLM
 │   │   └── references/
 │   │       └── knowledge/        # 从成功论文中提取的模式
@@ -418,11 +418,11 @@ Claude Scholar 支持两个运行时环境：
 
 | | Claude Code | Codex |
 |---|------------|-------|
-| **技能** | 34 个（完整） | 27 个通用 + 6 个参考 |
-| **钩子** | 5 个自动化 | 不适用（AGENTS.md 替代） |
+| **技能** | 35 个（完整） | 27 个通用 + 6 个参考 |
+| **钩子** | 5 个自动化 | 不适用（using-claude-scholar 技能替代） |
 | **命令** | 50+ 斜杠命令 | 不适用（直接使用技能） |
 | **代理** | 14 个专业 | 14 个（通过 `spawn_agent`） |
-| **安装** | 克隆 / 插件 | 符号链接 + AGENTS.md |
+| **安装** | 克隆 / 插件 | 仅符号链接（原生技能发现） |
 
 ### 安装选项
 
@@ -444,7 +444,7 @@ claude plugin install claude-scholar@claude-scholar
 
 **优势**：自动组件发现、版本跟踪、通过 `claude plugin update` 便捷更新。
 
-**包含**：所有 34 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
+**包含**：所有 35 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
 
 ##### 选项 2：完整安装（Git Clone）
 
@@ -457,7 +457,7 @@ git clone https://github.com/OniReimu/claude-scholar.git ~/.claude
 # 重启 Claude Code CLI
 ```
 
-**包含**：所有 34 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
+**包含**：所有 35 个技能、50+ 命令、14 个代理、5 个钩子和项目规则。
 
 ##### 选项 3：最小化安装
 
@@ -517,7 +517,7 @@ cp rules/agents.md ~/.claude/rules/
 # 克隆仓库
 git clone https://github.com/OniReimu/claude-scholar.git ~/claude-scholar
 
-# 运行安装脚本（创建符号链接，复制 AGENTS.md）
+# 运行安装脚本（创建符号链接，迁移旧版 AGENTS.md）
 chmod +x ~/claude-scholar/scripts/install-codex.sh
 ~/claude-scholar/scripts/install-codex.sh
 ```
@@ -530,7 +530,7 @@ git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 
 **安装内容：**
 - 创建符号链接：`~/.agents/skills/claude-scholar` → `skills/`
-- 复制 `AGENTS.md` → `~/.codex/AGENTS.md`
+- 检测并迁移旧版 `~/.codex/AGENTS.md`
 - 通过 `git pull` 更新，无需重新安装
 
 详细 Codex 安装指南请参阅 [.codex/INSTALL.md](.codex/INSTALL.md)。
