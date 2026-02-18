@@ -42,6 +42,10 @@ skills/paper-figure-generator/.autofigure-edit/
 !/CLAUDE.md
 !/policy/CLAUDE.md
 
+# Codex directory — only allow INSTALL.md
+.codex/*
+!.codex/INSTALL.md
+
 # Other temporary files
 docs/
 plan/
