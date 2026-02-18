@@ -1,350 +1,350 @@
-# Claude Scholar 配置
+# Claude Scholar Configuration
 
-## 项目概述
+## Project Overview
 
-**Claude Scholar** - 面向学术研究和软件开发的个人 Claude Code 配置系统
+**Claude Scholar** — A personal Claude Code configuration system for academic research and software development.
 
-**Mission**: 覆盖完整的学术研究生命周期（从构思到发表）和软件开发工作流，同时提供插件开发和项目管理能力。
+**Mission**: Cover the complete academic research lifecycle (from ideation to publication) and software development workflows, while providing plugin development and project management capabilities.
 
 ---
 
-## 用户背景
+## User Background
 
-### 学术背景
-- **学历**: 计算机科学 PhD
-- **投稿目标**:
-  - 顶会：NeurIPS, ICML, ICLR, KDD
-  - 高影响期刊：Nature, Science, Cell, PNAS
-- **关注点**: 学术写作质量、逻辑连贯性、自然表达
+### Academic Profile
+- **Degree**: Computer Science PhD
+- **Target Venues**:
+  - Top conferences: NeurIPS, ICML, ICLR, KDD
+  - High-impact journals: Nature, Science, Cell, PNAS
+- **Focus**: Academic writing quality, logical coherence, natural expression
 
-### 技术栈偏好
+### Technology Stack Preferences
 
-**Python 生态**:
-- **包管理**: `uv` - 现代化 Python 包管理器
-- **配置管理**: Hydra + OmegaConf（配置组合、覆盖、类型安全）
-- **模型训练**: Transformers Trainer
+**Python Ecosystem**:
+- **Package Manager**: `uv` — modern Python package manager
+- **Configuration**: Hydra + OmegaConf (composition, overrides, type safety)
+- **Model Training**: Transformers Trainer
 
-**Git 规范**:
-- **提交规范**: Conventional Commits
+**Git Conventions**:
+- **Commit Standard**: Conventional Commits
   ```
   Type: feat, fix, docs, style, refactor, perf, test, chore
   Scope: data, model, config, trainer, utils, workflow
   ```
-- **分支策略**: master/develop/feature/bugfix/hotfix/release
-- **合并策略**: 功能分支用 rebase 同步，用 merge --no-ff 合并
+- **Branch Strategy**: master/develop/feature/bugfix/hotfix/release
+- **Merge Strategy**: Rebase to sync feature branches, merge with `--no-ff`
 
 ---
 
-## 全局配置
+## Global Configuration
 
-### 语言设置
-- 用中文进行回答
-- 专业术语保持英文（如 NeurIPS, RLHF, TDD, Git）
-- 不翻译特定名词或名称
+### Language Settings
+- Respond in Chinese (中文)
+- Keep technical terms in English (e.g., NeurIPS, RLHF, TDD, Git)
+- Do not translate proper nouns or names
 
-### 工作目录规范
-- 计划文档：`/plan` 文件夹
-- 临时文件：`/temp` 文件夹
-- 文件夹不存在时自动创建
+### Working Directory Conventions
+- Plan documents: `/plan` folder
+- Temporary files: `/temp` folder
+- Auto-create folders if they do not exist
 
-### 任务执行原则
-- 复杂任务先交流意见，再拆解实施
-- 实施后进行示例测试
-- 做好备份，不影响现有功能
-- 完成后及时删除临时文件
+### Task Execution Principles
+- For complex tasks, discuss approach first, then break down and implement
+- Run example tests after implementation
+- Back up before changes; do not break existing functionality
+- Clean up temporary files promptly after completion
 
-### 论文写作规则（全局）
+### Paper Writing Rules (Global)
 
-论文写作规则统一定义在 `policy/rules/`（28 条规则卡片），覆盖图表格式、LaTeX 数学公式、实验结构、引文验证、投稿合规等。
-规则规范和完整注册表见 `policy/README.md`。技能文件通过 `<!-- policy:RULE_ID -->` 标记引用规则。
-**写作任务必须先读 `policy/README.md` + 相关 rule card，以 `policy/rules/` 为唯一真相源。**
+Paper writing rules are defined in `policy/rules/` (28 rule cards), covering figure formatting, LaTeX math, experiment structure, citation verification, submission compliance, etc.
+Rule specification and full registry: `policy/README.md`. Skills reference rules via `<!-- policy:RULE_ID -->` markers.
+**Writing tasks must first read `policy/README.md` + relevant rule cards; `policy/rules/` is the single source of truth.**
 
-### 工作风格
-- **任务管理**: 使用 TodoWrite 跟踪进度，复杂任务先规划再执行，优先使用已有 skills
-- **沟通方式**: 不确定时主动询问，重要操作前先确认，遵循 hook 强制流程
-- **代码风格**: Python 遵循 PEP 8，注释使用中文，命名使用英文
+### Working Style
+- **Task Management**: Use TodoWrite to track progress; plan before executing complex tasks; prefer existing skills
+- **Communication**: Ask proactively when uncertain; confirm before critical operations; follow hook-enforced workflows
+- **Code Style**: Python follows PEP 8; comments in Chinese; naming in English
 
 ---
 
-## 核心工作流
+## Core Workflows
 
-### 研究生命周期（7 阶段）
+### Research Lifecycle (7 Stages)
 
 ```
-构思 → ML开发 → 实验分析 → 论文写作 → 自审 → 投稿/Rebuttal → 录用后处理
+Ideation → ML Development → Experiment Analysis → Paper Writing → Self-Review → Submission/Rebuttal → Post-Acceptance
 ```
 
-| 阶段 | 核心工具 | 命令 |
-|------|---------|------|
-| 1. 研究构思 | `research-ideation` skill + `literature-reviewer` agent | `/research-init` |
-| 2. ML 项目开发 | `architecture-design` skill + `code-reviewer` agent | `/plan`, `/commit`, `/tdd` |
-| 3. 实验分析 | `results-analysis` skill + `data-analyst` agent | `/analyze-results` |
-| 4. 论文写作 | `ml-paper-writing` skill + `paper-miner` agent | - |
-| 5. 论文自审 | `paper-self-review` skill | - |
-| 6. 投稿与 Rebuttal | `review-response` skill + `rebuttal-writer` agent | `/rebuttal` |
-| 7. 录用后处理 | `post-acceptance` skill | `/presentation`, `/poster`, `/promote` |
+| Stage | Core Tools | Commands |
+|-------|-----------|----------|
+| 1. Research Ideation | `research-ideation` skill + `literature-reviewer` agent | `/research-init` |
+| 2. ML Project Development | `architecture-design` skill + `code-reviewer` agent | `/plan`, `/commit`, `/tdd` |
+| 3. Experiment Analysis | `results-analysis` skill + `data-analyst` agent | `/analyze-results` |
+| 4. Paper Writing | `ml-paper-writing` skill + `paper-miner` agent | - |
+| 5. Paper Self-Review | `paper-self-review` skill | - |
+| 6. Submission & Rebuttal | `review-response` skill + `rebuttal-writer` agent | `/rebuttal` |
+| 7. Post-Acceptance | `post-acceptance` skill | `/presentation`, `/poster`, `/promote` |
 
-### 支撑工作流
+### Supporting Workflows
 
-- **自动化执行**: 5 个 Hook 在会话各阶段自动触发（技能评估、环境初始化、工作总结、安全检查）
-- **知识提取**: `paper-miner` 和 `kaggle-miner` agent 持续从论文和竞赛中提取知识
-- **技能进化**: `skill-development` → `skill-quality-reviewer` → `skill-improver` 三步改进循环
-
----
-
-## 技能目录（35 skills）
-
-### 🔬 研究与分析 (5 skills)
-
-- **research-ideation**: 研究构思启动（5W1H、文献综述、Gap 分析、研究问题制定）
-- **results-analysis**: 实验结果分析（统计检验、可视化、消融实验）
-- **citation-verification**: 引文验证（多层验证：格式→API→信息→内容）
-- **daily-paper-generator**: 每日论文生成器，用于研究追踪
-- **paper-figure-generator**: 学术论文图表生成（系统总览、Pipeline、架构图等，基于 AutoFigure-Edit，生成可编辑 SVG）
-
-### 📝 论文写作与发表 (7 skills)
-
-- **ml-paper-writing**: ML/AI 论文写作辅助
-  - 顶会：NeurIPS, ICML, ICLR, ACL, AAAI, COLM
-  - 期刊：Nature, Science, Cell, PNAS
-- **writing-anti-ai**: 去除 AI 写作痕迹，支持中英文双语
-- **paper-self-review**: 论文自审（多项质量检查清单，含图表与数学公式规范）
-- **review-response**: 系统化 rebuttal 写作
-- **post-acceptance**: 录用后处理（演讲、海报、推广）
-- **doc-coauthoring**: 文档协作工作流
-- **latex-conference-template-organizer**: LaTeX 会议模板整理
-
-### 💻 开发工作流 (6 skills)
-
-- **daily-coding**: 日常编码检查清单（极简模式，自动触发）
-- **git-workflow**: Git 工作流规范（Conventional Commits, 分支管理策略）
-- **code-review-excellence**: 代码审查最佳实践
-- **bug-detective**: 调试和错误排查（Python, Bash/Zsh, JavaScript/TypeScript）
-- **architecture-design**: ML 项目代码框架和设计模式
-- **verification-loop**: 验证循环和测试
-
-### 🔌 插件开发 (8 skills)
-
-- **skill-development**: Skill 开发指南
-- **skill-improver**: Skill 改进工具
-- **skill-quality-reviewer**: Skill 质量审查
-- **command-development**: Slash 命令开发
-- **command-name**: 插件结构指南
-- **agent-identifier**: Agent 开发配置
-- **hook-development**: Hook 开发和事件处理
-- **mcp-integration**: MCP 服务器集成
-
-### 🧪 工具与实用 (4 skills)
-
-- **planning-with-files**: 使用 Markdown 文件进行规划和进度跟踪
-- **uv-package-manager**: uv 包管理器使用
-- **webapp-testing**: 本地 Web 应用测试
-- **kaggle-learner**: Kaggle 竞赛学习
-
-### 🎨 网页设计 (3 skills)
-
-- **frontend-design**: 创建独特、生产级的前端界面，避免通用 AI 美学
-- **ui-ux-pro-max**: UI/UX 设计智能（50+ 风格、97 色板、57 字体配对、9 技术栈）
-- **web-design-reviewer**: 网站设计视觉检查，识别并修复响应式、可访问性、布局问题
-
-### 🔧 系统 (2 skills)
-
-- **using-claude-scholar**: 元技能，确保正确使用 Claude Scholar 技能系统，强制技能评估纪律
-- **policy-rule-creator**: Policy Engine 规则创建向导（需求收集→Rule Card→Registry→Integration Marker→Lint→验证）
+- **Automation**: 5 Hooks auto-trigger at various session stages (skill evaluation, environment init, work summary, security checks)
+- **Knowledge Extraction**: `paper-miner` and `kaggle-miner` agents continuously extract knowledge from papers and competitions
+- **Skill Evolution**: `skill-development` → `skill-quality-reviewer` → `skill-improver` three-step improvement cycle
 
 ---
 
-## 命令（50+ Commands）
+## Skills Catalog (35 skills)
 
-### 研究工作流命令
+### 🔬 Research & Analysis (5 skills)
 
-| 命令 | 功能 |
-|------|------|
-| `/research-init` | 启动研究构思工作流（5W1H、文献综述、Gap 分析） |
-| `/analyze-results` | 分析实验结果（统计检验、可视化、消融实验） |
-| `/rebuttal` | 生成系统化 rebuttal 文档 |
-| `/presentation` | 创建会议演讲大纲 |
-| `/poster` | 生成学术海报设计方案 |
-| `/promote` | 生成推广内容（Twitter、LinkedIn、博客） |
+- **research-ideation**: Research ideation startup (5W1H, literature review, gap analysis, research question formulation)
+- **results-analysis**: Experiment results analysis (statistical tests, visualization, ablation studies)
+- **citation-verification**: Citation verification (multi-layer: format → API → metadata → content)
+- **daily-paper-generator**: Daily paper generator for research tracking
+- **paper-figure-generator**: Academic paper figure generation (system overview, pipeline, architecture diagrams, etc., powered by AutoFigure-Edit, produces editable SVG)
 
-### 开发工作流命令
+### 📝 Paper Writing & Publication (7 skills)
 
-| 命令 | 功能 |
-|------|------|
-| `/plan` | 创建实施计划 |
-| `/commit` | 提交代码（遵循 Conventional Commits） |
-| `/update-github` | 提交并推送到 GitHub |
-| `/update-readme` | 更新 README 文档 |
-| `/code-review` | 代码审查 |
-| `/tdd` | 测试驱动开发工作流 |
-| `/build-fix` | 修复构建错误 |
-| `/verify` | 验证更改 |
-| `/checkpoint` | 创建检查点 |
-| `/refactor-clean` | 重构和清理 |
-| `/learn` | 从代码中提取可重用模式 |
-| `/create_project` | 创建新项目 |
-| `/setup-pm` | 配置包管理器（uv/pnpm） |
-| `/update-memory` | 检查并更新 CLAUDE.md 记忆 |
+- **ml-paper-writing**: ML/AI paper writing assistant
+  - Conferences: NeurIPS, ICML, ICLR, ACL, AAAI, COLM
+  - Journals: Nature, Science, Cell, PNAS
+- **writing-anti-ai**: Remove AI writing patterns, bilingual support (EN/CN)
+- **paper-self-review**: Paper self-review (multi-item quality checklist, including figure and math conformance)
+- **review-response**: Systematic rebuttal writing
+- **post-acceptance**: Post-acceptance processing (presentations, posters, promotion)
+- **doc-coauthoring**: Document co-authoring workflow
+- **latex-conference-template-organizer**: LaTeX conference template organization
 
-### SuperClaude 命令集 (`/sc`)
+### 💻 Development Workflow (6 skills)
 
-- `/sc agent` - Agent 调度
-- `/sc analyze` - 代码分析
-- `/sc brainstorm` - 交互式头脑风暴
-- `/sc build` - 构建项目
-- `/sc business-panel` - 业务面板
-- `/sc cleanup` - 代码清理
-- `/sc design` - 系统设计
-- `/sc document` - 生成文档
-- `/sc estimate` - 工作量估算
-- `/sc explain` - 代码解释
-- `/sc git` - Git 操作
-- `/sc help` - 帮助信息
-- `/sc implement` - 功能实现
-- `/sc improve` - 代码改进
-- `/sc index` - 项目索引
-- `/sc index-repo` - 仓库索引
-- `/sc load` - 加载上下文
-- `/sc pm` - 包管理器操作
-- `/sc recommend` - 推荐方案
-- `/sc reflect` - 反思总结
-- `/sc research` - 技术调研
-- `/sc save` - 保存上下文
-- `/sc select-tool` - 工具选择
-- `/sc spawn` - 生成子任务
-- `/sc spec-panel` - 规格面板
-- `/sc task` - 任务管理
-- `/sc test` - 测试执行
-- `/sc troubleshoot` - 问题排查
-- `/sc workflow` - 工作流管理
+- **daily-coding**: Daily coding checklist (minimal mode, auto-trigger)
+- **git-workflow**: Git workflow standards (Conventional Commits, branch management)
+- **code-review-excellence**: Code review best practices
+- **bug-detective**: Debugging and error investigation (Python, Bash/Zsh, JavaScript/TypeScript)
+- **architecture-design**: ML project code architecture and design patterns
+- **verification-loop**: Verification loops and testing
+
+### 🔌 Plugin Development (8 skills)
+
+- **skill-development**: Skill development guide
+- **skill-improver**: Skill improvement tool
+- **skill-quality-reviewer**: Skill quality review
+- **command-development**: Slash command development
+- **command-name**: Plugin structure guide
+- **agent-identifier**: Agent development configuration
+- **hook-development**: Hook development and event handling
+- **mcp-integration**: MCP server integration
+
+### 🧪 Tools & Utilities (4 skills)
+
+- **planning-with-files**: Planning and progress tracking with Markdown files
+- **uv-package-manager**: uv package manager usage
+- **webapp-testing**: Local web application testing
+- **kaggle-learner**: Kaggle competition learning
+
+### 🎨 Web Design (3 skills)
+
+- **frontend-design**: Create distinctive, production-grade frontend interfaces, avoiding generic AI aesthetics
+- **ui-ux-pro-max**: UI/UX design intelligence (50+ styles, 97 palettes, 57 font pairings, 9 tech stacks)
+- **web-design-reviewer**: Website design visual inspection, identifying and fixing responsive, accessibility, and layout issues
+
+### 🔧 System (2 skills)
+
+- **using-claude-scholar**: Meta skill ensuring correct use of the Claude Scholar skill system, enforcing skill evaluation discipline
+- **policy-rule-creator**: Policy Engine rule creation wizard (requirements → Rule Card → Registry → Integration Marker → Lint → validation)
 
 ---
 
-## 代理（14 Agents）
+## Commands (50+)
 
-### 研究工作流代理
+### Research Workflow Commands
 
-- **literature-reviewer** - 文献搜索、分类和趋势分析
-- **data-analyst** - 自动化数据分析和可视化
-- **rebuttal-writer** - 系统化 rebuttal 写作，语气优化
-- **paper-miner** - 从成功论文中提取写作知识
+| Command | Function |
+|---------|----------|
+| `/research-init` | Start research ideation workflow (5W1H, literature review, gap analysis) |
+| `/analyze-results` | Analyze experiment results (statistical tests, visualization, ablation studies) |
+| `/rebuttal` | Generate systematic rebuttal document |
+| `/presentation` | Create conference presentation outline |
+| `/poster` | Generate academic poster design plan |
+| `/promote` | Generate promotional content (Twitter, LinkedIn, blog) |
 
-### 开发工作流代理
+### Development Workflow Commands
 
-- **architect** - 系统架构设计
-- **build-error-resolver** - 构建错误修复
-- **bug-analyzer** - 深度代码执行流分析和根因调查
-- **code-reviewer** - 代码审查
-- **dev-planner** - 开发任务规划和拆解
-- **refactor-cleaner** - 代码重构和清理
-- **tdd-guide** - TDD 工作流指导
-- **kaggle-miner** - Kaggle 工程实践提取
+| Command | Function |
+|---------|----------|
+| `/plan` | Create implementation plan |
+| `/commit` | Commit code (following Conventional Commits) |
+| `/update-github` | Commit and push to GitHub |
+| `/update-readme` | Update README documentation |
+| `/code-review` | Code review |
+| `/tdd` | Test-driven development workflow |
+| `/build-fix` | Fix build errors |
+| `/verify` | Verify changes |
+| `/checkpoint` | Create checkpoint |
+| `/refactor-clean` | Refactor and clean up |
+| `/learn` | Extract reusable patterns from code |
+| `/create_project` | Create new project |
+| `/setup-pm` | Configure package manager (uv/pnpm) |
+| `/update-memory` | Check and update CLAUDE.md memory |
 
-### 设计与内容代理
+### SuperClaude Command Set (`/sc`)
 
-- **ui-sketcher** - UI 蓝图设计和交互规范
-- **story-generator** - 用户故事和需求生成
-
----
-
-## 钩子（5 Hooks）
-
-跨平台 Node.js 钩子，自动化工作流执行：
-
-| 钩子 | 触发时机 | 功能 |
-|------|----------|------|
-| `session-start.js` | 会话开始 | 显示 Git 状态、待办事项、可用命令 |
-| `skill-forced-eval.js` | 每次用户输入 | 强制评估所有可用技能 |
-| `session-summary.js` | 会话结束 | 生成工作日志，检测 CLAUDE.md 更新 |
-| `stop-summary.js` | 会话停止 | 快速状态检查，临时文件检测 |
-| `security-guard.js` | 文件操作 | 安全验证（密钥检测、危险命令拦截） |
-
----
-
-## 规则
-
-### 开发运维规则（4 Rules，`rules/` 目录）
-
-全局约束，始终生效：
-
-| 规则文件 | 作用 |
-|---------|------|
-| `coding-style.md` | ML 项目代码标准：文件 200-400 行、不可变配置、类型提示、Factory & Registry 模式 |
-| `agents.md` | 代理编排：自动调用时机、并行执行、多视角分析 |
-| `security.md` | 安全规范：密钥管理、敏感文件保护、提交前安全检查 |
-| `experiment-reproducibility.md` | 实验可复现性：随机种子、配置记录、环境记录、检查点管理 |
-
-### 论文写作规则（28 Rules，`policy/rules/` 目录）
-
-论文写作规则由 Policy Engine 管理，覆盖 core/domain/venue 三层。
-规则规范和注册表见 `policy/README.md`。
-
----
-
-## 命名规范
-
-### Skill 命名
-- 格式：kebab-case（小写+连字符）
-- 形式：优先使用 gerund form（动词+ing）
-- 示例：`scientific-writing`, `git-workflow`, `bug-detective`
-
-### Tags 命名
-- 格式：Title Case
-- 缩写全大写：TDD, RLHF, NeurIPS, ICLR
-- 示例：`[Writing, Research, Academic]`
-
-### 描述规范
-- 人称：第三人称
-- 内容：包含用途和使用场景
-- 示例："为学术论文写作提供指导，覆盖顶会投稿要求"
+- `/sc agent` - Agent dispatch
+- `/sc analyze` - Code analysis
+- `/sc brainstorm` - Interactive brainstorming
+- `/sc build` - Build project
+- `/sc business-panel` - Business panel
+- `/sc cleanup` - Code cleanup
+- `/sc design` - System design
+- `/sc document` - Generate documentation
+- `/sc estimate` - Effort estimation
+- `/sc explain` - Code explanation
+- `/sc git` - Git operations
+- `/sc help` - Help information
+- `/sc implement` - Feature implementation
+- `/sc improve` - Code improvement
+- `/sc index` - Project index
+- `/sc index-repo` - Repository index
+- `/sc load` - Load context
+- `/sc pm` - Package manager operations
+- `/sc recommend` - Recommend solutions
+- `/sc reflect` - Reflect and summarize
+- `/sc research` - Technical research
+- `/sc save` - Save context
+- `/sc select-tool` - Tool selection
+- `/sc spawn` - Spawn subtasks
+- `/sc spec-panel` - Specification panel
+- `/sc task` - Task management
+- `/sc test` - Test execution
+- `/sc troubleshoot` - Troubleshooting
+- `/sc workflow` - Workflow management
 
 ---
 
-## 运行时兼容性
+## Agents (14)
 
-Claude Scholar 支持两个运行时环境：
+### Research Workflow Agents
 
-### Claude Code（完整支持）
+- **literature-reviewer** - Literature search, categorization, and trend analysis
+- **data-analyst** - Automated data analysis and visualization
+- **rebuttal-writer** - Systematic rebuttal writing with tone optimization
+- **paper-miner** - Extract writing knowledge from successful papers
 
-- **安装方式**: 克隆到 `~/.claude` 或作为 plugin 安装
-- **Hooks**: 5 个自动化钩子（session-start, skill-forced-eval, session-summary, stop-summary, security-guard）
-- **Skills**: 全部 35 个技能（含 `using-claude-scholar` 元技能）
-- **Commands**: 50+ 斜杠命令
-- **Agents**: 14 个专业代理
+### Development Workflow Agents
 
-### Codex（技能 + AGENTS.md）
+- **architect** - System architecture design
+- **build-error-resolver** - Build error resolution
+- **bug-analyzer** - Deep code execution flow analysis and root cause investigation
+- **code-reviewer** - Code review
+- **dev-planner** - Development task planning and decomposition
+- **refactor-cleaner** - Code refactoring and cleanup
+- **tdd-guide** - TDD workflow guidance
+- **kaggle-miner** - Kaggle engineering practice extraction
 
-- **安装方式**: `scripts/install-codex.sh` 创建符号链接到 `~/.agents/skills/`
-- **Hooks**: 不适用（Codex 不支持 hooks）
-- **Skills**: 27 个通用技能 + 6 个 Claude Code 专有技能（标记 `platform: claude-code`，作为参考文档）
-- **Commands**: 不适用（Codex 不支持斜杠命令，通过技能和 AGENTS.md 指令替代）
-- **AGENTS.md**: 编码所有 hook 行为为自然语言指令（技能评估、安全意识、会话行为）
+### Design & Content Agents
 
-### 工具映射
+- **ui-sketcher** - UI blueprint design and interaction specification
+- **story-generator** - User story and requirements generation
 
-| Claude Code | Codex | 备注 |
-|------------|-------|------|
-| `TodoWrite` | `plan` tool | Codex 内置计划工具 |
-| `Skill` tool | 原生 skill discovery | 自动从 `~/.agents/skills/` 发现 |
-| `Task` subagent | `spawn_agent` | Codex 原生支持子代理 |
-| `Edit` / `Write` | `apply_patch` | 文件编辑 |
+---
+
+## Hooks (5)
+
+Cross-platform Node.js hooks for automated workflow execution:
+
+| Hook | Trigger | Function |
+|------|---------|----------|
+| `session-start.js` | Session start | Display Git status, TODOs, available commands |
+| `skill-forced-eval.js` | Every user input | Force evaluation of all available skills |
+| `session-summary.js` | Session end | Generate work log, detect CLAUDE.md updates |
+| `stop-summary.js` | Session stop | Quick status check, temporary file detection |
+| `security-guard.js` | File operations | Security validation (secret detection, dangerous command interception) |
+
+---
+
+## Rules
+
+### Development & Operations Rules (4 Rules, `rules/` directory)
+
+Global constraints, always active:
+
+| Rule File | Purpose |
+|-----------|---------|
+| `coding-style.md` | ML project code standards: 200-400 line files, immutable configs, type hints, Factory & Registry patterns |
+| `agents.md` | Agent orchestration: auto-invocation triggers, parallel execution, multi-perspective analysis |
+| `security.md` | Security standards: secret management, sensitive file protection, pre-commit security checks |
+| `experiment-reproducibility.md` | Experiment reproducibility: random seeds, config recording, environment logging, checkpoint management |
+
+### Paper Writing Rules (28 Rules, `policy/rules/` directory)
+
+Paper writing rules are managed by the Policy Engine, covering core/domain/venue three layers.
+Rule specification and registry: `policy/README.md`.
+
+---
+
+## Naming Conventions
+
+### Skill Naming
+- Format: kebab-case (lowercase + hyphens)
+- Form: Prefer gerund form (verb+ing)
+- Examples: `scientific-writing`, `git-workflow`, `bug-detective`
+
+### Tag Naming
+- Format: Title Case
+- Abbreviations in all caps: TDD, RLHF, NeurIPS, ICLR
+- Examples: `[Writing, Research, Academic]`
+
+### Description Conventions
+- Person: Third person
+- Content: Include purpose and usage scenarios
+- Example: "Provides guidance for academic paper writing, covering top conference submission requirements"
+
+---
+
+## Runtime Compatibility
+
+Claude Scholar supports two runtime environments:
+
+### Claude Code (Full Support)
+
+- **Installation**: Clone to `~/.claude` or install as a plugin
+- **Hooks**: 5 automation hooks (session-start, skill-forced-eval, session-summary, stop-summary, security-guard)
+- **Skills**: All 35 skills (including `using-claude-scholar` meta skill)
+- **Commands**: 50+ slash commands
+- **Agents**: 14 specialized agents
+
+### Codex (Skills + AGENTS.md)
+
+- **Installation**: `scripts/install-codex.sh` creates symlink to `~/.agents/skills/`
+- **Hooks**: N/A (Codex does not support hooks)
+- **Skills**: 27 universal skills + 6 Claude Code-specific skills (marked `platform: claude-code`, serve as reference documentation)
+- **Commands**: N/A (Codex does not support slash commands; use skills and AGENTS.md directives instead)
+- **AGENTS.md**: Encodes all hook behaviors as natural language instructions (skill evaluation, security awareness, session behavior)
+
+### Tool Mapping
+
+| Claude Code | Codex | Notes |
+|------------|-------|-------|
+| `TodoWrite` | `plan` tool | Codex built-in planning tool |
+| `Skill` tool | Native skill discovery | Auto-discovered from `~/.agents/skills/` |
+| `Task` subagent | `spawn_agent` | Codex natively supports sub-agents |
+| `Edit` / `Write` | `apply_patch` | File editing |
 | `Grep` / `Glob` | `rg` / `rg --files` | ripgrep |
-| `EnterPlanMode` | `plan` tool | 复杂任务规划 |
+| `EnterPlanMode` | `plan` tool | Complex task planning |
 
 ---
 
-## 任务完成总结
+## Task Completion Summary
 
-每次任务完成时，主动提供简要总结：
+Proactively provide a brief summary after each task:
 
 ```
-📋 本次操作回顾
-1. [主要操作]
-2. [修改的文件]
+📋 Operation Review
+1. [Main operations]
+2. [Modified files]
 
-📊 当前状态
-• [Git/文件系统/运行状态]
+📊 Current Status
+• [Git/filesystem/runtime state]
 
-💡 下一步建议
-1. [针对性建议]
+💡 Next Steps
+1. [Actionable suggestions]
 ```
