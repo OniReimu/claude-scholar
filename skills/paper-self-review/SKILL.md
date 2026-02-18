@@ -141,6 +141,7 @@ Paper Quality Checklist:
 - [ ] Conclusion is a single dense paragraph (no subsections) <!-- policy:PAPER.CONCLUSION_SINGLE_PARAGRAPH -->
 - [ ] Figure source font ≥ 24pt (readable after LaTeX scaling) <!-- policy:FIG.FONT_GE_24PT -->
 - [ ] Figures use vector format (PDF/EPS) <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
+- [ ] System overview/pipeline/architecture diagrams use aspect ratio ≥ 2:1 (e.g., 2.1:1, 3:1) <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
 - [ ] Colorblind-safe palettes used <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - [ ] Figure captions are self-contained <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
 - [ ] Each Python plot = 1 file → 1 figure (no subplots); composite via LaTeX \subfigure <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->

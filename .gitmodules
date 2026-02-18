@@ -1,0 +1,3 @@
+[submodule ".codex/superpowers-ng"]
+	path = .codex/superpowers-ng
+	url = https://github.com/OniReimu/superpowers-ng.git

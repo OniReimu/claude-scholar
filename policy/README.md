@@ -110,6 +110,7 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 | FIG.ONE_FILE_ONE_FIGURE | fig-one-file-one-figure | core | error | true | doc |
 | FIG.COLORBLIND_SAFE_PALETTE | fig-colorblind-safe-palette | core | warn | false | doc |
 | FIG.SELF_CONTAINED_CAPTION | fig-self-contained-caption | core | warn | false | doc |
+| FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 | fig-system-overview-aspect-ratio-ge-2to1 | core | error | true | doc |
 | FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required | core | error | false | doc |
 | TABLE.BOOKTABS_FORMAT | table-booktabs-format | core | warn | false | lint_script |
 | TABLE.DIRECTION_INDICATORS | table-direction-indicators | core | warn | false | doc |
