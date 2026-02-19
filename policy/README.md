@@ -29,7 +29,7 @@ phases: [ideation, writing-background, writing-system-model, writing-methods,
 domains: [core] | [security, hci, se, is]
 venues: [all] | [neurips, icml, iclr, ccs, usenix, ndss, sp, chi, icse, fse, ase, misq, isr, ...]
 check_kind: regex | ast | llm_semantic | llm_style | manual
-enforcement: doc | lint_script       # doc=M1 无独立脚本, lint_script=M1 已有脚本。lint.sh 按 check_kind=regex 运行，不区分 enforcement
+enforcement: doc | lint_script       # lint_script=由 policy/lint.sh 执行（默认 regex；个别规则可有内置脚本检查）
 params: {}                           # 可选，profile 可覆盖（locked=false 时）
 conflicts_with: []                   # 可选
 lint_patterns: []                    # M2 新增：机器可读 regex（仅 check_kind=regex 时）
@@ -121,7 +121,7 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 | REF.CROSS_REFERENCE_STYLE | ref-cross-reference-style | core | warn | false | doc |
 | PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | false | lint_script |
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc |
-| CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | doc |
+| CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script |
 | EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc |
 | EXP.TAKEAWAY_BOX | exp-takeaway-box | core | warn | false | doc |
 | EXP.ABLATION_IN_RESULTS | exp-ablation-in-results | core | warn | false | doc |

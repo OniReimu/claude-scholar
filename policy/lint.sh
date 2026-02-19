@@ -289,6 +289,115 @@ report_finding() {
   fi
 }
 
+# ─── Built-in Rule: CITE.VERIFY_VIA_API ────────────────────────────────────
+# Hard-gate citation hygiene:
+#   1) unresolved [CITATION NEEDED] marker is forbidden at lint time
+#   2) obvious placeholder/hallucination patterns in .bib are forbidden
+#   3) every BibTeX entry must include doi/url/eprint for API traceability
+lint_cite_verify_via_api() {
+  local severity="$1"
+
+  local -a bib_files=() tex_files=()
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && bib_files+=("$f")
+  done < <(find "$TARGET_DIR" -name "*.bib" -type f 2>/dev/null | sort)
+
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tex_files+=("$f")
+  done < <(find "$TARGET_DIR" -name "*.tex" -type f 2>/dev/null | sort)
+
+  # 1) unresolved marker check
+  local unresolved_pat="\\[CITATION NEEDED\\]"
+  for file in "${bib_files[@]}" "${tex_files[@]}"; do
+    local matches
+    matches=$(regex_match "$unresolved_pat" "$file")
+    if [[ -n "$matches" ]]; then
+      while IFS= read -r mline; do
+        report_finding "$severity" "$RULE_ID" "$mline"
+      done <<< "$matches"
+    fi
+  done
+
+  # 2) placeholder / likely hallucination pattern checks (BibTeX only)
+  local -a suspicious_pats=(
+    "@\\w+\\{(ref[0-9]+|paper[0-9]+|unknown[0-9]*|todo[0-9]*)[,}]"
+    "author\\s*=\\s*\\{[^}]*\\.\\.\\.[^}]*\\}"
+    "author\\s*=\\s*\\{[^}]*\\b(et al\\.?|and others)\\b[^}]*\\}"
+    "title\\s*=\\s*\\{[^}]*\\b([Tt][Oo][Dd][Oo]|[Tt][Bb][Dd])\\b[^}]*\\}"
+    "title\\s*=\\s*\\{[^}]*\\.\\.\\.[^}]*\\}"
+  )
+  for raw_pat in "${suspicious_pats[@]}"; do
+    local pat
+    pat=$(yaml_unescape "$raw_pat")
+    for file in "${bib_files[@]}"; do
+      local matches
+      matches=$(regex_match "$pat" "$file")
+      if [[ -n "$matches" ]]; then
+        while IFS= read -r mline; do
+          report_finding "$severity" "$RULE_ID" "$mline"
+        done <<< "$matches"
+      fi
+    done
+  done
+
+  # 3) each entry requires at least one verifiable identifier
+  for file in "${bib_files[@]}"; do
+    while IFS= read -r detail; do
+      [[ -n "$detail" ]] || continue
+      report_finding "$severity" "$RULE_ID" "$detail"
+    done < <(
+      awk -v file="$file" '
+        function flush_entry() {
+          if (in_entry && has_identifier == 0) {
+            key_out = (entry_key == "" ? "<unknown>" : entry_key)
+            printf "%s:%d: entry '\''%s'\'' missing doi/url/eprint for API verification\n", file, entry_line, key_out
+          }
+        }
+
+        BEGIN {
+          in_entry = 0
+          has_identifier = 0
+          entry_key = ""
+          entry_line = 0
+        }
+
+        /^[[:space:]]*@/ {
+          flush_entry()
+
+          in_entry = 1
+          has_identifier = 0
+          entry_line = NR
+          entry_key = $0
+          sub(/^[[:space:]]*@[^{]+[{]/, "", entry_key)
+          sub(/[[:space:]]*,[[:space:]]*$/, "", entry_key)
+          sub(/,.*/, "", entry_key)
+        }
+
+        {
+          if (in_entry) {
+            lower = tolower($0)
+            if (lower ~ /^[[:space:]]*(doi|url|eprint)[[:space:]]*=/) {
+              has_identifier = 1
+            }
+          }
+        }
+
+        /^[[:space:]]*}[[:space:]]*,?[[:space:]]*$/ {
+          flush_entry()
+          in_entry = 0
+          has_identifier = 0
+          entry_key = ""
+          entry_line = 0
+        }
+
+        END {
+          flush_entry()
+        }
+      ' "$file"
+    )
+  done
+}
+
 # ─── Lint Single Rule ───────────────────────────────────────────────────────
 lint_rule() {
   local severity="$1"
@@ -392,19 +501,36 @@ for rule_file in "$RULES_DIR"/*.md; do
 
   parse_rule "$rule_file"
 
-  # Skip non-regex rules
-  [[ "$RULE_CHECK_KIND" == "regex" ]] || continue
-  # Skip rules without lint_patterns
-  [[ ${#PATTERNS[@]} -gt 0 ]] || continue
-  # Skip rules without lint_targets
-  [[ -n "$RULE_LINT_TARGETS" ]] || continue
-
   # Apply filters
   [[ -z "$FILTER_RULE" || "$RULE_ID" == "$FILTER_RULE" ]] || continue
   [[ -z "$FILTER_LAYER" || "$RULE_LAYER" == "$FILTER_LAYER" ]] || continue
 
   # Apply profile severity override
   local_severity=$(get_effective_severity "$RULE_ID" "$RULE_LOCKED" "$RULE_SEVERITY")
+
+  # Built-in rule checks (non-regex) with hard enforcement
+  if [[ "$RULE_ID" == "CITE.VERIFY_VIA_API" ]]; then
+    $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) builtin checks → *.bib, *.tex"
+
+    ((RULES_CHECKED++)) || true
+
+    prev_e=$TOTAL_ERRORS
+    prev_w=$TOTAL_WARNINGS
+
+    lint_cite_verify_via_api "$local_severity"
+
+    if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
+      ((RULES_PASSED++)) || true
+      $QUIET || echo -e "    ${GREEN}PASS${NC}"
+    fi
+    $QUIET || echo ""
+    continue
+  fi
+
+  # Regex engine only handles regex rules with explicit machine patterns
+  [[ "$RULE_CHECK_KIND" == "regex" ]] || continue
+  [[ ${#PATTERNS[@]} -gt 0 ]] || continue
+  [[ -n "$RULE_LINT_TARGETS" ]] || continue
 
   $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) ${#PATTERNS[@]} pattern(s) → ${RULE_LINT_TARGETS}"
 
