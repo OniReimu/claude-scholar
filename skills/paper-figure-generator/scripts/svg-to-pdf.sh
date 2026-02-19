@@ -34,10 +34,16 @@ if [ ! -f "$VENV_PY" ]; then
   exit 1
 fi
 
+# macOS: ensure Homebrew Cairo can be found by cairocffi/cairosvg
+if [ "$(uname)" = "Darwin" ] && [ -d "/opt/homebrew/lib" ]; then
+  export DYLD_FALLBACK_LIBRARY_PATH="/opt/homebrew/lib${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}"
+fi
+
 if ! "$VENV_PY" -c "import cairosvg" >/dev/null 2>&1; then
-  echo "Error: cairosvg not installed in skill venv."
+  echo "Error: cairosvg not available in skill venv (package missing or Cairo dylib unresolved)."
   echo "Install it:"
   echo "  uv pip install --python \"$VENV_PY\" cairosvg"
+  echo "If you're on macOS with Homebrew, ensure /opt/homebrew/lib is present."
   exit 1
 fi
 

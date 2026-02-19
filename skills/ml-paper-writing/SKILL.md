@@ -521,11 +521,20 @@ Figure 1 deserves special attention—many readers skip directly to it.
 - Use vector graphics (PDF/EPS for plots) <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
 - Write captions that stand alone without main text <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
 - **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
+- **Figure policy (default, mandatory):**
+  - **Figure 1 is required** and should be a conceptual system overview generated via `paper-figure-generator` (AutoFigure-Edit, editable SVG -> PDF).
+  - **All non-experimental figures default to `paper-figure-generator` + AutoFigure-Edit**, including `system-overview`, `pipeline`, `architecture`, `threat-model`, and `comparison`.
+  - **Experimental figures remain separate** (metrics curves/bars/scatter, ablation plots, runtime/accuracy tradeoffs) and should be produced in Step 8 with plotting workflow.
 - **MANDATORY for conceptual diagrams** (system overviews, pipelines, architectures): **activate `paper-figure-generator` skill NOW** to generate editable SVG figures via AutoFigure-Edit.
   - For `system-overview` / `pipeline` / `architecture` outputs, keep aspect ratio `width:height >= 2:1` (e.g., 2.1:1, 3:1), avoid near-square layouts <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
   - Recommended workflow: write `figures/{slug}/brief.md` (see `paper-figure-generator/references/figure-brief.md`) → write `figures/{slug}/method.txt` → run `bash skills/paper-figure-generator/scripts/doctor.sh` → run `bash skills/paper-figure-generator/scripts/generate.sh ...` → run `bash skills/paper-figure-generator/scripts/svg-to-pdf.sh ...`
   - Keep `figures/{slug}/run.json` for reproducibility
   - Do NOT skip this step — Figure 1 is critical for reviewer first impressions.
+- **When to add additional non-experimental figures (Figure 2+):**
+  - Add one when Figure 1 cannot clearly express a key mechanism (e.g., synchronization, recovery, label transformation, chained verification).
+  - Add one when the method includes ordered multi-role interactions (verifier/prover/server/client, etc.) that require a stepwise protocol view.
+  - Add one when Figure 1 becomes overloaded (too many crossing flows or mixed abstraction levels) and must be split into overview + mechanism/process detail.
+  - Keep these added figures conceptual and generate them with `paper-figure-generator` by default.
 
 ### Paper Section Structure
 
@@ -676,12 +685,14 @@ Best practices for the notation table:
 - For non-security papers, this section may be titled "Problem Setup" or "Problem Formulation"
 - If the system model is simple enough (e.g., standard supervised learning), it may be demoted to a subsection of §2 or §4
 
-> **MANDATORY: Generate a system architecture / workflow figure for this section.** Use `paper-figure-generator` skill to create the diagram via AutoFigure-Edit (brief.md → method.txt → generate SVG → convert to PDF). Select from `system-overview`, `pipeline`, `threat-model`, or `architecture` layout as appropriate. This figure typically becomes Figure 2 (after Figure 1 from Step 2) and is referenced in the System Model text. Do NOT proceed to Step 7 without producing this figure.
+> **MANDATORY: Generate at least one non-experimental conceptual figure for this section.** Use `paper-figure-generator` skill to create the diagram via AutoFigure-Edit (brief.md → method.txt → generate SVG → convert to PDF). Select from `system-overview`, `pipeline`, `threat-model`, or `architecture` layout as appropriate.
+>
+> This figure is usually Figure 2 (after Figure 1). If one figure is insufficient, add Figure 3+ for mechanism/protocol details (e.g., synchronization/recovery flow, chained verification steps), and still keep them in the conceptual diagram track (AutoFigure-Edit). Do NOT proceed to Step 7 without producing the required conceptual figure(s).
 >
 > **MANDATORY OUTPUT for Step 6:**
 > - [ ] Notation table (`Table~\ref{tab:notation}`) with all symbols used in the paper
 > - [ ] LaTeX text for §3 (problem definition + architecture + threat model as applicable)
-> - [ ] Architecture/workflow figure file (via `paper-figure-generator`, SVG→PDF)
+> - [ ] Architecture/workflow conceptual figure file(s) (via `paper-figure-generator`, SVG→PDF)
 > - [ ] `\label{fig:system-model}` reference in the LaTeX text
 
 **Step 7: Write Methods / Our Approach (→ §4)**

@@ -144,6 +144,9 @@ Paper Quality Checklist:
 - [ ] System overview/pipeline/architecture diagrams use aspect ratio ≥ 2:1 (e.g., 2.1:1, 3:1) <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
 - [ ] Colorblind-safe palettes used <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 - [ ] Figure captions are self-contained <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- [ ] Figure 1 exists and is a conceptual system overview (not an experiment plot)
+- [ ] Non-experimental figures (system/pipeline/architecture/threat-model/comparison) are generated via `paper-figure-generator` (AutoFigure-Edit) by default
+- [ ] Additional non-experimental figures are added when Figure 1 cannot clearly show key mechanism/protocol details
 - [ ] Each Python plot = 1 file → 1 figure (no subplots); composite via LaTeX \subfigure <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
 - [ ] Tables use booktabs format <!-- policy:TABLE.BOOKTABS_FORMAT -->
 - [ ] Table headers include direction indicators (↑/↓) <!-- policy:TABLE.DIRECTION_INDICATORS -->

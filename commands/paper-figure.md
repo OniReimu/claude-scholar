@@ -6,13 +6,26 @@ description: Generate editable SVG conceptual figures for academic papers via Au
 
 Use this command to generate **editable SVG** conceptual figures (system overview, pipeline, architecture, threat model, comparison) for academic papers via AutoFigure-Edit.
 
+## Default Figure Policy
+
+- Figure 1 is required and should be a conceptual system overview.
+- All **non-experimental figures** default to `paper-figure-generator` + AutoFigure-Edit:
+  - `system-overview`, `pipeline`, `architecture`, `threat-model`, `comparison`
+- **Experimental figures** (metric curves/bars/scatter, runtime/accuracy plots, ablation charts) are not in this command's default scope.
+
 ## When to Use
 
 Use `/paper-figure` when you want:
 - Figure 1 / method overview diagram
 - System Model / workflow diagram
 - Threat model / comparison figure
+- Additional non-experimental Figure 2+ / Figure 3+ to explain mechanism or protocol details
 - An editable SVG output (not just PNG)
+
+Add additional non-experimental figures when:
+- Figure 1 cannot clearly express a key mechanism (e.g., synchronization, recovery, label transformation, chained verification)
+- The method has ordered multi-role interactions (e.g., verifier/prover/server/client) needing stepwise protocol visualization
+- Figure 1 is overloaded (too many crossing flows or mixed abstraction levels) and should be split into overview + detail
 
 ## Workflow (Recommended)
 

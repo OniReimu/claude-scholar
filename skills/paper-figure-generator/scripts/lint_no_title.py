@@ -240,6 +240,11 @@ def lint_pdf(pdf_path: Path) -> list[Finding]:
     first_lines = lines[:15]
     candidate = max(first_lines, key=lambda s: len(re.sub(r"\s+", "", s)), default="")
     normalized_len = len(re.sub(r"\s+", "", candidate))
+    # Ignore obvious multi-column label rows (e.g., "Verifier      Server")
+    # which are common in diagram bodies and are not top titles.
+    if re.search(r"\s{3,}", candidate):
+        return []
+
     if normalized_len >= 14 and " " in candidate and len(candidate) >= 12:
         return [
             Finding(

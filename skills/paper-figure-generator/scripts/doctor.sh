@@ -94,6 +94,11 @@ else
 fi
 echo ""
 
+# macOS: ensure Homebrew Cairo can be found by cairocffi/cairosvg
+if [ "$(uname)" = "Darwin" ] && [ -d "/opt/homebrew/lib" ]; then
+  export DYLD_FALLBACK_LIBRARY_PATH="/opt/homebrew/lib${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}"
+fi
+
 if "$VENV_PY" -c "import cairosvg" >/dev/null 2>&1; then
   echo "SVG->PDF:"
   echo "  cairosvg: OK (in skill venv)"
