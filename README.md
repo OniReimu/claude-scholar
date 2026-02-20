@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-02-19 (v1.3.0)**: Introduced the paper policy engine (`policy/`): rule-card based design in `policy/rules/` (single source of truth), layered scope (`core/domain/venue`), profile overlays in `policy/profiles/`, and executable validation/lint workflows via `policy/validate.sh` and `policy/lint.sh`. Synced Figure workflow policy (Figure 1 required; non-experimental figures default to AutoFigure-Edit).
 - **2026-02-16 (v1.2.1)**: Added a global figure rule: no in-image titles for any generated visuals (AutoFigure-Edit conceptual diagrams, legacy image APIs, or Python experimental plots). Use captions in paper text/LaTeX instead.
 - **2026-02-16**: Enforced `paper-figure-generator` execution priority: default `AutoFigure-Edit + OpenRouter` first, fallback to legacy Gemini/OpenAI flow only after failure; added troubleshooting note for outdated plugin cache prompts (`GOOGLE_API_KEY` / `OPENAI_API_KEY`).
 - **2026-02-15**: Migrated `paper-figure-generator` to AutoFigure-Edit — generates editable SVG vector figures from method text descriptions; replaces Gemini/OpenAI raster generation; supports style transfer via reference images; uses OpenRouter + Roboflow (free SAM3 API)
@@ -33,7 +34,7 @@ Claude Scholar is a personal configuration system for Claude Code CLI, providing
 | 📚 [Core Workflows](#core-workflows) | Paper writing, code organization, skill evolution |
 | 🛠️ [What's Included](#whats-included) | Skills, commands, agents overview |
 | 📖 [Installation Guide](#installation-options) | Full, minimal, or selective setup |
-| 🔧 [Project Rules](#project-rules) | Coding style and agent orchestration |
+| 🔧 [Project Rules](#project-rules) | Coding rules + paper policy engine |
 
 ## Core Workflows
 
@@ -304,6 +305,13 @@ claude-scholar/
 │   ├── security.md              # Secrets management, sensitive file protection
 │   └── experiment-reproducibility.md  # Random seeds, config recording, checkpoints
 │
+├── policy/              # Paper policy engine (rule cards + validation + lint)
+│   ├── rules/                    # Canonical paper-writing rule cards (single source of truth)
+│   ├── profiles/                 # Domain/venue overlays (severity/params tuning)
+│   ├── validate.sh               # Rule-card integrity validation
+│   ├── lint.sh                   # Machine-enforceable lint checks
+│   └── README.md                 # Policy engine design and conventions
+│
 ├── scripts/
 │   ├── install-codex.sh         # Codex installer (macOS/Linux, symlink-based)
 │   ├── install-codex-windows.ps1 # Codex installer (Windows, junction-based)
@@ -552,6 +560,17 @@ After installation, the hooks provide automated workflow assistance:
 4. **Session stops** with `stop-summary` → provides status check
 
 ## Project Rules
+
+### Paper Policy Engine
+
+Defined in `policy/`:
+- `policy/rules/` is the single source of truth for paper-writing constraints (figures, LaTeX, citations, experiments, submission).
+- Rule-card design uses frontmatter metadata (`id`, `layer`, `artifacts`, `phases`, `check_kind`, `enforcement`) plus required sections (`Requirement`, `Rationale`, `Check`, `Examples`).
+- Layering model: `core` (always on), `domain` (field-specific), `venue` (conference/journal specific); profile overlays live in `policy/profiles/*.md`.
+- Validation and enforcement workflow:
+  - `bash policy/validate.sh` for structure/integration checks
+  - `bash policy/lint.sh` for machine-enforceable checks
+- Skills/commands reference rules via `<!-- policy:RULE_ID -->` markers.
 
 ### Coding Style
 

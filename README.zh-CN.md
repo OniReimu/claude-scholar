@@ -10,6 +10,7 @@
 
 ## News
 
+- **2026-02-19 (v1.3.0)**: 引入论文策略引擎（`policy/`）：在 `policy/rules/` 采用规则卡设计并作为唯一真相源，支持分层作用域（`core/domain/venue`）、`policy/profiles/` 配置覆盖，以及 `policy/validate.sh` + `policy/lint.sh` 的可执行校验流程。同步强化图表工作流策略（Figure 1 必须存在；非实验图默认走 AutoFigure-Edit）。
 - **2026-02-16 (v1.2.1)**: 新增全局出图规则：任何生成图（AutoFigure-Edit 概念图、旧版生图链路、Python 实验图）都不添加图内标题；标题信息统一放在论文 caption/正文中。
 - **2026-02-16**: 强化 `paper-figure-generator` 执行优先级：默认先走 `AutoFigure-Edit + OpenRouter`，仅在默认链路失败后才回退到旧版 Gemini/OpenAI 流程；新增旧插件缓存提示（`GOOGLE_API_KEY` / `OPENAI_API_KEY`）排障说明。
 - **2026-02-15**: 迁移 `paper-figure-generator` 至 AutoFigure-Edit — 从方法文本生成可编辑 SVG 矢量图；替代 Gemini/OpenAI 光栅生成；支持风格迁移；使用 OpenRouter + Roboflow（免费 SAM3 API）
@@ -33,7 +34,7 @@ Claude Scholar 是一个面向 Claude Code CLI 的个人配置系统，提供丰
 | 📚 [核心工作流](#核心工作流) | 论文写作、代码组织、技能进化 |
 | 🛠️ [功能亮点](#功能亮点) | 技能、命令、代理概览 |
 | 📖 [安装指南](#安装选项) | 完整、最小化或选择性安装 |
-| 🔧 [项目规则](#项目规则) | 代码风格和代理编排 |
+| 🔧 [项目规则](#项目规则) | 代码规则 + 论文策略引擎 |
 
 ## 核心工作流
 
@@ -304,6 +305,13 @@ claude-scholar/
 │   ├── security.md              # 密钥管理、敏感文件保护
 │   └── experiment-reproducibility.md  # 随机种子、配置记录、检查点
 │
+├── policy/              # 论文策略引擎（规则卡 + 校验 + lint）
+│   ├── rules/                    # 论文写作规则卡（单一真相源）
+│   ├── profiles/                 # 领域/会议覆盖配置（severity/params）
+│   ├── validate.sh               # 规则卡结构与集成校验
+│   ├── lint.sh                   # 可机器执行的规则检查
+│   └── README.md                 # 策略引擎设计说明
+│
 ├── scripts/
 │   ├── install-codex.sh         # Codex 安装器（macOS/Linux，符号链接）
 │   ├── install-codex-windows.ps1 # Codex 安装器（Windows，junction）
@@ -552,6 +560,17 @@ git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 4. **会话停止**时使用 `stop-summary` → 提供状态检查
 
 ## 项目规则
+
+### 论文策略引擎
+
+在 `policy/` 中定义：
+- `policy/rules/` 是论文写作约束（图表、LaTeX、引文、实验、投稿合规）的唯一真相源。
+- 规则卡采用 frontmatter 元数据（`id`、`layer`、`artifacts`、`phases`、`check_kind`、`enforcement`）+ 必要正文段落（`Requirement`、`Rationale`、`Check`、`Examples`）。
+- 分层模型：`core`（全局必守）、`domain`（领域特定）、`venue`（会议/期刊特定）；覆盖配置在 `policy/profiles/*.md`。
+- 校验与执行流程：
+  - `bash policy/validate.sh`：结构与集成校验
+  - `bash policy/lint.sh`：可机器执行的规则检查
+- skills/commands 通过 `<!-- policy:RULE_ID -->` marker 关联规则。
 
 ### 代码风格
 
