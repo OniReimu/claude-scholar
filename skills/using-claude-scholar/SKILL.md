@@ -45,6 +45,7 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
 | `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
 | `REPRO.COMPUTE_RESOURCES_DOCUMENTED` | 计算资源文档 |
+| `PROSE.CRYPTO_CONSTRUCTION_TEMPLATE` | 密码化构造写法（security-crypto） |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
 | `PROSE.EM_DASH_RESTRICTION` | 限制em-dash |
 | `SUBMIT.SECTION_NUMBERING_CONSISTENCY` | Section编号一致 |

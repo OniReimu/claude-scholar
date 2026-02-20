@@ -717,6 +717,7 @@ Pseudocode guidelines:
 - Keep pseudocode at the right abstraction level — highlight what is **novel**, abstract away standard operations (e.g., "Train with SGD" not 10 lines of gradient update)
 - Use consistent notation: match variable names between math formulation, pseudocode, and prose
 - If the algorithm is short (< 5 lines), inline description may suffice; reserve `Algorithm` floats for procedures with ≥ 5 steps or non-obvious control flow
+- For crypto-oriented security papers, present the core protocol as a structured construction (e.g., `Construction 1`) with explicit `Primitives`, `Parameters`, and named procedures (`Setup/Commit/Verify` or equivalent) <!-- policy:PROSE.CRYPTO_CONSTRUCTION_TEMPLATE -->
 
 **Cross-reference style (mandatory in manuscript text):** <!-- policy:REF.CROSS_REFERENCE_STYLE -->
 - Figure: `Fig.~\ref{...}`

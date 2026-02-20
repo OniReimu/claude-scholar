@@ -27,6 +27,7 @@ venue: neurips
 - `policy/rules/submit-section-numbering-consistency.md`
 - `policy/rules/repro-random-seed-documentation.md`
 - `policy/rules/repro-compute-resources-documented.md`
+- `policy/rules/prose-crypto-construction-template.md`
 - `policy/rules/prose-intensifiers-elimination.md`
 - `policy/rules/prose-em-dash-restriction.md`
 - `policy/rules/exp-ablation-in-results.md`

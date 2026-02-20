@@ -129,6 +129,7 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 | REPRO.RANDOM_SEED_DOCUMENTATION | repro-random-seed-documentation | core | error | false | doc |
 | REPRO.COMPUTE_RESOURCES_DOCUMENTED | repro-compute-resources-documented | core | warn | false | doc |
 | SUBMIT.SECTION_NUMBERING_CONSISTENCY | submit-section-numbering-consistency | core | warn | false | lint_script |
+| PROSE.CRYPTO_CONSTRUCTION_TEMPLATE | prose-crypto-construction-template | domain | warn | false | doc |
 | PROSE.INTENSIFIERS_ELIMINATION | prose-intensifiers-elimination | domain | warn | false | lint_script |
 | PROSE.EM_DASH_RESTRICTION | prose-em-dash-restriction | domain | warn | false | lint_script |
 | ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc |

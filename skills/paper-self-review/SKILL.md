@@ -151,6 +151,7 @@ Paper Quality Checklist:
 - [ ] Tables use booktabs format <!-- policy:TABLE.BOOKTABS_FORMAT -->
 - [ ] Table headers include direction indicators (↑/↓) <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - [ ] Symbols consistent throughout paper <!-- policy:LATEX.NOTATION_CONSISTENCY -->
+- [ ] For crypto-oriented security papers, core mechanism is presented as a structured Construction (Primitives/Parameters + named procedures) <!-- policy:PROSE.CRYPTO_CONSTRUCTION_TEMPLATE -->
 - [ ] Empty intensifiers removed <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
 - [ ] Em-dashes used sparingly <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - [ ] Experiment results include error bars <!-- policy:EXP.ERROR_BARS_REQUIRED -->
