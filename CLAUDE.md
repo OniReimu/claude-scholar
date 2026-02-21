@@ -55,7 +55,7 @@
 
 ### Paper Writing Rules (Global)
 
-Paper writing rules are defined in `policy/rules/` (35 rule cards), covering figure formatting, LaTeX math, experiment structure, citation verification, submission compliance, and SoK-specific guidance.
+Paper writing rules are defined in `policy/rules/` (37 rule cards), covering figure formatting, LaTeX math, experiment structure, citation verification, submission compliance, and SoK-specific guidance.
 Rule specification and full registry: `policy/README.md`. Skills reference rules via `<!-- policy:RULE_ID -->` markers.
 SoK requirements are activated via profile selection (for example `policy/profiles/security-sok-sp.md`) in v1.
 **Writing tasks must first read `policy/README.md` + relevant rule cards; `policy/rules/` is the single source of truth.**
@@ -275,7 +275,7 @@ Global constraints, always active:
 | `security.md` | Security standards: secret management, sensitive file protection, pre-commit security checks |
 | `experiment-reproducibility.md` | Experiment reproducibility: random seeds, config recording, environment logging, checkpoint management |
 
-### Paper Writing Rules (35 Rules, `policy/rules/` directory)
+### Paper Writing Rules (37 Rules, `policy/rules/` directory)
 
 Paper writing rules are managed by the Policy Engine, covering core/domain/venue three layers.
 SoK policy is profile-activated in v1 (`security-sok-sp` and future `<domain>-sok-<venue>` profiles).

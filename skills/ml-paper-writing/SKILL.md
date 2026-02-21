@@ -35,6 +35,8 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
 | `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 非实跑结果 caption 强制披露 |
+| `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
 | `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
 | `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
 | `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |
@@ -786,18 +788,22 @@ Experiment Plan:
 Validate alignment — for each experiment, verify: `Claim (Step 1) → Experiment Design → Expected Evidence → Planned Figure/Table`. If any claim lacks support, add experiments. If any experiment doesn't support a claim, move to appendix.
 
 > **GATE: Do NOT proceed to 8b until the user confirms the experiment plan.**
+>
+> **Execution mode gate**: if user already specifies execution mode at the beginning of the task, use it directly and do not ask again. Otherwise, ask once before 8b:
+> - `ACTUAL_RUN`: run experiments and use only actual executed results
+> - `FABRICATED_PLACEHOLDER`: write complete runnable code first, then allow placeholder draft artifacts with mandatory fabricated disclosure <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE --> <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
 
 ---
 
 **8b. Execute Experiments:**
 
-**Write and run experiment code NOW.** This is not a planning step — produce actual code and actual results.
+**Write experiment code NOW.** Whether to run immediately depends on execution mode.
 
 Concrete actions (execute in order):
 1. **Write experiment scripts**: Python files using the project's codebase and config system (Hydra/OmegaConf), with `set_seed()` at entry point
-2. **Run the scripts**: Execute via `uv run script.py` (default Python runner), capture stdout/stderr
-3. **Collect raw results**: Save to CSV/JSON files in the project's results directory
-4. **Log metadata**: GPU type, total hours, library versions
+2. **Write launch script**: one command/pipeline to run all planned experiments end-to-end
+3. **If `ACTUAL_RUN`**: run scripts, capture stdout/stderr, collect raw results, log metadata
+4. **If `FABRICATED_PLACEHOLDER`**: stop at implementation stage in this round; do not claim results are executed
 
 **Python tooling**: All experiment scripts default to `uv` for execution and dependency management:
 - Run scripts: `uv run python train.py` or `uv run script.py`
@@ -835,19 +841,26 @@ Reproducibility requirements (per `rules/experiment-reproducibility.md`):
 - Checkpoint naming: `best_model.pt`, `checkpoint_epoch_N.pt`, `checkpoint_latest.pt`
 - Record dataset hash or version tag
 
-> **Compute constraint handling**: If experiments require GPU or extended compute that exceeds the current environment, you MUST still: (1) write complete, runnable experiment scripts, (2) write a launch script that runs all experiments end-to-end, (3) present scripts to user and **wait for user to run them and provide raw results** before proceeding to 8c. Do NOT skip to Step 9 with placeholder results.
-
-> **GATE: Do NOT proceed to 8c until raw result files (CSV/JSON/logs) exist — either from direct execution or from user-provided results.**
+> **Compute constraint handling**:
+> If experiments require HPC or long GPU time beyond the current environment, you MUST still write complete runnable scripts + launch script in this round.
+> - `ACTUAL_RUN`: wait for raw results from direct/user execution before analysis
+> - `FABRICATED_PLACEHOLDER`: you may draft placeholder artifacts, but every non-actual result must be explicitly disclosed in subsection status + caption <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED --> <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
+>
+> **GATE**:
+> - `ACTUAL_RUN`: Do NOT proceed to 8c until raw result files (CSV/JSON/logs) exist.
+> - `FABRICATED_PLACEHOLDER`: Do NOT present placeholders as actual execution outputs.
 
 ---
 
 **8c. Analyze Results and Generate Figures/Tables:**
 
-**Produce actual figure files and/or LaTeX table code NOW.** Use `results-analysis` skill for statistical analysis.
+Use `results-analysis` skill with mode-specific behavior:
+- **ACTUAL_RUN**: analyze real outputs and generate actual figures/tables.
+- **FABRICATED_PLACEHOLDER**: generate draft placeholders only; mark every placeholder result as fabricated in caption and subsection status declaration. <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE --> <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
 
 Concrete actions:
-1. **Load raw results** from 8b output files
-2. **Run statistical tests** (significance, confidence intervals — see `results-analysis` skill)
+1. **(ACTUAL_RUN)** Load raw results from 8b output files
+2. **(ACTUAL_RUN)** Run statistical tests (significance, confidence intervals — see `results-analysis` skill)
 3. **Generate figures** (save as PDF) and/or **generate LaTeX table code** based on data characteristics:
 
 | Data Characteristic | Best Visualization | Tool |
@@ -879,12 +892,13 @@ fig, axes = plt.subplots(1, 4, figsize=(16, 3))  # ← NEVER do this
 
 **Figure quality**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — consistent style, **font size ≥ 24pt in source** (critical: smaller fonts become unreadable after scaling to column width), colorblind-safe palettes (Okabe-Ito or Paul Tol), line width ≥ 2.5pt, PDF vector format. See `results-analysis` skill for recommended `plt.rcParams` template. <!-- policy:FIG.FONT_GE_24PT --> <!-- policy:FIG.VECTOR_FORMAT_REQUIRED --> <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
 
-> **MANDATORY OUTPUT for Step 8 (all three required before proceeding to Step 9):**
+> **MANDATORY OUTPUT for Step 8:**
 > - [ ] Experiment plan document (confirmed by user in 8a)
-> - [ ] Raw result files — CSV/JSON/logs (produced in 8b, or provided by user)
-> - [ ] Figure PDF files AND/OR LaTeX table code (produced in 8c)
+> - [ ] Complete runnable experiment scripts + launch script (produced in 8b)
+> - [ ] `ACTUAL_RUN`: raw result files + actual figure/table artifacts
+> - [ ] `FABRICATED_PLACEHOLDER`: placeholder figure/table artifacts with explicit fabricated disclosure
 >
-> **If any output is missing, STOP and address it. Do NOT write §5 Experiments without actual data.**
+> **If any required output is missing, STOP and address it.**
 
 **Step 9: Write Experiments Section**
 
@@ -920,6 +934,7 @@ All experiments run on [GPU type] for [total hours]. Seeds: ... <!-- policy:REPR
 Use `\subsubsection` for each experiment group. **Every** `\subsubsection` MUST:
 1. `\ref` to its corresponding figure or table (e.g., "as shown in Table~\ref{tab:main}" or "Fig.~\ref{fig:convergence} shows...")
 2. End with a **Takeaway box** summarizing the key finding: <!-- policy:EXP.TAKEAWAY_BOX -->
+3. If the subsection contains non-executed placeholder results, add subsection-level status declaration comment and red uppercase fabricated disclosure in each related caption. <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED --> <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
 
 ```latex
 \begin{center}

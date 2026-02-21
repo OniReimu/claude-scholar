@@ -32,6 +32,8 @@ venue: sp
 - `policy/rules/prose-em-dash-restriction.md`
 - `policy/rules/exp-ablation-in-results.md`
 - `policy/rules/exp-results-subsection-structure.md`
+- `policy/rules/exp-fabricated-results-caption-disclosure.md`
+- `policy/rules/exp-results-status-declaration-required.md`
 - `policy/rules/ethics-limitations-section-mandatory.md`
 - `policy/rules/anon-double-blind-anonymization.md`
 - `policy/rules/submit-page-limit-strict.md`

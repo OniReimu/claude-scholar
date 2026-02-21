@@ -26,6 +26,8 @@ venue: icse
 - `policy/rules/exp-takeaway-box.md`
 - `policy/rules/exp-ablation-in-results.md`
 - `policy/rules/exp-results-subsection-structure.md`
+- `policy/rules/exp-fabricated-results-caption-disclosure.md`
+- `policy/rules/exp-results-status-declaration-required.md`
 - `policy/rules/repro-random-seed-documentation.md`
 - `policy/rules/repro-compute-resources-documented.md`
 - `policy/rules/submit-section-numbering-consistency.md`

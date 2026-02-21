@@ -39,6 +39,8 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
 | `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 非实跑结果 caption 强制披露 |
+| `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
 | `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
 | `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
 | `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |
@@ -62,6 +64,10 @@ When a SoK profile is active, also enforce:
 - documented survey methodology (search + screening) <!-- policy:SOK.METHODOLOGY_REPORTING -->
 - taxonomy-aligned big comparison table <!-- policy:SOK.BIG_TABLE_REQUIRED -->
 - concrete research agenda in Conclusion/Discussion <!-- policy:SOK.RESEARCH_AGENDA_REQUIRED -->
+
+When experiments include placeholder/non-executed results, also enforce:
+- red uppercase fabricated disclosure in each affected figure/table caption <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
+- subsection-level `% [FABRICATED] ...` status declaration comment <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
 
 ---
 
@@ -241,7 +247,7 @@ NEVER read, write, or commit:
 
 ### Paper Writing Rules (Policy Engine)
 
-Paper writing rules (35 rule cards) are defined in `policy/rules/`.
+Paper writing rules (37 rule cards) are defined in `policy/rules/`.
 See `policy/README.md` for the full Rule ID Registry and rule card specification.
 Skills reference rules via HTML comment markers. In case of conflict, `policy/rules/` is the single source of truth.
 SoK requirements are activated by selecting SoK profiles (for example `policy/profiles/security-sok-sp.md`).

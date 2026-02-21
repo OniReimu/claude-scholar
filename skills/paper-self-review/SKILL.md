@@ -31,6 +31,8 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
 | `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 非实跑结果 caption 强制披露 |
+| `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
 | `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
 | `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
 | `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |
@@ -113,6 +115,8 @@ Check experiment section completeness:
 - Do experiment results include error bars? <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 - Are ablation studies in the Results section (not Discussion)? <!-- policy:EXP.ABLATION_IN_RESULTS -->
 - Does each experiment subsection follow the required structure? <!-- policy:EXP.RESULTS_SUBSECTION_STRUCTURE -->
+- If any result is fabricated/synthetic/dummy, is it explicitly disclosed in red uppercase in caption? <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
+- If a subsection contains fabricated results, is there a subsection-level `[FABRICATED]` status declaration comment? <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
 - Are random seeds documented? <!-- policy:REPRO.RANDOM_SEED_DOCUMENTATION -->
 - Are compute resources documented? <!-- policy:REPRO.COMPUTE_RESOURCES_DOCUMENTED -->
 
@@ -169,6 +173,8 @@ Paper Quality Checklist:
 - [ ] Experiment results subsections each end with \fbox Takeaway box <!-- policy:EXP.TAKEAWAY_BOX -->
 - [ ] Ablation studies in Results section <!-- policy:EXP.ABLATION_IN_RESULTS -->
 - [ ] Experiment subsections follow required structure <!-- policy:EXP.RESULTS_SUBSECTION_STRUCTURE -->
+- [ ] Fabricated/synthetic/dummy results are explicitly disclosed in red uppercase caption <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
+- [ ] Subsections containing fabricated results include a `[FABRICATED]` status declaration comment <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
 - [ ] SoK: taxonomy is explicit and operational <!-- policy:SOK.TAXONOMY_REQUIRED -->
 - [ ] SoK: methodology reporting is complete (sources + screening criteria) <!-- policy:SOK.METHODOLOGY_REPORTING -->
 - [ ] SoK: big comparison table aligned with taxonomy <!-- policy:SOK.BIG_TABLE_REQUIRED -->

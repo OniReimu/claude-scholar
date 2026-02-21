@@ -122,6 +122,20 @@ SoK 规则集合（语义规则）：
 
 ---
 
+## Experiment Status Scope（v1）
+
+实验结果默认状态为 ACTUAL（无需额外声明）。
+仅在使用占位/合成/虚拟结果时触发异常状态规则：
+
+| Rule ID | 作用 |
+|---------|------|
+| `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 在 figure/table caption 中红色大写披露 fabricated 状态 |
+| `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 在对应 `\subsubsection` 开头声明 `% [FABRICATED] ...` 状态注释 |
+
+> 轻/重任务判定属于 workflow 决策，不作为 policy rule schema 字段；policy 只约束论文产出物披露合规性。
+
+---
+
 ## Rule ID Registry
 
 | Rule ID | slug | layer | severity | locked | enforcement |
@@ -147,6 +161,8 @@ SoK 规则集合（语义规则）：
 | EXP.TAKEAWAY_BOX | exp-takeaway-box | core | warn | false | doc |
 | EXP.ABLATION_IN_RESULTS | exp-ablation-in-results | core | warn | false | doc |
 | EXP.RESULTS_SUBSECTION_STRUCTURE | exp-results-subsection-structure | core | warn | false | doc |
+| EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE | exp-fabricated-results-caption-disclosure | core | error | false | doc |
+| EXP.RESULTS_STATUS_DECLARATION_REQUIRED | exp-results-status-declaration-required | core | warn | false | doc |
 | REPRO.RANDOM_SEED_DOCUMENTATION | repro-random-seed-documentation | core | error | false | doc |
 | REPRO.COMPUTE_RESOURCES_DOCUMENTED | repro-compute-resources-documented | core | warn | false | doc |
 | SUBMIT.SECTION_NUMBERING_CONSISTENCY | submit-section-numbering-consistency | core | warn | false | lint_script |

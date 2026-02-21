@@ -28,6 +28,8 @@ A systematic experimental results analysis workflow connecting experimental data
 | `EXP.TAKEAWAY_BOX` | 实验结果Takeaway |
 | `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 非实跑结果 caption 强制披露 |
+| `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
 
 ## Core Features
 
@@ -57,6 +59,12 @@ Use this skill when you need to:
 Data Loading → Data Validation → Statistical Analysis → Visualization → Writing → Quality Check
 ```
 
+Execution mode gate:
+- If user already specifies mode at task start, use it directly.
+- Otherwise, ask once: `ACTUAL_RUN` or `FABRICATED_PLACEHOLDER`.
+- `ACTUAL_RUN`: requires raw result files before analysis.
+- `FABRICATED_PLACEHOLDER`: workflow stops at code implementation for this round (no real execution claims); allow draft placeholders only with explicit fabricated disclosures. <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED --> <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
+
 ### Step 1: Data Loading and Validation
 
 **Supported Data Formats:**
@@ -69,6 +77,7 @@ Data Loading → Data Validation → Statistical Analysis → Visualization → 
 - Completeness check - Missing values, outliers
 - Consistency check - Data format, units
 - Reproducibility check - Random seeds, version info
+- Mode consistency check - If `ACTUAL_RUN`, raw result files must exist; if only placeholder data exists, switch to `FABRICATED_PLACEHOLDER` and disclose status
 
 Select appropriate tools for data loading and preliminary validation based on data format.
 
@@ -230,6 +239,8 @@ See `references/results-writing-guide.md` for the complete writing guide.
 - [ ] Statistical test methods are specified
 - [ ] Figures are clear and readable (including black-and-white print)
 - [ ] No in-figure title text is used <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+- [ ] If any result is fabricated/synthetic/dummy, caption contains red uppercase disclosure <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
+- [ ] If a subsection contains fabricated results, add `% [FABRICATED] ...` status declaration comment <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
 - [ ] Hyperparameter search ranges are reported
 - [ ] Computational resources are specified (GPU type, time) <!-- policy:REPRO.COMPUTE_RESOURCES_DOCUMENTED -->
 - [ ] Random seed settings are specified (per `rules/experiment-reproducibility.md`) <!-- policy:REPRO.RANDOM_SEED_DOCUMENTATION -->
@@ -276,6 +287,7 @@ See `references/results-writing-guide.md` for the complete writing guide.
 - Not describing experimental setup
 - Hiding negative results
 - Missing statistical information
+- Presenting fabricated placeholders as if they were actual execution outputs
 
 ✅ **Correct approach:**
 - Objectively describe observed phenomena
