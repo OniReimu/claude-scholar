@@ -10,6 +10,7 @@
 
 ## News
 
+- **2026-02-21**: 新增首版 SoK 策略包：4 条语义规则 `SOK.*`、`security-sok-sp` profile，以及 3 个入口 skill 的 marker 集成。v1 中 SoK 仍通过 profile 激活（暂不做 schema 迁移）。
 - **2026-02-19 (v1.3.0)**: 引入论文策略引擎（`policy/`）：在 `policy/rules/` 采用规则卡设计并作为唯一真相源，支持分层作用域（`core/domain/venue`）、`policy/profiles/` 配置覆盖，以及 `policy/validate.sh` + `policy/lint.sh` 的可执行校验流程。同步强化图表工作流策略（Figure 1 必须存在；非实验图默认走 AutoFigure-Edit）。
 - **2026-02-16 (v1.2.1)**: 新增全局出图规则：任何生成图（AutoFigure-Edit 概念图、旧版生图链路、Python 实验图）都不添加图内标题；标题信息统一放在论文 caption/正文中。
 - **2026-02-16**: 强化 `paper-figure-generator` 执行优先级：默认先走 `AutoFigure-Edit + OpenRouter`，仅在默认链路失败后才回退到旧版 Gemini/OpenAI 流程；新增旧插件缓存提示（`GOOGLE_API_KEY` / `OPENAI_API_KEY`）排障说明。
@@ -567,6 +568,8 @@ git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 - `policy/rules/` 是论文写作约束（图表、LaTeX、引文、实验、投稿合规）的唯一真相源。
 - 规则卡采用 frontmatter 元数据（`id`、`layer`、`artifacts`、`phases`、`check_kind`、`enforcement`）+ 必要正文段落（`Requirement`、`Rationale`、`Check`、`Examples`）。
 - 分层模型：`core`（全局必守）、`domain`（领域特定）、`venue`（会议/期刊特定）；覆盖配置在 `policy/profiles/*.md`。
+- v1 的 SoK 规则通过 profile 激活（如 `policy/profiles/security-sok-sp.md`），包含语义规则 `SOK.TAXONOMY_REQUIRED`、`SOK.METHODOLOGY_REPORTING`、`SOK.BIG_TABLE_REQUIRED`、`SOK.RESEARCH_AGENDA_REQUIRED`。
+- 当前限制：`policy/lint.sh --profile` 仅加载单个扁平 profile 文件（暂不支持 inheritance/composition）。
 - 校验与执行流程：
   - `bash policy/validate.sh`：结构与集成校验
   - `bash policy/lint.sh`：可机器执行的规则检查

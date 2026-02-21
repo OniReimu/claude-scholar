@@ -101,6 +101,27 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 
 ---
 
+## SoK Scope（v1）
+
+SoK（Systematization of Knowledge）在 v1 中不新增 frontmatter `scope` 字段，而是通过 profile 激活：
+
+- 示例 profile：`policy/profiles/security-sok-sp.md`
+- 激活方式：`policy/lint.sh --profile <profile-file>`
+- 当前限制：一次仅加载一个 profile（无 inheritance/composition）
+
+SoK 规则集合（语义规则）：
+
+| Rule ID | 主要映射 Phase |
+|---------|-----------------|
+| `SOK.TAXONOMY_REQUIRED` | `writing-background` |
+| `SOK.METHODOLOGY_REPORTING` | `writing-methods` |
+| `SOK.BIG_TABLE_REQUIRED` | `writing-experiments` |
+| `SOK.RESEARCH_AGENDA_REQUIRED` | `writing-conclusion` |
+
+> 规则卡元数据采用现有 schema：`layer: domain`、`domains: [security, se, is]`、`venues: [all]`；并在 Rationale 中明确“仅在 SoK profile 激活时生效”。
+
+---
+
 ## Rule ID Registry
 
 | Rule ID | slug | layer | severity | locked | enforcement |
@@ -129,6 +150,10 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 | REPRO.RANDOM_SEED_DOCUMENTATION | repro-random-seed-documentation | core | error | false | doc |
 | REPRO.COMPUTE_RESOURCES_DOCUMENTED | repro-compute-resources-documented | core | warn | false | doc |
 | SUBMIT.SECTION_NUMBERING_CONSISTENCY | submit-section-numbering-consistency | core | warn | false | lint_script |
+| SOK.TAXONOMY_REQUIRED | sok-taxonomy-required | domain | error | false | doc |
+| SOK.METHODOLOGY_REPORTING | sok-methodology-reporting | domain | warn | false | doc |
+| SOK.BIG_TABLE_REQUIRED | sok-big-table-required | domain | error | false | doc |
+| SOK.RESEARCH_AGENDA_REQUIRED | sok-research-agenda-required | domain | error | false | doc |
 | PROSE.CRYPTO_CONSTRUCTION_TEMPLATE | prose-crypto-construction-template | domain | warn | false | doc |
 | PROSE.INTENSIFIERS_ELIMINATION | prose-intensifiers-elimination | domain | warn | false | lint_script |
 | PROSE.EM_DASH_RESTRICTION | prose-em-dash-restriction | domain | warn | false | lint_script |

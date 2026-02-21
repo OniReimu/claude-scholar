@@ -31,6 +31,10 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
 | `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
+| `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
+| `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |
+| `SOK.RESEARCH_AGENDA_REQUIRED` | SoK 必须给出研究议程 |
 | `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
 | `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
 | `CITE.VERIFY_VIA_API` | 引文API验证 |
@@ -121,6 +125,13 @@ Check submission requirements:
 - Is double-blind anonymization correct? <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION -->
 - Is there a Limitations section? <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
 
+### 9. SoK Scope Checks (When SoK profile is active)
+
+- Is there an explicit taxonomy with clear dimensions and boundaries? <!-- policy:SOK.TAXONOMY_REQUIRED -->
+- Is the survey methodology (search/screening criteria) reported? <!-- policy:SOK.METHODOLOGY_REPORTING -->
+- Is there at least one taxonomy-aligned big comparison table? <!-- policy:SOK.BIG_TABLE_REQUIRED -->
+- Does conclusion/discussion include a concrete research agenda? <!-- policy:SOK.RESEARCH_AGENDA_REQUIRED -->
+
 ## Quality Checklist
 
 Use this checklist for systematic paper self-review:
@@ -158,6 +169,10 @@ Paper Quality Checklist:
 - [ ] Experiment results subsections each end with \fbox Takeaway box <!-- policy:EXP.TAKEAWAY_BOX -->
 - [ ] Ablation studies in Results section <!-- policy:EXP.ABLATION_IN_RESULTS -->
 - [ ] Experiment subsections follow required structure <!-- policy:EXP.RESULTS_SUBSECTION_STRUCTURE -->
+- [ ] SoK: taxonomy is explicit and operational <!-- policy:SOK.TAXONOMY_REQUIRED -->
+- [ ] SoK: methodology reporting is complete (sources + screening criteria) <!-- policy:SOK.METHODOLOGY_REPORTING -->
+- [ ] SoK: big comparison table aligned with taxonomy <!-- policy:SOK.BIG_TABLE_REQUIRED -->
+- [ ] SoK: concrete research agenda in Conclusion/Discussion <!-- policy:SOK.RESEARCH_AGENDA_REQUIRED -->
 - [ ] Random seeds documented <!-- policy:REPRO.RANDOM_SEED_DOCUMENTATION -->
 - [ ] Compute resources documented <!-- policy:REPRO.COMPUTE_RESOURCES_DOCUMENTED -->
 - [ ] Top-level sections ≤ 6 <!-- policy:PAPER.SECTION_HEADINGS_MAX_6 -->

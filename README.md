@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-02-21**: Added first SoK policy pack: 4 semantic `SOK.*` rule cards, `security-sok-sp` profile, and entry-skill marker wiring. SoK remains profile-activated scope in v1 (no schema migration yet).
 - **2026-02-19 (v1.3.0)**: Introduced the paper policy engine (`policy/`): rule-card based design in `policy/rules/` (single source of truth), layered scope (`core/domain/venue`), profile overlays in `policy/profiles/`, and executable validation/lint workflows via `policy/validate.sh` and `policy/lint.sh`. Synced Figure workflow policy (Figure 1 required; non-experimental figures default to AutoFigure-Edit).
 - **2026-02-16 (v1.2.1)**: Added a global figure rule: no in-image titles for any generated visuals (AutoFigure-Edit conceptual diagrams, legacy image APIs, or Python experimental plots). Use captions in paper text/LaTeX instead.
 - **2026-02-16**: Enforced `paper-figure-generator` execution priority: default `AutoFigure-Edit + OpenRouter` first, fallback to legacy Gemini/OpenAI flow only after failure; added troubleshooting note for outdated plugin cache prompts (`GOOGLE_API_KEY` / `OPENAI_API_KEY`).
@@ -567,6 +568,8 @@ Defined in `policy/`:
 - `policy/rules/` is the single source of truth for paper-writing constraints (figures, LaTeX, citations, experiments, submission).
 - Rule-card design uses frontmatter metadata (`id`, `layer`, `artifacts`, `phases`, `check_kind`, `enforcement`) plus required sections (`Requirement`, `Rationale`, `Check`, `Examples`).
 - Layering model: `core` (always on), `domain` (field-specific), `venue` (conference/journal specific); profile overlays live in `policy/profiles/*.md`.
+- SoK in v1 is activated by profile (for example `policy/profiles/security-sok-sp.md`), currently with semantic `SOK.*` rules (`SOK.TAXONOMY_REQUIRED`, `SOK.METHODOLOGY_REPORTING`, `SOK.BIG_TABLE_REQUIRED`, `SOK.RESEARCH_AGENDA_REQUIRED`).
+- Current limitation: `policy/lint.sh --profile` loads a single flat profile file (no inheritance/composition yet).
 - Validation and enforcement workflow:
   - `bash policy/validate.sh` for structure/integration checks
   - `bash policy/lint.sh` for machine-enforceable checks

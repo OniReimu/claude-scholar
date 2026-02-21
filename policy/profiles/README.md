@@ -2,6 +2,9 @@
 
 Profile = 领域 + 会议组合，定义加载哪些规则以及参数覆盖。
 
+> v1 限制：`policy/lint.sh --profile` 当前只支持加载单个 profile 文件，不支持 profile inheritance/composition。
+> 因此如 `security-sok-sp` 这类 SoK profile 需显式复制 base includes，再追加 `SOK.*` 规则。
+
 ---
 
 ## Profile Frontmatter
@@ -11,6 +14,16 @@ Profile = 领域 + 会议组合，定义加载哪些规则以及参数覆盖。
 name: security-neurips
 domain: security
 venue: neurips
+---
+```
+
+SoK profile 示例：
+
+```yaml
+---
+name: security-sok-sp
+domain: security
+venue: sp
 ---
 ```
 

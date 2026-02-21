@@ -39,6 +39,10 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
 | `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
+| `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
+| `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
+| `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |
+| `SOK.RESEARCH_AGENDA_REQUIRED` | SoK 必须给出研究议程 |
 | `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
 | `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
 | `CITE.VERIFY_VIA_API` | 引文API验证 |
@@ -52,6 +56,12 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
 | `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
 | `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
+
+When a SoK profile is active, also enforce:
+- explicit taxonomy in Background/Related Work <!-- policy:SOK.TAXONOMY_REQUIRED -->
+- documented survey methodology (search + screening) <!-- policy:SOK.METHODOLOGY_REPORTING -->
+- taxonomy-aligned big comparison table <!-- policy:SOK.BIG_TABLE_REQUIRED -->
+- concrete research agenda in Conclusion/Discussion <!-- policy:SOK.RESEARCH_AGENDA_REQUIRED -->
 
 ---
 
@@ -231,9 +241,10 @@ NEVER read, write, or commit:
 
 ### Paper Writing Rules (Policy Engine)
 
-Paper writing rules (28 rule cards) are defined in `policy/rules/`.
+Paper writing rules (35 rule cards) are defined in `policy/rules/`.
 See `policy/README.md` for the full Rule ID Registry and rule card specification.
 Skills reference rules via HTML comment markers. In case of conflict, `policy/rules/` is the single source of truth.
+SoK requirements are activated by selecting SoK profiles (for example `policy/profiles/security-sok-sp.md`).
 **Writing tasks must first read `policy/README.md` + relevant rule cards.**
 
 ---
