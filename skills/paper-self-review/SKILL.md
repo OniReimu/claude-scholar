@@ -188,6 +188,37 @@ Paper Quality Checklist:
 - [ ] Limitations section present <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
 ```
 
+## Orchestrator Integration
+
+This skill owns stage: **`self_review`**.
+
+When invoked within an active research run (see `orchestrator/run-card.md`):
+
+1. **Stage start**: Mark `self_review` → `in_progress`; verify `writeup` stage is `done`.
+2. **Review**: Execute the full quality checklist (structure, logic, citations, figures, math, experiments, submission compliance).
+3. **Policy gate**: Run `bash policy/lint.sh --profile <profile> .` where `<profile>` comes from `run.json` (default: none).
+4. **Stage end**: Record `artifacts.self_review.checklist_passed` and `artifacts.self_review.lint_result` in run state; request human approval before marking `done`.
+
+**Expected artifacts** (run fields):
+- `artifacts.self_review.checklist_passed` — boolean
+- `artifacts.self_review.lint_result` — pass/fail + summary
+
+**Gate execution and persistence**:
+
+The `self_review` gate runs `bash policy/lint.sh --profile <profile> .` (profile from `run.json`; default: none). After execution, persist results into run state:
+
+```
+gate_results.self_review = {
+  last_run: "<ISO timestamp>",
+  passed: true|false,
+  summary: "<first 5 lines of lint output or 'All checks passed'>"
+}
+```
+
+The stage may only be marked `done` if `gate_results.self_review.passed === true` **and** the user approves the checklist. If the gate fails, the stage remains `in_progress` and the user is shown the failure summary.
+
+If no active run exists, proceed with standalone self-review (no orchestrator interaction).
+
 ## When to Use
 
 Use this skill in the following scenarios:

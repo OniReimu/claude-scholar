@@ -149,6 +149,24 @@ Conference preparation and research promotion:
 
 **Coverage**: 90% of academic research lifecycle (from idea to publication)
 
+### Workflow Orchestrator
+
+Claude Scholar includes a stateful **Workflow Orchestrator** that tracks progress across the research lifecycle as a single, resumable run. No new commands are needed -- the orchestrator activates transparently when relevant skills and agents are invoked.
+
+**Key features:**
+- **Single mode, resumable runs**: State persists in `.claude/orchestrator/` across sessions. Resume from where you left off.
+- **10-stage pipeline**: intake -> literature -> proposal -> development -> experiments -> analysis -> writeup -> self_review -> rebuttal -> post_acceptance
+- **Stage gates**: Human approval and policy lint checks at stage boundaries prevent premature progression.
+- **Artifact fingerprinting**: SHA256 hashes detect file changes and mark affected stages as `stale`.
+- **Experiments boundary**: The `experiments` stage enters `blocked` until the user provides a `data_path` with actual results. Rollback is always possible ("roll back to stage X").
+
+**How it works:**
+- Session start hook displays active run ID, current stage, and next action.
+- Skills and agents automatically read/write run state per the [Run Card contract](orchestrator/run-card.md).
+- Stage registry defined in `orchestrator/stages.json`; runtime library at `scripts/lib/orchestrator.js`.
+
+See [docs/orchestrator.md](docs/orchestrator.md) for full documentation.
+
 ### Supporting Workflows
 
 These workflows run in the background to enhance the primary workflows.
@@ -305,6 +323,10 @@ claude-scholar/
 │   ├── agents.md                # Agent orchestration: when to delegate, parallel execution
 │   ├── security.md              # Secrets management, sensitive file protection
 │   └── experiment-reproducibility.md  # Random seeds, config recording, checkpoints
+│
+├── orchestrator/        # Workflow Orchestrator (stage registry + run card)
+│   ├── stages.json              # Stage definitions (10 stages, artifacts, gates)
+│   └── run-card.md              # Skills/agents integration contract
 │
 ├── policy/              # Paper policy engine (rule cards + validation + lint)
 │   ├── rules/                    # Canonical paper-writing rule cards (single source of truth)

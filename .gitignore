@@ -47,7 +47,8 @@ skills/paper-figure-generator/.autofigure-edit/
 !.codex/INSTALL.md
 
 # Other temporary files
-docs/
+docs/*
+!docs/orchestrator.md
 plan/
 plans/
 projects/

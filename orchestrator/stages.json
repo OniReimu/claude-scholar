@@ -1,0 +1,155 @@
+{
+  "version": "1.0.0",
+  "status_enum": ["pending", "in_progress", "blocked", "done", "stale"],
+  "stages": [
+    {
+      "id": "intake",
+      "label": "Scope & Constraints",
+      "order": 1,
+      "required_inputs": [],
+      "expected_artifacts": [
+        { "kind": "run_field", "path": "inputs.venue", "description": "Target venue or journal" },
+        { "kind": "run_field", "path": "inputs.profile", "description": "Policy profile (e.g. security-sok-sp)" }
+      ],
+      "gates": [],
+      "next_stage": "literature",
+      "optional": false
+    },
+    {
+      "id": "literature",
+      "label": "Literature Review & Gap Analysis",
+      "order": 2,
+      "required_inputs": ["intake.done"],
+      "expected_artifacts": [
+        { "kind": "file", "path": "literature-review.md" },
+        { "kind": "file", "path": "references.bib" }
+      ],
+      "gates": [
+        { "type": "human_approval", "prompt": "Confirm literature review covers the target scope" }
+      ],
+      "next_stage": "proposal",
+      "optional": false
+    },
+    {
+      "id": "proposal",
+      "label": "Research Question & Method Plan",
+      "order": 3,
+      "required_inputs": ["literature.done"],
+      "expected_artifacts": [
+        { "kind": "file", "path": "research-proposal.md" }
+      ],
+      "gates": [
+        { "type": "human_approval", "prompt": "Approve research question and methodology" }
+      ],
+      "next_stage": "development",
+      "optional": false
+    },
+    {
+      "id": "development",
+      "label": "Codebase & Infra Setup",
+      "order": 4,
+      "required_inputs": ["proposal.done"],
+      "expected_artifacts": [
+        { "kind": "run_field", "path": "artifacts.development.repo_ready", "description": "Codebase scaffold complete" },
+        { "kind": "run_field", "path": "artifacts.development.config_path", "description": "Hydra/OmegaConf config root" }
+      ],
+      "gates": [
+        { "type": "human_approval", "prompt": "Confirm codebase is ready for experiments" }
+      ],
+      "next_stage": "experiments",
+      "optional": false
+    },
+    {
+      "id": "experiments",
+      "label": "Experiment Plan & Execution",
+      "order": 5,
+      "required_inputs": ["development.done"],
+      "expected_artifacts": [
+        { "kind": "run_field", "path": "inputs.experiments.data_path", "must_exist": true },
+        { "kind": "run_field", "path": "artifacts.experiments.fingerprints", "min_items": 1 }
+      ],
+      "gates": [
+        { "type": "human_action", "prompt": "Run experiments and provide the results data path" },
+        { "type": "human_approval", "prompt": "Confirm experiment results are ACTUAL_RUN (not fabricated)" }
+      ],
+      "next_stage": "analysis",
+      "optional": false,
+      "notes": "Human-run stage: enters 'blocked' until user provides data_path and fingerprints"
+    },
+    {
+      "id": "analysis",
+      "label": "Results Analysis & Visualization",
+      "order": 6,
+      "required_inputs": ["experiments.done"],
+      "expected_artifacts": [
+        { "kind": "file", "path": "analysis-output/analysis-report.md" },
+        { "kind": "file", "path": "analysis-output/results-draft.md" },
+        { "kind": "file", "path": "analysis-output/visualization-specs.md" }
+      ],
+      "gates": [
+        { "type": "policy_check", "command": "experiment_status_disclosure", "description": "Enforce experiment status disclosure rules" },
+        { "type": "human_approval", "prompt": "Approve analysis results and visualizations" }
+      ],
+      "next_stage": "writeup",
+      "optional": false
+    },
+    {
+      "id": "writeup",
+      "label": "Paper Drafting",
+      "order": 7,
+      "required_inputs": ["analysis.done"],
+      "expected_artifacts": [
+        { "kind": "run_field", "path": "artifacts.writeup.main_tex", "description": "Path to main .tex file" },
+        { "kind": "run_field", "path": "artifacts.writeup.figures_dir", "description": "Path to figures directory" }
+      ],
+      "gates": [
+        { "type": "human_approval", "prompt": "Approve draft for self-review" }
+      ],
+      "next_stage": "self_review",
+      "optional": false
+    },
+    {
+      "id": "self_review",
+      "label": "Paper Self-Review & Policy Lint",
+      "order": 8,
+      "required_inputs": ["writeup.done"],
+      "expected_artifacts": [
+        { "kind": "run_field", "path": "artifacts.self_review.checklist_passed", "description": "Self-review checklist result" },
+        { "kind": "run_field", "path": "artifacts.self_review.lint_result", "description": "Policy lint pass/fail" }
+      ],
+      "gates": [
+        { "type": "policy_check", "command": "bash policy/lint.sh --profile <profile> .", "description": "Run policy lint on paper" },
+        { "type": "human_approval", "prompt": "Approve paper for submission" }
+      ],
+      "next_stage": "rebuttal",
+      "optional": false
+    },
+    {
+      "id": "rebuttal",
+      "label": "Review Response",
+      "order": 9,
+      "required_inputs": ["self_review.done"],
+      "expected_artifacts": [
+        { "kind": "file", "path": "rebuttal.md" }
+      ],
+      "gates": [
+        { "type": "human_approval", "prompt": "Approve rebuttal for submission" }
+      ],
+      "next_stage": "post_acceptance",
+      "optional": true
+    },
+    {
+      "id": "post_acceptance",
+      "label": "Post-Acceptance Processing",
+      "order": 10,
+      "required_inputs": [],
+      "expected_artifacts": [
+        { "kind": "run_field", "path": "artifacts.post_acceptance.presentation", "description": "Presentation slides path" },
+        { "kind": "run_field", "path": "artifacts.post_acceptance.poster", "description": "Poster path" }
+      ],
+      "gates": [],
+      "next_stage": null,
+      "optional": true
+    }
+  ]
+}

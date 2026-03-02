@@ -248,6 +248,38 @@ See `references/results-writing-guide.md` for the complete writing guide.
 - [ ] Environment recorded (Python version, GPU driver, key library versions)
 - [ ] Results are reproducible (code/data available)
 
+## Orchestrator Integration
+
+This skill owns stage: **`analysis`**.
+
+When invoked within an active research run (see `orchestrator/run-card.md`):
+
+1. **Stage start**: Mark `analysis` → `in_progress`; verify `experiments` stage is `done` (data_path exists + fingerprinted).
+2. **Analysis**: Execute the standard analysis pipeline; enforce experiment status disclosure rules.
+3. **Stage end**: Fingerprint `analysis-output/analysis-report.md`, `analysis-output/results-draft.md`, `analysis-output/visualization-specs.md`; request human approval.
+4. **Gate**: Run experiment status disclosure check before marking `done`.
+
+**Expected artifacts** (files):
+- `analysis-output/analysis-report.md`
+- `analysis-output/results-draft.md`
+- `analysis-output/visualization-specs.md`
+
+**Gate execution and persistence**:
+
+The `analysis` gate enforces experiment status disclosure rules (`EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` and `EXP.RESULTS_STATUS_DECLARATION_REQUIRED`). After verification, persist results into run state:
+
+```
+gate_results.analysis = {
+  last_run: "<ISO timestamp>",
+  passed: true|false,
+  summary: "<disclosure check outcome: all results verified as ACTUAL_RUN | fabricated results detected and properly disclosed | FAIL: undisclosed fabricated results>"
+}
+```
+
+The stage may only be marked `done` if `gate_results.analysis.passed === true` **and** the user approves the analysis. If fabricated results are detected without proper disclosure, the gate fails and the user must either add disclosure markers or confirm the data is from actual runs.
+
+If no active run exists, initialize one with `initRun()`.
+
 ## Common Mistakes and Pitfalls
 
 ### Statistical Errors

@@ -61,6 +61,11 @@ You are a literature review specialist focusing on academic research in AI and m
    - Produce BibTeX references for citation management
    - Provide actionable recommendations
 
+**Run State Bookends:**
+
+- **On entry**: Check for an active orchestrator run via `orchestrator/run-card.md`. If one exists, attach outputs to it and mark the `literature` stage as `in_progress`. If none exists, initialize a run with the inferred research title.
+- **On exit**: List produced artifacts (`literature-review.md`, `references.bib`, `research-proposal.md`), fingerprint them, and request user approval before marking the stage as `done`.
+
 **Analysis Process:**
 
 Follow this systematic workflow for literature review:

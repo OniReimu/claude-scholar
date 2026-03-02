@@ -139,6 +139,22 @@ Paper accepted -> Write Twitter thread -> Create LinkedIn post -> Draft blog pos
 - Share across multiple platforms
 - Include accessible descriptions for figures
 
+## Orchestrator Integration
+
+This skill owns stage: **`post_acceptance`** (optional).
+
+When invoked within an active research run (see `orchestrator/run-card.md`):
+
+1. **Stage start**: Mark `post_acceptance` → `in_progress`.
+2. **Preparation**: Create presentation slides, poster, and promotion content per existing workflow.
+3. **Stage end**: Record `artifacts.post_acceptance.presentation` and `artifacts.post_acceptance.poster` paths in run state.
+
+**Expected artifacts** (run fields):
+- `artifacts.post_acceptance.presentation` — slides path
+- `artifacts.post_acceptance.poster` — poster path
+
+If no active run exists, proceed with standalone post-acceptance workflow (no orchestrator interaction).
+
 ## Summary
 
 This skill provides a comprehensive post-acceptance workflow covering three key areas: presentation slides, academic posters, and promotional content. Following these guidelines helps researchers effectively communicate their work at conferences and to the broader community.
