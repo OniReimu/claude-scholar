@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-03-02 (v1.4.0)**: Added Workflow Orchestrator — stateful, resumable research run coordination layer. 10-stage pipeline with persistent run state (`.claude/orchestrator/`), artifact fingerprinting (SHA256), auto-stale detection at session start, rollback with downstream cascade, stage gates (human approval + policy lint). Zero new commands — activates transparently via existing skills/agents/hooks.
 - **2026-02-21**: Added first SoK policy pack: 4 semantic `SOK.*` rule cards, `security-sok-sp` profile, and entry-skill marker wiring. SoK remains profile-activated scope in v1 (no schema migration yet).
 - **2026-02-19 (v1.3.0)**: Introduced the paper policy engine (`policy/`): rule-card based design in `policy/rules/` (single source of truth), layered scope (`core/domain/venue`), profile overlays in `policy/profiles/`, and executable validation/lint workflows via `policy/validate.sh` and `policy/lint.sh`. Synced Figure workflow policy (Figure 1 required; non-experimental figures default to AutoFigure-Edit).
 - **2026-02-16 (v1.2.1)**: Added a global figure rule: no in-image titles for any generated visuals (AutoFigure-Edit conceptual diagrams, legacy image APIs, or Python experimental plots). Use captions in paper text/LaTeX instead.
