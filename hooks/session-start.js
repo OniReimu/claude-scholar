@@ -137,13 +137,23 @@ try {
       ? (stages.stages.find(s => s.id === freshRun.current_stage) || {}).label || freshRun.current_stage
       : freshRun.current_stage;
     const stageStatus = (freshRun.stages[freshRun.current_stage] || {}).status || 'unknown';
-    const nextStage = stages
-      ? (stages.stages.find(s => s.id === freshRun.current_stage) || {}).next_stage || null
+    const currentStageDef = stages
+      ? (stages.stages.find(s => s.id === freshRun.current_stage) || null)
       : null;
+    const nextStageId = currentStageDef ? (currentStageDef.next_stage || null) : null;
+    const nextStageLabel = (stages && nextStageId)
+      ? ((stages.stages.find(s => s.id === nextStageId) || {}).label || null)
+      : null;
+
+    const venue = freshRun.venue || (freshRun.inputs && freshRun.inputs.venue) || null;
+    const profile = freshRun.profile || (freshRun.inputs && freshRun.inputs.profile) || null;
     output += `🔬 Active Run: ${freshRun.id} — ${freshRun.title}\n`;
-    output += `  ▸ Stage: ${stageLabel} [${stageStatus}]\n`;
-    if (freshRun.venue) output += `  ▸ Venue: ${freshRun.venue}\n`;
-    if (nextStage) output += `  ▸ Next: ${nextStage}\n`;
+    output += `  ▸ Stage: ${stageLabel} (${freshRun.current_stage}) [${stageStatus}]\n`;
+    if (venue) output += `  ▸ Venue: ${venue}\n`;
+    if (profile) output += `  ▸ Profile: ${profile}\n`;
+    if (nextStageId) {
+      output += `  ▸ Next: ${nextStageLabel ? `${nextStageLabel} (${nextStageId})` : nextStageId}\n`;
+    }
     // 显示所有 stale 阶段
     const staleStages = Object.entries(freshRun.stages || {})
       .filter(([, v]) => v.status === 'stale')
@@ -152,6 +162,28 @@ try {
       output += `  ⚠️  Stale stages: ${staleStages.join(', ')}`;
       if (newlyStale.length > 0) output += ` (${newlyStale.length} detected this session)`;
       output += '\n';
+    }
+
+    // 已标 done 但缺失 fingerprints：stale 检测将无法覆盖这些阶段
+    if (stages && Array.isArray(stages.stages)) {
+      const doneMissingFingerprints = [];
+      for (const s of stages.stages) {
+        const state = (freshRun.stages || {})[s.id];
+        if (!state || state.status !== 'done') continue;
+
+        const expectedFiles = (s.expected_artifacts || [])
+          .filter((a) => a && a.kind === 'file' && typeof a.path === 'string')
+          .map((a) => a.path);
+        if (expectedFiles.length === 0) continue;
+
+        const fps = (freshRun.artifacts && freshRun.artifacts[s.id] && freshRun.artifacts[s.id].fingerprints) || {};
+        const missing = expectedFiles.filter((p) => !fps[p]);
+        if (missing.length > 0) doneMissingFingerprints.push(s.id);
+      }
+
+      if (doneMissingFingerprints.length > 0) {
+        output += `  ⚠️  Done stages missing fingerprints: ${doneMissingFingerprints.join(', ')}\n`;
+      }
     }
     output += '\n';
   }

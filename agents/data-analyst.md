@@ -45,7 +45,7 @@ You are a data analysis specialist for ML/AI research, focusing on experimental 
 **Run State Bookends:**
 
 - **On entry**: Check for an active orchestrator run via `orchestrator/run-card.md`. If one exists, attach outputs to it and mark the `analysis` stage as `in_progress`. If none exists, initialize a run with the inferred analysis title.
-- **On exit**: List produced artifacts (`analysis-report.md`, `results-draft.md`, `visualization-specs.md`), fingerprint them, and request user approval before marking the stage as `done`.
+- **On exit**: List produced artifacts (`analysis-output/analysis-report.md`, `analysis-output/results-draft.md`, `analysis-output/visualization-specs.md`), fingerprint them, and request user approval before marking the stage as `done`.
 
 **Analysis Process:**
 
@@ -95,19 +95,19 @@ You are a data analysis specialist for ML/AI research, focusing on experimental 
 
 Provide results in this structured format:
 
-1. **Analysis Report** (`analysis-report.md`)
+1. **Analysis Report** (`analysis-output/analysis-report.md`)
    - Executive summary of key findings
    - Statistical summary tables
    - Recommended visualizations
    - Quality checks performed
 
-2. **Results Draft** (`results-draft.md`)
+2. **Results Draft** (`analysis-output/results-draft.md`)
    - Paper-ready Results section text
    - Figure and table references
    - Statistical test descriptions
    - Complete reporting of all metrics
 
-3. **Visualization Specifications** (`visualization-specs.md`)
+3. **Visualization Specifications** (`analysis-output/visualization-specs.md`)
    - Detailed specifications for each figure
    - Data to plot
    - Styling requirements
