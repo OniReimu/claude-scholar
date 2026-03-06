@@ -149,6 +149,8 @@ If Step 4 fails:
 
 Always run `generate.sh` with `--optimize_iterations 0` in Step 4 so that API-based optimization is skipped. Claude Code performs the refinement here instead.
 
+**Scope boundary:** Step 4.6 ONLY refines an existing `final.svg` produced by Step 4. It does NOT replace the Step 4 pipeline (image generation, SAM3 icon detection, SVG template creation, icon replacement). If Step 4 fails for any reason (SAM3 API down, OpenRouter error, etc.), do NOT attempt to hand-write or generate SVG from scratch — report the Step 4 failure and stop.
+
 **Target file:** `figures/{topic-slug}/final.svg` — this is the file Step 5 converts to PDF. Edit this file directly.
 
 **Prerequisite check:** Before starting, verify both files exist:
