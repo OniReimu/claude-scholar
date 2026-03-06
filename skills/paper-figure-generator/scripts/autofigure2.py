@@ -111,6 +111,13 @@ SAM3_API_TIMEOUT = 300
 USE_REFERENCE_IMAGE = False
 REFERENCE_IMAGE_PATH: Optional[str] = None
 
+# RMBG model settings. Pin revision by default to avoid cache-only hotfix drift.
+RMBG_MODEL_ID = os.environ.get("AUTOFIGURE_RMBG_MODEL_ID", "briaai/RMBG-2.0")
+RMBG_MODEL_REVISION = os.environ.get(
+    "AUTOFIGURE_RMBG_REVISION",
+    "31cc7f7883fc7bb7444b81542dca94844e13eac8",
+)
+
 
 # ============================================================================
 # 统一的 LLM 调用接口
@@ -1362,7 +1369,9 @@ class BriaRMBG2Remover:
         else:
             print("从 HuggingFace 加载 RMBG-2.0 模型...")
             self.model = AutoModelForImageSegmentation.from_pretrained(
-                "briaai/RMBG-2.0", trust_remote_code=True,
+                RMBG_MODEL_ID,
+                trust_remote_code=True,
+                revision=RMBG_MODEL_REVISION,
             ).eval().to(device)
 
         self.image_size = (1024, 1024)

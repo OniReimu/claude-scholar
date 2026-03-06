@@ -1,5 +1,5 @@
 {
-  "version": "1.4.1",
+  "version": "1.4.2",
   "status_enum": ["pending", "in_progress", "blocked", "done", "stale"],
   "stages": [
     {
