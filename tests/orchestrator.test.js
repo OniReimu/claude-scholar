@@ -328,6 +328,174 @@ describe('fingerprintFiles', () => {
   });
 });
 
+describe('collectTrackedFiles', () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = createTempProject();
+  });
+
+  afterEach(() => {
+    cleanupDir(tmpDir);
+  });
+
+  it('includes contract-declared file artifacts for non-writeup stages', () => {
+    const run = orchestrator.initRun({ cwd: tmpDir, title: 'Tracked Files Test' });
+    fs.writeFileSync(path.join(tmpDir, 'literature-review.md'), '# Literature\n', 'utf8');
+    fs.writeFileSync(path.join(tmpDir, 'references.bib'), '@article{a,title={A}}\n', 'utf8');
+
+    const tracked = orchestrator.collectTrackedFiles({
+      cwd: tmpDir,
+      run,
+      stageId: 'literature',
+    });
+
+    assert.deepEqual(tracked, ['literature-review.md', 'references.bib']);
+  });
+
+  it('expands main tex dependencies recursively for writeup', () => {
+    const paperDir = path.join(tmpDir, 'paper');
+    const sectionsDir = path.join(paperDir, 'sections');
+    const figuresDir = path.join(paperDir, 'figures');
+    const refsDir = path.join(paperDir, 'refs');
+
+    fs.mkdirSync(sectionsDir, { recursive: true });
+    fs.mkdirSync(figuresDir, { recursive: true });
+    fs.mkdirSync(refsDir, { recursive: true });
+
+    fs.writeFileSync(
+      path.join(paperDir, 'main.tex'),
+      [
+        '\\documentclass{article}',
+        '\\input{sections/intro}',
+        '\\include{sections/method}',
+        '\\bibliography{refs/main}',
+        '\\addbibresource{refs/extra.bib}',
+        '\\begin{document}',
+        '\\includegraphics[width=0.9\\\\linewidth]{figures/overview}',
+        '\\end{document}',
+        '',
+      ].join('\n'),
+      'utf8'
+    );
+    fs.writeFileSync(path.join(sectionsDir, 'intro.tex'), 'Intro\n\\input{details}\n', 'utf8');
+    fs.writeFileSync(path.join(sectionsDir, 'details.tex'), 'Details\n', 'utf8');
+    fs.writeFileSync(path.join(sectionsDir, 'method.tex'), 'Method\n', 'utf8');
+    fs.writeFileSync(path.join(refsDir, 'main.bib'), '@article{main,title={Main}}\n', 'utf8');
+    fs.writeFileSync(path.join(refsDir, 'extra.bib'), '@article{extra,title={Extra}}\n', 'utf8');
+    fs.writeFileSync(path.join(figuresDir, 'overview.pdf'), '%PDF-1.4\n', 'utf8');
+
+    let run = orchestrator.initRun({ cwd: tmpDir, title: 'Writeup Tracking Test' });
+    run = orchestrator.updateRun({
+      cwd: tmpDir,
+      patch: {
+        artifacts: {
+          writeup: {
+            main_tex: 'paper/main.tex',
+            figures_dir: 'paper/figures',
+          },
+        },
+      },
+    });
+
+    const tracked = orchestrator.collectTrackedFiles({
+      cwd: tmpDir,
+      run,
+      stageId: 'writeup',
+    });
+
+    assert.deepEqual(tracked, [
+      'paper/figures/overview.pdf',
+      'paper/main.tex',
+      'paper/refs/extra.bib',
+      'paper/refs/main.bib',
+      'paper/sections/details.tex',
+      'paper/sections/intro.tex',
+      'paper/sections/method.tex',
+    ]);
+  });
+});
+
+describe('fingerprintStageArtifacts', () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = createTempProject();
+  });
+
+  afterEach(() => {
+    cleanupDir(tmpDir);
+  });
+
+  it('returns tracked_files and fingerprints for a stage', () => {
+    fs.mkdirSync(path.join(tmpDir, 'paper', 'sections'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, 'paper', 'main.tex'), '\\input{sections/intro}\n', 'utf8');
+    fs.writeFileSync(path.join(tmpDir, 'paper', 'sections', 'intro.tex'), 'Intro\n', 'utf8');
+
+    let run = orchestrator.initRun({ cwd: tmpDir, title: 'Stage Fingerprint Test' });
+    run = orchestrator.updateRun({
+      cwd: tmpDir,
+      patch: {
+        artifacts: {
+          writeup: {
+            main_tex: 'paper/main.tex',
+            figures_dir: 'paper/figures',
+          },
+        },
+      },
+    });
+
+    const result = orchestrator.fingerprintStageArtifacts({
+      cwd: tmpDir,
+      run,
+      stageId: 'writeup',
+    });
+
+    assert.deepEqual(result.tracked_files, ['paper/main.tex', 'paper/sections/intro.tex']);
+    assert.equal(Object.keys(result.fingerprints).length, 2);
+    assert.ok(result.fingerprints['paper/main.tex'].startsWith('sha256:'));
+    assert.ok(result.fingerprints['paper/sections/intro.tex'].startsWith('sha256:'));
+  });
+
+  it('changes fingerprints when a referenced writeup dependency changes', () => {
+    fs.mkdirSync(path.join(tmpDir, 'paper', 'sections'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, 'paper', 'main.tex'), '\\input{sections/intro}\n', 'utf8');
+    fs.writeFileSync(path.join(tmpDir, 'paper', 'sections', 'intro.tex'), 'Intro\n', 'utf8');
+
+    let run = orchestrator.initRun({ cwd: tmpDir, title: 'Fingerprint Change Test' });
+    run = orchestrator.updateRun({
+      cwd: tmpDir,
+      patch: {
+        artifacts: {
+          writeup: {
+            main_tex: 'paper/main.tex',
+            figures_dir: 'paper/figures',
+          },
+        },
+      },
+    });
+
+    const before = orchestrator.fingerprintStageArtifacts({
+      cwd: tmpDir,
+      run,
+      stageId: 'writeup',
+    });
+
+    fs.writeFileSync(path.join(tmpDir, 'paper', 'sections', 'intro.tex'), 'Intro changed\n', 'utf8');
+
+    const after = orchestrator.fingerprintStageArtifacts({
+      cwd: tmpDir,
+      run,
+      stageId: 'writeup',
+    });
+
+    assert.notEqual(
+      before.fingerprints['paper/sections/intro.tex'],
+      after.fingerprints['paper/sections/intro.tex']
+    );
+  });
+});
+
 describe('appendEvent', () => {
   let tmpDir;
   let runId;

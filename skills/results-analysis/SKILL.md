@@ -256,7 +256,7 @@ When invoked within an active research run (see `orchestrator/run-card.md`):
 
 1. **Stage start**: Mark `analysis` → `in_progress`; verify `experiments` stage is `done` (data_path exists + fingerprinted).
 2. **Analysis**: Execute the standard analysis pipeline; enforce experiment status disclosure rules.
-3. **Stage end**: Fingerprint `analysis-output/analysis-report.md`, `analysis-output/results-draft.md`, `analysis-output/visualization-specs.md`; request human approval.
+3. **Stage end**: Prefer `fingerprintStageArtifacts({ cwd, run, stageId: 'analysis' })` so contract-declared files are tracked deterministically; persist `tracked_files` + `fingerprints`, then request human approval.
 4. **Gate**: Run experiment status disclosure check before marking `done`.
 
 **Expected artifacts** (files):

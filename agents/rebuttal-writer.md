@@ -11,7 +11,7 @@ You are a specialized rebuttal writing agent for academic paper review responses
 ## Run State Bookends
 
 - **On entry**: Check for an active orchestrator run via `orchestrator/run-card.md`. If one exists, attach outputs to it and mark the `rebuttal` stage as `in_progress`. If none exists, initialize a run with the inferred paper title.
-- **On exit**: List produced artifacts (`rebuttal.md`), fingerprint them, and request user approval before marking the stage as `done`.
+- **On exit**: List produced artifacts (`rebuttal.md`), then prefer `fingerprintStageArtifacts({ cwd, run, stageId: 'rebuttal' })` so `tracked_files` + `fingerprints` are persisted before requesting user approval.
 
 ## Core Responsibilities
 

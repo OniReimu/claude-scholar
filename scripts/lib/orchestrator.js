@@ -18,6 +18,9 @@ const crypto = require('crypto');
 
 const VALID_STATUSES = ['pending', 'in_progress', 'blocked', 'done', 'stale'];
 const LOCK_STALE_MS = 30_000; // 30 秒后视 lockfile 为过期
+const TEX_EXTENSIONS = ['.tex'];
+const BIB_EXTENSIONS = ['.bib'];
+const GRAPHICS_EXTENSIONS = ['.pdf', '.png', '.jpg', '.jpeg', '.eps', '.svg'];
 
 // ---------------------------------------------------------------------------
 // 辅助函数
@@ -258,6 +261,257 @@ function deepMerge(target, source) {
 }
 
 /**
+ * 规范化相对路径，统一为正斜杠
+ * @param {string} relPath
+ * @returns {string}
+ */
+function normalizeRelativePath(relPath) {
+  return relPath.split(path.sep).join('/');
+}
+
+/**
+ * 判断文件是否位于 workspace 内
+ * @param {string} base
+ * @param {string} fullPath
+ * @returns {boolean}
+ */
+function isWithinWorkspace(base, fullPath) {
+  const rel = path.relative(base, fullPath);
+  return rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel);
+}
+
+/**
+ * 尝试解析候选文件路径
+ * @param {{cwd?: string, fromDir: string, refPath: string, extensions?: string[]}} opts
+ * @returns {string|null}
+ */
+function resolveWorkspaceFile({ cwd, fromDir, refPath, extensions = [] } = {}) {
+  const base = cwd || process.cwd();
+  if (!refPath || typeof refPath !== 'string') return null;
+  if (/^[a-z]+:\/\//i.test(refPath)) return null;
+
+  const trimmed = refPath.trim();
+  const rawCandidate = path.isAbsolute(trimmed)
+    ? trimmed
+    : path.resolve(fromDir || base, trimmed);
+
+  const candidates = [rawCandidate];
+  if (path.extname(rawCandidate) === '') {
+    for (const ext of extensions) {
+      candidates.push(rawCandidate + ext);
+    }
+  }
+
+  for (const candidate of candidates) {
+    if (!isWithinWorkspace(base, candidate)) continue;
+    try {
+      if (fs.statSync(candidate).isFile()) {
+        return normalizeRelativePath(path.relative(base, candidate));
+      }
+    } catch {
+      // ignore missing candidates
+    }
+  }
+
+  return null;
+}
+
+/**
+ * 移除 LaTeX 注释（忽略转义的 %）
+ * @param {string} content
+ * @returns {string}
+ */
+function stripLatexComments(content) {
+  return content
+    .split('\n')
+    .map((line) => line.replace(/(^|[^\\])%.*/g, '$1'))
+    .join('\n');
+}
+
+/**
+ * 从 TeX 内容提取依赖
+ * @param {string} content
+ * @returns {{includes: string[], bibliographies: string[], graphics: string[]}}
+ */
+function extractLatexDependencies(content) {
+  const sanitized = stripLatexComments(content);
+  const includes = [];
+  const bibliographies = [];
+  const graphics = [];
+
+  const includeRe = /\\(?:input|include)\{([^}]+)\}/g;
+  const bibliographyRe = /\\bibliography\{([^}]+)\}/g;
+  const addBibRe = /\\addbibresource(?:\[[^\]]*\])?\{([^}]+)\}/g;
+  const graphicsRe = /\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}/g;
+
+  let match;
+  while ((match = includeRe.exec(sanitized)) !== null) {
+    includes.push(match[1].trim());
+  }
+
+  while ((match = bibliographyRe.exec(sanitized)) !== null) {
+    for (const item of match[1].split(',')) {
+      const trimmed = item.trim();
+      if (trimmed) bibliographies.push(trimmed);
+    }
+  }
+
+  while ((match = addBibRe.exec(sanitized)) !== null) {
+    const trimmed = match[1].trim();
+    if (trimmed) bibliographies.push(trimmed);
+  }
+
+  while ((match = graphicsRe.exec(sanitized)) !== null) {
+    const trimmed = match[1].trim();
+    if (trimmed) graphics.push(trimmed);
+  }
+
+  return { includes, bibliographies, graphics };
+}
+
+/**
+ * 收集 writeup 阶段的本地 TeX 依赖
+ * @param {{cwd?: string, mainTexPath: string}} opts
+ * @returns {string[]}
+ */
+function collectWriteupDependencies({ cwd, mainTexPath } = {}) {
+  const base = cwd || process.cwd();
+  const tracked = new Set();
+  const visitedTex = new Set();
+
+  const walkTexFile = (relativePath) => {
+    const fullPath = path.join(base, relativePath);
+    if (visitedTex.has(fullPath)) return;
+    visitedTex.add(fullPath);
+    tracked.add(relativePath);
+
+    let content;
+    try {
+      content = fs.readFileSync(fullPath, 'utf8');
+    } catch {
+      return;
+    }
+
+    const fromDir = path.dirname(fullPath);
+    const deps = extractLatexDependencies(content);
+
+    for (const ref of deps.includes) {
+      const rel = resolveWorkspaceFile({
+        cwd: base,
+        fromDir,
+        refPath: ref,
+        extensions: TEX_EXTENSIONS,
+      });
+      if (rel) walkTexFile(rel);
+    }
+
+    for (const ref of deps.bibliographies) {
+      const rel = resolveWorkspaceFile({
+        cwd: base,
+        fromDir,
+        refPath: ref,
+        extensions: BIB_EXTENSIONS,
+      });
+      if (rel) tracked.add(rel);
+    }
+
+    for (const ref of deps.graphics) {
+      const rel = resolveWorkspaceFile({
+        cwd: base,
+        fromDir,
+        refPath: ref,
+        extensions: GRAPHICS_EXTENSIONS,
+      });
+      if (rel) tracked.add(rel);
+    }
+  };
+
+  if (typeof mainTexPath !== 'string' || !mainTexPath.trim()) {
+    return [];
+  }
+
+  const mainTex = resolveWorkspaceFile({
+    cwd: base,
+    fromDir: base,
+    refPath: mainTexPath,
+    extensions: TEX_EXTENSIONS,
+  });
+  if (!mainTex) return [];
+
+  walkTexFile(mainTex);
+  return Array.from(tracked).sort();
+}
+
+/**
+ * 收集某个 stage 应被追踪的文件列表
+ * @param {{cwd?: string, run?: object, stageId?: string, extraPaths?: string[]}} opts
+ * @returns {string[]}
+ */
+function collectTrackedFiles({ cwd, run, stageId, extraPaths } = {}) {
+  const base = cwd || process.cwd();
+  const currentRun = run || loadActiveRun({ cwd: base });
+  if (!currentRun) return [];
+
+  const resolvedStageId = stageId || currentRun.current_stage;
+  const tracked = new Set();
+
+  let stageDef = null;
+  try {
+    const stages = loadStages({ cwd: base });
+    stageDef = stages.stages.find((stage) => stage.id === resolvedStageId) || null;
+  } catch {
+    stageDef = null;
+  }
+
+  if (stageDef && Array.isArray(stageDef.expected_artifacts)) {
+    for (const artifact of stageDef.expected_artifacts) {
+      if (!artifact || artifact.kind !== 'file' || typeof artifact.path !== 'string') continue;
+      const rel = resolveWorkspaceFile({
+        cwd: base,
+        fromDir: base,
+        refPath: artifact.path,
+      });
+      if (rel) tracked.add(rel);
+    }
+  }
+
+  if (resolvedStageId === 'writeup') {
+    const mainTexPath = currentRun.artifacts &&
+      currentRun.artifacts.writeup &&
+      currentRun.artifacts.writeup.main_tex;
+    for (const rel of collectWriteupDependencies({ cwd: base, mainTexPath })) {
+      tracked.add(rel);
+    }
+  }
+
+  if (Array.isArray(extraPaths)) {
+    for (const extra of extraPaths) {
+      const rel = resolveWorkspaceFile({
+        cwd: base,
+        fromDir: base,
+        refPath: extra,
+      });
+      if (rel) tracked.add(rel);
+    }
+  }
+
+  return Array.from(tracked).sort();
+}
+
+/**
+ * 基于 stage 规则生成 tracked_files 与 fingerprints
+ * @param {{cwd?: string, run?: object, stageId?: string, extraPaths?: string[]}} opts
+ * @returns {{tracked_files: string[], fingerprints: object}}
+ */
+function fingerprintStageArtifacts({ cwd, run, stageId, extraPaths } = {}) {
+  const tracked_files = collectTrackedFiles({ cwd, run, stageId, extraPaths });
+  return {
+    tracked_files,
+    fingerprints: fingerprintFiles({ cwd, paths: tracked_files }),
+  };
+}
+
+/**
  * 标记阶段状态
  * @param {{cwd?: string, stageId: string, status: string, note?: string}} opts
  * @returns {object} 更新后的 run 对象
@@ -478,6 +732,8 @@ module.exports = {
   loadActiveRun,
   initRun,
   updateRun,
+  collectTrackedFiles,
+  fingerprintStageArtifacts,
   markStage,
   setStageStatus,
   fingerprintFiles,

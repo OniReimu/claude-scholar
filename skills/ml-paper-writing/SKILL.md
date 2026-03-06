@@ -1857,7 +1857,7 @@ When invoked within an active research run (see `orchestrator/run-card.md`):
 
 1. **Stage start**: Mark `writeup` → `in_progress`; verify `analysis` stage is `done`.
 2. **Drafting**: Write paper sections, generate figures, manage citations per existing workflow.
-3. **Stage end**: Record `artifacts.writeup.main_tex` and `artifacts.writeup.figures_dir` in run state; fingerprint key files; request human approval before marking `done`.
+3. **Stage end**: Record `artifacts.writeup.main_tex` and `artifacts.writeup.figures_dir` in run state; prefer `fingerprintStageArtifacts({ cwd, run, stageId: 'writeup' })` so local `\input` / bibliography / `\includegraphics` dependencies are tracked automatically; request human approval before marking `done`.
 
 **Expected artifacts** (run fields):
 - `artifacts.writeup.main_tex` — path to main `.tex` file

@@ -90,7 +90,7 @@ When invoked within an active research run (see `orchestrator/run-card.md`):
 
 1. **Stage start**: Mark `rebuttal` → `in_progress`; verify `self_review` stage is `done`.
 2. **Rebuttal**: Parse reviewer comments, develop strategy, write responses per existing workflow.
-3. **Stage end**: Fingerprint `rebuttal.md`; verify rebuttal artifacts exist before marking `done`.
+3. **Stage end**: Prefer `fingerprintStageArtifacts({ cwd, run, stageId: 'rebuttal' })`; persist `tracked_files` + `fingerprints`, verify rebuttal artifacts exist, then mark `done`.
 
 **Expected artifacts** (files):
 - `rebuttal.md`

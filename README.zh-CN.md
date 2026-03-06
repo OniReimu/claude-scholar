@@ -163,7 +163,7 @@ Claude Scholar 是一个面向 Claude Code CLI 的个人配置系统，提供丰
 
 - **skill-forced-eval** (`skill-forced-eval.js`): 在每次用户提示之前 → 动态扫描所有可用技能（本地 + 插件）→ 强制评估每个技能 → 要求实现前激活 → 确保不遗漏相关技能
 - **session-start** (`session-start.js`): 会话开始时 → 显示 Git 状态、待办事项、可用命令、包管理器 → 一目了然地展示项目上下文
-- **session-summary** (`session-summary.js`): 会话结束时 → 生成全面的工作日志 → 总结所做的所有更改 → 提供下一步的智能建议
+- **session-summary** (`session-summary.js`): 会话结束时 → 生成全面的工作日志 → 总结所做的所有更改 → 附带 orchestrator 状态与最近事件摘要
 - **stop-summary** (`stop-summary.js`): 会话停止时 → 快速状态检查 → 检测临时文件 → 显示可操作的清理建议
 
 **跨平台**: 所有钩子使用 Node.js（非 shell 脚本），确保 Windows/macOS/Linux 兼容性。
@@ -557,7 +557,7 @@ git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 
 1. **每次提示**触发 `skill-forced-eval` → 确保考虑适用技能
 2. **会话开始**时使用 `session-start` → 显示项目上下文
-3. **会话结束**时使用 `session-summary` → 生成带有建议的工作日志
+3. **会话结束**时使用 `session-summary` → 生成带有建议的工作日志，并附带 orchestrator 状态/事件摘要
 4. **会话停止**时使用 `stop-summary` → 提供状态检查
 
 ## 项目规则

@@ -26,6 +26,22 @@ const cwd = input.cwd || process.cwd();
 const sessionId = input.session_id || 'unknown';
 const transcriptPath = input.transcript_path || '';
 
+function formatOrchestratorEvent(event) {
+  if (!event || typeof event !== 'object') return '';
+  const payload = event.payload || {};
+  if (event.type === 'stage_status_change') {
+    const note = payload.note ? ` (${payload.note})` : '';
+    return `${event.type}: ${payload.stage || 'unknown'} -> ${payload.status || 'unknown'}${note}`;
+  }
+  if (payload.stage && payload.reason) {
+    return `${event.type}: ${payload.stage} (${payload.reason})`;
+  }
+  if (payload.stage) {
+    return `${event.type}: ${payload.stage}`;
+  }
+  return event.type || 'unknown_event';
+}
+
 // Create work log directory
 const logDir = path.join(cwd, '.claude', 'logs');
 fs.mkdirSync(logDir, { recursive: true });
@@ -143,6 +159,80 @@ if (transcriptPath && fs.existsSync(transcriptPath)) {
   } catch {
     // Ignore errors
   }
+}
+
+// Orchestrator summary
+try {
+  const orchestrator = require('../scripts/lib/orchestrator');
+  const activeRun = orchestrator.loadActiveRun({ cwd });
+  if (activeRun) {
+    let stages = null;
+    try {
+      stages = orchestrator.loadStages({ cwd });
+    } catch {
+      stages = null;
+    }
+
+    const currentStageId = activeRun.current_stage;
+    const currentStage = (activeRun.stages || {})[currentStageId] || {};
+    const currentStageLabel = stages
+      ? ((stages.stages.find((stage) => stage.id === currentStageId) || {}).label || currentStageId)
+      : currentStageId;
+    const staleStages = Object.entries(activeRun.stages || {})
+      .filter(([, state]) => state.status === 'stale')
+      .map(([stageId]) => stageId);
+    const currentArtifacts = ((activeRun.artifacts || {})[currentStageId]) || {};
+    const trackedFilesCount = Array.isArray(currentArtifacts.tracked_files)
+      ? currentArtifacts.tracked_files.length
+      : Object.keys(currentArtifacts.fingerprints || {}).length;
+
+    logContent += `## Orchestrator Status\n`;
+    logContent += `\n`;
+    logContent += `- Run: ${activeRun.id} - ${activeRun.title}\n`;
+    logContent += `- Current stage: ${currentStageLabel} (${currentStageId}) [${currentStage.status || 'unknown'}]\n`;
+    if (activeRun.venue || (activeRun.inputs && activeRun.inputs.venue)) {
+      logContent += `- Venue: ${activeRun.venue || activeRun.inputs.venue}\n`;
+    }
+    if (staleStages.length > 0) {
+      logContent += `- Stale stages: ${staleStages.join(', ')}\n`;
+    }
+    if (trackedFilesCount > 0) {
+      logContent += `- Tracked files in current stage: ${trackedFilesCount}\n`;
+    }
+    logContent += `\n`;
+
+    const eventsPath = path.join(
+      orchestrator.getOrchestratorRoot({ cwd }),
+      'runs',
+      activeRun.id,
+      'events.ndjson'
+    );
+    if (fs.existsSync(eventsPath)) {
+      const events = fs.readFileSync(eventsPath, 'utf8')
+        .split('\n')
+        .filter(Boolean)
+        .slice(-5)
+        .map((line) => {
+          try {
+            return JSON.parse(line);
+          } catch {
+            return null;
+          }
+        })
+        .filter(Boolean);
+
+      if (events.length > 0) {
+        logContent += `## Recent Orchestrator Events\n`;
+        logContent += `\n`;
+        for (const event of events) {
+          logContent += `- ${event.timestamp}: ${formatOrchestratorEvent(event)}\n`;
+        }
+        logContent += `\n`;
+      }
+    }
+  }
+} catch {
+  // Ignore orchestrator errors in session summary
 }
 
 // Next steps

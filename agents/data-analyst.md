@@ -45,7 +45,7 @@ You are a data analysis specialist for ML/AI research, focusing on experimental 
 **Run State Bookends:**
 
 - **On entry**: Check for an active orchestrator run via `orchestrator/run-card.md`. If one exists, attach outputs to it and mark the `analysis` stage as `in_progress`. If none exists, initialize a run with the inferred analysis title.
-- **On exit**: List produced artifacts (`analysis-output/analysis-report.md`, `analysis-output/results-draft.md`, `analysis-output/visualization-specs.md`), fingerprint them, and request user approval before marking the stage as `done`.
+- **On exit**: List produced artifacts (`analysis-output/analysis-report.md`, `analysis-output/results-draft.md`, `analysis-output/visualization-specs.md`), then prefer `fingerprintStageArtifacts({ cwd, run, stageId: 'analysis' })` so `tracked_files` + `fingerprints` are persisted before requesting user approval.
 
 **Analysis Process:**
 

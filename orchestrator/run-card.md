@@ -34,6 +34,7 @@
   "inputs": {},
   "artifacts": {
     "<stage_id>": {
+      "tracked_files": ["<path-a>", "<path-b>"],
       "fingerprints": { "<path>": "sha256:..." }
     }
   },
@@ -63,11 +64,13 @@
 当 skill/agent 完成其所属阶段时：
 
 1. **写入产物**：将文件输出到预期路径
-2. **指纹化产物**：调用 `fingerprintFiles({ cwd, paths })` 计算 hash
-   - **只选小而关键的文件**（`.md`、`.tex`、`.bib`、summary/spec 文件）
+2. **收集 + 指纹化产物**：优先调用 `fingerprintStageArtifacts({ cwd, run, stageId, extraPaths })`
+   - 该 helper 会自动纳入 stage contract 中声明的 `kind:file` 产物
+   - `writeup` 阶段会从 `artifacts.writeup.main_tex` 自动展开本地 `\input` / `\include` / bibliography / `\includegraphics` 依赖
+   - `extraPaths` 只用于补充，不能替代 contract baseline
    - **不要指纹化大体积原始数据**（实验结果 CSV、模型 checkpoint、图片原始文件等），否则 SessionStart 指纹比对会拖慢启动
    - 经验法则：单个被指纹化文件不应超过 1 MB
-3. **保存指纹**：调用 `updateRun({ cwd, patch: { artifacts: { [stageId]: { fingerprints } } } })`
+3. **保存指纹**：调用 `updateRun({ cwd, patch: { artifacts: { [stageId]: { tracked_files, fingerprints } } } })`
 4. **执行 gates**（如有）：运行 policy lint 或请求人工审批
 5. **保存 gate 结果**：调用 `updateRun({ cwd, patch: { gate_results: { [stageId]: { ... } } } })`
 6. **请求审批**：向用户确认产物质量
@@ -116,6 +119,8 @@ orch.initRun({ cwd, title, ... })     // 初始化新 run
 orch.markStage({ cwd, stageId, status, note })  // 标记阶段状态
 orch.updateRun({ cwd, patch })        // 更新 run 字段
 orch.fingerprintFiles({ cwd, paths }) // 文件指纹化
+orch.collectTrackedFiles({ cwd, run, stageId, extraPaths }) // 收集应追踪文件
+orch.fingerprintStageArtifacts({ cwd, run, stageId, extraPaths }) // 生成 tracked_files + fingerprints
 orch.appendEvent({ cwd, runId, type, payload })  // 追加事件
 orch.setStageStatus({ cwd, stageId, status, reason })  // 设置状态（支持回滚）
 orch.withRunLock({ cwd, runId }, fn)  // Advisory locking

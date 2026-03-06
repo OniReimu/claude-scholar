@@ -159,6 +159,7 @@ Claude Scholar includes a stateful **Workflow Orchestrator** that tracks progres
 - **10-stage pipeline**: intake -> literature -> proposal -> development -> experiments -> analysis -> writeup -> self_review -> rebuttal -> post_acceptance
 - **Stage gates**: Human approval and policy lint checks at stage boundaries prevent premature progression.
 - **Artifact fingerprinting**: SHA256 hashes detect file changes and mark affected stages as `stale`.
+- **Contract-backed fingerprinting**: Stage file artifacts are fingerprinted deterministically, and `writeup` expands local LaTeX dependencies from `main_tex`.
 - **Experiments boundary**: The `experiments` stage enters `blocked` until the user provides a `data_path` with actual results. Rollback is always possible ("roll back to stage X").
 
 **How it works:**
@@ -182,7 +183,7 @@ Session Start → Skill Evaluation → Session End → Session Stop
 
 - **skill-forced-eval** (`skill-forced-eval.js`): Before EVERY user prompt → dynamically scans all available skills (local + plugins) → forces evaluation of each skill → requires activation before implementation → ensures no relevant skill is missed
 - **session-start** (`session-start.js`): Session begins → displays Git status, pending todos, available commands, package manager → shows project context at a glance
-- **session-summary** (`session-summary.js`): Session ends → generates comprehensive work log → summarizes all changes made → provides smart recommendations for next steps
+- **session-summary** (`session-summary.js`): Session ends → generates comprehensive work log → summarizes all changes made → includes orchestrator status and recent run events
 - **stop-summary** (`stop-summary.js`): Session stops → quick status check → detects temporary files → shows actionable cleanup suggestions
 
 **Cross-platform**: All hooks use Node.js (not shell scripts) ensuring Windows/macOS/Linux compatibility.
@@ -580,7 +581,7 @@ After installation, the hooks provide automated workflow assistance:
 
 1. **Every prompt** triggers `skill-forced-eval` → ensures applicable skills are considered
 2. **Session starts** with `session-start` → displays project context
-3. **Sessions end** with `session-summary` → generates work log with recommendations
+3. **Sessions end** with `session-summary` → generates work log with recommendations plus orchestrator state/event summary
 4. **Session stops** with `stop-summary` → provides status check
 
 ## Project Rules
