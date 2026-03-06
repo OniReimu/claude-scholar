@@ -5,14 +5,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILL_DIR="$(dirname "$SCRIPT_DIR")"
-
-# 从项目根目录加载 .env（从 skill 目录向上两级）
-PROJECT_ROOT="$(cd "$SKILL_DIR/../.." && pwd)"
-if [ -f "$PROJECT_ROOT/.env" ]; then
-    set -a
-    source "$PROJECT_ROOT/.env"
-    set +a
-fi
+SYSTEM_PYTHON="$(command -v python3 || command -v python || true)"
 
 # 解析关键参数（用于默认值/去重/run.json）
 METHOD_FILE=""
@@ -67,6 +60,24 @@ if [ -z "$METHOD_FILE" ] || [ -z "$OUTPUT_DIR" ]; then
   exit 1
 fi
 
+# 从实际 workspace 根目录加载 .env，而不是 skill 安装目录
+WORKSPACE_ROOT="$PWD"
+if [ -n "$SYSTEM_PYTHON" ]; then
+  DETECTED_ROOT="$("$SYSTEM_PYTHON" "$SCRIPT_DIR/workspace_root.py" \
+    --output-dir "$OUTPUT_DIR" \
+    --method-file "$METHOD_FILE" \
+    --workspace-cwd "$PWD" 2>/dev/null || true)"
+  if [ -n "$DETECTED_ROOT" ]; then
+    WORKSPACE_ROOT="$DETECTED_ROOT"
+  fi
+fi
+
+if [ -f "$WORKSPACE_ROOT/.env" ]; then
+    set -a
+    source "$WORKSPACE_ROOT/.env"
+    set +a
+fi
+
 if [ "$PROVIDER_ARG_PRESENT" -eq 0 ]; then
   PROVIDER="${AUTOFIGURE_PROVIDER:-openrouter}"
 fi
@@ -95,8 +106,8 @@ if [ "$API_KEY_ARG_PRESENT" -eq 0 ] && [ -z "${!KEY_VAR:-}" ]; then
 fi
 
 # 检查虚拟环境
-PYTHON="${SCRIPT_DIR}/.venv/bin/python"
-if [ ! -f "$PYTHON" ]; then
+PYTHON="${AUTOFIGURE_PYTHON:-${SCRIPT_DIR}/.venv/bin/python}"
+if [ ! -x "$PYTHON" ]; then
     echo "Error: Virtual environment not found. Run setup first:"
     echo "  bash ${SCRIPT_DIR}/setup.sh"
     exit 1
@@ -158,72 +169,20 @@ else
 fi
 
 # 记录本次运行参数（不写入任何 secret value）
-"$PYTHON" - <<'PY' "$OUTPUT_DIR" "$PROJECT_ROOT" "$PROVIDER" "$SAM_BACKEND" "$KEY_VAR" "$API_KEY_ARG_PRESENT" "$METHOD_FILE" "${FINAL_ARGS[@]}"
-import json
-import os
-import platform
-import sys
-from datetime import datetime, timezone
-from pathlib import Path
+API_KEY_SOURCE="env"
+if [ "$API_KEY_ARG_PRESENT" -eq 1 ]; then
+  API_KEY_SOURCE="cli"
+fi
 
-output_dir = Path(sys.argv[1])
-project_root = Path(sys.argv[2])
-provider = sys.argv[3]
-sam_backend = sys.argv[4]
-key_var = sys.argv[5]
-api_key_arg_present = sys.argv[6] == "1"
-method_file = sys.argv[7]
-raw_args = sys.argv[8:]
-
-# Filter out --api_key and its value to prevent secret leakage
-_filtered_args: list[str] = []
-_skip_next = False
-for _a in raw_args:
-    if _skip_next:
-        _skip_next = False
-        continue
-    if _a == "--api_key":
-        _skip_next = True
-        continue
-    if _a.startswith("--api_key="):
-        continue
-    _filtered_args.append(_a)
-raw_args = _filtered_args
-
-def _git_rev(root: Path) -> str | None:
-    try:
-        import subprocess
-        return (
-            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=root)
-            .decode()
-            .strip()
-        )
-    except Exception:
-        return None
-
-run = {
-    "created_at": datetime.now(timezone.utc).isoformat(),
-    "project_root": str(project_root),
-    "output_dir": str(output_dir),
-    "method_file": str(Path(method_file)),
-    "provider": provider,
-    "sam_backend": sam_backend,
-    "args": raw_args,
-    "env": {
-        "api_key_source": "cli" if api_key_arg_present else "env",
-        "api_key_var": None if api_key_arg_present else key_var,
-        # Never write secret values; only record presence.
-        "has_OPENROUTER_API_KEY": bool(os.environ.get("OPENROUTER_API_KEY")),
-        "has_BIANXIE_API_KEY": bool(os.environ.get("BIANXIE_API_KEY")),
-        "has_ROBOFLOW_API_KEY": bool(os.environ.get("ROBOFLOW_API_KEY")),
-        "has_FAL_KEY": bool(os.environ.get("FAL_KEY")),
-    },
-    "git_rev": _git_rev(project_root),
-    "platform": {"system": platform.system(), "release": platform.release()},
-}
-
-(output_dir / "run.json").write_text(json.dumps(run, indent=2, ensure_ascii=True) + "\n")
-PY
+"$PYTHON" "$SCRIPT_DIR/write_run_metadata.py" \
+  --output-dir "$OUTPUT_DIR" \
+  --method-file "$METHOD_FILE" \
+  --provider "$PROVIDER" \
+  --sam-backend "$SAM_BACKEND" \
+  --api-key-source "$API_KEY_SOURCE" \
+  --api-key-var "$KEY_VAR" \
+  --workspace-cwd "$WORKSPACE_ROOT" \
+  -- "${FINAL_ARGS[@]}"
 
 CMD=("$PYTHON" "$SCRIPT_DIR/autofigure2.py")
 if [ "$PROVIDER_ARG_PRESENT" -eq 0 ]; then
@@ -234,7 +193,9 @@ if [ "$API_KEY_ARG_PRESENT" -eq 0 ]; then
 else
   echo "Warning: --api_key provided via CLI args; prefer using .env to avoid shell history leakage."
 fi
-CMD+=("${SAM_ARGS[@]}")
+if [ "${#SAM_ARGS[@]}" -gt 0 ]; then
+  CMD+=("${SAM_ARGS[@]}")
+fi
 CMD+=("${FINAL_ARGS[@]}")
 
 "${CMD[@]}"
