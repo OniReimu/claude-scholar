@@ -120,6 +120,23 @@ ml-paper-writing (Paper writing)
 - **Output format**: Markdown format for easy editing and version control
 - **Citation management**: Generates references in BibTeX format
 
+## Orchestrator Integration
+
+This skill owns stages: **`intake`**, **`literature`**, **`proposal`**.
+
+When invoked within an active research run (see `orchestrator/run-card.md`):
+
+1. **Stage start**: Mark `intake` → `in_progress`; record venue, profile, and scope in `inputs`.
+2. **Literature stage**: After generating `literature-review.md` and `references.bib`, prefer `fingerprintStageArtifacts({ cwd, run, stageId: 'literature' })` so contract files are tracked deterministically; persist `tracked_files` + `fingerprints`, then request human approval.
+3. **Proposal stage**: After generating `research-proposal.md`, prefer `fingerprintStageArtifacts({ cwd, run, stageId: 'proposal' })`; persist `tracked_files` + `fingerprints`, then request approval.
+4. **Stage end**: Mark each completed stage as `done` only after gate approval.
+
+**Expected artifacts**:
+- `literature-review.md`, `references.bib` (literature stage)
+- `research-proposal.md` (proposal stage)
+
+If no active run exists when this skill is invoked, initialize one with `initRun()` using the inferred research title.
+
 ## Additional Resources
 
 ### Reference Files

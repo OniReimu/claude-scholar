@@ -250,6 +250,22 @@ The project uses Hydra for configuration management:
 - [ ] Registration decorator is used
 - [ ] Configuration files are added if needed
 
+## Orchestrator Integration
+
+This skill owns stage: **`development`**.
+
+When invoked within an active research run (see `orchestrator/run-card.md`):
+
+1. **Stage start**: Mark `development` → `in_progress`; verify `proposal` stage is `done`.
+2. **Development**: Set up project structure, implement Factory/Registry patterns, configure Hydra/OmegaConf.
+3. **Stage end**: Record `artifacts.development.repo_ready` (boolean) and `artifacts.development.config_path` in run state; request human approval before marking `done`.
+
+**Expected artifacts** (run fields):
+- `artifacts.development.repo_ready` — codebase scaffold complete
+- `artifacts.development.config_path` — Hydra/OmegaConf config root path
+
+If no active run exists, proceed with standalone architecture design (no orchestrator interaction).
+
 ## Additional Resources
 
 ### Reference Files

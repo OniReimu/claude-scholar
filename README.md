@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-03-02 (v1.4.1)**: Added Workflow Orchestrator — stateful, resumable research run coordination layer. 10-stage pipeline with persistent run state (`.claude/orchestrator/`), artifact fingerprinting (SHA256), auto-stale detection at session start, rollback with downstream cascade, stage gates (human approval + policy lint). Zero new commands — activates transparently via existing skills/agents/hooks.
 - **2026-02-21**: Added first SoK policy pack: 4 semantic `SOK.*` rule cards, `security-sok-sp` profile, and entry-skill marker wiring. SoK remains profile-activated scope in v1 (no schema migration yet).
 - **2026-02-19 (v1.3.0)**: Introduced the paper policy engine (`policy/`): rule-card based design in `policy/rules/` (single source of truth), layered scope (`core/domain/venue`), profile overlays in `policy/profiles/`, and executable validation/lint workflows via `policy/validate.sh` and `policy/lint.sh`. Synced Figure workflow policy (Figure 1 required; non-experimental figures default to AutoFigure-Edit).
 - **2026-02-16 (v1.2.1)**: Added a global figure rule: no in-image titles for any generated visuals (AutoFigure-Edit conceptual diagrams, legacy image APIs, or Python experimental plots). Use captions in paper text/LaTeX instead.
@@ -149,6 +150,25 @@ Conference preparation and research promotion:
 
 **Coverage**: 90% of academic research lifecycle (from idea to publication)
 
+### Workflow Orchestrator
+
+Claude Scholar includes a stateful **Workflow Orchestrator** that tracks progress across the research lifecycle as a single, resumable run. No new commands are needed -- the orchestrator activates transparently when relevant skills and agents are invoked.
+
+**Key features:**
+- **Single mode, resumable runs**: State persists in `.claude/orchestrator/` across sessions. Resume from where you left off.
+- **10-stage pipeline**: intake -> literature -> proposal -> development -> experiments -> analysis -> writeup -> self_review -> rebuttal -> post_acceptance
+- **Stage gates**: Human approval and policy lint checks at stage boundaries prevent premature progression.
+- **Artifact fingerprinting**: SHA256 hashes detect file changes and mark affected stages as `stale`.
+- **Contract-backed fingerprinting**: Stage file artifacts are fingerprinted deterministically, and `writeup` expands local LaTeX dependencies from `main_tex`.
+- **Experiments boundary**: The `experiments` stage enters `blocked` until the user provides a `data_path` with actual results. Rollback is always possible ("roll back to stage X").
+
+**How it works:**
+- Session start hook displays active run ID, current stage, and next action.
+- Skills and agents automatically read/write run state per the [Run Card contract](orchestrator/run-card.md).
+- Stage registry defined in `orchestrator/stages.json`; runtime library at `scripts/lib/orchestrator.js`.
+
+See [docs/orchestrator.md](docs/orchestrator.md) for full documentation.
+
 ### Supporting Workflows
 
 These workflows run in the background to enhance the primary workflows.
@@ -163,7 +183,7 @@ Session Start → Skill Evaluation → Session End → Session Stop
 
 - **skill-forced-eval** (`skill-forced-eval.js`): Before EVERY user prompt → dynamically scans all available skills (local + plugins) → forces evaluation of each skill → requires activation before implementation → ensures no relevant skill is missed
 - **session-start** (`session-start.js`): Session begins → displays Git status, pending todos, available commands, package manager → shows project context at a glance
-- **session-summary** (`session-summary.js`): Session ends → generates comprehensive work log → summarizes all changes made → provides smart recommendations for next steps
+- **session-summary** (`session-summary.js`): Session ends → generates comprehensive work log → summarizes all changes made → includes orchestrator status and recent run events
 - **stop-summary** (`stop-summary.js`): Session stops → quick status check → detects temporary files → shows actionable cleanup suggestions
 
 **Cross-platform**: All hooks use Node.js (not shell scripts) ensuring Windows/macOS/Linux compatibility.
@@ -305,6 +325,10 @@ claude-scholar/
 │   ├── agents.md                # Agent orchestration: when to delegate, parallel execution
 │   ├── security.md              # Secrets management, sensitive file protection
 │   └── experiment-reproducibility.md  # Random seeds, config recording, checkpoints
+│
+├── orchestrator/        # Workflow Orchestrator (stage registry + run card)
+│   ├── stages.json              # Stage definitions (10 stages, artifacts, gates)
+│   └── run-card.md              # Skills/agents integration contract
 │
 ├── policy/              # Paper policy engine (rule cards + validation + lint)
 │   ├── rules/                    # Canonical paper-writing rule cards (single source of truth)
@@ -557,7 +581,7 @@ After installation, the hooks provide automated workflow assistance:
 
 1. **Every prompt** triggers `skill-forced-eval` → ensures applicable skills are considered
 2. **Session starts** with `session-start` → displays project context
-3. **Sessions end** with `session-summary` → generates work log with recommendations
+3. **Sessions end** with `session-summary` → generates work log with recommendations plus orchestrator state/event summary
 4. **Session stops** with `stop-summary` → provides status check
 
 ## Project Rules

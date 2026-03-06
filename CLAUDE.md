@@ -85,6 +85,24 @@ Ideation → ML Development → Experiment Analysis → Paper Writing → Self-R
 | 6. Submission & Rebuttal | `review-response` skill + `rebuttal-writer` agent | `/rebuttal` |
 | 7. Post-Acceptance | `post-acceptance` skill | `/presentation`, `/poster`, `/promote` |
 
+### Workflow Orchestrator
+
+A stateful, resumable run coordination layer that tracks research progress across sessions:
+
+- **Storage**: `.claude/orchestrator/` (per-project run state, event logs, artifact fingerprints)
+- **Stages**: 10-stage pipeline (`intake` → `literature` → `proposal` → `development` → `experiments` → `analysis` → `writeup` → `self_review` → `rebuttal` → `post_acceptance`)
+- **Status enum**: `pending`, `in_progress`, `blocked`, `done`, `stale`
+- **No new commands**: Orchestrator activates transparently via existing skills/agents/hooks
+- **Stage gates**: Human approval + policy lint at stage boundaries
+- **Invalidation**: Artifact hash mismatch marks stages as `stale`; only affected gates re-run
+- **Experiments boundary**: Stage enters `blocked` until user provides `data_path`; rollback via "roll back to stage X"
+
+Key files:
+- Stage registry: `orchestrator/stages.json`
+- Run Card contract: `orchestrator/run-card.md`
+- Runtime library: `scripts/lib/orchestrator.js`
+- Documentation: `docs/orchestrator.md`
+
 ### Supporting Workflows
 
 - **Automation**: 5 Hooks auto-trigger at various session stages (skill evaluation, environment init, work summary, security checks)

@@ -136,8 +136,26 @@ function collectSkills() {
 // Generate skill list
 const SKILL_LIST = collectSkills();
 
+// Orchestrator: Active run context (prepended before skill list)
+let orchestratorContext = '';
+try {
+  const orchestrator = require('../scripts/lib/orchestrator');
+  const activeRun = orchestrator.loadActiveRun({ cwd });
+  if (activeRun) {
+    const stageStatus = (activeRun.stages[activeRun.current_stage] || {}).status || 'unknown';
+    orchestratorContext = `## Active Research Run
+▸ Run: ${activeRun.id} — ${activeRun.title}
+▸ Stage: ${activeRun.current_stage} [${stageStatus}]
+If the request relates to the active run, continue from the current stage and update run state per orchestrator/run-card.md.
+
+`;
+  }
+} catch {
+  // orchestrator 不可用时静默忽略
+}
+
 // Generate output
-const output = `## Instruction: Forced Skill Activation (Mandatory)
+const output = `${orchestratorContext}## Instruction: Forced Skill Activation (Mandatory)
 
 ### Step 1 - Evaluate Skills
 For each skill below, state: [skill name] - Yes/No - [reason]

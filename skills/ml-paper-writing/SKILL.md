@@ -1849,6 +1849,22 @@ Templates in `templates/` directory: **ICML 2026**, **ICLR 2026**, **NeurIPS 202
 
 See [templates/README.md](templates/README.md) for detailed setup instructions.
 
+### Orchestrator Integration
+
+This skill owns stage: **`writeup`**.
+
+When invoked within an active research run (see `orchestrator/run-card.md`):
+
+1. **Stage start**: Mark `writeup` → `in_progress`; verify `analysis` stage is `done`.
+2. **Drafting**: Write paper sections, generate figures, manage citations per existing workflow.
+3. **Stage end**: Record `artifacts.writeup.main_tex` and `artifacts.writeup.figures_dir` in run state; prefer `fingerprintStageArtifacts({ cwd, run, stageId: 'writeup' })` so local `\input` / bibliography / `\includegraphics` dependencies are tracked automatically; request human approval before marking `done`.
+
+**Expected artifacts** (run fields):
+- `artifacts.writeup.main_tex` — path to main `.tex` file
+- `artifacts.writeup.figures_dir` — path to figures directory
+
+If no active run exists, initialize one with `initRun()` using the paper title and target venue.
+
 ### Key External Sources
 
 **Writing Philosophy:**

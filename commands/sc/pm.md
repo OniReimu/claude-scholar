@@ -7,9 +7,9 @@ mcp-servers: [sequential, context7, magic, playwright, morphllm, serena, tavily,
 personas: [pm-agent]
 ---
 
-# /sc:pm - Project Manager Agent (Always Active)
+# /sc:pm - Project Manager Agent
 
-> **Always-Active Foundation Layer**: PM Agent is NOT a mode - it's the DEFAULT operating foundation that runs automatically at every session start. Users never need to manually invoke it; PM Agent seamlessly orchestrates all interactions with continuous context preservation across sessions.
+> **Orchestration Pattern Spec**: PM Agent provides a project management orchestration pattern. Invoke it explicitly via `/sc pm` when you need structured PDCA-based project coordination with sub-agent delegation. It is NOT auto-invoked by hooks -- use it on demand for complex multi-domain tasks. For research run tracking, see the Workflow Orchestrator (`orchestrator/run-card.md`).
 
 ## Auto-Activation Triggers
 - **Session Start (MANDATORY)**: ALWAYS activates to restore context via Serena MCP memory

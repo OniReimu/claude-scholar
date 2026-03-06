@@ -92,6 +92,105 @@ try {
 
 output += '\n';
 
+// Orchestrator: Active Run Status
+try {
+  const orchestrator = require('../scripts/lib/orchestrator');
+  const activeRun = orchestrator.loadActiveRun({ cwd });
+  if (activeRun) {
+    let stages;
+    try { stages = orchestrator.loadStages({ cwd }); } catch { stages = null; }
+
+    // 指纹比对：检测 done 阶段的 artifact 是否被修改/删除，自动标记 stale
+    // 按 stage order 排序，从最上游开始检测（setStageStatus 会清除下游）
+    const stageOrder = stages ? stages.stages.map(s => s.id) : [];
+    const doneStages = Object.entries(activeRun.stages || {})
+      .filter(([, v]) => v.status === 'done')
+      .map(([k]) => k);
+    if (stageOrder.length > 0) {
+      doneStages.sort((a, b) => stageOrder.indexOf(a) - stageOrder.indexOf(b));
+    }
+    const newlyStale = [];
+    for (const stageId of doneStages) {
+      // 重新加载 run：前一轮 setStageStatus 可能已清除此 stage 为 pending
+      const currentRun = newlyStale.length > 0 ? orchestrator.loadActiveRun({ cwd }) : activeRun;
+      if (!currentRun || (currentRun.stages[stageId] || {}).status !== 'done') continue;
+      const fingerprints = (currentRun.artifacts && currentRun.artifacts[stageId] && currentRun.artifacts[stageId].fingerprints) || {};
+      const filePaths = Object.keys(fingerprints);
+      if (filePaths.length === 0) continue;
+      const currentHashes = orchestrator.fingerprintFiles({ cwd, paths: filePaths });
+      for (const fp of filePaths) {
+        // 文件被删除（undefined）或内容变更：都标为 stale
+        if (!currentHashes[fp] || currentHashes[fp] !== fingerprints[fp]) {
+          const reason = !currentHashes[fp] ? `Artifact missing: ${fp}` : `Artifact changed: ${fp}`;
+          try {
+            orchestrator.setStageStatus({ cwd, stageId, status: 'stale', reason });
+            newlyStale.push(stageId);
+          } catch { /* ignore write errors in hook */ }
+          break; // 一个 mismatch 就够了
+        }
+      }
+    }
+    // 重新加载 run state（可能被 setStageStatus 修改过）
+    const freshRun = newlyStale.length > 0 ? orchestrator.loadActiveRun({ cwd }) || activeRun : activeRun;
+
+    const stageLabel = stages
+      ? (stages.stages.find(s => s.id === freshRun.current_stage) || {}).label || freshRun.current_stage
+      : freshRun.current_stage;
+    const stageStatus = (freshRun.stages[freshRun.current_stage] || {}).status || 'unknown';
+    const currentStageDef = stages
+      ? (stages.stages.find(s => s.id === freshRun.current_stage) || null)
+      : null;
+    const nextStageId = currentStageDef ? (currentStageDef.next_stage || null) : null;
+    const nextStageLabel = (stages && nextStageId)
+      ? ((stages.stages.find(s => s.id === nextStageId) || {}).label || null)
+      : null;
+
+    const venue = freshRun.venue || (freshRun.inputs && freshRun.inputs.venue) || null;
+    const profile = freshRun.profile || (freshRun.inputs && freshRun.inputs.profile) || null;
+    output += `🔬 Active Run: ${freshRun.id} — ${freshRun.title}\n`;
+    output += `  ▸ Stage: ${stageLabel} (${freshRun.current_stage}) [${stageStatus}]\n`;
+    if (venue) output += `  ▸ Venue: ${venue}\n`;
+    if (profile) output += `  ▸ Profile: ${profile}\n`;
+    if (nextStageId) {
+      output += `  ▸ Next: ${nextStageLabel ? `${nextStageLabel} (${nextStageId})` : nextStageId}\n`;
+    }
+    // 显示所有 stale 阶段
+    const staleStages = Object.entries(freshRun.stages || {})
+      .filter(([, v]) => v.status === 'stale')
+      .map(([k]) => k);
+    if (staleStages.length > 0) {
+      output += `  ⚠️  Stale stages: ${staleStages.join(', ')}`;
+      if (newlyStale.length > 0) output += ` (${newlyStale.length} detected this session)`;
+      output += '\n';
+    }
+
+    // 已标 done 但缺失 fingerprints：stale 检测将无法覆盖这些阶段
+    if (stages && Array.isArray(stages.stages)) {
+      const doneMissingFingerprints = [];
+      for (const s of stages.stages) {
+        const state = (freshRun.stages || {})[s.id];
+        if (!state || state.status !== 'done') continue;
+
+        const expectedFiles = (s.expected_artifacts || [])
+          .filter((a) => a && a.kind === 'file' && typeof a.path === 'string')
+          .map((a) => a.path);
+        if (expectedFiles.length === 0) continue;
+
+        const fps = (freshRun.artifacts && freshRun.artifacts[s.id] && freshRun.artifacts[s.id].fingerprints) || {};
+        const missing = expectedFiles.filter((p) => !fps[p]);
+        if (missing.length > 0) doneMissingFingerprints.push(s.id);
+      }
+
+      if (doneMissingFingerprints.length > 0) {
+        output += `  ⚠️  Done stages missing fingerprints: ${doneMissingFingerprints.join(', ')}\n`;
+      }
+    }
+    output += '\n';
+  }
+} catch {
+  // orchestrator 不可用时静默忽略
+}
+
 // Todos
 output += `📋 Todos:\n`;
 const todoInfo = common.getTodoInfo(cwd);
