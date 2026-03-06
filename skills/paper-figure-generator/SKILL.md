@@ -111,8 +111,11 @@ Execute the generation script:
 AUTOFIGURE_PROVIDER=openrouter \
 bash skills/paper-figure-generator/scripts/generate.sh \
   --method_file figures/{topic-slug}/method.txt \
-  --output_dir figures/{topic-slug}
+  --output_dir figures/{topic-slug} \
+  --optimize_iterations 0
 ```
+
+> `--optimize_iterations 0` skips the API-based Step 4.6 optimization. Claude Code handles SVG refinement in Step 4.6 below, using session tokens instead of API keys.
 
 **CLI options:**
 - `--method_file <path>` — Path to method text file (required)
@@ -134,14 +137,62 @@ bash skills/paper-figure-generator/scripts/generate.sh \
 - `figures/{topic-slug}/final.svg` — Editable SVG vector graphic
 - `figures/{topic-slug}/icons/` — Extracted icon assets
 
-After generation, display the output paths and ask if the user wants to:
-- Regenerate with adjustments (modify method.txt or add reference image)
-- Try a different style via reference image
-- Manually edit the SVG
+After generation, display the output paths and proceed to Step 4.6 for optimization.
 
 If Step 4 fails:
 - First diagnose with `bash skills/paper-figure-generator/scripts/doctor.sh`
 - Keep AutoFigure-Edit as default; only switch to legacy Gemini/OpenAI flow when the user explicitly asks for fallback
+
+### Step 4.6: Optimize — Claude Code SVG Refinement (No API Key Required)
+
+**This step uses Claude Code's own session to refine the SVG — no OpenRouter/Bianxie API tokens consumed.**
+
+Always run `generate.sh` with `--optimize_iterations 0` in Step 4 so that API-based optimization is skipped. Claude Code performs the refinement here instead.
+
+**Target file:** `figures/{topic-slug}/final.svg` — this is the file Step 5 converts to PDF. Edit this file directly.
+
+**Prerequisite check:** Before starting, verify both files exist:
+- `figures/{topic-slug}/final.svg` — if missing, Step 4 failed; run `doctor.sh` and report the error.
+- `figures/{topic-slug}/figure.png` — if missing, skip visual comparison; only perform structural SVG review (text alignment, spacing, layout consistency from SVG source alone).
+
+**Iteration loop (max 2 rounds by default):**
+
+For each iteration (up to 2):
+
+- **(a) Render current SVG to PNG:**
+  ```bash
+  DYLD_FALLBACK_LIBRARY_PATH="/opt/homebrew/lib${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}" \
+  skills/paper-figure-generator/scripts/.venv/bin/python -c "
+  from cairosvg import svg2png
+  svg2png(url='figures/{topic-slug}/final.svg', write_to='figures/{topic-slug}/final_preview.png', scale=2)
+  "
+  ```
+  If this fails (cairosvg not installed or SVG parse error), run `bash skills/paper-figure-generator/scripts/doctor.sh` and report the issue. Do not proceed without a preview PNG.
+
+  Known cairosvg limitations: CSS filters (`drop-shadow`, `blur`), `<foreignObject>`, and some gradient types may not render correctly. If the preview shows missing shadows or broken regions that look fine in the SVG source, these are cairosvg rendering gaps — do not attempt to fix them.
+
+- **(b) Read and compare:**
+  - Read `figures/{topic-slug}/figure.png` (original target) and `figures/{topic-slug}/final_preview.png` (current rendering) using the Read tool for visual comparison.
+  - **Do NOT read `final.svg` raw** — it contains large base64-encoded icon images that waste tokens. Instead, use Grep to extract structural elements:
+    ```bash
+    grep -n '<\(text\|rect\|line\|path\|circle\|ellipse\|polygon\|g \|g>\|image\|marker\|defs\|use\|svg\)' figures/{topic-slug}/final.svg | grep -v 'base64'
+    ```
+    This shows layout-relevant tags with line numbers for targeted editing.
+
+- **(c) Analyze differences** across two aspects:
+  - **POSITION**: icon images, text elements, arrows, lines/borders
+  - **STYLE**: sizes/proportions, font sizes/colors/weights, arrow styles, line styles
+
+- **(d) Edit the SVG** using the Edit tool to fix identified issues. Preserve:
+  - All `<image>` elements with `id` like `icon_AF01`, `icon_AF02` (replaced icons with embedded base64 data) — do not modify the `href` attribute or base64 payload
+  - No in-figure title text <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+
+- **(e) Re-render and verify** — run the render command from (a) again, then Read both `final_preview.png` and `figure.png` side-by-side to confirm improvement.
+
+**After 2 iterations:** stop and ask the user:
+- "SVG 已经过 2 轮优化，是否需要继续？" — if yes, do 1 more round; if no, proceed to Step 5.
+
+**Skip condition:** If no actionable differences are found in Position or Style analysis (step c), skip further iterations and proceed directly to Step 5.
 
 ### Step 5: Finalize — Convert SVG to PDF for LaTeX
 
@@ -150,15 +201,15 @@ Convert the SVG to PDF for LaTeX inclusion:
 ```bash
 # Option 1: 使用 skill 自带脚本（推荐）
 bash skills/paper-figure-generator/scripts/svg-to-pdf.sh \
-  --svg figures/{slug}/final.svg \
-  --pdf figures/{slug}/figure.pdf
+  --svg figures/{topic-slug}/final.svg \
+  --pdf figures/{topic-slug}/figure.pdf
 
 # Option 2: 项目 venv 中安装 cairosvg
 uv pip install cairosvg
-uv run python -c "import cairosvg; cairosvg.svg2pdf(url='figures/{slug}/final.svg', write_to='figures/{slug}/figure.pdf')"
+uv run python -c "import cairosvg; cairosvg.svg2pdf(url='figures/{topic-slug}/final.svg', write_to='figures/{topic-slug}/figure.pdf')"
 
 # Option 3: Inkscape CLI
-inkscape figures/{slug}/final.svg --export-type=pdf --export-filename=figures/{slug}/figure.pdf
+inkscape figures/{topic-slug}/final.svg --export-type=pdf --export-filename=figures/{topic-slug}/figure.pdf
 ```
 
 Embed in LaTeX:
@@ -166,7 +217,7 @@ Embed in LaTeX:
 ```latex
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{figures/{slug}/figure.pdf}
+  \includegraphics[width=\linewidth]{figures/{topic-slug}/figure.pdf}
   \caption{System overview of the proposed method.}
   \label{fig:system-overview}
 \end{figure}
@@ -179,6 +230,6 @@ Embed in LaTeX:
 - For `system-overview` / `pipeline` / `architecture` layouts, keep canvas aspect ratio `width:height >= 2:1` (e.g., 2.1:1, 3:1) <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
 - For data visualization (bar charts, line plots, heatmaps), use the `results-analysis` skill instead
 - AutoFigure-Edit source code (`autofigure2.py`) is vendored in `scripts/`; only `.venv/` is gitignored
-- Requires LLM provider key (default `OPENROUTER_API_KEY`; optional `BIANXIE_API_KEY`) and a SAM3 backend key (`ROBOFLOW_API_KEY` recommended) in `.env`
+- Requires LLM provider key (default `OPENROUTER_API_KEY`; optional `BIANXIE_API_KEY`) for Step 4 generation and a SAM3 backend key (`ROBOFLOW_API_KEY` recommended) in `.env`. Step 4.6 SVG refinement uses Claude Code session tokens instead — no additional API key needed
 - Some models require HuggingFace authentication; run `hf auth login` in the project venv (see Step 3)
 - Output SVG can be further edited with any SVG editor (Inkscape, Illustrator, AutoFigure-Edit's built-in editor)
