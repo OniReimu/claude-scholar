@@ -8,6 +8,10 @@ version: 0.1.0
 
 A systematic paper quality checking tool that helps researchers conduct comprehensive self-review before submission.
 
+## ⚠️ Author Style Guide <!-- style:author-voice -->
+
+> **MANDATORY**: Self-review 时必须对照 `policy/style-guide.md` 检查风格一致性。论文不仅要无错误，更要符合作者的个人写作指纹。
+
 ## Policy Rules
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
@@ -44,7 +48,24 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
 | `REPRO.COMPUTE_RESOURCES_DOCUMENTED` | 计算资源文档 |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
-| `PROSE.EM_DASH_RESTRICTION` | 限制em-dash |
+| `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
+| `PROSE.FILLER_PHRASES` | 删除冗余填充短语 |
+| `PROSE.COLON_LIST_OVERUSE` | 禁止正文内联编号列表 |
+| `PROSE.RULE_OF_THREE` | 避免反复三项并列 |
+| `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
+| `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list） |
+| `PROSE.TENSE_CONSISTENCY` | 各章节时态一致 |
+| `PROSE.ABBREVIATION_FIRST_USE` | 缩写首次展开 |
+| `PROSE.VAGUE_QUANTIFIERS` | 禁止模糊量词 |
+| `PROSE.SENTENCE_LENGTH` | 单句≤35词 |
+| `PROSE.PARAGRAPH_TOPIC_SENTENCE` | 首句为topic sentence |
+| `PROSE.SUBSECTION_COMPLETENESS` | subsection≥2段 |
+| `PROSE.EQUATION_EXPLANATION` | 公式三步解释 |
+| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词 |
+| `PROSE.HEDGING_DISCIPLINE` | Hedging需匹配证据 |
+| `PROSE.NUMBER_EXPRESSION` | 数字表达规范 |
+| `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
+| `PROSE.RELATED_WORK_EVOLUTION` | Related Work按脉络组织 |
 | `SUBMIT.SECTION_NUMBERING_CONSISTENCY` | Section编号一致 |
 | `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
 | `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |

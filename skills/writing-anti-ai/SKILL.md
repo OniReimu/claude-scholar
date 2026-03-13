@@ -11,6 +11,10 @@ tags: [Writing, AI, Anti-AI, Humanizer]
 
 Remove AI-generated writing patterns from text to make it sound natural and human-written. Supports both English and Chinese.
 
+## ⚠️ Author Style Guide <!-- style:author-voice -->
+
+> **MANDATORY**: 编辑前必须先读 `policy/style-guide.md`。去除 AI 痕迹的目标不只是"不像 AI"，更是要回归作者真实的写作风格。style-guide 定义了那个风格。
+
 ## Policy Rules
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
@@ -21,7 +25,14 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
 | `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
-| `PROSE.EM_DASH_RESTRICTION` | 限制em-dash |
+| `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
+| `PROSE.FILLER_PHRASES` | 删除冗余填充短语 |
+| `PROSE.COLON_LIST_OVERUSE` | 禁止正文内联编号列表 |
+| `PROSE.RULE_OF_THREE` | 避免反复三项并列 |
+| `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
+| `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list） |
+| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词 |
+| `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
 
 ## Overview
 

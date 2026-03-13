@@ -1,12 +1,24 @@
 # Policy Engine — 论文写作规则注册中心
 
+## ⚠️ MANDATORY: Author Style Guide
+
+**所有论文写作任务开始前，必须先读 `policy/style-guide.md`。**
+这是作者的个人写作风格指纹（基于 Pre-GPT 时期论文分析），与 `policy/rules/` 同级权威。
+不读 style-guide 写出的文字不是作者的风格。引用标记：`<!-- style:author-voice -->`
+
 ## 权威定义优先级
 
 ```
-policy/rules/ (单一真相源) > CLAUDE.md/AGENTS.md (指引入口) > skills/*/SKILL.md (上下文引用)
+policy/style-guide.md (整体性写作风格) ≡ policy/rules/ (单条可判定规则) > CLAUDE.md/AGENTS.md (指引入口) > skills/*/SKILL.md (上下文引用)
 ```
 
-技能文件通过 `<!-- policy:RULE_ID -->` 标记引用规则。M3 已完成去重，`policy/rules/` 为唯一真相源。
+**`style-guide.md` 和 `rules/` 是同级权威，二者缺一不可。**
+
+区分标准：
+- **`style-guide.md`** — 整体性写作风格身份：偏好动词、句式模板、段落组织、叙事逻辑。写作时整体浸入，无法拆成单条 pass/fail
+- **`rules/`** — 单条可判定的规则（1 rule = 1 file）：每条有明确的 pass/fail 判定标准，可用 regex 或 LLM 逐条检查
+
+技能文件通过 `<!-- policy:RULE_ID -->` 标记引用规则，通过 `<!-- style:author-voice -->` 标记引用风格指南。M3 已完成去重，`policy/rules/` 为唯一真相源。
 
 ---
 
@@ -173,6 +185,23 @@ SoK 规则集合（语义规则）：
 | PROSE.CRYPTO_CONSTRUCTION_TEMPLATE | prose-crypto-construction-template | domain | warn | false | doc |
 | PROSE.INTENSIFIERS_ELIMINATION | prose-intensifiers-elimination | domain | warn | false | lint_script |
 | PROSE.EM_DASH_RESTRICTION | prose-em-dash-restriction | domain | warn | false | lint_script |
+| PROSE.FILLER_PHRASES | prose-filler-phrases | domain | warn | false | lint_script |
+| PROSE.COLON_LIST_OVERUSE | prose-colon-list-overuse | domain | warn | false | lint_script |
+| PROSE.RULE_OF_THREE | prose-rule-of-three | domain | warn | false | doc |
+| PROSE.PROMOTIONAL_LANGUAGE | prose-promotional-language | domain | warn | false | lint_script |
+| PROSE.FORMATTING_RESTRAINT | prose-formatting-restraint | domain | warn | false | doc |
+| PROSE.TENSE_CONSISTENCY | prose-tense-consistency | domain | warn | false | doc |
+| PROSE.ABBREVIATION_FIRST_USE | prose-abbreviation-first-use | domain | warn | false | doc |
+| PROSE.VAGUE_QUANTIFIERS | prose-vague-quantifiers | domain | warn | false | lint_script |
+| PROSE.SENTENCE_LENGTH | prose-sentence-length | domain | warn | false | lint_script |
+| PROSE.PARAGRAPH_TOPIC_SENTENCE | prose-paragraph-topic-sentence | domain | warn | false | doc |
+| PROSE.SUBSECTION_COMPLETENESS | prose-subsection-completeness | domain | warn | false | doc |
+| PROSE.EQUATION_EXPLANATION | prose-equation-explanation | domain | warn | false | doc |
+| PROSE.INFORMAL_VOCABULARY | prose-informal-vocabulary | domain | warn | false | lint_script |
+| PROSE.HEDGING_DISCIPLINE | prose-hedging-discipline | domain | warn | false | doc |
+| PROSE.NUMBER_EXPRESSION | prose-number-expression | domain | warn | false | doc |
+| PROSE.ELEGANT_VARIATION | prose-elegant-variation | domain | warn | false | doc |
+| PROSE.RELATED_WORK_EVOLUTION | prose-related-work-evolution | domain | warn | false | doc |
 | ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc |
 | ANON.DOUBLE_BLIND_ANONYMIZATION | anon-double-blind-anonymization | venue | error | true | doc |
 | SUBMIT.PAGE_LIMIT_STRICT | submit-page-limit-strict | venue | error | false | doc |
