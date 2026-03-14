@@ -202,6 +202,16 @@ SoK 规则集合（语义规则）：
 | PROSE.NUMBER_EXPRESSION | prose-number-expression | domain | warn | false | doc |
 | PROSE.ELEGANT_VARIATION | prose-elegant-variation | domain | warn | false | doc |
 | PROSE.RELATED_WORK_EVOLUTION | prose-related-work-evolution | domain | warn | false | doc |
+| PROSE.COPULA_DODGE | prose-copula-dodge | domain | warn | false | lint_script |
+| PROSE.NEGATIVE_PARALLELISM | prose-negative-parallelism | domain | warn | false | lint_script |
+| PROSE.SUPERFICIAL_ING_SUFFIX | prose-superficial-ing-suffix | domain | warn | false | lint_script |
+| PROSE.DESPITE_DISMISSAL | prose-despite-dismissal | domain | warn | false | lint_script |
+| PROSE.VAGUE_ATTRIBUTIONS | prose-vague-attributions | domain | warn | false | lint_script |
+| PROSE.RHETORICAL_SELF_ANSWER | prose-rhetorical-self-answer | domain | warn | false | lint_script |
+| PROSE.ANAPHORA_ABUSE | prose-anaphora-abuse | domain | warn | false | doc |
+| PROSE.GERUND_FRAGMENT_LITANY | prose-gerund-fragment-litany | domain | warn | false | doc |
+| PROSE.SHORT_PUNCHY_FRAGMENTS | prose-short-punchy-fragments | domain | warn | false | doc |
+| PROSE.UNICODE_ARROWS | prose-unicode-arrows | domain | warn | false | lint_script |
 | ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc |
 | ANON.DOUBLE_BLIND_ANONYMIZATION | anon-double-blind-anonymization | venue | error | true | doc |
 | SUBMIT.PAGE_LIMIT_STRICT | submit-page-limit-strict | venue | error | false | doc |

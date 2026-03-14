@@ -16,7 +16,7 @@ const crypto = require('crypto');
 // 常量
 // ---------------------------------------------------------------------------
 
-const VALID_STATUSES = ['pending', 'in_progress', 'blocked', 'done', 'stale'];
+const VALID_STATUSES = ['pending', 'in_progress', 'blocked', 'done', 'stale', 'skipped'];
 const LOCK_STALE_MS = 30_000; // 30 秒后视 lockfile 为过期
 const TEX_EXTENSIONS = ['.tex'];
 const BIB_EXTENSIONS = ['.bib'];
@@ -200,6 +200,92 @@ function initRun({ cwd, title, profile, venue } = {}) {
   atomicWriteJSON(path.join(root, 'active-run.json'), {
     run_id: runId,
     activated_at: now,
+  });
+
+  return run;
+}
+
+/**
+ * 初始化一个 polish 模式的 run（改稿模式）
+ * 跳过 stage 1-6，直接从 self_review 开始
+ * @param {{cwd?: string, title: string, mainTexPath: string, profile?: string, venue?: string}} opts
+ * @returns {object} 新创建的 run 对象
+ */
+function initPolishRun({ cwd, title, mainTexPath, profile, venue } = {}) {
+  if (!title) throw new Error('title is required');
+  if (!mainTexPath) throw new Error('mainTexPath is required for polish mode');
+
+  const root = getOrchestratorRoot({ cwd });
+  const runId = generateRunId();
+  const runDir = path.join(root, 'runs', runId);
+  const now = new Date().toISOString();
+
+  let stagesRegistry;
+  try {
+    stagesRegistry = loadStages({ cwd });
+  } catch {
+    throw new Error('Cannot load stages.json — required for polish mode');
+  }
+
+  // 初始化阶段状态：stage 2-6 标记为 skipped，其他为 pending
+  const skippedStages = new Set(['literature', 'proposal', 'development', 'experiments', 'analysis']);
+  const stages = {};
+  for (const s of stagesRegistry.stages) {
+    if (skippedStages.has(s.id)) {
+      stages[s.id] = { status: 'skipped', note: 'Skipped in polish mode' };
+    } else {
+      stages[s.id] = { status: 'pending' };
+    }
+  }
+
+  // intake 直接标记为 done
+  stages.intake = { status: 'done', completed_at: now, note: 'Polish mode intake' };
+  // writeup 标记为 done（用户提供的 draft 就是 writeup 产物）
+  stages.writeup = { status: 'done', completed_at: now, note: 'Existing draft provided' };
+
+  const run = {
+    id: runId,
+    title,
+    mode: 'polish',
+    profile: profile || null,
+    venue: venue || null,
+    created_at: now,
+    updated_at: now,
+    current_stage: 'self_review',
+    stages,
+    inputs: {
+      mode: 'polish',
+      main_tex: mainTexPath,
+      ...(venue ? { venue } : {}),
+      ...(profile ? { profile } : {}),
+    },
+    artifacts: {
+      writeup: {
+        main_tex: mainTexPath,
+      },
+    },
+    gate_results: {},
+  };
+
+  // 写入 run.json
+  fs.mkdirSync(runDir, { recursive: true });
+  atomicWriteJSON(path.join(runDir, 'run.json'), run);
+
+  // 初始化空事件日志
+  fs.writeFileSync(path.join(runDir, 'events.ndjson'), '', 'utf8');
+
+  // 设置活跃 run
+  atomicWriteJSON(path.join(root, 'active-run.json'), {
+    run_id: runId,
+    activated_at: now,
+  });
+
+  // 记录 polish init 事件
+  appendEvent({
+    cwd,
+    runId,
+    type: 'polish_init',
+    payload: { main_tex: mainTexPath, profile, venue },
   });
 
   return run;
@@ -731,6 +817,7 @@ module.exports = {
   loadStages,
   loadActiveRun,
   initRun,
+  initPolishRun,
   updateRun,
   collectTrackedFiles,
   fingerprintStageArtifacts,

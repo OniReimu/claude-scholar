@@ -76,6 +76,38 @@
 6. **请求审批**：向用户确认产物质量
 7. **标记 `done`**：调用 `markStage({ cwd, stageId, status: 'done' })`
 
+## Polish 模式（改稿合约）
+
+### 初始化
+
+```javascript
+const run = orch.initPolishRun({
+  cwd,
+  title: 'Polish: Paper Title',
+  mainTexPath: 'paper/main.tex',
+  profile: 'security-neurips',  // optional
+  venue: 'NeurIPS',             // optional
+});
+```
+
+### 阶段流转
+
+1. `intake` → 自动 `done`（polish mode intake）
+2. `literature` ~ `analysis` → 自动 `skipped`
+3. `writeup` → 自动 `done`（已有 draft）
+4. `self_review` → `in_progress`（开始检查）
+5. 有违规 → `rewrite`（逐 section 改写）→ 回到 `self_review`
+6. 全部 pass → `rebuttal` 或结束
+
+### Rewrite 阶段的合约
+
+Rewrite 阶段必须：
+1. 读取 `artifacts.self_review.violation_report`
+2. 加载 `policy/style-guide.md`（⚠️ MANDATORY）
+3. 对每个违规 section 进行改写
+4. 记录 `artifacts.rewrite.sections_rewritten` 和 `artifacts.rewrite.iteration`
+5. 请求人工审批后才能回到 `self_review`
+
 ## 失效规则 (Invalidation)
 
 Session start hook 自动比对 `done` 阶段的 `artifacts.*.fingerprints` 与当前文件 hash。当 mismatch 被检测到时：

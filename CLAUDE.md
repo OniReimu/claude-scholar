@@ -55,10 +55,10 @@
 
 ### Paper Writing Rules (Global)
 
-Paper writing rules are defined in `policy/rules/` (37 rule cards), covering figure formatting, LaTeX math, experiment structure, citation verification, submission compliance, and SoK-specific guidance.
+Paper writing rules are defined in `policy/rules/` (67 rule cards), covering figure formatting, LaTeX math, experiment structure, citation verification, submission compliance, prose style (30 PROSE rules), and SoK-specific guidance.
 Rule specification and full registry: `policy/README.md`. Skills reference rules via `<!-- policy:RULE_ID -->` markers.
 SoK requirements are activated via profile selection (for example `policy/profiles/security-sok-sp.md`) in v1.
-**Writing tasks must first read `policy/README.md` + relevant rule cards; `policy/rules/` is the single source of truth.**
+**Writing tasks must first read `policy/style-guide.md` (author voice) + `policy/README.md` + relevant rule cards. `policy/style-guide.md` ≡ `policy/rules/` are co-equal authorities.**
 
 ### Working Style
 - **Task Management**: Use TodoWrite to track progress; plan before executing complex tasks; prefer existing skills
@@ -90,8 +90,9 @@ Ideation → ML Development → Experiment Analysis → Paper Writing → Self-R
 A stateful, resumable run coordination layer that tracks research progress across sessions:
 
 - **Storage**: `.claude/orchestrator/` (per-project run state, event logs, artifact fingerprints)
-- **Stages**: 10-stage pipeline (`intake` → `literature` → `proposal` → `development` → `experiments` → `analysis` → `writeup` → `self_review` → `rebuttal` → `post_acceptance`)
-- **Status enum**: `pending`, `in_progress`, `blocked`, `done`, `stale`
+- **Stages**: 11-stage pipeline (`intake` → `literature` → `proposal` → `development` → `experiments` → `analysis` → `writeup` → `self_review` → `rewrite` → `rebuttal` → `post_acceptance`)
+- **Status enum**: `pending`, `in_progress`, `blocked`, `done`, `stale`, `skipped`
+- **Polish mode**: 用户说"帮我 polish 这篇论文"/"改写这个 draft" 时，调用 `initPolishRun()` 跳过 stage 2-6，直接从 self_review 开始 review→rewrite 循环
 - **No new commands**: Orchestrator activates transparently via existing skills/agents/hooks
 - **Stage gates**: Human approval + policy lint at stage boundaries
 - **Invalidation**: Artifact hash mismatch marks stages as `stale`; only affected gates re-run

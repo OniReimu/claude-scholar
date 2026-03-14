@@ -33,6 +33,16 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list） |
 | `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词 |
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
+| `PROSE.COPULA_DODGE` | 禁止"serves as"替代"is" |
+| `PROSE.NEGATIVE_PARALLELISM` | 禁止"It's not X, it's Y"假深刻 |
+| `PROSE.SUPERFICIAL_ING_SUFFIX` | 禁止句末-ing浮浅分析 |
+| `PROSE.DESPITE_DISMISSAL` | 禁止"Despite challenges"公式化dismissal |
+| `PROSE.VAGUE_ATTRIBUTIONS` | 禁止"experts argue"模糊归因 |
+| `PROSE.RHETORICAL_SELF_ANSWER` | 禁止"The result? X."自问自答 |
+| `PROSE.ANAPHORA_ABUSE` | 禁止同一句首重复3+次 |
+| `PROSE.GERUND_FRAGMENT_LITANY` | 禁止分词片段堆叠 |
+| `PROSE.SHORT_PUNCHY_FRAGMENTS` | 禁止极短句独立成段 |
+| `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
 ## Overview
 
