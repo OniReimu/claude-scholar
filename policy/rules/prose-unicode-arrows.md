@@ -12,9 +12,22 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: safe
 lint_patterns:
   - pattern: "[→←↔⇒⇐⇔➜➔]"
     mode: match
+fix_patterns:
+  - find: "→"
+    replace: "$\\rightarrow$"
+  - find: "←"
+    replace: "$\\leftarrow$"
+  - find: "↔"
+    replace: "$\\leftrightarrow$"
+  - find: "⇒"
+    replace: "$\\Rightarrow$"
+  - find: "⇐"
+    replace: "$\\Leftarrow$"
 lint_targets: "**/*.tex"
 ---
 

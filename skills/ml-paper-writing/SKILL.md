@@ -639,6 +639,10 @@ Must include:
 - Brief approach overview
 - Methods should start by page 2-3 maximum
 
+> **Section-Level Guardrail Sweep (Steps 5-10):** After drafting each section, run `bash policy/lint.sh --fix .` from the paper directory to auto-fix safe guardrail violations (filler phrases, copula dodges, etc.) before moving to the next section. This catches mechanical issues early and avoids accumulation at Step 11.
+
+> **⚠️ MANDATORY: Guardrail Checklist.** During all writing steps (5-10), actively avoid the prohibited patterns listed in `policy/guardrail-checklist.md`. This is a compact (~200 token) reference of 18 guardrail rules. Prevention during writing is cheaper than post-hoc fixing. <!-- policy:guardrail-checklist -->
+
 **Step 5: Write Background & Related Work (→ §2)**
 
 This section combines foundational knowledge and positioning against existing work.
@@ -1158,12 +1162,22 @@ NeurIPS, ICML, and ICLR all require paper checklists. See `references/checklists
 - **ICLR**: LLM disclosure required if LLMs used in research process
 - **ACL**: Responsible NLP Research checklist, mandatory Limitations section
 
-**Final pass before submission:**
-- Use `paper-self-review` skill for the latest multi-item quality checklist (including figure/title and LaTeX math conformance)
-- Use `citation-verification` skill for reference validation
-- Use `writing-anti-ai` skill if needed for natural voice
-- Verify claim-evidence-figure alignment from Step 8a
-- Check page limits, anonymization, supplementary materials <!-- policy:SUBMIT.PAGE_LIMIT_STRICT --> <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION --> <!-- policy:SUBMIT.SECTION_NUMBERING_CONSISTENCY -->
+**Final pass before submission (two-phase review):**
+
+1. **Step A — Guardrail Sweep** (auto-fix, no human gate needed):
+   - Run `bash policy/lint.sh --fix .` to auto-fix safe guardrail violations (filler phrases, copula dodges, informal vocabulary, unicode arrows, vague attributions)
+   - Run `bash policy/lint.sh --constraint-type guardrail .` to verify all guardrails clean
+   - If assisted-level guardrail violations remain (intensifiers, em-dashes, etc.), review suggested fixes manually
+
+2. **Step B — Guidance Review** (requires judgment):
+   - Use `paper-self-review` skill for the full quality checklist (structure, logic, figures, math, experiments)
+   - Run `bash policy/lint.sh --constraint-type guidance .` to check structural rules
+   - Use `citation-verification` skill for reference validation
+   - Use `writing-anti-ai` skill if needed for natural voice
+   - Verify claim-evidence-figure alignment from Step 8a
+   - Check page limits, anonymization, supplementary materials <!-- policy:SUBMIT.PAGE_LIMIT_STRICT --> <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION --> <!-- policy:SUBMIT.SECTION_NUMBERING_CONSISTENCY -->
+
+> **Both steps must pass before submission.** When used with the orchestrator, `markStage('self_review', 'done')` enforces this via `validateGates()`.
 
 ---
 

@@ -55,7 +55,7 @@
 
 ### Paper Writing Rules (Global)
 
-Paper writing rules are defined in `policy/rules/` (67 rule cards), covering figure formatting, LaTeX math, experiment structure, citation verification, submission compliance, prose style (30 PROSE rules), and SoK-specific guidance.
+Paper writing rules are defined in `policy/rules/` (64 rule cards), covering figure formatting, LaTeX math, experiment structure, citation verification, submission compliance, prose style (30 PROSE rules), and SoK-specific guidance.
 Rule specification and full registry: `policy/README.md`. Skills reference rules via `<!-- policy:RULE_ID -->` markers.
 SoK requirements are activated via profile selection (for example `policy/profiles/security-sok-sp.md`) in v1.
 **Writing tasks must first read `policy/style-guide.md` (author voice) + `policy/README.md` + relevant rule cards. `policy/style-guide.md` ≡ `policy/rules/` are co-equal authorities.**

@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: doc
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: none
 lint_patterns:
   - pattern: "\\$\\$"
     mode: match

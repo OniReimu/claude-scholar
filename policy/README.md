@@ -42,10 +42,13 @@ domains: [core] | [security, hci, se, is]
 venues: [all] | [neurips, icml, iclr, ccs, usenix, ndss, sp, chi, icse, fse, ase, misq, isr, ...]
 check_kind: regex | ast | llm_semantic | llm_style | manual
 enforcement: doc | lint_script       # lint_script=由 policy/lint.sh 执行（默认 regex；个别规则可有内置脚本检查）
+constraint_type: guardrail | guidance  # 规则语义：guardrail=约束性（不要做 X）, guidance=构建性（要做 Y）
+autofix: safe | assisted | none      # 修复策略：safe=无人值守替换, assisted=展示 diff 待确认, none=需重写
 params: {}                           # 可选，profile 可覆盖（locked=false 时）
 conflicts_with: []                   # 可选
 lint_patterns: []                    # M2 新增：机器可读 regex（仅 check_kind=regex 时）
 lint_targets: ""                     # M2 新增：glob pattern 指定检查目标
+fix_patterns: []                     # 可选：自动修复映射（仅 autofix=safe 时），条目含 find/replace
 ---
 ```
 
@@ -67,6 +70,8 @@ lint_targets: ""                     # M2 新增：glob pattern 指定检查目�
 - **locked**: `true` 时 profile 不可覆盖 severity 和 params
 - **layer**: `core`（所有论文必须遵守）| `domain`（领域/风格相关）| `venue`（会议/期刊特定）
 - **enforcement**: `doc`（仅文档约束）| `lint_script`（已有自动检查脚本）
+- **constraint_type**: `guardrail`（约束性——"不要做 X"，如禁用特定词汇/模式）| `guidance`（构建性——"要做 Y"，如要求特定结构/内容）。与 `check_kind` 正交，不可互推
+- **autofix**: `safe`（有封闭替换表，零已知 exception，可无人值守执行）| `assisted`（可生成 diff，但有已知 exception，必须展示 diff 待确认）| `none`（需要理解上下文/重写，不可自动修复）。与 `constraint_type` 独立判断
 - **params**: 声明所有可覆盖参数的默认值，Profile override 引用的 param key 必须在此存在
 - **lint_patterns**: 机器可读 regex 模式列表（仅 `check_kind: regex` 时填写），每项含：
   - `pattern`: 正则表达式
@@ -150,72 +155,72 @@ SoK 规则集合（语义规则）：
 
 ## Rule ID Registry
 
-| Rule ID | slug | layer | severity | locked | enforcement |
-|---------|------|-------|----------|--------|-------------|
-| FIG.NO_IN_FIGURE_TITLE | fig-no-in-figure-title | core | error | true | lint_script |
-| FIG.FONT_GE_24PT | fig-font-ge-24pt | core | error | false | doc |
-| FIG.ONE_FILE_ONE_FIGURE | fig-one-file-one-figure | core | error | true | doc |
-| FIG.COLORBLIND_SAFE_PALETTE | fig-colorblind-safe-palette | core | warn | false | doc |
-| FIG.SELF_CONTAINED_CAPTION | fig-self-contained-caption | core | warn | false | doc |
-| FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 | fig-system-overview-aspect-ratio-ge-2to1 | core | error | true | doc |
-| FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required | core | error | false | doc |
-| TABLE.BOOKTABS_FORMAT | table-booktabs-format | core | warn | false | lint_script |
-| TABLE.DIRECTION_INDICATORS | table-direction-indicators | core | warn | false | doc |
-| LATEX.CMARK_XMARK_PMARK_MACROS | latex-cmark-xmark-pmark-macros | core | error | false | doc |
-| LATEX.EQ.DISPLAY_STYLE | latex-eq-display-style | core | error | true | doc |
-| LATEX.VAR.LONG_TOKEN_USE_TEXT | latex-var-long-token-use-text | core | warn | false | doc |
-| LATEX.NOTATION_CONSISTENCY | latex-notation-consistency | core | error | true | doc |
-| REF.CROSS_REFERENCE_STYLE | ref-cross-reference-style | core | warn | false | doc |
-| PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | false | lint_script |
-| PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc |
-| CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script |
-| EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc |
-| EXP.TAKEAWAY_BOX | exp-takeaway-box | core | warn | false | doc |
-| EXP.ABLATION_IN_RESULTS | exp-ablation-in-results | core | warn | false | doc |
-| EXP.RESULTS_SUBSECTION_STRUCTURE | exp-results-subsection-structure | core | warn | false | doc |
-| EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE | exp-fabricated-results-caption-disclosure | core | error | false | doc |
-| EXP.RESULTS_STATUS_DECLARATION_REQUIRED | exp-results-status-declaration-required | core | warn | false | doc |
-| REPRO.RANDOM_SEED_DOCUMENTATION | repro-random-seed-documentation | core | error | false | doc |
-| REPRO.COMPUTE_RESOURCES_DOCUMENTED | repro-compute-resources-documented | core | warn | false | doc |
-| SUBMIT.SECTION_NUMBERING_CONSISTENCY | submit-section-numbering-consistency | core | warn | false | lint_script |
-| SOK.TAXONOMY_REQUIRED | sok-taxonomy-required | domain | error | false | doc |
-| SOK.METHODOLOGY_REPORTING | sok-methodology-reporting | domain | warn | false | doc |
-| SOK.BIG_TABLE_REQUIRED | sok-big-table-required | domain | error | false | doc |
-| SOK.RESEARCH_AGENDA_REQUIRED | sok-research-agenda-required | domain | error | false | doc |
-| PROSE.CRYPTO_CONSTRUCTION_TEMPLATE | prose-crypto-construction-template | domain | warn | false | doc |
-| PROSE.INTENSIFIERS_ELIMINATION | prose-intensifiers-elimination | domain | warn | false | lint_script |
-| PROSE.EM_DASH_RESTRICTION | prose-em-dash-restriction | domain | warn | false | lint_script |
-| PROSE.FILLER_PHRASES | prose-filler-phrases | domain | warn | false | lint_script |
-| PROSE.COLON_LIST_OVERUSE | prose-colon-list-overuse | domain | warn | false | lint_script |
-| PROSE.RULE_OF_THREE | prose-rule-of-three | domain | warn | false | doc |
-| PROSE.PROMOTIONAL_LANGUAGE | prose-promotional-language | domain | warn | false | lint_script |
-| PROSE.FORMATTING_RESTRAINT | prose-formatting-restraint | domain | warn | false | doc |
-| PROSE.TENSE_CONSISTENCY | prose-tense-consistency | domain | warn | false | doc |
-| PROSE.ABBREVIATION_FIRST_USE | prose-abbreviation-first-use | domain | warn | false | doc |
-| PROSE.VAGUE_QUANTIFIERS | prose-vague-quantifiers | domain | warn | false | lint_script |
-| PROSE.SENTENCE_LENGTH | prose-sentence-length | domain | warn | false | lint_script |
-| PROSE.PARAGRAPH_TOPIC_SENTENCE | prose-paragraph-topic-sentence | domain | warn | false | doc |
-| PROSE.SUBSECTION_COMPLETENESS | prose-subsection-completeness | domain | warn | false | doc |
-| PROSE.EQUATION_EXPLANATION | prose-equation-explanation | domain | warn | false | doc |
-| PROSE.INFORMAL_VOCABULARY | prose-informal-vocabulary | domain | warn | false | lint_script |
-| PROSE.HEDGING_DISCIPLINE | prose-hedging-discipline | domain | warn | false | doc |
-| PROSE.NUMBER_EXPRESSION | prose-number-expression | domain | warn | false | doc |
-| PROSE.ELEGANT_VARIATION | prose-elegant-variation | domain | warn | false | doc |
-| PROSE.RELATED_WORK_EVOLUTION | prose-related-work-evolution | domain | warn | false | doc |
-| PROSE.COPULA_DODGE | prose-copula-dodge | domain | warn | false | lint_script |
-| PROSE.NEGATIVE_PARALLELISM | prose-negative-parallelism | domain | warn | false | lint_script |
-| PROSE.SUPERFICIAL_ING_SUFFIX | prose-superficial-ing-suffix | domain | warn | false | lint_script |
-| PROSE.DESPITE_DISMISSAL | prose-despite-dismissal | domain | warn | false | lint_script |
-| PROSE.VAGUE_ATTRIBUTIONS | prose-vague-attributions | domain | warn | false | lint_script |
-| PROSE.RHETORICAL_SELF_ANSWER | prose-rhetorical-self-answer | domain | warn | false | lint_script |
-| PROSE.ANAPHORA_ABUSE | prose-anaphora-abuse | domain | warn | false | doc |
-| PROSE.GERUND_FRAGMENT_LITANY | prose-gerund-fragment-litany | domain | warn | false | doc |
-| PROSE.SHORT_PUNCHY_FRAGMENTS | prose-short-punchy-fragments | domain | warn | false | doc |
-| PROSE.UNICODE_ARROWS | prose-unicode-arrows | domain | warn | false | lint_script |
-| ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc |
-| ANON.DOUBLE_BLIND_ANONYMIZATION | anon-double-blind-anonymization | venue | error | true | doc |
-| SUBMIT.PAGE_LIMIT_STRICT | submit-page-limit-strict | venue | error | false | doc |
-| BIBTEX.CONSISTENT_CITATION_KEY_FORMAT | bibtex-consistent-citation-key-format | venue | warn | false | lint_script |
+| Rule ID | slug | layer | severity | locked | enforcement | constraint_type | autofix |
+|---------|------|-------|----------|--------|-------------|-----------------|---------|
+| FIG.NO_IN_FIGURE_TITLE | fig-no-in-figure-title | core | error | true | lint_script | guidance | none |
+| FIG.FONT_GE_24PT | fig-font-ge-24pt | core | error | false | doc | guidance | none |
+| FIG.ONE_FILE_ONE_FIGURE | fig-one-file-one-figure | core | error | true | doc | guidance | none |
+| FIG.COLORBLIND_SAFE_PALETTE | fig-colorblind-safe-palette | core | warn | false | doc | guidance | none |
+| FIG.SELF_CONTAINED_CAPTION | fig-self-contained-caption | core | warn | false | doc | guidance | none |
+| FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 | fig-system-overview-aspect-ratio-ge-2to1 | core | error | true | doc | guidance | none |
+| FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required | core | error | false | doc | guidance | none |
+| TABLE.BOOKTABS_FORMAT | table-booktabs-format | core | warn | false | lint_script | guardrail | assisted |
+| TABLE.DIRECTION_INDICATORS | table-direction-indicators | core | warn | false | doc | guidance | none |
+| LATEX.CMARK_XMARK_PMARK_MACROS | latex-cmark-xmark-pmark-macros | core | error | false | doc | guidance | none |
+| LATEX.EQ.DISPLAY_STYLE | latex-eq-display-style | core | error | true | doc | guardrail | none |
+| LATEX.VAR.LONG_TOKEN_USE_TEXT | latex-var-long-token-use-text | core | warn | false | doc | guidance | none |
+| LATEX.NOTATION_CONSISTENCY | latex-notation-consistency | core | error | true | doc | guidance | none |
+| REF.CROSS_REFERENCE_STYLE | ref-cross-reference-style | core | warn | false | doc | guidance | none |
+| PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | false | lint_script | guidance | none |
+| PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc | guidance | none |
+| CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script | guidance | none |
+| EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc | guidance | none |
+| EXP.TAKEAWAY_BOX | exp-takeaway-box | core | warn | false | doc | guidance | none |
+| EXP.ABLATION_IN_RESULTS | exp-ablation-in-results | core | warn | false | doc | guidance | none |
+| EXP.RESULTS_SUBSECTION_STRUCTURE | exp-results-subsection-structure | core | warn | false | doc | guidance | none |
+| EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE | exp-fabricated-results-caption-disclosure | core | error | false | doc | guidance | none |
+| EXP.RESULTS_STATUS_DECLARATION_REQUIRED | exp-results-status-declaration-required | core | warn | false | doc | guidance | none |
+| REPRO.RANDOM_SEED_DOCUMENTATION | repro-random-seed-documentation | core | error | false | doc | guidance | none |
+| REPRO.COMPUTE_RESOURCES_DOCUMENTED | repro-compute-resources-documented | core | warn | false | doc | guidance | none |
+| SUBMIT.SECTION_NUMBERING_CONSISTENCY | submit-section-numbering-consistency | core | warn | false | lint_script | guidance | none |
+| SOK.TAXONOMY_REQUIRED | sok-taxonomy-required | domain | error | false | doc | guidance | none |
+| SOK.METHODOLOGY_REPORTING | sok-methodology-reporting | domain | warn | false | doc | guidance | none |
+| SOK.BIG_TABLE_REQUIRED | sok-big-table-required | domain | error | false | doc | guidance | none |
+| SOK.RESEARCH_AGENDA_REQUIRED | sok-research-agenda-required | domain | error | false | doc | guidance | none |
+| PROSE.CRYPTO_CONSTRUCTION_TEMPLATE | prose-crypto-construction-template | domain | warn | false | doc | guidance | none |
+| PROSE.INTENSIFIERS_ELIMINATION | prose-intensifiers-elimination | domain | warn | false | lint_script | guardrail | assisted |
+| PROSE.EM_DASH_RESTRICTION | prose-em-dash-restriction | domain | warn | false | lint_script | guardrail | assisted |
+| PROSE.FILLER_PHRASES | prose-filler-phrases | domain | warn | false | lint_script | guardrail | safe |
+| PROSE.COLON_LIST_OVERUSE | prose-colon-list-overuse | domain | warn | false | lint_script | guardrail | none |
+| PROSE.RULE_OF_THREE | prose-rule-of-three | domain | warn | false | doc | guidance | none |
+| PROSE.PROMOTIONAL_LANGUAGE | prose-promotional-language | domain | warn | false | lint_script | guardrail | assisted |
+| PROSE.FORMATTING_RESTRAINT | prose-formatting-restraint | domain | warn | false | doc | guidance | none |
+| PROSE.TENSE_CONSISTENCY | prose-tense-consistency | domain | warn | false | doc | guidance | none |
+| PROSE.ABBREVIATION_FIRST_USE | prose-abbreviation-first-use | domain | warn | false | doc | guidance | none |
+| PROSE.VAGUE_QUANTIFIERS | prose-vague-quantifiers | domain | warn | false | lint_script | guardrail | assisted |
+| PROSE.SENTENCE_LENGTH | prose-sentence-length | domain | warn | false | lint_script | guardrail | none |
+| PROSE.PARAGRAPH_TOPIC_SENTENCE | prose-paragraph-topic-sentence | domain | warn | false | doc | guidance | none |
+| PROSE.SUBSECTION_COMPLETENESS | prose-subsection-completeness | domain | warn | false | doc | guidance | none |
+| PROSE.EQUATION_EXPLANATION | prose-equation-explanation | domain | warn | false | doc | guidance | none |
+| PROSE.INFORMAL_VOCABULARY | prose-informal-vocabulary | domain | warn | false | lint_script | guardrail | safe |
+| PROSE.HEDGING_DISCIPLINE | prose-hedging-discipline | domain | warn | false | doc | guidance | none |
+| PROSE.NUMBER_EXPRESSION | prose-number-expression | domain | warn | false | doc | guidance | none |
+| PROSE.ELEGANT_VARIATION | prose-elegant-variation | domain | warn | false | doc | guidance | none |
+| PROSE.RELATED_WORK_EVOLUTION | prose-related-work-evolution | domain | warn | false | doc | guidance | none |
+| PROSE.COPULA_DODGE | prose-copula-dodge | domain | warn | false | lint_script | guardrail | safe |
+| PROSE.NEGATIVE_PARALLELISM | prose-negative-parallelism | domain | warn | false | lint_script | guardrail | assisted |
+| PROSE.SUPERFICIAL_ING_SUFFIX | prose-superficial-ing-suffix | domain | warn | false | lint_script | guardrail | assisted |
+| PROSE.DESPITE_DISMISSAL | prose-despite-dismissal | domain | warn | false | lint_script | guardrail | none |
+| PROSE.VAGUE_ATTRIBUTIONS | prose-vague-attributions | domain | warn | false | lint_script | guardrail | safe |
+| PROSE.RHETORICAL_SELF_ANSWER | prose-rhetorical-self-answer | domain | warn | false | lint_script | guardrail | none |
+| PROSE.ANAPHORA_ABUSE | prose-anaphora-abuse | domain | warn | false | doc | guidance | none |
+| PROSE.GERUND_FRAGMENT_LITANY | prose-gerund-fragment-litany | domain | warn | false | doc | guidance | none |
+| PROSE.SHORT_PUNCHY_FRAGMENTS | prose-short-punchy-fragments | domain | warn | false | doc | guidance | none |
+| PROSE.UNICODE_ARROWS | prose-unicode-arrows | domain | warn | false | lint_script | guardrail | safe |
+| ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc | guidance | none |
+| ANON.DOUBLE_BLIND_ANONYMIZATION | anon-double-blind-anonymization | venue | error | true | doc | guidance | none |
+| SUBMIT.PAGE_LIMIT_STRICT | submit-page-limit-strict | venue | error | false | doc | guidance | none |
+| BIBTEX.CONSISTENT_CITATION_KEY_FORMAT | bibtex-consistent-citation-key-format | venue | warn | false | lint_script | guardrail | none |
 
 ---
 

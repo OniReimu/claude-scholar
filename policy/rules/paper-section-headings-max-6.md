@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {max_sections: 6}
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 lint_patterns:
   - pattern: "\\\\section\\{"
     mode: count

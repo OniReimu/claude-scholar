@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: doc
 params: {}
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 lint_patterns:
   - pattern: "\\.savefig\\(['\"].*\\.(png|jpg|jpeg)['\"]"
     mode: match

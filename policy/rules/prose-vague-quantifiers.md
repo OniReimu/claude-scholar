@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: assisted
 lint_patterns:
   - pattern: "\\b(some|many|several|a number of|a large amount of|a great deal of|lots of|a lot of|numerous|plenty of|a wide range of)\\b"
     mode: match

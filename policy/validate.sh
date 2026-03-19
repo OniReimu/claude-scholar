@@ -59,7 +59,7 @@ collect_rule_cards
 
 # ─── 1. Required Frontmatter Fields ─────────────────────────────────────────
 section "1. Required Frontmatter Fields"
-REQUIRED_FIELDS="id slug severity locked layer artifacts phases domains venues check_kind enforcement"
+REQUIRED_FIELDS="id slug severity locked layer artifacts phases domains venues check_kind enforcement constraint_type autofix"
 
 for f in "${RULE_CARDS[@]}"; do
   fname=$(basename "$f")
@@ -131,6 +131,12 @@ for f in "${RULE_CARDS[@]}"; do
 
   ck=$(echo "$fm" | awk '/^check_kind: /{print $2; exit}')
   case "$ck" in regex|ast|llm_semantic|llm_style|manual) ;; *) err "$fname: check_kind='$ck' not in valid set" ;; esac
+
+  ct=$(echo "$fm" | awk '/^constraint_type: /{print $2; exit}')
+  case "$ct" in guardrail|guidance) ;; *) err "$fname: constraint_type='$ct' not in {guardrail,guidance}" ;; esac
+
+  af=$(echo "$fm" | awk '/^autofix: /{print $2; exit}')
+  case "$af" in safe|assisted|none) ;; *) err "$fname: autofix='$af' not in {safe,assisted,none}" ;; esac
 done
 pass "Field value validity checked"
 

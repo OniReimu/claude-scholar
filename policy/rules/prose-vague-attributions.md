@@ -12,11 +12,18 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: safe
 lint_patterns:
   - pattern: "\\b([Ee]xperts|[Oo]bservers|[Rr]esearchers|[Ss]cholars)\\s+(argue|believe|suggest|note|have cited|have noted|contend|maintain)\\b"
     mode: match
   - pattern: "\\b([Ii]ndustry|[Rr]ecent) reports (suggest|indicate|show)\\b"
     mode: match
+fix_patterns:
+  - find: "\\b[Ee]xperts argue that "
+    replace: ""
+  - find: "\\b[Rr]esearchers have noted that "
+    replace: ""
 lint_targets: "**/*.tex"
 ---
 

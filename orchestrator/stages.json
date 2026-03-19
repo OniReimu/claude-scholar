@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "2.0.0",
   "status_enum": ["pending", "in_progress", "blocked", "done", "stale", "skipped"],
   "stages": [
     {
@@ -115,17 +115,19 @@
       "required_inputs": ["writeup.done"],
       "expected_artifacts": [
         { "kind": "run_field", "path": "artifacts.self_review.checklist_passed", "description": "Self-review checklist result" },
-        { "kind": "run_field", "path": "artifacts.self_review.lint_result", "description": "Policy lint pass/fail" },
+        { "kind": "run_field", "path": "gate_results.self_review.guardrail_clean", "description": "Guardrail sweep passed (auto-fix + verification)" },
+        { "kind": "run_field", "path": "gate_results.self_review.guidance_clean", "description": "Guidance review passed (structural + checklist)" },
         { "kind": "run_field", "path": "artifacts.self_review.violation_report", "description": "Violation report (style-guide + rules)" }
       ],
       "gates": [
-        { "type": "policy_check", "command": "bash policy/lint.sh --profile <profile> .", "description": "Run policy lint on paper" },
-        { "type": "human_approval", "prompt": "Approve paper for submission (or send to rewrite)" }
+        { "type": "policy_check", "command": "bash policy/lint.sh --constraint-type guardrail --profile <profile> .", "description": "Guardrail sweep: auto-fix safe violations, verify all guardrails clean", "result_keys": ["guardrail_clean"] },
+        { "type": "policy_check", "command": "bash policy/lint.sh --constraint-type guidance --profile <profile> .", "description": "Guidance review: structural rules + full checklist", "result_keys": ["guidance_clean"] },
+        { "type": "human_approval", "prompt": "Both guardrail sweep and guidance review passed. Approve paper for submission (or send to rewrite)" }
       ],
       "next_stage": "rewrite",
       "next_stage_if_pass": "rebuttal",
       "optional": false,
-      "notes": "In polish mode: if violations remain, next_stage is 'rewrite'; if all pass, next_stage_if_pass is 'rebuttal'"
+      "notes": "Two-phase review: Step A (guardrail sweep with auto-fix via --fix) then Step B (guidance review via --constraint-type guidance). Both must pass. Rewrite loops back to full self_review, re-running Step A to catch new guardrail violations introduced by rewrites."
     },
     {
       "id": "rewrite",

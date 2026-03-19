@@ -12,9 +12,18 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: safe
 lint_patterns:
   - pattern: "\\b(serves as|stands as|marks a|represents a)\\b"
     mode: match
+fix_patterns:
+  - find: "\\bserves as\\b"
+    replace: "is"
+  - find: "\\bstands as\\b"
+    replace: "is"
+  - find: "\\bmarks a\\b"
+    replace: "is a"
 lint_targets: "**/*.tex"
 ---
 

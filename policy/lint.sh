@@ -5,12 +5,15 @@
 # runs regex checks on target files, reports violations.
 #
 # Usage: policy/lint.sh [OPTIONS] [TARGET_DIR]
-#   --profile FILE    Apply profile overrides (severity, params)
-#   --strict-warn     Treat warnings as errors (exit 1)
-#   --quiet           Only show summary, suppress per-match output
-#   --rule RULE_ID    Lint only a specific rule
-#   --layer LAYER     Lint only rules of a specific layer (core|domain|venue)
-#   -h, --help        Show help
+#   --profile FILE              Apply profile overrides (severity, params)
+#   --strict-warn               Treat warnings as errors (exit 1)
+#   --quiet                     Only show summary, suppress per-match output
+#   --rule RULE_ID              Lint only a specific rule
+#   --layer LAYER               Lint only rules of a specific layer (core|domain|venue)
+#   --constraint-type TYPE      Filter by constraint_type (guardrail|guidance)
+#   --autofix LEVEL             Filter by autofix (safe|assisted|none)
+#   --fix                       Auto-fix safe violations (only applies to autofix=safe rules)
+#   -h, --help                  Show help
 #
 # Exit codes:
 #   0 - All pass (or warnings only without --strict-warn)
@@ -45,7 +48,11 @@ PROFILE=""
 TARGET_DIR=""
 FILTER_RULE=""
 FILTER_LAYER=""
+FILTER_CONSTRAINT_TYPE=""
+FILTER_AUTOFIX=""
+FIX_MODE=false
 GREP_MODE=""     # "ggrep" | "grep" | "perl"
+TOTAL_FIXES=0
 TOTAL_ERRORS=0
 TOTAL_WARNINGS=0
 RULES_CHECKED=0
@@ -60,13 +67,16 @@ show_help() {
 # ─── Argument Parsing ────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --profile)     PROFILE="$2"; shift 2 ;;
-    --strict-warn) STRICT_WARN=true; shift ;;
-    --quiet)       QUIET=true; shift ;;
-    --rule)        FILTER_RULE="$2"; shift 2 ;;
-    --layer)       FILTER_LAYER="$2"; shift 2 ;;
-    -h|--help)     show_help ;;
-    -*)            echo "Unknown option: $1" >&2; exit 2 ;;
+    --profile)          PROFILE="$2"; shift 2 ;;
+    --strict-warn)      STRICT_WARN=true; shift ;;
+    --quiet)            QUIET=true; shift ;;
+    --rule)             FILTER_RULE="$2"; shift 2 ;;
+    --layer)            FILTER_LAYER="$2"; shift 2 ;;
+    --constraint-type)  FILTER_CONSTRAINT_TYPE="$2"; shift 2 ;;
+    --autofix)          FILTER_AUTOFIX="$2"; shift 2 ;;
+    --fix)              FIX_MODE=true; shift ;;
+    -h|--help)          show_help ;;
+    -*)                 echo "Unknown option: $1" >&2; exit 2 ;;
     *)             TARGET_DIR="$1"; shift ;;
   esac
 done
@@ -81,6 +91,20 @@ fi
 if [[ ! -d "$RULES_DIR" ]]; then
   echo "ERROR: Rules directory '$RULES_DIR' not found" >&2
   exit 2
+fi
+
+# Validate enum filters
+if [[ -n "$FILTER_CONSTRAINT_TYPE" ]]; then
+  case "$FILTER_CONSTRAINT_TYPE" in
+    guardrail|guidance) ;;
+    *) echo "ERROR: --constraint-type must be 'guardrail' or 'guidance'" >&2; exit 2 ;;
+  esac
+fi
+if [[ -n "$FILTER_AUTOFIX" ]]; then
+  case "$FILTER_AUTOFIX" in
+    safe|assisted|none) ;;
+    *) echo "ERROR: --autofix must be 'safe', 'assisted', or 'none'" >&2; exit 2 ;;
+  esac
 fi
 
 # ─── Pattern Engine Detection ────────────────────────────────────────────────
@@ -221,27 +245,35 @@ get_effective_threshold() {
 # ─── Frontmatter Parser ─────────────────────────────────────────────────────
 # Single-pass parser using pure bash (no grep/sed in pipelines).
 # Sets: RULE_ID, RULE_SEVERITY, RULE_LOCKED, RULE_LAYER, RULE_CHECK_KIND,
-#       RULE_LINT_TARGETS, PATTERNS[] (entries: "pattern\tmode\tthreshold")
+#       RULE_CONSTRAINT_TYPE, RULE_AUTOFIX, RULE_LINT_TARGETS,
+#       PATTERNS[] (entries: "pattern\tmode\tthreshold"),
+#       FIX_PATTERNS[] (entries: "find\treplace")
 RULE_ID="" RULE_SEVERITY="" RULE_LOCKED="" RULE_LAYER=""
-RULE_CHECK_KIND="" RULE_LINT_TARGETS=""
+RULE_CHECK_KIND="" RULE_CONSTRAINT_TYPE="" RULE_AUTOFIX=""
+RULE_LINT_TARGETS=""
 declare -a PATTERNS=()
+declare -a FIX_PATTERNS=()
 
 parse_rule() {
   local file="$1"
 
   RULE_ID="" RULE_SEVERITY="" RULE_LOCKED="" RULE_LAYER=""
-  RULE_CHECK_KIND="" RULE_LINT_TARGETS=""
+  RULE_CHECK_KIND="" RULE_CONSTRAINT_TYPE="" RULE_AUTOFIX=""
+  RULE_LINT_TARGETS=""
   PATTERNS=()
+  FIX_PATTERNS=()
 
   # Extract frontmatter (between --- markers)
   local frontmatter
   frontmatter=$(awk '/^---$/{n++;next} n==1{print}' "$file")
 
-  # Single-pass: parse simple fields and lint_patterns block together
-  local in_lp=false
+  # Single-pass: parse simple fields, lint_patterns and fix_patterns blocks
+  local in_lp=false in_fp=false
   local cur_pat="" cur_mode="match" cur_thresh="" cur_thresh_param=""
+  local cur_find="" cur_replace=""
 
   while IFS= read -r line; do
+    # ── lint_patterns block ──
     if $in_lp; then
       if [[ "$line" =~ ^\ \ -\ pattern:\ \"(.+)\" ]]; then
         [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}"$'\t'"${cur_thresh_param}")
@@ -253,27 +285,41 @@ parse_rule() {
       elif [[ "$line" =~ ^\ \ \ \ threshold_param:\ ([a-z0-9_]+) ]]; then
         cur_thresh_param="${BASH_REMATCH[1]}"
       else
-        # Non-indented line ends the block; save last entry
         [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}"$'\t'"${cur_thresh_param}")
         cur_pat=""; in_lp=false
-        # Fall through to parse this line as a regular key
       fi
     fi
-    if ! $in_lp; then
+    # ── fix_patterns block ──
+    if $in_fp; then
+      if [[ "$line" =~ ^\ \ -\ find:\ \"(.+)\" ]]; then
+        [[ -n "$cur_find" ]] && FIX_PATTERNS+=("${cur_find}"$'\t'"${cur_replace}")
+        cur_find="${BASH_REMATCH[1]}"; cur_replace=""
+      elif [[ "$line" =~ ^\ \ \ \ replace:\ \"(.*)\" ]]; then
+        cur_replace="${BASH_REMATCH[1]}"
+      else
+        [[ -n "$cur_find" ]] && FIX_PATTERNS+=("${cur_find}"$'\t'"${cur_replace}")
+        cur_find=""; in_fp=false
+      fi
+    fi
+    if ! $in_lp && ! $in_fp; then
       case "$line" in
-        "id: "*)           RULE_ID="${line#id: }" ;;
-        "severity: "*)     RULE_SEVERITY="${line#severity: }" ;;
-        "locked: "*)       RULE_LOCKED="${line#locked: }" ;;
-        "layer: "*)        RULE_LAYER="${line#layer: }" ;;
-        "check_kind: "*)   RULE_CHECK_KIND="${line#check_kind: }" ;;
-        "lint_targets: "*) local t="${line#lint_targets: }"; RULE_LINT_TARGETS="${t//\"/}" ;;
-        "lint_patterns:")  in_lp=true ;;
+        "id: "*)               RULE_ID="${line#id: }" ;;
+        "severity: "*)         RULE_SEVERITY="${line#severity: }" ;;
+        "locked: "*)           RULE_LOCKED="${line#locked: }" ;;
+        "layer: "*)            RULE_LAYER="${line#layer: }" ;;
+        "check_kind: "*)       RULE_CHECK_KIND="${line#check_kind: }" ;;
+        "constraint_type: "*)  RULE_CONSTRAINT_TYPE="${line#constraint_type: }" ;;
+        "autofix: "*)          RULE_AUTOFIX="${line#autofix: }" ;;
+        "lint_targets: "*)     local t="${line#lint_targets: }"; RULE_LINT_TARGETS="${t//\"/}" ;;
+        "lint_patterns:")      in_lp=true ;;
+        "fix_patterns:")       in_fp=true ;;
       esac
     fi
   done <<< "$frontmatter"
 
-  # Save last pattern entry if block was at end of frontmatter
+  # Save last entries if blocks were at end of frontmatter
   [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}"$'\t'"${cur_thresh_param}")
+  [[ -n "$cur_find" ]] && FIX_PATTERNS+=("${cur_find}"$'\t'"${cur_replace}")
   return 0
 }
 
@@ -464,12 +510,19 @@ lint_rule() {
   # ── Negative mode: pattern NOT found in scoped files = violation ──
   if [[ ${#n_pats[@]} -gt 0 ]]; then
     local -a scope=()
-    if [[ ${#m_pats[@]} -gt 0 && ${#flagged_files[@]} -gt 0 ]]; then
-      # Scope to files that matched the 'match' patterns
-      while IFS= read -r f; do
-        scope+=("$f")
-      done < <(printf '%s\n' "${flagged_files[@]}" | sort -u)
+    if [[ ${#m_pats[@]} -gt 0 ]]; then
+      # When match patterns exist, scope negative checks to files with violations only.
+      # If no files matched, skip negative checks (no violations = no scope).
+      if [[ ${#flagged_files[@]} -eq 0 ]]; then
+        # No match hits → nothing to scope against → skip negative checks
+        true  # fall through with empty scope
+      else
+        while IFS= read -r f; do
+          scope+=("$f")
+        done < <(printf '%s\n' "${flagged_files[@]}" | sort -u)
+      fi
     else
+      # No match patterns defined → check all target files
       scope=("${tfiles[@]}")
     fi
 
@@ -484,6 +537,57 @@ lint_rule() {
       done
     done
   fi
+}
+
+# ─── Fix Rule (autofix=safe) ─────────────────────────────────────────────
+# Applies fix_patterns (find→replace) using Python re.sub with lambda
+# for truly literal replacement (no interpolation of $, \, @ etc.).
+# Only called when --fix is active and rule has autofix=safe.
+fix_rule() {
+  local -a tfiles=()
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tfiles+=("$f")
+  done < <(find_target_files "$RULE_LINT_TARGETS" "$TARGET_DIR")
+
+  if [[ ${#tfiles[@]} -eq 0 ]]; then return; fi
+  if [[ ${#FIX_PATTERNS[@]} -eq 0 ]]; then
+    $QUIET || echo -e "    ${DIM}(no fix_patterns defined, skipping auto-fix)${NC}"
+    return
+  fi
+
+  local rule_fixes=0
+  for entry in "${FIX_PATTERNS[@]}"; do
+    IFS=$'\t' read -r find_pat replace_str <<< "$entry"
+    local uf
+    uf=$(yaml_unescape "$find_pat")
+    local ur
+    ur=$(yaml_unescape "$replace_str")
+
+    for file in "${tfiles[@]}"; do
+      # Count matches before fixing
+      local before_count
+      before_count=$(regex_count "$uf" "$file")
+      if (( before_count > 0 )); then
+        # Apply fix using Python re.sub with lambda (truly literal replacement)
+        LINT_FIND="$uf" LINT_REPLACE="$ur" python3 -c "
+import re, os
+find = os.environ['LINT_FIND']
+repl = os.environ['LINT_REPLACE']
+path = '$file'
+with open(path, 'r') as f:
+    content = f.read()
+content = re.sub(find, lambda m: repl, content)
+with open(path, 'w') as f:
+    f.write(content)
+" 2>/dev/null
+        ((rule_fixes += before_count)) || true
+        $QUIET || printf '    \033[0;32mFIXED\033[0m %s: %d replacement(s) [%s → %s]\n' \
+          "$file" "$before_count" "$find_pat" "${replace_str:-<delete>}"
+      fi
+    done
+  done
+
+  ((TOTAL_FIXES += rule_fixes)) || true
 }
 
 # ─── Load Profile ───────────────────────────────────────────────────────────
@@ -504,6 +608,11 @@ for rule_file in "$RULES_DIR"/*.md; do
   # Apply filters
   [[ -z "$FILTER_RULE" || "$RULE_ID" == "$FILTER_RULE" ]] || continue
   [[ -z "$FILTER_LAYER" || "$RULE_LAYER" == "$FILTER_LAYER" ]] || continue
+  [[ -z "$FILTER_CONSTRAINT_TYPE" || "$RULE_CONSTRAINT_TYPE" == "$FILTER_CONSTRAINT_TYPE" ]] || continue
+  [[ -z "$FILTER_AUTOFIX" || "$RULE_AUTOFIX" == "$FILTER_AUTOFIX" ]] || continue
+
+  # --fix mode: skip rules that aren't autofix=safe
+  if $FIX_MODE && [[ "$RULE_AUTOFIX" != "safe" ]]; then continue; fi
 
   # Apply profile severity override
   local_severity=$(get_effective_severity "$RULE_ID" "$RULE_LOCKED" "$RULE_SEVERITY")
@@ -529,21 +638,44 @@ for rule_file in "$RULES_DIR"/*.md; do
 
   # Regex engine only handles regex rules with explicit machine patterns
   [[ "$RULE_CHECK_KIND" == "regex" ]] || continue
-  [[ ${#PATTERNS[@]} -gt 0 ]] || continue
+  [[ ${#PATTERNS[@]} -gt 0 || ($FIX_MODE && ${#FIX_PATTERNS[@]} -gt 0) ]] || continue
   [[ -n "$RULE_LINT_TARGETS" ]] || continue
 
-  $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) ${#PATTERNS[@]} pattern(s) → ${RULE_LINT_TARGETS}"
+  if $FIX_MODE; then
+    $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (autofix: ${RULE_AUTOFIX}) ${#FIX_PATTERNS[@]} fix pattern(s) → ${RULE_LINT_TARGETS}"
+  else
+    $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) ${#PATTERNS[@]} pattern(s) → ${RULE_LINT_TARGETS}"
+  fi
 
   ((RULES_CHECKED++)) || true
 
-  prev_e=$TOTAL_ERRORS
-  prev_w=$TOTAL_WARNINGS
+  if $FIX_MODE; then
+    fix_rule
+    # Post-fix verification: re-lint the same rule to confirm violations are gone
+    if [[ ${#PATTERNS[@]} -gt 0 ]]; then
+      prev_e=$TOTAL_ERRORS
+      prev_w=$TOTAL_WARNINGS
+      lint_rule "$local_severity"
+      remaining=$(( (TOTAL_ERRORS - prev_e) + (TOTAL_WARNINGS - prev_w) ))
+      if (( remaining > 0 )); then
+        $QUIET || echo -e "    ${YELLOW}VERIFY${NC} ${remaining} violation(s) remain after auto-fix"
+      else
+        ((RULES_PASSED++)) || true
+        $QUIET || echo -e "    ${GREEN}VERIFIED${NC} clean after auto-fix"
+      fi
+    else
+      ((RULES_PASSED++)) || true
+    fi
+  else
+    prev_e=$TOTAL_ERRORS
+    prev_w=$TOTAL_WARNINGS
 
-  lint_rule "$local_severity"
+    lint_rule "$local_severity"
 
-  if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
-    ((RULES_PASSED++)) || true
-    $QUIET || echo -e "    ${GREEN}PASS${NC}"
+    if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
+      ((RULES_PASSED++)) || true
+      $QUIET || echo -e "    ${GREEN}PASS${NC}"
+    fi
   fi
   $QUIET || echo ""
 done
@@ -555,6 +687,9 @@ echo -e "  Rules checked:  ${RULES_CHECKED}"
 echo -e "  Rules passed:   ${GREEN}${RULES_PASSED}${NC}"
 echo -e "  Errors:         ${RED}${TOTAL_ERRORS}${NC}"
 echo -e "  Warnings:       ${YELLOW}${TOTAL_WARNINGS}${NC}"
+if $FIX_MODE; then
+  echo -e "  Fixes applied:  ${GREEN}${TOTAL_FIXES}${NC}"
+fi
 if $STRICT_WARN; then
   echo -e "  ${DIM}(--strict-warn active: warnings treated as errors)${NC}"
 fi

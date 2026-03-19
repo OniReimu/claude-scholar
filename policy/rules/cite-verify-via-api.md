@@ -12,6 +12,8 @@ check_kind: manual
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 ---
 
 ## Requirement

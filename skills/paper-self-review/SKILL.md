@@ -226,27 +226,35 @@ This skill owns stage: **`self_review`**.
 When invoked within an active research run (see `orchestrator/run-card.md`):
 
 1. **Stage start**: Mark `self_review` → `in_progress`; verify `writeup` stage is `done`.
-2. **Review**: Execute the full quality checklist (structure, logic, citations, figures, math, experiments, submission compliance).
-3. **Policy gate**: Run `bash policy/lint.sh --profile <profile> .` where `<profile>` comes from `run.json` (default: none).
-4. **Stage end**: Record `artifacts.self_review.checklist_passed` and `artifacts.self_review.lint_result` in run state; request human approval before marking `done`.
+2. **Step A — Guardrail sweep** (auto-fix pass):
+   - Run `bash policy/lint.sh --fix --profile <profile> .` to auto-fix safe guardrail violations.
+   - Run `bash policy/lint.sh --constraint-type guardrail --profile <profile> .` to identify any remaining guardrail violations (assisted/none level) for manual review.
+   - Record `gate_results.self_review.guardrail_clean = true`.
+3. **Step B — Guidance review** (requires judgment):
+   - Run `bash policy/lint.sh --constraint-type guidance --profile <profile> .` to check structural rules.
+   - Execute the full quality checklist (structure, logic, citations, figures, math, experiments, submission compliance).
+   - Record `gate_results.self_review.guidance_clean = true`.
+4. **Stage end**: Request human approval before marking `done`.
 
-**Expected artifacts** (run fields):
+**Expected run fields:**
 - `artifacts.self_review.checklist_passed` — boolean
-- `artifacts.self_review.lint_result` — pass/fail + summary
+- `gate_results.self_review.guardrail_clean` — boolean (guardrail sweep passed)
+- `gate_results.self_review.guidance_clean` — boolean (guidance review passed)
 
 **Gate execution and persistence**:
 
-The `self_review` gate runs `bash policy/lint.sh --profile <profile> .` (profile from `run.json`; default: none). After execution, persist results into run state:
+The `self_review` stage has two sequential policy gates. After execution, persist results into run state:
 
 ```
 gate_results.self_review = {
   last_run: "<ISO timestamp>",
-  passed: true|false,
-  summary: "<first 5 lines of lint output or 'All checks passed'>"
+  guardrail_clean: true|false,
+  guidance_clean: true|false,
+  summary: "<violation summary or 'All checks passed'>"
 }
 ```
 
-The stage may only be marked `done` if `gate_results.self_review.passed === true` **and** the user approves the checklist. If the gate fails, the stage remains `in_progress` and the user is shown the failure summary.
+The stage may only be marked `done` if **both** `gate_results.self_review.guardrail_clean === true` **and** `gate_results.self_review.guidance_clean === true` **and** the user approves the checklist. `markStage()` enforces this via `validateGates()` — attempting to mark `done` without both keys set to `true` will throw an error. If either gate fails, the stage remains `in_progress`.
 
 If no active run exists, proceed with standalone self-review (no orchestrator interaction).
 

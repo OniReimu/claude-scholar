@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: safe
 lint_patterns:
   - pattern: "\\ba lot of\\b"
     mode: match
@@ -25,6 +27,15 @@ lint_patterns:
     mode: match
   - pattern: "\\bsmaller\\b"
     mode: match
+fix_patterns:
+  - find: "\\ba lot of\\b"
+    replace: "many"
+  - find: "\\bbigger\\b"
+    replace: "larger"
+  - find: "\\bkind of\\b"
+    replace: "somewhat"
+  - find: "\\bsort of\\b"
+    replace: "somewhat"
 lint_targets: "**/*.tex"
 ---
 

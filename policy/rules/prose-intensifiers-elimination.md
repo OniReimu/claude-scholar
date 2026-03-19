@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: assisted
 lint_patterns:
   - pattern: "\\b(very|extremely|highly|significantly|remarkably|substantially)\\b"
     mode: match

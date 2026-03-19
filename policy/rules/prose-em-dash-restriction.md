@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {max_per_paragraph: 0}
 conflicts_with: []
+constraint_type: guardrail
+autofix: assisted
 lint_patterns:
   - pattern: "---"
     mode: match

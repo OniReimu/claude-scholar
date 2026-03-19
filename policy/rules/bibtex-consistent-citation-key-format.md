@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: none
 lint_patterns:
   - pattern: "@\\w+\\{(?![a-z]+_\\d{4}_[a-z])"
     mode: match

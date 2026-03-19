@@ -12,6 +12,8 @@ check_kind: llm_semantic
 enforcement: doc
 params: {min_token_length: 4}
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 ---
 
 ## Requirement

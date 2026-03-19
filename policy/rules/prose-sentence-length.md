@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {max_words: 35}
 conflicts_with: []
+constraint_type: guardrail
+autofix: none
 lint_patterns:
   - pattern: "[^.!?]*\\s[^.!?]*"
     mode: count

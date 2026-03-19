@@ -12,6 +12,8 @@ check_kind: llm_semantic
 enforcement: doc
 params: {min_font_pt: 24, min_line_width_pt: 2.5}
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 ---
 
 ## Requirement

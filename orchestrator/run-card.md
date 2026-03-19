@@ -43,6 +43,12 @@
       "last_run": "...",
       "passed": true,
       "summary": "..."
+    },
+    "self_review": {
+      "last_run": "...",
+      "guardrail_clean": true,
+      "guidance_clean": true,
+      "summary": "..."
     }
   }
 }
@@ -148,7 +154,8 @@ const orch = require('./scripts/lib/orchestrator');
 // 核心操作
 orch.loadActiveRun({ cwd })           // 加载活跃 run
 orch.initRun({ cwd, title, ... })     // 初始化新 run
-orch.markStage({ cwd, stageId, status, note })  // 标记阶段状态
+orch.validateGates({ cwd, stageId, run })  // 验证 stage gates（data-driven，读 result_keys）
+orch.markStage({ cwd, stageId, status, note })  // 标记阶段状态（done 时自动调用 validateGates）
 orch.updateRun({ cwd, patch })        // 更新 run 字段
 orch.fingerprintFiles({ cwd, paths }) // 文件指纹化
 orch.collectTrackedFiles({ cwd, run, stageId, extraPaths }) // 收集应追踪文件

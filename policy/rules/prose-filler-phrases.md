@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: safe
 lint_patterns:
   - pattern: "\\b[Ii]n order to\\b"
     mode: match
@@ -29,6 +31,23 @@ lint_patterns:
     mode: match
   - pattern: "\\b[Ii]n the context of\\b"
     mode: match
+fix_patterns:
+  - find: "\\b[Ii]n order to\\b"
+    replace: "to"
+  - find: "\\b[Ii]t is important to note that "
+    replace: ""
+  - find: "\\b[Ii]t is worth noting that "
+    replace: ""
+  - find: "\\b[Aa]s a matter of fact,? ?"
+    replace: ""
+  - find: "\\bplays a crucial role in\\b"
+    replace: "is critical for"
+  - find: "\\b[Ii]t should be noted that "
+    replace: ""
+  - find: "\\b[Ii]t is noteworthy that "
+    replace: ""
+  - find: "\\b[Ii]n the context of\\b"
+    replace: "in"
 lint_targets: "**/*.tex"
 ---
 

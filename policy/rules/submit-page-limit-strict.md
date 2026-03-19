@@ -18,6 +18,8 @@ params:
   aaai: 7
   colm: 9
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 ---
 
 ## Requirement

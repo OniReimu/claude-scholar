@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 lint_patterns:
   - pattern: "\\\\section\\*\\{(?!References|Acknowledgment|Broader Impact|Ethics|Limitations|Appendix)"
     mode: match

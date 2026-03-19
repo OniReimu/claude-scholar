@@ -12,6 +12,8 @@ check_kind: llm_semantic
 enforcement: doc
 params: {}
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 ---
 
 ## Requirement

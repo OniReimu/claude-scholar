@@ -598,6 +598,75 @@ function fingerprintStageArtifacts({ cwd, run, stageId, extraPaths } = {}) {
 }
 
 /**
+ * 验证 stage 的所有 required gates 是否已通过
+ *
+ * Data-driven：每个 policy_check gate 可声明 result_keys 数组，
+ * validateGates 据此检查 gate_results[stageId] 中对应的 key。
+ * 未声明 result_keys 时 fallback 到通用 `passed` 字段（向后兼容）。
+ *
+ * @param {{cwd?: string, stageId: string, run?: object}} opts
+ * @returns {{valid: boolean, failures: string[]}}
+ */
+function validateGates({ cwd, stageId, run } = {}) {
+  const failures = [];
+
+  let stagesRegistry;
+  try {
+    stagesRegistry = loadStages({ cwd });
+  } catch {
+    return { valid: true, failures }; // 无 stages.json 时跳过验证
+  }
+
+  const stageDef = stagesRegistry.stages.find((s) => s.id === stageId);
+  if (!stageDef || !Array.isArray(stageDef.gates) || stageDef.gates.length === 0) {
+    return { valid: true, failures };
+  }
+
+  const activeRun = run || loadActiveRun({ cwd });
+  if (!activeRun) return { valid: true, failures };
+
+  const gateResults = (activeRun.gate_results && activeRun.gate_results[stageId]) || {};
+
+  // Collect all declared result_keys across all gates for this stage.
+  // If ANY new key is present in gateResults, disable legacy fallback for ALL gates.
+  // This prevents mixed state bypass (e.g., guardrail_clean + passed without guidance_clean).
+  const allDeclaredKeys = [];
+  for (const gate of stageDef.gates) {
+    if (gate.type === 'policy_check' && Array.isArray(gate.result_keys)) {
+      allDeclaredKeys.push(...gate.result_keys);
+    }
+  }
+  const hasAnyNewKeyGlobal = allDeclaredKeys.some((key) => key in gateResults);
+
+  for (const gate of stageDef.gates) {
+    if (gate.type !== 'policy_check') continue;
+    // human_approval gates 不在此验证（由 LLM/skill 层保证）
+
+    const resultKeys = gate.result_keys;
+    if (Array.isArray(resultKeys) && resultKeys.length > 0) {
+      // Data-driven：检查声明的每个 result key（strict boolean）
+      if (!hasAnyNewKeyGlobal && gateResults.passed === true) {
+        // Pure legacy run.json — no new keys at all, accept `passed` as compatible
+        continue;
+      }
+      // New schema or mixed state: require every declared key
+      for (const key of resultKeys) {
+        if (gateResults[key] !== true) {
+          failures.push(`${key} not passed (gate: ${gate.description || 'unnamed'})`);
+        }
+      }
+    } else {
+      // Fallback：通用 `passed` 字段（向后兼容旧 schema，strict boolean）
+      if (gateResults.passed !== true) {
+        failures.push(`policy_check gate "${gate.description || 'unnamed'}" not passed`);
+      }
+    }
+  }
+
+  return { valid: failures.length === 0, failures };
+}
+
+/**
  * 标记阶段状态
  * @param {{cwd?: string, stageId: string, status: string, note?: string}} opts
  * @returns {object} 更新后的 run 对象
@@ -610,14 +679,21 @@ function markStage({ cwd, stageId, status, note } = {}) {
     throw new Error(`Invalid status "${status}". Must be one of: ${VALID_STATUSES.join(', ')}`);
   }
 
+  // 加载当前 run（用于 stageId 校验和 gate 验证，避免多次读取）
+  const currentRun = loadActiveRun({ cwd });
+
   // 校验 stageId 存在于当前 run 的 stages 中
-  {
-    const activeCheck = readJSON(path.join(getOrchestratorRoot({ cwd }), 'active-run.json'));
-    if (activeCheck && activeCheck.run_id) {
-      const runCheck = readJSON(path.join(getOrchestratorRoot({ cwd }), 'runs', activeCheck.run_id, 'run.json'));
-      if (runCheck && runCheck.stages && !(stageId in runCheck.stages)) {
-        throw new Error(`Unknown stageId "${stageId}". Valid stages: ${Object.keys(runCheck.stages).join(', ')}`);
-      }
+  if (currentRun && currentRun.stages && !(stageId in currentRun.stages)) {
+    throw new Error(`Unknown stageId "${stageId}". Valid stages: ${Object.keys(currentRun.stages).join(', ')}`);
+  }
+
+  // 当标记为 done 时，验证所有 required gates 已通过
+  if (status === 'done') {
+    const { valid, failures } = validateGates({ cwd, stageId, run: currentRun });
+    if (!valid) {
+      throw new Error(
+        `Cannot mark "${stageId}" as done: ${failures.join('; ')}`
+      );
     }
   }
 
@@ -821,6 +897,7 @@ module.exports = {
   updateRun,
   collectTrackedFiles,
   fingerprintStageArtifacts,
+  validateGates,
   markStage,
   setStageStatus,
   fingerprintFiles,

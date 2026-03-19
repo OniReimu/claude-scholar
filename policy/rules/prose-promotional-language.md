@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: assisted
 lint_patterns:
   - pattern: "\\b(exciting|remarkable|revolutionary|groundbreaking|dramatically|game-changing|cutting-edge|unprecedented|transformative)\\b"
     mode: match

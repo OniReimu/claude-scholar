@@ -12,6 +12,8 @@ check_kind: llm_style
 enforcement: doc
 params: {min_paragraphs: 2}
 conflicts_with: []
+constraint_type: guidance
+autofix: none
 ---
 
 ## Requirement

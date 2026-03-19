@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: none
 lint_patterns:
   - pattern: "\\b[Dd]espite (these|its|their|such) (challenges|limitations|drawbacks|shortcomings)"
     mode: match

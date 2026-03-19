@@ -12,6 +12,8 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
+constraint_type: guardrail
+autofix: none
 lint_patterns:
   - pattern: "\\?\\s+(A |An |The |It |This |That |One |Not |Yes|No|Devastating|Significant|Simple)"
     mode: match

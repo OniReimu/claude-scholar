@@ -19,6 +19,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
 > 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（18 条禁止模式）。
 
 | Rule ID | 摘要 |
 |---------|------|
