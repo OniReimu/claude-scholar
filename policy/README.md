@@ -171,6 +171,7 @@ SoK 规则集合（语义规则）：
 | LATEX.VAR.LONG_TOKEN_USE_TEXT | latex-var-long-token-use-text | core | warn | false | doc | guidance | none |
 | LATEX.NOTATION_CONSISTENCY | latex-notation-consistency | core | error | true | doc | guidance | none |
 | REF.CROSS_REFERENCE_STYLE | ref-cross-reference-style | core | warn | false | doc | guidance | none |
+| REF.WOVEN_CROSS_REFERENCE | ref-woven-cross-reference | core | warn | false | doc | guardrail | assisted |
 | PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | false | lint_script | guidance | none |
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc | guidance | none |
 | CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script | guidance | none |
