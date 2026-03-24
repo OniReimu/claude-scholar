@@ -20,5 +20,6 @@
 - **NO colon-numbered lists**: "we: (1)...(2)...(3)..." → use `enumerate` or prose
 - **NO despite-dismissal**: "Despite challenges, X continues to thrive" → analyze the challenge
 - **NO superficial -ing suffixes**: trailing ", enabling/ensuring/providing..." → be specific
+- **NO dangling cross-references**: "Fig.~\ref{} illustrates X." → weave ref into analytical sentence; delete `\ref{}` and check if claim remains
 - **Sentence length**: max 35 words per sentence
 - **LaTeX**: `\begin{equation}` not `$$`; `\toprule/\midrule/\bottomrule` not `\hline`; BibTeX keys: `lastname_year_word` format
