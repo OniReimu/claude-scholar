@@ -1,11 +1,11 @@
 /**
  * Section Checklist for Paper Writing
  *
- * 11-point verification checklist per section type.
- * Used before advancing to Phase 3 (full lint integration).
+ * 19-point verification checklist per section type (Phase 3).
+ * Combines structural checks (1-11) with policy rule integration (12-19).
  *
- * Phase 2 implementation: structure-focused, rule-based
- * Phase 3+ : expand with policy lint integration
+ * Phase 2: 11-point checklist
+ * Phase 3: expanded to 19 points with LaTeX-aware detection and policy rules
  *
  * Checklist items:
  * 1. Structure: proper heading hierarchy
@@ -14,11 +14,19 @@
  * 4. Equations: equations explained
  * 5. Paragraphs: reasonable length (not too long)
  * 6. Clarity: no vague statements
- * 7. Transitions: smooth between paragraphs
+ * 7. Transitions: smooth between paragraphs (LaTeX-aware)
  * 8. Evidence: claims supported
  * 9. Consistency: terminology consistent
  * 10. Prose: quality checks (from instant-feedback)
  * 11. Completeness: minimum length/paragraph count
+ * 12. Promotional Language: no hype (policy rule)
+ * 13. Copula Dodge: avoid "serves as", "marks a" (policy rule)
+ * 14. Superficial -ing Suffix: avoid ", highlighting", ", emphasizing" (policy rule)
+ * 15. Unicode Arrows: no mathematical arrows in prose (policy rule)
+ * 16. Colon List Overuse: avoid ": (1)", ": (i)" format (policy rule)
+ * 17. Despite Dismissal: avoid "Despite these challenges" (policy rule)
+ * 18. Vague Attributions: avoid "Experts argue", "Industry reports" (policy rule)
+ * 19. Section Count: max 6 main sections (policy rule)
  */
 
 'use strict';
