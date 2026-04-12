@@ -43,11 +43,13 @@ Generate publication-quality conceptual figures for academic papers using [AutoF
 4. **Outdated-skill detection:** if the agent shows a prompt like “needs `GOOGLE_API_KEY` or `OPENAI_API_KEY`”, treat it as an outdated plugin cache and continue with this skill's AutoFigure-Edit command path.
 5. **No title in generated image:** never add a top title/heading text inside the generated figure; use paper caption instead. <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 
-## 5-Step Workflow
+## Multi-Agent Workflow
 
-### Step 1: Analyze — Extract Method Description
+**All subagents MUST use `model: opus` (Claude Opus 4.6).** Haiku is insufficient for complex protocol/architecture understanding.
 
-Read the user's paper sections (method, system model, architecture) and extract a clear textual description of the system or method. Focus on:
+### Step 1: Analyze — Planner Subagent
+
+Spawn a **Planner subagent** (Opus, high thinking) to read the user's paper sections (method, system model, architecture) and extract a structured method description. The subagent should focus on:
 
 - **Components**: Named modules, blocks, or entities (3-8 recommended)
 - **Relationships**: Data flow, connections, interactions between components
@@ -70,6 +72,17 @@ Present the extracted structure to the user for confirmation before proceeding.
 | `threat-model` | Security papers: attacker/defender/entities |
 | `comparison` | Side-by-side: ours vs baseline |
 | `architecture` | Detailed neural network / system architecture |
+
+### Step 1.5: Critic — Review Method Description
+
+Spawn a **Critic subagent** (Opus, high thinking) to review the Planner's output. The Critic checks:
+
+- **Protocol correctness**: Are message flows accurate? (e.g., unicast vs broadcast, who aggregates)
+- **Completeness**: Are all components, certificates, and phases represented?
+- **Design logic**: Are there conflicting visual dimensions? (e.g., two time axes)
+- **Consistency**: Do colors, labels, and annotations match across the diagram?
+
+If the Critic finds issues, it produces a corrected `method.txt`. If no issues, proceed with the Planner's version.
 
 ### Step 2: Prepare — Write Method Text and Select Style
 
@@ -122,8 +135,9 @@ bash skills/paper-figure-generator/scripts/generate.sh \
 - `--output_dir <path>` — Output directory (required)
 - `--use_reference_image --reference_image_path <path>` — Enable style transfer with reference image
 - `--image_model <name>` — Override image generation model
-- `--svg_model <name>` — Override SVG generation model
+- `--svg_model <name>` — Override SVG generation model (note: `google/gemini-3-pro-preview` may 404; use `google/gemini-2.5-pro` as fallback)
 - `--sam_backend <local|fal|roboflow>` — Override SAM3 backend (default: auto-detected from env)
+- `--sam_prompt <prompts>` — Comma-separated SAM3 detection prompts (default: `icon,robot,animal,person`). **Use Stylist recommendations — see Step 4.5.**
 - `--optimize_iterations <n>` — SVG refinement iterations (0 to disable)
 - `--merge_threshold <n>` — Region merging threshold (0 to disable)
 
@@ -142,6 +156,43 @@ After generation, display the output paths and proceed to Step 4.6 for optimizat
 If Step 4 fails:
 - First diagnose with `bash skills/paper-figure-generator/scripts/doctor.sh`
 - Keep AutoFigure-Edit as default; only switch to legacy Gemini/OpenAI flow when the user explicitly asks for fallback
+
+### Step 4.5: Stylist — SAM Parameter Selection (Auto)
+
+**If Step 4 completes but SAM3 detects 0 icons**, the default prompts (`icon,robot,animal,person`) don't match the figure style. Run the Stylist to fix this.
+
+**Stylist subagent** (Opus, high thinking) reads `figures/{topic-slug}/figure.png` and recommends:
+
+1. **`sam_prompt`** — detection prompts matching the figure's visual elements:
+   | Figure Style | Recommended Prompts |
+   |-------------|-------------------|
+   | System overview (servers, databases, users) | `icon,robot,person` (default) |
+   | Message sequence / swimlane diagram | `rectangle,box` |
+   | Pipeline / flow diagram | `rectangle,box,arrow` |
+   | Architecture with icons | `icon,rectangle,box` |
+
+2. **`min_score`** — confidence threshold to filter noise:
+   - Figures with many small elements: `0.5` (permissive)
+   - Figures with few large blocks: `0.6–0.7` (strict, avoids background detection)
+
+3. **`merge_threshold`** — overlap merge threshold:
+   - Dense diagrams: `0.7` (aggressive merge)
+   - Sparse diagrams: `0.9` (default, minimal merge)
+
+Then re-run SAM3 + remaining steps with Stylist's parameters:
+
+```bash
+# Re-run from Step 2 onward with Stylist-recommended params
+AUTOFIGURE_PROVIDER=openrouter \
+bash skills/paper-figure-generator/scripts/generate.sh \
+  --method_file figures/{topic-slug}/method.txt \
+  --output_dir figures/{topic-slug} \
+  --sam_prompt "{stylist_recommended_prompts}" \
+  --svg_model "google/gemini-2.5-pro" \
+  --optimize_iterations 0
+```
+
+**Skip condition:** If Step 4 already detected icons successfully (>0), skip Stylist and proceed to Step 4.6.
 
 ### Step 4.6: Optimize — Claude Code SVG Refinement (No API Key Required)
 
