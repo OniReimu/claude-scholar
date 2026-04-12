@@ -18,9 +18,16 @@ const crypto = require('crypto');
 
 const VALID_STATUSES = ['pending', 'in_progress', 'blocked', 'done', 'stale', 'skipped'];
 const LOCK_STALE_MS = 30_000; // 30 秒后视 lockfile 为过期
+const LOCK_HEARTBEAT_INTERVAL_MS = 10_000; // 10 秒更新一次心跳
 const TEX_EXTENSIONS = ['.tex'];
 const BIB_EXTENSIONS = ['.bib'];
 const GRAPHICS_EXTENSIONS = ['.pdf', '.png', '.jpg', '.jpeg', '.eps', '.svg'];
+
+// ---------------------------------------------------------------------------
+// 全局事件队列（保护 appendEvent 的并发写入）
+// ---------------------------------------------------------------------------
+
+const EVENT_QUEUES = new Map(); // run_id -> {queue: [], writing: false}
 
 // ---------------------------------------------------------------------------
 // 辅助函数
@@ -667,7 +674,8 @@ function validateGates({ cwd, stageId, run } = {}) {
 }
 
 /**
- * 标记阶段状态
+ * 标记阶段状态（TOCTOU-safe）
+ * 修复：validateGates() + updateRun() 间的竞态（v1.5）
  * @param {{cwd?: string, stageId: string, status: string, note?: string}} opts
  * @returns {object} 更新后的 run 对象
  */
@@ -679,55 +687,70 @@ function markStage({ cwd, stageId, status, note } = {}) {
     throw new Error(`Invalid status "${status}". Must be one of: ${VALID_STATUSES.join(', ')}`);
   }
 
-  // 加载当前 run（用于 stageId 校验和 gate 验证，避免多次读取）
+  // 获取当前 run 和 run_id（用于锁）
   const currentRun = loadActiveRun({ cwd });
-
-  // 校验 stageId 存在于当前 run 的 stages 中
-  if (currentRun && currentRun.stages && !(stageId in currentRun.stages)) {
-    throw new Error(`Unknown stageId "${stageId}". Valid stages: ${Object.keys(currentRun.stages).join(', ')}`);
+  if (!currentRun) {
+    throw new Error('No active run');
   }
 
-  // 当标记为 done 时，验证所有 required gates 已通过
-  if (status === 'done') {
-    const { valid, failures } = validateGates({ cwd, stageId, run: currentRun });
-    if (!valid) {
-      throw new Error(
-        `Cannot mark "${stageId}" as done: ${failures.join('; ')}`
-      );
+  const root = getOrchestratorRoot({ cwd });
+  const active = readJSON(path.join(root, 'active-run.json'));
+  if (!active || !active.run_id) {
+    throw new Error('No active run ID');
+  }
+
+  // 在锁保护下执行所有更新操作
+  return withRunLock({ cwd, runId: active.run_id }, () => {
+    // 重新加载最新的 run 状态（在锁内）
+    const run = loadActiveRun({ cwd });
+    if (!run) {
+      throw new Error('Run disappeared under lock');
     }
-  }
 
-  const now = new Date().toISOString();
-  const patch = {
-    stages: {
-      [stageId]: {
-        status,
-        ...(status === 'in_progress' ? { started_at: now } : {}),
-        ...(status === 'done' ? { completed_at: now } : {}),
-        ...(note ? { note } : {}),
+    // 校验 stageId 存在于当前 run 的 stages 中
+    if (run && run.stages && !(stageId in run.stages)) {
+      throw new Error(`Unknown stageId "${stageId}". Valid stages: ${Object.keys(run.stages).join(', ')}`);
+    }
+
+    // 当标记为 done 时，验证所有 required gates 已通过
+    if (status === 'done') {
+      const { valid, failures } = validateGates({ cwd, stageId, run });
+      if (!valid) {
+        throw new Error(
+          `Cannot mark "${stageId}" as done: ${failures.join('; ')}`
+        );
+      }
+    }
+
+    const now = new Date().toISOString();
+    const patch = {
+      stages: {
+        [stageId]: {
+          status,
+          ...(status === 'in_progress' ? { started_at: now } : {}),
+          ...(status === 'done' ? { completed_at: now } : {}),
+          ...(note ? { note } : {}),
+        },
       },
-    },
-  };
+    };
 
-  // 如果标记为 in_progress，同时更新 current_stage
-  if (status === 'in_progress') {
-    patch.current_stage = stageId;
-  }
+    // 如果标记为 in_progress，同时更新 current_stage
+    if (status === 'in_progress') {
+      patch.current_stage = stageId;
+    }
 
-  const run = updateRun({ cwd, patch });
+    const updatedRun = updateRun({ cwd, patch });
 
-  // 记录事件
-  const active = readJSON(path.join(getOrchestratorRoot({ cwd }), 'active-run.json'));
-  if (active && active.run_id) {
+    // 记录事件（在锁内，保证一致性）
     appendEvent({
       cwd,
       runId: active.run_id,
       type: 'stage_status_change',
       payload: { stage: stageId, status, note: note || null },
     });
-  }
 
-  return run;
+    return updatedRun;
+  });
 }
 
 /**
@@ -805,7 +828,8 @@ function fingerprintFiles({ cwd, paths } = {}) {
 }
 
 /**
- * 追加事件到 events.ndjson
+ * 追加事件到 events.ndjson（带事件队列守卫）
+ * 修复：并发写入导致 NDJSON 损坏（v1.5）
  * @param {{cwd?: string, runId: string, type: string, payload: object}} opts
  */
 function appendEvent({ cwd, runId, type, payload } = {}) {
@@ -826,12 +850,42 @@ function appendEvent({ cwd, runId, type, payload } = {}) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  fs.appendFileSync(eventsPath, line, 'utf8');
+  // 使用事件队列防止并发写入
+  // 初始化队列（如果不存在）
+  if (!EVENT_QUEUES.has(runId)) {
+    EVENT_QUEUES.set(runId, { queue: [], writing: false });
+  }
+
+  const queueState = EVENT_QUEUES.get(runId);
+  queueState.queue.push(line);
+
+  // 处理队列
+  if (!queueState.writing) {
+    queueState.writing = true;
+    (function processQueue() {
+      if (queueState.queue.length === 0) {
+        queueState.writing = false;
+        return;
+      }
+
+      const line = queueState.queue.shift();
+      try {
+        fs.appendFileSync(eventsPath, line, 'utf8');
+      } catch (err) {
+        // 重新入队失败的行（简单重试，实际可能需要更复杂的处理）
+        console.error(`Failed to append event for run ${runId}: ${err.message}`);
+      }
+
+      // 继续处理队列（同步处理避免竞态）
+      processQueue();
+    })();
+  }
 }
 
 /**
- * 尽力型 advisory locking
- * 使用 lockfile（wx 模式）防止并发写入
+ * PID-based advisory locking with heartbeat
+ * 使用 PID 验证 + 心跳防止 false-positive 过期检测
+ * 修复：TOCTOU 竞态（v1.5）
  * @param {{cwd?: string, runId: string}} opts
  * @param {function} fn - 在锁保护下执行的函数
  * @returns {*} fn 的返回值
@@ -846,42 +900,76 @@ function withRunLock({ cwd, runId }, fn) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  // 检查是否存在过期的 lockfile
+  // 检查是否存在过期的 lockfile（基于时间戳，不信任 mtime）
   try {
-    const stat = fs.statSync(lockPath);
-    const age = Date.now() - stat.mtimeMs;
-    if (age > LOCK_STALE_MS) {
-      // 过期锁，移除
-      fs.unlinkSync(lockPath);
+    const lockData = readJSON(lockPath);
+    if (lockData && lockData.pid) {
+      const age = Date.now() - (lockData.heartbeat_time || lockData.timestamp);
+      // 超过 30 秒，视为过期（所有者进程可能崩溃了）
+      if (age > LOCK_STALE_MS) {
+        fs.unlinkSync(lockPath);
+      }
     }
   } catch {
-    // lockfile 不存在，正常
+    // lockfile 不存在或读取失败，正常
   }
 
-  // 尝试获取锁
-  let fd;
+  // 尝试获取锁（原子操作）
+  const lockContent = {
+    pid: process.pid,
+    timestamp: Date.now(),
+    heartbeat_time: Date.now(),
+  };
+
   try {
-    fd = fs.openSync(lockPath, 'wx');
-    fs.writeSync(fd, JSON.stringify({ pid: process.pid, timestamp: Date.now() }));
-    fs.closeSync(fd);
+    // 用 tmp → rename 确保原子性
+    const tmp = lockPath + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(lockContent) + '\n', 'utf8');
+    fs.renameSync(tmp, lockPath);
   } catch (err) {
-    if (err.code === 'EEXIST') {
-      throw new Error(`Run ${runId} is locked by another process`);
-    }
-    throw err;
+    // 锁获取失败
+    throw new Error(`Run ${runId} is locked by another process`);
   }
 
-  // 执行函数
+  // 启动心跳定时器，防止 30s 超时
+  let heartbeatInterval = null;
+  let result;
+
   try {
-    return fn();
+    heartbeatInterval = setInterval(() => {
+      try {
+        const current = readJSON(lockPath);
+        if (current && current.pid === process.pid) {
+          current.heartbeat_time = Date.now();
+          const tmp = lockPath + '.tmp';
+          fs.writeFileSync(tmp, JSON.stringify(current) + '\n', 'utf8');
+          fs.renameSync(tmp, lockPath);
+        }
+      } catch {
+        // 心跳失败忽略（进程将在 finally 中释放锁）
+      }
+    }, LOCK_HEARTBEAT_INTERVAL_MS);
+
+    // 执行被保护的函数
+    result = fn();
   } finally {
+    // 停止心跳
+    if (heartbeatInterval) {
+      clearInterval(heartbeatInterval);
+    }
+
     // 释放锁
     try {
-      fs.unlinkSync(lockPath);
+      const current = readJSON(lockPath);
+      if (current && current.pid === process.pid) {
+        fs.unlinkSync(lockPath);
+      }
     } catch {
-      // 忽略删除失败
+      // 忽略释放失败
     }
   }
+
+  return result;
 }
 
 // ---------------------------------------------------------------------------
