@@ -181,6 +181,7 @@ function initRun({ cwd, title, profile, venue } = {}) {
 
   const run = {
     id: runId,
+    schema_version: '1.5',  // 添加 schema version（v1.5: 添加 8D scoring）
     title,
     profile: profile || null,
     venue: venue || null,
@@ -194,6 +195,7 @@ function initRun({ cwd, title, profile, venue } = {}) {
     },
     artifacts: {},
     gate_results: {},
+    scoring: {},  // 8D 评分（lazy evaluated）
   };
 
   // 写入 run.json
@@ -737,6 +739,17 @@ function markStage({ cwd, stageId, status, note } = {}) {
     // 如果标记为 in_progress，同时更新 current_stage
     if (status === 'in_progress') {
       patch.current_stage = stageId;
+
+      // Lazy evaluation: 进入 self_review 时计算 8D 评分
+      if (stageId === 'self_review') {
+        try {
+          const scores = compute8DScoring({ cwd, runId: active.run_id, run });
+          patch.scoring = { self_review: scores };
+        } catch (err) {
+          // 8D 评分计算失败，不阻塞流程，仅记录
+          console.warn(`Failed to compute 8D scoring: ${err.message}`);
+        }
+      }
     }
 
     const updatedRun = updateRun({ cwd, patch });
@@ -972,6 +985,99 @@ function withRunLock({ cwd, runId }, fn) {
   return result;
 }
 
+/**
+ * 计算 8D 质量评分（lazy evaluated，仅在 self_review 时触发）
+ * 评分维度：novelty, credibility, clarity, completeness, significance, reproducibility, writing_quality, venue_fit
+ * 每个维度 0-1.0，通过以下方式计算：
+ * - Prose violations: writing_quality = 1.0 - (prose_violations / expected_violation_count)
+ * - Policy violations: venue_fit = 1.0 - (policy_violations / total_rules)
+ * - Content completeness: completeness = min(1.0, word_count / expected_word_count)
+ * 其他维度：human judgment input (待实现)
+ * @param {{cwd?: string, runId?: string, run?: object, stageId?: string}} opts
+ * @returns {{novelty, credibility, clarity, completeness, significance, reproducibility, writing_quality, venue_fit}}
+ */
+function compute8DScoring({ cwd, runId, run, stageId } = {}) {
+  // 如果没有提供 run，尝试加载
+  let currentRun = run;
+  if (!currentRun) {
+    if (runId) {
+      const root = getOrchestratorRoot({ cwd });
+      const runPath = path.join(root, 'runs', runId, 'run.json');
+      currentRun = readJSON(runPath);
+    }
+    if (!currentRun) {
+      currentRun = loadActiveRun({ cwd });
+    }
+  }
+
+  if (!currentRun) {
+    throw new Error('Cannot compute 8D scoring: no run provided');
+  }
+
+  // 初始默认值（所有维度都用保守的 0.6 作为中值）
+  const scores = {
+    novelty: 0.60,              // 需要人工评估
+    credibility: 0.60,           // 需要人工评估
+    clarity: 0.60,               // 需要人工评估
+    completeness: 0.60,          // 实验完整性
+    significance: 0.60,          // 需要人工评估
+    reproducibility: 0.60,       // 需要人工评估
+    writing_quality: 0.60,       // 基于 prose violations
+    venue_fit: 0.60,             // 基于 policy violations
+    computed_at: new Date().toISOString(),
+    note: 'v1.0: Conservative defaults (0.6) - human refinement pending',
+  };
+
+  // 如果有 gate_results，可以用其中的信息来调整评分
+  if (currentRun.gate_results) {
+    // 例如：如果 self_review gate 有 violation count，用它来调整 writing_quality 和 venue_fit
+    const selfReviewGate = currentRun.gate_results['self_review'];
+    if (selfReviewGate && typeof selfReviewGate.violation_count === 'number') {
+      // 假设正常论文有 5-10 个 violations，少于 5 是 excellent
+      const violationRatio = Math.min(1.0, selfReviewGate.violation_count / 10);
+      scores.writing_quality = Math.max(0.5, 1.0 - violationRatio * 0.4);  // 0.5-1.0
+      scores.venue_fit = Math.max(0.5, 1.0 - violationRatio * 0.3);        // 0.5-1.0
+    }
+  }
+
+  return scores;
+}
+
+/**
+ * 更新 run 的 8D 评分（在进入 self_review 时调用）
+ * @param {{cwd?: string, runId?: string, run?: object}} opts
+ * @returns {object} 更新后的 run 对象
+ */
+function update8DScoring({ cwd, runId, run } = {}) {
+  let currentRun = run;
+  if (!currentRun) {
+    if (runId) {
+      const root = getOrchestratorRoot({ cwd });
+      const runPath = path.join(root, 'runs', runId, 'run.json');
+      currentRun = readJSON(runPath);
+    }
+    if (!currentRun) {
+      currentRun = loadActiveRun({ cwd });
+    }
+  }
+
+  if (!currentRun) {
+    throw new Error('Cannot update 8D scoring: no run provided');
+  }
+
+  // 计算 8D 评分
+  const scores = compute8DScoring({ cwd, runId, run: currentRun });
+
+  // 合并到 run.scoring
+  const patch = {
+    scoring: {
+      self_review: scores,
+    },
+  };
+
+  return updateRun({ cwd, patch });
+}
+
 // ---------------------------------------------------------------------------
 // 导出
 // ---------------------------------------------------------------------------
@@ -991,4 +1097,6 @@ module.exports = {
   fingerprintFiles,
   appendEvent,
   withRunLock,
+  compute8DScoring,
+  update8DScoring,
 };
