@@ -117,6 +117,125 @@ function getTodoInfo(cwd) {
   };
 }
 
+
+/**
+ * Resolve repository root when available
+ * @param {string} cwd - Current working directory
+ * @returns {string} Repository root or cwd fallback
+ */
+function getRepoRoot(cwd) {
+  try {
+    return execSync('git rev-parse --show-toplevel', {
+      cwd,
+      encoding: 'utf8',
+      stdio: 'pipe'
+    }).trim();
+  } catch {
+    return cwd;
+  }
+}
+
+/**
+ * Detect whether the current repository is bound to Obsidian project memory
+ * @param {string} cwd - Current working directory
+ * @returns {Object} Binding info
+ */
+function getProjectMemoryBinding(cwd) {
+  const repoRoot = getRepoRoot(cwd);
+  const projectMemoryDir = path.join(repoRoot, '.claude', 'project-memory');
+  const registryPath = path.join(projectMemoryDir, 'registry.yaml');
+
+  if (!fs.existsSync(registryPath)) {
+    return {
+      bound: false,
+      repoRoot,
+      registryPath,
+      projectId: null,
+      status: null,
+      autoSync: false,
+      vaultRoot: null,
+      hubNote: null,
+      memoryPath: null
+    };
+  }
+
+  let registry = null;
+  try {
+    registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+  } catch {
+    registry = null;
+  }
+
+  let project = null;
+  if (registry && registry.projects && typeof registry.projects === 'object') {
+    const projects = Object.values(registry.projects);
+    project = projects.find(item =>
+      Array.isArray(item.repo_roots) &&
+      item.repo_roots.some(root => repoRoot === root || cwd.startsWith(root))
+    ) || projects[0] || null;
+  }
+
+  let memoryPath = null;
+  if (project && project.project_id) {
+    memoryPath = path.join(projectMemoryDir, `${project.project_id}.md`);
+  } else if (fs.existsSync(projectMemoryDir)) {
+    const memoryFiles = fs.readdirSync(projectMemoryDir).filter(name => name.endsWith('.md'));
+    if (memoryFiles.length > 0) {
+      memoryPath = path.join(projectMemoryDir, memoryFiles[0]);
+    }
+  }
+
+  return {
+    bound: true,
+    repoRoot,
+    registryPath,
+    projectId: project ? project.project_id || null : null,
+    status: project ? project.status || null : null,
+    autoSync: Boolean(project && project.auto_sync),
+    vaultRoot: project ? project.vault_root || null : null,
+    hubNote: project ? project.hub_note || null : null,
+    memoryPath
+  };
+}
+
+/**
+ * Heuristically detect whether a directory looks like a research repo
+ * @param {string} cwd - Current working directory
+ * @returns {Object} Detection result
+ */
+function detectResearchProject(cwd) {
+  const repoRoot = getRepoRoot(cwd);
+  const markers = [
+    '.git',
+    'README.md',
+    'docs',
+    'notes',
+    'plan',
+    'results',
+    'outputs',
+    'src',
+    'scripts'
+  ];
+
+  const hits = markers.filter(marker => fs.existsSync(path.join(repoRoot, marker)));
+  const candidate = hits.length >= 3 || (hits.includes('.git') && hits.includes('README.md') && hits.length >= 2);
+
+  return {
+    repoRoot,
+    candidate,
+    markers: hits
+  };
+}
+
+/**
+ * Detect whether a user prompt looks research-related
+ * @param {string} prompt - User prompt
+ * @returns {boolean} Whether the prompt looks research-related
+ */
+function promptLooksResearchRelated(prompt) {
+  return /\b(obsidian|zotero|paper|papers|literature|review|experiment|results?|finding|analysis|research|plan|todo|daily|meeting|writing|draft|proposal|rebuttal|claim|method)\b|文献|实验|结果|研究|计划|待办|知识库|论文|综述|笔记|项目记忆|obsidian|zotero/i.test(prompt);
+}
+
 /**
  * Get Git change details
  * @param {string} cwd - Current working directory
@@ -124,23 +243,45 @@ function getTodoInfo(cwd) {
  */
 function getChangesDetails(cwd) {
   try {
-    const added = execSync('git diff --name-only --diff-filter=A', {
-      cwd,
-      encoding: 'utf8',
-      stdio: 'pipe'
-    }).trim().split('\n').filter(Boolean).length;
+    let added = 0;
+    let modified = 0;
+    let deleted = 0;
 
-    const modified = execSync('git diff --name-only --diff-filter=M', {
-      cwd,
-      encoding: 'utf8',
-      stdio: 'pipe'
-    }).trim().split('\n').filter(Boolean).length;
+    // 解析 name-status 输出，每行格式: "A\tfilename" 或 "M\tfilename"
+    const parseNameStatus = (output) => {
+      for (const line of output.trim().split('\n').filter(Boolean)) {
+        const status = line.charAt(0);
+        if (status === 'A') added++;
+        else if (status === 'M') modified++;
+        else if (status === 'D') deleted++;
+      }
+    };
 
-    const deleted = execSync('git diff --name-only --diff-filter=D', {
+    // 工作区变更（unstaged）
+    const unstaged = execSync('git diff --name-status', {
       cwd,
       encoding: 'utf8',
       stdio: 'pipe'
-    }).trim().split('\n').filter(Boolean).length;
+    });
+    parseNameStatus(unstaged);
+
+    // 暂存区变更（staged）
+    const staged = execSync('git diff --cached --name-status', {
+      cwd,
+      encoding: 'utf8',
+      stdio: 'pipe'
+    });
+    parseNameStatus(staged);
+
+    // 未跟踪文件算作 added
+    const untracked = execSync('git status --porcelain', {
+      cwd,
+      encoding: 'utf8',
+      stdio: 'pipe'
+    });
+    for (const line of untracked.trim().split('\n').filter(Boolean)) {
+      if (line.startsWith('??')) added++;
+    }
 
     return { added, modified, deleted };
   } catch {
@@ -166,13 +307,28 @@ function analyzeChangesByType(cwd) {
     };
   }
 
-  const changes = gitInfo.changes.join('\n');
+  // 逐行匹配文件路径（git status --porcelain 格式: "XY filename"）
+  const files = gitInfo.changes.map(line => line.substring(3).trim());
 
-  const testFiles = (changes.match(/test/gi) || []).length;
-  const docsFiles = (changes.match(/\.(md|txt|rst)$/gi) || []).length;
-  const sqlFiles = (changes.match(/\.sql$/gi) || []).length;
-  const configFiles = (changes.match(/\.(json|yaml|yml|toml|ini|conf)$/gi) || []).length;
-  const serviceFiles = (changes.match(/(service|controller)/gi) || []).length;
+  const testRegex = /(?:^|[\/\\])tests?[\/\\]|[\/\\._]test[_.]|\.test\.|_test\./i;
+  const docsRegex = /\.(md|txt|rst)$/i;
+  const sqlRegex = /\.sql$/i;
+  const configRegex = /\.(json|yaml|yml|toml|ini|conf)$/i;
+  const serviceRegex = /(service|controller)/i;
+
+  let testFiles = 0;
+  let docsFiles = 0;
+  let sqlFiles = 0;
+  let configFiles = 0;
+  let serviceFiles = 0;
+
+  for (const file of files) {
+    if (testRegex.test(file)) testFiles++;
+    if (docsRegex.test(file)) docsFiles++;
+    if (sqlRegex.test(file)) sqlFiles++;
+    if (configRegex.test(file)) configFiles++;
+    if (serviceRegex.test(file)) serviceFiles++;
+  }
 
   return {
     test_files: testFiles,
@@ -189,7 +345,7 @@ function analyzeChangesByType(cwd) {
  * @returns {Object} Temporary file information
  */
 function detectTempFiles(cwd) {
-  const tempFiles = [];
+  const tempFiles = new Set();
   const gitInfo = getGitInfo(cwd);
 
   // Find temp files from Git untracked files
@@ -198,7 +354,7 @@ function detectTempFiles(cwd) {
       if (change.startsWith('??')) {
         const file = change.substring(3).trim();
         if (/plan|draft|tmp|temp|scratch/i.test(file)) {
-          tempFiles.push(file);
+          tempFiles.add(file);
         }
       }
     }
@@ -212,7 +368,7 @@ function detectTempFiles(cwd) {
       try {
         const files = getAllFiles(dirPath);
         for (const file of files) {
-          tempFiles.push(path.relative(cwd, file));
+          tempFiles.add(path.relative(cwd, file));
         }
       } catch {
         // Ignore errors
@@ -221,8 +377,8 @@ function detectTempFiles(cwd) {
   }
 
   return {
-    files: tempFiles,
-    count: tempFiles.length
+    files: Array.from(tempFiles),
+    count: tempFiles.size
   };
 }
 
@@ -419,7 +575,7 @@ function collectLocalSkills(homeDir) {
     .map(d => d.name);
 
   for (const skillName of skillDirs) {
-    const skillFile = path.join(skillsDir, skillName, 'skill.md');
+    const skillFile = path.join(skillsDir, skillName, 'SKILL.md');
     let description = '';
 
     if (fs.existsSync(skillFile)) {
@@ -551,7 +707,7 @@ function checkClaudeMdUpdate(homeDir) {
 
   // Define source file directories to monitor
   const sourceDirs = [
-    { dir: path.join(homeDir, '.claude', 'skills'), pattern: /skill\.md$/, type: 'skill' },
+    { dir: path.join(homeDir, '.claude', 'skills'), pattern: /SKILL\.md$/, type: 'skill' },
     { dir: path.join(homeDir, '.claude', 'commands'), pattern: /\.md$/, type: 'command' },
     { dir: path.join(homeDir, '.claude', 'agents'), pattern: /\.md$/, type: 'agent' },
     { dir: path.join(homeDir, '.claude', 'hooks'), pattern: /\.(js|json)$/, type: 'hook' }
@@ -637,6 +793,10 @@ function createTempFile(prefix = 'claude-temp') {
 module.exports = {
   getGitInfo,
   getTodoInfo,
+  getRepoRoot,
+  getProjectMemoryBinding,
+  detectResearchProject,
+  promptLooksResearchRelated,
   getChangesDetails,
   analyzeChangesByType,
   detectTempFiles,
