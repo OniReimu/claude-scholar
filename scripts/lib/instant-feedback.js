@@ -24,7 +24,8 @@ const path = require('path');
 
 const PROSE_RULES = {
   'PROSE.INTENSIFIERS': {
-    pattern: /\b(very|really|quite|extremely|incredibly|absolutely|definitely)\b/gi,
+    // Aligned with policy/rules: very, extremely, highly, significantly, remarkably, substantially
+    pattern: /\b(very|extremely|highly|significantly|remarkably|substantially)\b/gi,
     message: '删除空洞强调词',
     severity: 'warn',
   },
@@ -34,12 +35,14 @@ const PROSE_RULES = {
     severity: 'error',
   },
   'PROSE.FILLER_PHRASES': {
-    pattern: /\b(as mentioned|in fact|it should be noted|it is worth noting|furthermore|moreover|in addition)\b/gi,
+    // Aligned with policy/rules: expanded list
+    pattern: /\b(as mentioned|in fact|it should be noted|it is worth noting|furthermore|moreover|in addition|in order to|it is important to note|plays a crucial role)\b/gi,
     message: '删除冗余填充短语',
     severity: 'warn',
   },
   'PROSE.VAGUE_QUANTIFIERS': {
-    pattern: /\b(several|many|some|few|a lot of|quite a few)\b/gi,
+    // Aligned with policy/rules: some, many, several, a number of, a wide range of
+    pattern: /\b(some|many|several|a number of|a wide range of|quite a few|a lot of)\b/gi,
     message: '避免模糊量词，使用具体数字',
     severity: 'warn',
   },
@@ -60,7 +63,8 @@ const PROSE_RULES = {
     severity: 'warn',
   },
   'PROSE.INFORMAL_VOCABULARY': {
-    pattern: /\b(stuff|thing|really|basically|essentially|pretty|kind of|sort of|got|gonna|wanna)\b/gi,
+    // Aligned with policy/rules: stuff, thing, basically, gonna, wanna, kind of, sort of
+    pattern: /\b(stuff|thing|basically|gonna|wanna|kind of|sort of)\b/gi,
     message: '禁止口语化用词',
     severity: 'error',
   },
