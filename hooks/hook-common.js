@@ -789,6 +789,104 @@ function createTempFile(prefix = 'claude-temp') {
   return path.join(tmpDir, `${prefix}-${randomSuffix}.tmp`);
 }
 
+/**
+ * Load RIN freshness cache (v1.5)
+ * Optimization: incremental staleness detection instead of O(n) scan
+ * @param {string} rinPath - Path to RIN/ directory
+ * @returns {Object} Cache object: {lastUpdated: timestamp, notes: {name: mtime}}
+ */
+function loadFreshnessCache(rinPath) {
+  const cachePath = path.join(rinPath, '.freshness-cache.json');
+  try {
+    return JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+  } catch {
+    return { lastUpdated: Date.now(), notes: {} };
+  }
+}
+
+/**
+ * Update RIN freshness cache
+ * Compares current mtime of all notes against cached values
+ * Returns only changed notes to avoid O(n) recalculation
+ * @param {string} rinPath - Path to RIN/ directory
+ * @param {Object} oldCache - Previous cache from loadFreshnessCache()
+ * @returns {Object} {cache: updated cache, changedNotes: list of changed note names}
+ */
+function updateFreshnessCache(rinPath, oldCache) {
+  if (!fs.existsSync(rinPath)) {
+    return { cache: oldCache, changedNotes: [] };
+  }
+
+  const changedNotes = [];
+  const newCache = { lastUpdated: Date.now(), notes: {} };
+
+  // Scan subdirectories: facts/, experience/, user/, goals/, sources/, projects/, daily/
+  const subdirs = ['facts', 'experience', 'user', 'goals', 'sources', 'projects', 'daily'];
+
+  for (const subdir of subdirs) {
+    const subdirPath = path.join(rinPath, subdir);
+    if (!fs.existsSync(subdirPath)) continue;
+
+    try {
+      const files = fs.readdirSync(subdirPath);
+      for (const file of files) {
+        if (!file.endsWith('.md') && !file.endsWith('.canvas')) continue;
+
+        const filePath = path.join(subdirPath, file);
+        try {
+          const stat = fs.statSync(filePath);
+          const mtime = stat.mtimeMs;
+          newCache.notes[file] = mtime;
+
+          // Detect changes: file was added, deleted, or modified
+          const oldMtime = oldCache.notes[file];
+          if (oldMtime === undefined || oldMtime !== mtime) {
+            changedNotes.push(file);
+          }
+        } catch {
+          // Ignore stat errors
+        }
+      }
+    } catch {
+      // Ignore read errors
+    }
+  }
+
+  // Write cache atomically
+  const cachePath = path.join(rinPath, '.freshness-cache.json');
+  try {
+    const tmp = cachePath + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(newCache, null, 2) + '\n', 'utf8');
+    fs.renameSync(tmp, cachePath);
+  } catch {
+    // Ignore cache write errors; freshness check will be slower but still correct
+  }
+
+  return { cache: newCache, changedNotes };
+}
+
+/**
+ * Check RIN staleness (notes not updated in 30+ days)
+ * Uses freshness cache to avoid O(n) filesystem scans
+ * @param {string} rinPath - Path to RIN/ directory
+ * @param {number} staleThresholdDays - Days before a note is considered stale (default 30)
+ * @returns {Array} List of stale note names
+ */
+function getRINStaleness(rinPath, staleThresholdDays = 30) {
+  const cache = loadFreshnessCache(rinPath);
+  const staleThresholdMs = staleThresholdDays * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  const staleNotes = [];
+  for (const [file, mtime] of Object.entries(cache.notes)) {
+    if (now - mtime > staleThresholdMs) {
+      staleNotes.push(file);
+    }
+  }
+
+  return staleNotes;
+}
+
 // Export all functions
 module.exports = {
   getGitInfo,
@@ -810,5 +908,8 @@ module.exports = {
   createTempFile,
   getAllFiles,
   checkClaudeMdUpdate,
-  updateSyncTimestamp
+  updateSyncTimestamp,
+  loadFreshnessCache,
+  updateFreshnessCache,
+  getRINStaleness
 };
