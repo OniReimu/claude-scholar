@@ -24,9 +24,9 @@ const path = require('path');
 
 const PROSE_RULES = {
   'PROSE.INTENSIFIERS': {
-    // Aligned with policy/rules: very, extremely, highly, remarkably, substantially
-    // NOTE: 'significantly' excluded — valid in statistical contexts (p < 0.05, statistically significant)
-    pattern: /\b(very|extremely|highly|remarkably|substantially)\b/gi,
+    // Aligned with policy/rules: very, extremely, highly, significantly, remarkably, substantially
+    // NOTE: 'significantly' flagged in all contexts; caller must filter statistical-significance exceptions
+    pattern: /\b(very|extremely|highly|significantly|remarkably|substantially)\b/gi,
     message: '删除空洞强调词',
     severity: 'warn',
   },
