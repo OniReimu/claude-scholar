@@ -52,6 +52,13 @@ const SECTION_TYPES = {
     shouldHaveCitations: true,
     shouldHaveFigures: true,
   },
+  model: {
+    name: 'Formal Model / Framework',
+    minWordCount: 200,
+    minParagraphs: 2,
+    shouldHaveCitations: false,  // Model definitions are author's own formalization
+    shouldHaveFigures: false,
+  },
   experiments: {
     name: 'Experiments & Results',
     minWordCount: 400,
