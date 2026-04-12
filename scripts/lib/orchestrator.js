@@ -740,7 +740,7 @@ function markStage({ cwd, stageId, status, note } = {}) {
     if (status === 'in_progress') {
       patch.current_stage = stageId;
 
-      // Lazy evaluation: 进入 self_review 时计算 8D 评分
+      // Lazy evaluation: 进入 self_review 时计算 8D 评分 + 运行 Section Checklist
       if (stageId === 'self_review') {
         try {
           const scores = compute8DScoring({ cwd, runId: active.run_id, run });
@@ -748,6 +748,16 @@ function markStage({ cwd, stageId, status, note } = {}) {
         } catch (err) {
           // 8D 评分计算失败，不阻塞流程，仅记录
           console.warn(`Failed to compute 8D scoring: ${err.message}`);
+        }
+
+        // Run Section Checklist and populate gate results
+        try {
+          const mainTexPath = run.artifacts && run.artifacts.main_tex_path;
+          if (mainTexPath) {
+            runChecklistGate({ cwd, mainTexPath });
+          }
+        } catch (err) {
+          console.warn(`Failed to run checklist gate: ${err.message}`);
         }
       }
     }
@@ -1078,6 +1088,88 @@ function update8DScoring({ cwd, runId, run } = {}) {
   return updateRun({ cwd, patch });
 }
 
+/**
+ * Run Section Checklist and write results to run.gate_results.self_review
+ * Called when entering self_review stage to populate policy lint gate status
+ *
+ * @param {{cwd, mainTexPath}} opts
+ * @returns {object} checklist summary with coverage, violation_count, guardrail_clean, guidance_clean
+ */
+function runChecklistGate({ cwd, mainTexPath } = {}) {
+  // Validate inputs (codex warning fix)
+  if (!mainTexPath) {
+    console.warn('runChecklistGate: mainTexPath not provided, skipping checklist');
+    return null;
+  }
+
+  // Validate cwd if provided
+  if (cwd && typeof cwd !== 'string') {
+    console.warn('runChecklistGate: cwd must be a string');
+    return null;
+  }
+
+  try {
+    const sectionChecklist = require('./section-checklist.js');
+    const fs = require('fs');
+
+    // 读取全文
+    if (!fs.existsSync(mainTexPath)) {
+      console.warn(`runChecklistGate: file not found ${mainTexPath}`);
+      return null;
+    }
+
+    const texContent = fs.readFileSync(mainTexPath, 'utf8');
+
+    // 运行 checklist（全文模式，section type = 'background'）
+    const result = sectionChecklist.runSectionChecklist({
+      text: texContent,
+      sectionType: 'background',  // 全文用 background 宽松模式
+      title: 'Full Paper Check',
+    });
+
+    if (!result || typeof result.coverage !== 'number') {
+      console.warn('runChecklistGate: checklist returned invalid result');
+      return null;
+    }
+
+    const violationCount = result.totalCount - result.passCount;
+    const guardrailClean = result.coverage >= 0.7;  // 70% 通过率 = guardrail clean
+    const guidanceClean = result.coverage >= 0.5;   // 50% 通过率 = guidance clean
+
+    // 写入 gate_results（带并发锁保护）
+    const run = loadActiveRun({ cwd });
+    if (run && run.id) {
+      // Use lock to protect concurrent gate_results updates (codex warning fix)
+      withRunLock({ cwd, runId: run.id }, () => {
+        updateRun({
+          cwd,
+          patch: {
+            gate_results: {
+              self_review: {
+                violation_count: violationCount,
+                coverage: result.coverage,
+                guardrail_clean: guardrailClean,
+                guidance_clean: guidanceClean,
+                checked_at: new Date().toISOString(),
+              },
+            },
+          },
+        });
+      });
+    }
+
+    return {
+      violationCount,
+      coverage: result.coverage,
+      guardrailClean,
+      guidanceClean,
+    };
+  } catch (err) {
+    console.warn(`runChecklistGate failed: ${err.message}`);
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // 导出
 // ---------------------------------------------------------------------------
@@ -1099,4 +1191,5 @@ module.exports = {
   withRunLock,
   compute8DScoring,
   update8DScoring,
+  runChecklistGate,
 };
