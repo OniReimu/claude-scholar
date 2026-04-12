@@ -340,17 +340,38 @@ function checkConsistency(texContent) {
  * Check 10: Prose Quality (integrated from instant-feedback)
  */
 function checkProseQuality(texContent) {
-  const feedback = instantFeedback.analyzeSubsectionQuality({ text: texContent });
-  const pass = feedback.overall_quality >= 0.60;  // 60% 通过
+  try {
+    const feedback = instantFeedback.analyzeSubsectionQuality({ text: texContent });
 
-  return {
-    item: '10. Prose Quality',
-    pass,
-    details: `Quality score: ${(feedback.overall_quality * 100).toFixed(0)}%`,
-    violations: feedback.violations.prose.length > 0
-      ? feedback.violations.prose.map(v => `${v.rule}: ${v.message}`)
-      : [],
-  };
+    // Defensive check: ensure feedback is valid (codex warning fix)
+    if (!feedback || typeof feedback.overall_quality !== 'number') {
+      return {
+        item: '10. Prose Quality',
+        pass: false,
+        details: 'Could not compute prose quality',
+        violations: ['Prose quality check failed'],
+      };
+    }
+
+    const pass = feedback.overall_quality >= 0.60;  // 60% 通过
+
+    return {
+      item: '10. Prose Quality',
+      pass,
+      details: `Quality score: ${(feedback.overall_quality * 100).toFixed(0)}%`,
+      violations: feedback.violations && feedback.violations.prose && feedback.violations.prose.length > 0
+        ? feedback.violations.prose.map(v => `${v.rule}: ${v.message}`)
+        : [],
+    };
+  } catch (err) {
+    // Fail gracefully if prose check throws
+    return {
+      item: '10. Prose Quality',
+      pass: false,
+      details: `Error: ${err.message}`,
+      violations: ['Prose quality check error'],
+    };
+  }
 }
 
 /**
