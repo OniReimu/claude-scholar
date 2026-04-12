@@ -64,8 +64,8 @@ const PROSE_RULES = {
     severity: 'warn',
   },
   'PROSE.INFORMAL_VOCABULARY': {
-    // Aligned with policy/rules: stuff, thing, basically, gonna, wanna, kind of, sort of
-    pattern: /\b(stuff|thing|basically|gonna|wanna|kind of|sort of)\b/gi,
+    // Aligned with policy/rules: stuff, thing, things, basically, gonna, wanna, kind of, sort of
+    pattern: /\b(stuff|things?|basically|gonna|wanna|kind of|sort of)\b/gi,
     message: '禁止口语化用词',
     severity: 'error',
   },
