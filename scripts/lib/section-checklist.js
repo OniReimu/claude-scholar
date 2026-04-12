@@ -376,11 +376,19 @@ function checkProseQuality(texContent) {
 
 /**
  * Check 11: Completeness (word count, paragraph count)
+ * Fixes: Strip LaTeX commands before counting words to avoid inflated counts
  */
 function checkCompleteness(texContent, sectionType = 'default') {
   const expectedConfig = SECTION_TYPES[sectionType] || { minWordCount: 200, minParagraphs: 1 };
 
-  const wordCount = texContent.split(/\s+/).length;
+  // Strip LaTeX commands and environments before counting words
+  // This avoids counting \cite{xxx} or \textbf{text} as multiple words
+  let cleanedForWordCount = texContent;
+  cleanedForWordCount = cleanedForWordCount.replace(/\\[a-zA-Z]+\{[^}]*\}/g, '');  // Remove \command{...}
+  cleanedForWordCount = cleanedForWordCount.replace(/\\[a-zA-Z]+(\[[^\]]*\])?/g, '');  // Remove \command or \command[...]
+  cleanedForWordCount = cleanedForWordCount.replace(/[{}~^_&]/g, '');  // Remove LaTeX special chars
+
+  const wordCount = cleanedForWordCount.split(/\s+/).filter(w => w.length > 0).length;
   const paragraphs = texContent.split(/\n\n+/).filter(p => p.trim().length > 50).length;
 
   const pass = wordCount >= expectedConfig.minWordCount && paragraphs >= expectedConfig.minParagraphs;
