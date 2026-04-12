@@ -12,9 +12,13 @@ dependencies: [semanticscholar, arxiv, habanero, requests]
 
 Expert-level guidance for writing publication-ready papers targeting **NeurIPS, ICML, ICLR, ACL, AAAI, and COLM**. This skill combines writing philosophy from top researchers (Nanda, Farquhar, Karpathy, Lipton, Steinhardt) with practical tools: LaTeX templates, citation verification APIs, and conference checklists.
 
-## ⚠️ Author Style Guide <!-- style:author-voice -->
+## ⚠️ Author Style Guide <!-- style:author-voice --> (v1.5)
 
 > **MANDATORY**: 写作前必须先读 `policy/style-guide.md`。这是作者的个人写作风格指纹，与 rules 同级权威。不读 style-guide 写出的文字不是作者的风格。
+>
+> **v1.5 Policy Pre-activation**: 进入任何写作步骤（Background、Methods、Results、Conclusion、Polish mode）时，自动激活 policy/style-guide.md 和相关规则集。
+> 不再依赖用户主动引用，而是在工作流中内置强制加载。
+> **If Polish mode**: 额外激活 30 条 PROSE 规则进行 prose 改写。
 
 ## Policy Rules
 
