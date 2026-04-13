@@ -568,9 +568,8 @@ Before writing anything, articulate and verify:
 
 Figure 1 deserves special attention—many readers skip directly to it.
 - Convey core idea, approach, or most compelling result
-- Use vector graphics (PDF/EPS for plots) <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
-- Write captions that stand alone without main text <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
-- **Accessibility**: 8% of men have color vision deficiency — use colorblind-safe palettes (Okabe-Ito or Paul Tol), verify grayscale readability, differentiate lines by style (solid/dashed/dotted) not just color <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
+- Data-driven plots: use `scientific-figure-making` skill (handles vector export, palette, font sizing)
+- Write captions that stand alone without main text
 - **Figure policy (default, mandatory):**
   - **Figure 1 is required** and should be a conceptual system overview generated via `paper-figure-generator` (AutoFigure-Edit, editable SVG -> PDF).
   - **All non-experimental figures default to `paper-figure-generator` + AutoFigure-Edit**, including `system-overview`, `pipeline`, `architecture`, `threat-model`, and `comparison`.
