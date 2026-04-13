@@ -130,8 +130,7 @@ Systematically compare performance across different methods, ensuring fair compa
 ### Step 4: Visualization
 
 > **Implementation delegate**: 绘图代码实现使用 `scientific-figure-making` skill（[figures4papers](https://github.com/ChenLiu-1996/figures4papers)，via `vendor/figures4papers` submodule）。该 skill 提供 `apply_publication_style()`、`make_grouped_bar()`、`make_trend()`、`make_heatmap()` 等 helper 函数和语义化配色系统。
->
-> **权威优先级**: `policy/rules/fig-*` > `scientific-figure-making` defaults。冲突时以 policy rules 为准。
+> 字号、配色、导出格式等细节由 `scientific-figure-making` 的 `FigureStyle` 和 `finalize_figure()` 全权处理。
 
 #### 4a. Plotting Implementation（delegate 给 scientific-figure-making）
 
@@ -140,35 +139,20 @@ Systematically compare performance across different methods, ensuring fair compa
 1. **Read** `skills/scientific-figure-making/references/api.md` — 获取函数签名、PALETTE 定义、FigureStyle 配置
 2. **Read** `skills/scientific-figure-making/references/common-patterns.md` — 获取 layout patterns（ultra-wide 画布、dedicated legend panel、print-safe bars 等）
 3. **使用 helper 函数**生成代码：
-   - `apply_publication_style(style)` — 设置 rcParams
+   - `apply_publication_style(style)` — 设置 rcParams（字号、线宽、配色由 FigureStyle 管理）
    - `make_grouped_bar()` / `make_trend()` / `make_heatmap()` / `make_scatter()` — 生成图表
-   - `finalize_figure(fig, out_path, formats=['pdf'], dpi=300)` — 导出
+   - `finalize_figure(fig, out_path, formats=['pdf'], dpi=300)` — 导出（格式由此函数管理）
 
-**FigureStyle override**（policy 强制覆盖 scientific-figure-making 默认值）:
+#### 4b. 硬约束（仅 2 条 active policy rules）
 
-```python
-from scientific_figure_making import FigureStyle, apply_publication_style
+| Policy Rule | 要求 |
+|-------------|------|
+| `FIG.NO_IN_FIGURE_TITLE` | 禁止 `plt.title()` / `ax.set_title()` / `fig.suptitle()`，标题只放 LaTeX caption |
+| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图。禁止 `plt.subplots(n, m)` 拼多个独立数据图。复合布局用 LaTeX `\subfigure`。Dedicated legend panel（`ax.set_axis_off()` + legend）视为同一语义单元，允许 |
 
-style = FigureStyle(
-    font_size=28,          # override 默认 16 → 满足 FIG.FONT_GE_24PT
-    axes_linewidth=2.5,    # 满足 min_line_width_pt ≥ 2.5
-)
-apply_publication_style(style)
-```
+<!-- policy:FIG.NO_IN_FIGURE_TITLE --> <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
 
-#### 4b. Policy Rules（最终裁判，不可 override）
-
-| Policy Rule | 要求 | 与 scientific-figure-making 的关系 |
-|-------------|------|-----------------------------------|
-| `FIG.FONT_GE_24PT` | 所有文字 ≥ 24pt，线宽 ≥ 2.5pt | **Override**: figures4papers 默认 font_size=16，必须提高到 ≥24 |
-| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用 PDF/EPS | **兼容**: `finalize_figure(formats=['pdf'])` |
-| `FIG.COLORBLIND_SAFE_PALETTE` | Okabe-Ito / Paul Tol | **兼容**: figures4papers 语义 PALETTE 可作为补充，但须验证色盲安全 |
-| `FIG.NO_IN_FIGURE_TITLE` | 禁止 plt.title / suptitle | **兼容**: 双方一致 |
-| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 | **注意**: figures4papers 的 dedicated legend panel pattern 使用 subplots，允许作为"1 figure = legend + data panel"的例外；但不允许将多个独立数据图拼入同一文件 |
-| `FIG.SELF_CONTAINED_CAPTION` | Caption 三要素 | **兼容**: 不影响代码生成 |
-| `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 | **兼容**: 由 `make_trend(uncertainty=...)` 和 bar 的 error bars 支持 |
-
-<!-- policy:FIG.VECTOR_FORMAT_REQUIRED --> <!-- policy:FIG.COLORBLIND_SAFE_PALETTE --> <!-- policy:FIG.NO_IN_FIGURE_TITLE --> <!-- policy:FIG.FONT_GE_24PT --> <!-- policy:FIG.ONE_FILE_ONE_FIGURE --> <!-- policy:FIG.SELF_CONTAINED_CAPTION --> <!-- policy:EXP.ERROR_BARS_REQUIRED -->
+> **其余 fig-* rules**（FONT_GE_24PT、VECTOR_FORMAT_REQUIRED、COLORBLIND_SAFE_PALETTE、SELF_CONTAINED_CAPTION、SYSTEM_OVERVIEW_ASPECT_RATIO）已退役为 `severity: info`，由 `scientific-figure-making` 的 API 和 design conventions 接管。
 
 #### 4c. Visualization Selection Guide
 
