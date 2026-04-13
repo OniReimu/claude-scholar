@@ -112,9 +112,8 @@ Check the completeness and accuracy of citations:
 
 Evaluate the quality and effectiveness of figures and tables:
 - Do all figures/tables have clear captions + labels (no in-figure title text)? <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
-- Are figures in vector format (PDF/EPS)? <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
-- Are colorblind-safe palettes used? <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
-- Are captions self-contained (what, how, takeaway)? <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- Are figures consistent with `scientific-figure-making` style (palette, font sizing, export format)?
+- Are captions self-contained (what, how, takeaway)?
 - Do tables use booktabs format? <!-- policy:TABLE.BOOKTABS_FORMAT -->
 - Do table headers include direction indicators (↑/↓)? <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - Do figures/tables support the text narrative?
