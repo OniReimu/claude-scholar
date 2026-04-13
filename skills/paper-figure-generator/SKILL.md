@@ -280,7 +280,7 @@ Embed in LaTeX:
 
 - This skill generates **conceptual/illustrative diagrams**, not data-driven plots or charts
 - Do not add title text inside the image canvas; keep title/description in caption or surrounding paper text <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
-- For `system-overview` / `pipeline` / `architecture` layouts, keep canvas aspect ratio `width:height >= 2:1` (e.g., 2.1:1, 3:1) <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
+- For `system-overview` / `pipeline` / `architecture` layouts, prefer wide aspect ratios (`width:height >= 2:1`, e.g., 2.1:1, 3:1) for readability
 - For data visualization (bar charts, line plots, heatmaps), use the `results-analysis` skill instead
 - AutoFigure-Edit source code (`autofigure2.py`) is vendored in `scripts/`; only `.venv/` is gitignored
 - Requires LLM provider key (default `OPENROUTER_API_KEY`; optional `BIANXIE_API_KEY`) for Step 4 generation and a SAM3 backend key (`ROBOFLOW_API_KEY` recommended) in `.env`. Step 4.6 SVG refinement uses Claude Code session tokens instead — no additional API key needed
