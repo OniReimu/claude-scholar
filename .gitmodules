@@ -1,3 +1,6 @@
 [submodule ".codex/superpowers-ng"]
 	path = .codex/superpowers-ng
 	url = https://github.com/OniReimu/superpowers-ng.git
+[submodule "vendor/figures4papers"]
+	path = vendor/figures4papers
+	url = https://github.com/ChenLiu-1996/figures4papers.git

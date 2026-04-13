@@ -129,64 +129,79 @@ Systematically compare performance across different methods, ensuring fair compa
 
 ### Step 4: Visualization
 
-**Publication-Quality Visualization Requirements:**
-- Vector format (PDF/EPS) <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
-- Colorblind-friendly palette <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
-- Clear labels and legends
-- Appropriate error bars <!-- policy:EXP.ERROR_BARS_REQUIRED -->
-- No in-figure title text (`plt.title` / `set_title` / `suptitle` forbidden) <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
-- Self-contained captions (what, how, takeaway) <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
-- Readable in black-and-white print
+> **Implementation delegate**: 绘图代码实现使用 `scientific-figure-making` skill（[figures4papers](https://github.com/ChenLiu-1996/figures4papers)，via `vendor/figures4papers` submodule）。该 skill 提供 `apply_publication_style()`、`make_grouped_bar()`、`make_trend()`、`make_heatmap()` 等 helper 函数和语义化配色系统。
+>
+> **权威优先级**: `policy/rules/fig-*` > `scientific-figure-making` defaults。冲突时以 policy rules 为准。
 
-**Visualization Selection Guide** — match data characteristics to the right figure type:
+#### 4a. Plotting Implementation（delegate 给 scientific-figure-making）
+
+生成绘图代码时，**优先使用 `scientific-figure-making` skill 的 API**：
+
+1. **Read** `skills/scientific-figure-making/references/api.md` — 获取函数签名、PALETTE 定义、FigureStyle 配置
+2. **Read** `skills/scientific-figure-making/references/common-patterns.md` — 获取 layout patterns（ultra-wide 画布、dedicated legend panel、print-safe bars 等）
+3. **使用 helper 函数**生成代码：
+   - `apply_publication_style(style)` — 设置 rcParams
+   - `make_grouped_bar()` / `make_trend()` / `make_heatmap()` / `make_scatter()` — 生成图表
+   - `finalize_figure(fig, out_path, formats=['pdf'], dpi=300)` — 导出
+
+**FigureStyle override**（policy 强制覆盖 scientific-figure-making 默认值）:
+
+```python
+from scientific_figure_making import FigureStyle, apply_publication_style
+
+style = FigureStyle(
+    font_size=28,          # override 默认 16 → 满足 FIG.FONT_GE_24PT
+    axes_linewidth=2.5,    # 满足 min_line_width_pt ≥ 2.5
+)
+apply_publication_style(style)
+```
+
+#### 4b. Policy Rules（最终裁判，不可 override）
+
+| Policy Rule | 要求 | 与 scientific-figure-making 的关系 |
+|-------------|------|-----------------------------------|
+| `FIG.FONT_GE_24PT` | 所有文字 ≥ 24pt，线宽 ≥ 2.5pt | **Override**: figures4papers 默认 font_size=16，必须提高到 ≥24 |
+| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用 PDF/EPS | **兼容**: `finalize_figure(formats=['pdf'])` |
+| `FIG.COLORBLIND_SAFE_PALETTE` | Okabe-Ito / Paul Tol | **兼容**: figures4papers 语义 PALETTE 可作为补充，但须验证色盲安全 |
+| `FIG.NO_IN_FIGURE_TITLE` | 禁止 plt.title / suptitle | **兼容**: 双方一致 |
+| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 | **注意**: figures4papers 的 dedicated legend panel pattern 使用 subplots，允许作为"1 figure = legend + data panel"的例外；但不允许将多个独立数据图拼入同一文件 |
+| `FIG.SELF_CONTAINED_CAPTION` | Caption 三要素 | **兼容**: 不影响代码生成 |
+| `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 | **兼容**: 由 `make_trend(uncertainty=...)` 和 bar 的 error bars 支持 |
+
+<!-- policy:FIG.VECTOR_FORMAT_REQUIRED --> <!-- policy:FIG.COLORBLIND_SAFE_PALETTE --> <!-- policy:FIG.NO_IN_FIGURE_TITLE --> <!-- policy:FIG.FONT_GE_24PT --> <!-- policy:FIG.ONE_FILE_ONE_FIGURE --> <!-- policy:FIG.SELF_CONTAINED_CAPTION --> <!-- policy:EXP.ERROR_BARS_REQUIRED -->
+
+#### 4c. Visualization Selection Guide
+
+匹配数据特征选择最合适的图表类型：
 
 | Data Characteristic | Best Visualization | When to Use |
 |--------------------|-------------------|-------------|
-| Trend / convergence over epochs | **Line plot** | Training curves, learning rate schedules, performance over time |
-| Performance comparison across methods | **Bar chart** | Ablation studies, comparing 3-8 methods on 1-3 metrics |
+| Trend / convergence over epochs | **Line plot** (`make_trend`) | Training curves, learning rate schedules, performance over time |
+| Performance comparison across methods | **Bar chart** (`make_grouped_bar`) | Ablation studies, comparing 3-8 methods on 1-3 metrics |
 | Distribution / outliers across runs | **Box plot** or **violin plot** | Showing variance, comparing distributions across groups |
-| Multi-objective tradeoff | **Pareto front** or **scatter matrix** | Accuracy vs latency, accuracy vs cost, multi-dimensional tradeoffs |
+| Multi-objective tradeoff | **Pareto front** or **scatter matrix** (`make_scatter`) | Accuracy vs latency, accuracy vs cost |
 | Component contribution | **Waterfall chart** or **stacked bar** | Ablation showing cumulative contribution of each module |
 | Fairness / group differences | **Grouped box plot** with CI error bars | Comparing performance across demographic groups |
-| Feature importance / attention | **Heatmap** | Attention weights, correlation matrices, confusion matrices |
-| High-dimensional embeddings | **t-SNE / UMAP scatter** | Cluster visualization, representation quality analysis |
-| Sensitivity to hyperparameter | **Line plot with shaded CI** | Sweeping one hyperparameter while showing uncertainty |
+| Feature importance / attention | **Heatmap** (`make_heatmap`) | Attention weights, correlation matrices, confusion matrices |
+| High-dimensional embeddings | **t-SNE / UMAP scatter** (`make_scatter`) | Cluster visualization, representation quality analysis |
+| Sensitivity to hyperparameter | **Line plot with shaded CI** (`make_trend`) | Sweeping one hyperparameter while showing uncertainty |
 
 **When to use figures vs tables:**
 - **Figures (Python plots)**: Data is sparse, need to show trends/distributions/relationships, fewer than ~20 data points per comparison, spatial encoding adds meaning
 - **Tables (`booktabs` + `\resizebox`)**: Dense numerical results, many metrics (5+) AND/OR many baselines (5+), readers need exact numbers, double-column (`table*`) for large comparison matrices <!-- policy:TABLE.BOOKTABS_FORMAT --> <!-- policy:TABLE.DIRECTION_INDICATORS -->
 
-**Figure quality reference**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) for publication-ready Python plotting — consistent style, proper font sizes, colorblind-safe palettes (Okabe-Ito or Paul Tol), no chart junk. Always save as PDF vector format.
+#### 4d. Layout Patterns（from scientific-figure-making）
 
-**CRITICAL — Font size and line width** (common mistake: too small after scaling):
+参考 `skills/scientific-figure-making/references/common-patterns.md`，核心 patterns：
 
-```python
-# 在每个绘图脚本开头设置，确保缩放到论文列宽后仍可读
-plt.rcParams.update({
-    'font.size': 28,           # 全局默认
-    'axes.labelsize': 30,      # x/y 轴标签
-    'xtick.labelsize': 26,     # 刻度标签
-    'ytick.labelsize': 26,
-    'legend.fontsize': 26,     # 图例
-    'lines.linewidth': 3.0,    # 线宽
-    'lines.markersize': 10,    # 标记点
-    'axes.linewidth': 2.0,     # 坐标轴线宽
-})
-```
+1. **Ultra-wide 画布** — `figsize=(45, 12)`, 宽高比 3-4:1，避免标签拥挤
+2. **Dedicated legend panel** — 独立 subplot 放图例，数据区域保持干净
+3. **No x-tick labels** — 用 legend 代替 x 轴标签（当 x 轴是 method/condition 时）
+4. **Dynamic Y-axis** — `data.min() - margin` to `data.max() + margin`，突出差异
+5. **Hatching + edge** — `edgecolor='black'` + hatch patterns，保证灰度可读
+6. **Semantic color** — 蓝=ours, 绿=improvement, 红=baseline, 灰=neutral
 
-**所有文字必须 ≥ 24pt**（源文件中的 matplotlib pt 值，非打印尺寸）。 <!-- policy:FIG.FONT_GE_24PT -->
-
-**Accessibility requirements:**
-- Use **colorblind-safe palettes**: Okabe-Ito (8 colors) or Paul Tol (up to 12 colors) <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
-- Verify **grayscale readability** (8% of men have color vision deficiency)
-- Differentiate lines by **style** (solid/dashed/dotted), not just color
-- Save as **PDF vector format**: `plt.savefig('fig.pdf', bbox_inches='tight')` <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
-- **1 file = 1 figure**: Do NOT use `plt.subplots()` to combine multiple plots. Each plot is a separate file. Composite layouts are handled in LaTeX via `\subfigure`. <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
-- If multiple plots share a legend, save the legend as a separate image file
-- Source font size ≥ 24pt, line width ≥ 2.5pt
-- Put title semantics in caption/text, not inside the figure canvas <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
-
-See `references/visualization-best-practices.md` for additional details.
+See `references/visualization-best-practices.md` and `skills/scientific-figure-making/references/design-theory.md` for additional details.
 
 ### Step 5: Writing the Results Section
 
