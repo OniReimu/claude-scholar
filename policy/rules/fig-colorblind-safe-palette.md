@@ -1,7 +1,7 @@
 ---
 id: FIG.COLORBLIND_SAFE_PALETTE
 slug: fig-colorblind-safe-palette
-severity: warn
+severity: info
 locked: false
 layer: core
 artifacts: [figure, code]
@@ -14,7 +14,13 @@ params: {}
 conflicts_with: []
 constraint_type: guidance
 autofix: none
+deprecated_by: scientific-figure-making
 ---
+
+> **⚠️ Deprecated**: 本规则已由 `scientific-figure-making` skill 的语义化 PALETTE 接管。
+> PALETTE 提供蓝=proposed method、绿=improvement、红=baseline、灰=neutral 的语义配色，
+> 同时通过 hatching + edge 保证灰度可读。详见 `skills/scientific-figure-making/references/api.md`。
+> 保留本文件作为历史参考。
 
 ## Requirement
 
