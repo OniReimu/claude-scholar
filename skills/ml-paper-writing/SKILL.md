@@ -1857,15 +1857,12 @@ Baseline & 85.2 & 45ms \\
 
 ### Figures
 
-- **Vector graphics** (PDF, EPS) for all plots and diagrams <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
-- **Raster** (PNG 600 DPI) only for photographs
-- Use **colorblind-safe palettes** (Okabe-Ito or Paul Tol) <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
-- Verify **grayscale readability** (8% of men have color vision deficiency)
 - **No title inside figure**—the caption serves this function <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
-- **Self-contained captions**—reader should understand without main text <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- **1 file = 1 figure**—composite layouts via LaTeX `\subfigure` <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
+- Style, palette, font sizing, export format: handled by `scientific-figure-making` skill
 
 **Figure type distinction:**
-- **Data-driven plots** (bar charts, line plots, heatmaps, scatter plots): use `results-analysis` skill with matplotlib/seaborn
+- **Data-driven plots** (bar charts, line plots, heatmaps, scatter plots): use `scientific-figure-making` skill (`apply_publication_style` + helper functions)
 - **Conceptual diagrams** (system overviews, pipelines, architectures, threat models, comparisons): use `paper-figure-generator` skill with AutoFigure-Edit (outputs editable SVG)
 
 ---
