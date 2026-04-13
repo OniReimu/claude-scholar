@@ -575,7 +575,7 @@ Figure 1 deserves special attention—many readers skip directly to it.
   - **All non-experimental figures default to `paper-figure-generator` + AutoFigure-Edit**, including `system-overview`, `pipeline`, `architecture`, `threat-model`, and `comparison`.
   - **Experimental figures remain separate** (metrics curves/bars/scatter, ablation plots, runtime/accuracy tradeoffs) and should be produced in Step 8 with plotting workflow.
 - **MANDATORY for conceptual diagrams** (system overviews, pipelines, architectures): **activate `paper-figure-generator` skill NOW** to generate editable SVG figures via AutoFigure-Edit.
-  - For `system-overview` / `pipeline` / `architecture` outputs, keep aspect ratio `width:height >= 2:1` (e.g., 2.1:1, 3:1), avoid near-square layouts <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
+  - For `system-overview` / `pipeline` / `architecture` outputs, prefer wide aspect ratios (≥ 2:1) for readability
   - Recommended workflow: write `figures/{slug}/brief.md` (see `paper-figure-generator/references/figure-brief.md`) → write `figures/{slug}/method.txt` → run `bash skills/paper-figure-generator/scripts/doctor.sh` → run `bash skills/paper-figure-generator/scripts/generate.sh ...` → run `bash skills/paper-figure-generator/scripts/svg-to-pdf.sh ...`
   - Keep `figures/{slug}/run.json` for reproducibility
   - Do NOT skip this step — Figure 1 is critical for reviewer first impressions.
