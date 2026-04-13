@@ -1,7 +1,7 @@
 ---
 id: FIG.FONT_GE_24PT
 slug: fig-font-ge-24pt
-severity: error
+severity: info
 locked: false
 layer: core
 artifacts: [figure]
@@ -14,7 +14,12 @@ params: {min_font_pt: 24, min_line_width_pt: 2.5}
 conflicts_with: []
 constraint_type: guidance
 autofix: none
+deprecated_by: scientific-figure-making
 ---
+
+> **⚠️ Deprecated**: 本规则已由 `scientific-figure-making` skill 的 `FigureStyle` 接管。
+> `FigureStyle` 按图表类型自适应字号（大面板 24pt、紧凑图 15-16pt），比固定阈值更灵活。
+> 保留本文件作为历史参考。
 
 ## Requirement
 
