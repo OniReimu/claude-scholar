@@ -2,6 +2,13 @@
 
 论文级可视化的最佳实践指南。
 
+> **Implementation**: 绘图代码实现优先使用 `scientific-figure-making` skill（`skills/scientific-figure-making/`）。
+> 该 skill 提供标准化 API（`apply_publication_style`、`make_grouped_bar`、`make_trend`、`make_heatmap` 等），
+> 详见 `skills/scientific-figure-making/references/api.md`。
+>
+> 本文档定义**质量标准和约束**，`scientific-figure-making` 提供**实现工具**。
+> 冲突时以 `policy/rules/fig-*` 为最终权威。
+
 ## 核心原则
 
 1. **清晰性** - 信息传达清晰，无歧义
