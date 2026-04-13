@@ -184,11 +184,7 @@ Paper Quality Checklist:
 - [ ] BibTeX key format is consistent <!-- policy:BIBTEX.CONSISTENT_CITATION_KEY_FORMAT -->
 - [ ] Cross-references use correct prefix: Fig.~\ref, Table~\ref, \S\ref, \eqref, \textbf{Appendix~\ref}, Algorithm~\ref, Listing~\ref <!-- policy:REF.CROSS_REFERENCE_STYLE -->
 - [ ] Conclusion is a single dense paragraph (no subsections) <!-- policy:PAPER.CONCLUSION_SINGLE_PARAGRAPH -->
-- [ ] Figure source font ≥ 24pt (readable after LaTeX scaling) <!-- policy:FIG.FONT_GE_24PT -->
-- [ ] Figures use vector format (PDF/EPS) <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
-- [ ] System overview/pipeline/architecture diagrams use aspect ratio ≥ 2:1 (e.g., 2.1:1, 3:1) <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
-- [ ] Colorblind-safe palettes used <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
-- [ ] Figure captions are self-contained <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- [ ] Figures follow `scientific-figure-making` conventions (font sizing, vector export, palette, captions)
 - [ ] Figure 1 exists and is a conceptual system overview (not an experiment plot)
 - [ ] Non-experimental figures (system/pipeline/architecture/threat-model/comparison) are generated via `paper-figure-generator` (AutoFigure-Edit) by default
 - [ ] Additional non-experimental figures are added when Figure 1 cannot clearly show key mechanism/protocol details
