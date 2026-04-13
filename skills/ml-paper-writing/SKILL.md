@@ -928,7 +928,7 @@ fig, axes = plt.subplots(1, 4, figsize=(16, 3))  # ← NEVER do this
 
 **Shared legend**: If multiple sub-figures share the same legend, save the legend as a separate image file and include it above the subfigures in LaTeX (see subfigure template in Step 9).
 
-**Figure quality**: Follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — consistent style, **font size ≥ 24pt in source** (critical: smaller fonts become unreadable after scaling to column width), colorblind-safe palettes (Okabe-Ito or Paul Tol), line width ≥ 2.5pt, PDF vector format. See `results-analysis` skill for recommended `plt.rcParams` template. <!-- policy:FIG.FONT_GE_24PT --> <!-- policy:FIG.VECTOR_FORMAT_REQUIRED --> <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
+**Figure quality**: Use `scientific-figure-making` skill（`apply_publication_style()` + `finalize_figure()`）— handles font sizing, palette, line width, and PDF vector export. See `skills/scientific-figure-making/references/api.md` for the full API.
 
 > **MANDATORY OUTPUT for Step 8:**
 > - [ ] Experiment plan document (confirmed by user in 8a)
