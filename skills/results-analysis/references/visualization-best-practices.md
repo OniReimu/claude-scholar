@@ -2,313 +2,47 @@
 
 论文级可视化的最佳实践指南。
 
-> **Implementation**: 绘图代码实现优先使用 `scientific-figure-making` skill（`skills/scientific-figure-making/`）。
-> 该 skill 提供标准化 API（`apply_publication_style`、`make_grouped_bar`、`make_trend`、`make_heatmap` 等），
-> 详见 `skills/scientific-figure-making/references/api.md`。
+> **Implementation**: 绘图代码实现由 `scientific-figure-making` skill 全权负责。
+> 本文档仅保留 **active policy rules** 和 **决策指南**，不重复 API / 配色 / 字号等细节。
 >
-> 本文档定义**质量标准和约束**，`scientific-figure-making` 提供**实现工具**。
-> 冲突时以 `policy/rules/fig-*` 为最终权威。
+> 详细参考：
+> - API & PALETTE → `skills/scientific-figure-making/references/api.md`
+> - Design theory → `skills/scientific-figure-making/references/design-theory.md`
+> - Layout patterns → `skills/scientific-figure-making/references/common-patterns.md`
+> - Tutorials → `skills/scientific-figure-making/references/tutorials.md`
 
-## 核心原则
+## Active Policy Rules（仅 2 条）
 
-1. **清晰性** - 信息传达清晰，无歧义
-2. **准确性** - 数据表示准确，不误导
-3. **可访问性** - 色盲友好，黑白打印可读
-4. **专业性** - 符合学术出版标准
+| Rule | 要求 |
+|------|------|
+| `FIG.NO_IN_FIGURE_TITLE` | 禁止 `plt.title()` / `ax.set_title()` / `fig.suptitle()`。标题只放 LaTeX `\caption{}` | <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图。禁止 `plt.subplots(n, m)` 拼多个独立图。复合布局用 LaTeX `\subfigure` | <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
 
-## 图表格式要求
+其余 fig-* rules（FONT_GE_24PT、VECTOR_FORMAT_REQUIRED、COLORBLIND_SAFE_PALETTE、SELF_CONTAINED_CAPTION、SYSTEM_OVERVIEW_ASPECT_RATIO）已退役为 `severity: info`，由 `scientific-figure-making` 的 FigureStyle / finalize_figure / PALETTE 接管。
 
-### 矢量图 vs 位图
+## 图表 vs 表格选择
 
-| 格式 | 类型 | 使用场景 | 质量 |
-|------|------|----------|------|
-| PDF/EPS | 矢量图 | 图表、曲线、示意图 | ✅ 推荐 |
-| SVG | 矢量图 | 网页展示 | ✅ 可用 |
-| PNG | 位图 | 照片、截图 | ⚠️ 需高分辨率（≥600 DPI） |
-| JPG | 位图 | 照片 | ❌ 避免用于图表 |
-
-**规则**: 所有图表使用矢量图格式（PDF/EPS），照片使用高分辨率位图（PNG ≥600 DPI）。 <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
-
-## 配色方案
-
-### 色盲友好配色
-
-**推荐配色方案**:
-
-#### Okabe-Ito 配色（最常用）
-- 橙色: #E69F00
-- 天蓝: #56B4E9
-- 绿色: #009E73
-- 黄色: #F0E442
-- 蓝色: #0072B2
-- 红色: #D55E00
-- 粉色: #CC79A7
-- 黑色: #000000
-
-#### Paul Tol 配色
-- 适用于定性数据
-- 提供多种配色方案（亮色、柔和、对比）
-
-### 配色原则
-
-1. **最多使用 5-7 种颜色** - 过多颜色难以区分
-2. **避免红绿组合** - 红绿色盲无法区分
-3. **测试黑白打印** - 确保灰度下可读
-4. **使用不同线型** - 配合颜色使用（实线、虚线、点线）
-
-## 图表类型选择
-
-### 折线图 (Line Plot)
-
-**使用场景**: 展示趋势、训练曲线、时间序列
-
-**要点**:
-- 使用误差带（阴影区域）表示标准差/标准误
-- 线宽 2.5-3.0 pt
-- 标记点大小适中（8-12 pt）
-- 网格线透明度 0.3
-
-**示例**: 训练损失曲线、准确率随 epoch 变化
-
-### 柱状图 (Bar Plot)
-
-**使用场景**: 性能对比、消融实验
-
-**要点**:
-- 使用误差条表示不确定性
-- 柱子宽度一致
-- 间距适当（柱宽的 20-30%）
-- 加粗最佳结果的柱子
-
-**示例**: 不同方法的准确率对比
-
-### 箱线图 (Box Plot)
-
-**使用场景**: 展示分布、识别异常值
-
-**要点**:
-- 显示中位数、四分位数、异常值
-- 适合展示多次运行的结果
-- 可与散点图叠加
-
-**示例**: 多次运行的性能分布
-
-### 散点图 (Scatter Plot)
-
-**使用场景**: 展示相关性、聚类效果
-
-**要点**:
-- 点的大小和透明度适当
-- 使用不同形状区分类别
-- 添加趋势线（如需要）
-
-**示例**: 预测值 vs 真实值、特征空间可视化
-
-### 热力图 (Heatmap)
-
-**使用场景**: 混淆矩阵、相关性矩阵、注意力权重
-
-**要点**:
-- 使用顺序配色（单色渐变）或发散配色（双色渐变）
-- 添加数值标注（如空间允许）
-- 色条（colorbar）清晰标注
-
-**示例**: 混淆矩阵、注意力可视化
-
-## 图表元素规范
-
-### 字体大小规范
-
-**重要**: matplotlib 中的字体大小指的是 **源文件中的 pt 值**，不是最终打印尺寸。由于论文图表会被缩放到单栏（~3.5 inches）或双栏（~7 inches）宽度，源文件中的字体必须足够大才能在缩放后保持可读。
-
-**最低要求: 所有文字 ≥ 24pt** <!-- policy:FIG.FONT_GE_24PT -->
-
-| 元素 | 推荐字体大小 | 说明 |
-|------|------------|------|
-| 坐标轴标签 (xlabel/ylabel) | 28-32 pt | 描述变量和单位 |
-| 刻度标签 (tick labels) | 24-28 pt | 数值刻度 |
-| 图例文字 (legend) | 24-28 pt | 曲线/方法名称 |
-| 标注文字 (annotations) | 24-26 pt | 图内标注 |
-| 子图标识 (subplot tags) | 24-28 pt | 如 (a), (b)；仅标识，不写标题 |
-
-**推荐的 matplotlib 全局配置** — 在每个绘图脚本开头设置:
-
-```python
-import matplotlib.pyplot as plt
-
-plt.rcParams.update({
-    'font.size': 28,
-    'axes.labelsize': 30,
-    'xtick.labelsize': 26,
-    'ytick.labelsize': 26,
-    'legend.fontsize': 26,
-    'lines.linewidth': 3.0,
-    'lines.markersize': 10,
-    'axes.linewidth': 2.0,
-    'xtick.major.width': 2.0,
-    'ytick.major.width': 2.0,
-    'xtick.major.size': 8,
-    'ytick.major.size': 8,
-    'font.family': 'sans-serif',
-    'font.sans-serif': ['Arial', 'Helvetica', 'DejaVu Sans'],
-    'mathtext.fontset': 'dejavusans',
-})
-```
-
-### 坐标轴
-
-**X 轴和 Y 轴**:
-- 标签字体大小: 28-32 pt（源文件）
-- 刻度字体大小: 24-28 pt（源文件）
-- 标签清晰描述变量和单位
-- 刻度间距合理
-
-**坐标轴范围**:
-- Y 轴通常从 0 开始（除非有特殊原因）
-- 不要截断坐标轴夸大差异
-- 使用科学计数法表示大数值
-
-### 图例 (Legend)
-
-**位置**: 不遮挡数据，通常放在右上角或外部
-
-**内容**:
-- 简洁描述每条曲线/柱子
-- 字体大小 24-28 pt（源文件）
-- 使用与图中一致的颜色和线型
-
-### 标题和标签
-
-**图标题（强制规则）**: 不在图内添加标题，统一使用 caption 代替。禁止使用 `plt.title()`、`ax.set_title()`、`fig.suptitle()`。 <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
-
-**Caption**:
-- 独立完整，不依赖正文
-- 说明图表内容、实验设置、关键观察
-- 字体大小 9-10 pt
-
-**示例**: "图 1: 不同模型在测试集上的准确率对比。误差条表示 5 次运行的标准差。我们的方法（蓝色）在所有数据集上均优于基线方法。"
+- **Figures（Python plots）**: 数据稀疏、需展示趋势/分布/关系、< 20 个数据点、空间编码有意义
+- **Tables（`booktabs`）**: 密集数值结果、≥5 指标或 ≥5 baseline、读者需精确数值 <!-- policy:TABLE.BOOKTABS_FORMAT -->
 
 ## 误差表示
 
-### 误差条 (Error Bars)
+- 柱状图 → 垂直误差条（SD / SE / CI）
+- 折线图 → 误差带（`alpha=0.2-0.3`）
+- Caption 中必须说明误差类型（SD / SE / 95% CI）
+- 多次运行（≥3-5 runs）报告 <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 
-**类型**:
-- 标准差 (SD): 描述数据变异性
-- 标准误 (SE): 描述均值不确定性
-- 置信区间 (CI): 参数估计范围
+## 常见错误速查
 
-**表示方法**:
-- 柱状图: 垂直误差条
-- 折线图: 误差带（阴影区域）
-
-**必须说明**: 在 caption 中明确说明使用的是哪种误差
-
-### 误差带 (Error Band)
-
-**折线图的误差表示**:
-- 使用半透明阴影区域（alpha=0.2-0.3）
-- 颜色与主线一致
-- 不要使用误差条（会使图表混乱）
-
-## 尺寸和分辨率
-
-### 图表尺寸
-
-**单栏图** (single-column):
-- 宽度: 3.5 inches (约 9 cm)
-- 高度: 2-3 inches
-
-**双栏图** (double-column):
-- 宽度: 7 inches (约 18 cm)
-- 高度: 3-5 inches
-
-**纵横比**: 通常 4:3 或 16:9
-
-### 分辨率
-
-**矢量图**: 无需考虑分辨率
-
-**位图**:
-- 最低: 300 DPI
-- 推荐: 600 DPI
-- 高质量: 1200 DPI
-
-## 常见错误
-
-### 错误 1: 使用位图格式
-
-❌ **错误**: 保存为 PNG/JPG
-✅ **正确**: 保存为 PDF/EPS
-
-### 错误 2: 非色盲友好配色
-
-❌ **错误**: 红色和绿色组合
-✅ **正确**: 使用 Okabe-Ito 配色
-
-### 错误 3: 缺少误差表示
-
-❌ **错误**: 只显示均值
-✅ **正确**: 添加误差条/误差带
-
-### 错误 4: 坐标轴截断
-
-❌ **错误**: Y 轴从 80% 开始（夸大差异）
-✅ **正确**: Y 轴从 0% 开始（或说明原因）
-
-### 错误 5: 图表过于复杂
-
-❌ **错误**: 一张图包含 10+ 条曲线
-✅ **正确**: 拆分为多张图或使用子图
-
-### 错误 6: 字体过小
-
-❌ **错误**: 标签字体 6-12 pt（缩放后无法阅读）
-✅ **正确**: 标签字体 ≥ 24 pt（源文件中），确保缩放到论文列宽后仍可读
-
-## 检查清单
-
-提交前检查：
-
-- [ ] 使用矢量图格式（PDF/EPS） <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
-- [ ] 配色色盲友好（Okabe-Ito 或 Paul Tol） <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
-- [ ] 黑白打印可读（测试过）
-- [ ] 包含误差条/误差带 <!-- policy:EXP.ERROR_BARS_REQUIRED -->
-- [ ] Caption 中说明误差类型
-- [ ] 坐标轴标签清晰（包含单位）
-- [ ] 图例不遮挡数据
-- [ ] 源文件字体大小 ≥ 24 pt（缩放后仍可读） <!-- policy:FIG.FONT_GE_24PT -->
-- [ ] 线宽适当（2.5-3.0 pt）
-- [ ] Caption 独立完整
-
-## 工具推荐
-
-**Python**:
-- matplotlib: 基础绘图
-- seaborn: 统计可视化
-- plotly: 交互式图表
-
-**配色工具**:
-- ColorBrewer: 配色方案选择
-- Coblis: 色盲模拟器
-
-**格式转换**:
-- Inkscape: SVG 编辑和转换
-- Adobe Illustrator: 专业图形编辑
+| 错误 | 正确做法 |
+|------|---------|
+| 图内加标题 | 标题放 `\caption{}` |
+| 多图拼一个文件 | 每图独立文件，LaTeX `\subfigure` 组合 |
+| 只显示均值 | 加误差条/误差带 |
+| Y 轴从 80% 开始 | 从 0 开始或说明原因 |
+| 一张图 10+ 条曲线 | 拆分多图 |
 
 ## 参考资源
 
+- [figures4papers](https://github.com/ChenLiu-1996/figures4papers) — upstream skill source
 - [Ten Simple Rules for Better Figures](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003833)
-- [Okabe-Ito Color Palette](https://jfly.uni-koeln.de/color/)
-- [Paul Tol's Notes on Colour](https://personal.sron.nl/~pault/)
-
-## 总结
-
-论文级可视化的关键：
-
-1. **矢量图格式** - PDF/EPS
-2. **色盲友好** - Okabe-Ito 配色
-3. **误差表示** - 误差条/误差带
-4. **清晰标注** - 坐标轴、图例、caption
-5. **黑白可读** - 测试灰度打印
-
-遵循这些原则可以创建清晰、准确、专业的论文图表。
