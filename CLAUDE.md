@@ -112,12 +112,13 @@ Key files:
 
 ---
 
-## Skills Catalog (35 skills)
+## Skills Catalog (36 skills)
 
-### 🔬 Research & Analysis (5 skills)
+### 🔬 Research & Analysis (6 skills)
 
 - **research-ideation**: Research ideation startup (5W1H, literature review, gap analysis, research question formulation)
-- **results-analysis**: Experiment results analysis (statistical tests, visualization, ablation studies)
+- **results-analysis**: Experiment results analysis (statistical tests, visualization, ablation studies); plotting implementation delegates to `scientific-figure-making`
+- **scientific-figure-making**: Publication-quality matplotlib figures (grouped bars, trends, heatmaps, scatter) with standardized API, semantic palette, and print-safe patterns (upstream: [figures4papers](https://github.com/ChenLiu-1996/figures4papers), via `vendor/figures4papers` submodule)
 - **citation-verification**: Citation verification (multi-layer: format → API → metadata → content)
 - **daily-paper-generator**: Daily paper generator for research tracking
 - **paper-figure-generator**: Academic paper figure generation (system overview, pipeline, architecture diagrams, etc., powered by AutoFigure-Edit, produces editable SVG)
