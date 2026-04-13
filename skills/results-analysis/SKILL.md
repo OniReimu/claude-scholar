@@ -298,17 +298,15 @@ If no active run exists, initialize one with `initRun()`.
 ### Visualization Errors
 
 ❌ **Wrong approach:**
-- Using non-colorblind-friendly palettes <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
-- Y-axis not starting from 0 (exaggerating differences)
-- Missing error bars <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 - Adding chart titles inside figure canvas <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+- Combining multiple independent plots in one file <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
+- Not following `scientific-figure-making` style conventions
 - Overly complex figures
 
 ✅ **Correct approach:**
-- Use Okabe-Ito or Paul Tol palettes <!-- policy:FIG.COLORBLIND_SAFE_PALETTE -->
-- Set reasonable axis ranges
-- Include error bars and confidence intervals <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 - Keep titles in caption/paper text, not in figure canvas <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
+- 1 file = 1 figure, composite via LaTeX `\subfigure` <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
+- Use `apply_publication_style()` + `finalize_figure()` from `scientific-figure-making`
 - Keep figures clean and clear
 
 ### Writing Errors
