@@ -1,7 +1,7 @@
 ---
 id: FIG.SELF_CONTAINED_CAPTION
 slug: fig-self-contained-caption
-severity: warn
+severity: info
 locked: false
 layer: core
 artifacts: [figure, text]
@@ -14,7 +14,11 @@ params: {}
 conflicts_with: []
 constraint_type: guidance
 autofix: none
+deprecated_by: writing-convention
 ---
+
+> **⚠️ Deprecated**: 本规则作为写作层面的 guideline 保留参考，不再作为代码级硬约束检查。
+> Caption 质量属于论文写作范畴，由 `ml-paper-writing` / `paper-self-review` skill 在 review 阶段覆盖。
 
 ## Requirement
 
