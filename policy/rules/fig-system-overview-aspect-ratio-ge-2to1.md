@@ -1,8 +1,8 @@
 ---
 id: FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1
 slug: fig-system-overview-aspect-ratio-ge-2to1
-severity: error
-locked: true
+severity: info
+locked: false
 layer: core
 artifacts: [figure]
 phases: [ideation, writing-system-model, writing-methods, self-review, revision, camera-ready]
@@ -14,7 +14,11 @@ params: {}
 conflicts_with: []
 constraint_type: guidance
 autofix: none
+deprecated_by: paper-figure-generator-internal
 ---
+
+> **⚠️ Deprecated**: 本规则仅适用于 `paper-figure-generator` skill（AutoFigure-Edit 概念图），
+> 不适用于数据驱动的 matplotlib 图表。作为内部参考保留，不再作为通用 policy 规则。
 
 ## Requirement
 
@@ -22,7 +26,7 @@ autofix: none
 
 ## Rationale
 
-系统概览图通常包含多模块与箭头关系，若画布过“高”或接近方形，在双栏论文排版中会导致字体与连线拥挤，信息层次变差。采用至少 2:1 的横向比例可以保持流程方向清晰，提升在缩放后的可读性。
+系统概览图通常包含多模块与箭头关系，若画布过”高”或接近方形，在双栏论文排版中会导致字体与连线拥挤，信息层次变差。采用至少 2:1 的横向比例可以保持流程方向清晰，提升在缩放后的可读性。
 
 ## Check
 
