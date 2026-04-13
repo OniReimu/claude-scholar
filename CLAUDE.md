@@ -79,7 +79,7 @@ Ideation → ML Development → Experiment Analysis → Paper Writing → Self-R
 |-------|-----------|----------|
 | 1. Research Ideation | `research-ideation` skill + `literature-reviewer` agent | `/research-init` |
 | 2. ML Project Development | `architecture-design` skill + `code-reviewer` agent | `/plan`, `/commit`, `/tdd` |
-| 3. Experiment Analysis | `results-analysis` skill + `data-analyst` agent | `/analyze-results` |
+| 3. Experiment Analysis | `results-analysis` skill (delegates plotting to `scientific-figure-making`) + `data-analyst` agent | `/analyze-results` |
 | 4. Paper Writing | `ml-paper-writing` skill + `paper-miner` agent | - |
 | 5. Paper Self-Review | `paper-self-review` skill | - |
 | 6. Submission & Rebuttal | `review-response` skill + `rebuttal-writer` agent | `/rebuttal` |
