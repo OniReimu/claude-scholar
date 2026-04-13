@@ -1,7 +1,7 @@
 ---
 id: FIG.VECTOR_FORMAT_REQUIRED
 slug: fig-vector-format-required
-severity: error
+severity: info
 locked: false
 layer: core
 artifacts: [figure, code]
@@ -18,7 +18,12 @@ lint_patterns:
   - pattern: "\\.savefig\\(['\"].*\\.(png|jpg|jpeg)['\"]"
     mode: match
 lint_targets: "**/*.py"
+deprecated_by: scientific-figure-making
 ---
+
+> **⚠️ Deprecated**: 本规则已由 `scientific-figure-making` skill 的 `finalize_figure()` 接管。
+> `finalize_figure(formats=['pdf'])` 自动处理导出格式，同时可按需生成 PNG 预览。
+> 保留本文件作为历史参考。
 
 ## Requirement
 
