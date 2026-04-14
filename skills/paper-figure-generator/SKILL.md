@@ -276,6 +276,16 @@ Embed in LaTeX:
 \end{figure}
 ```
 
+## Relationship with Other Figure Tools
+
+| 需求 | 工具 |
+|------|------|
+| 概念/示意图（系统概览、架构、pipeline、threat model、对比） | **paper-figure-generator**（本 skill，默认） |
+| 正式图表语法（流程图、时序图、UML、状态机、决策树、DFD、BPMN） | `fireworks-tech-graph` |
+| 数据驱动图表（bar、line、heatmap、scatter） | `scientific-figure-making` / `results-analysis` |
+
+**默认策略**: 所有论文概念图默认走本 skill。如果用户对结果不满意，或图的内容更适合正式图表语法（如需要决策菱形、生命线、状态转移），可将已有的 `figures/{slug}/method.txt` 直接作为 `fireworks-tech-graph` 的输入重新生成。用户也可一开始就指定使用 `fireworks-tech-graph`。
+
 ## Important Notes
 
 - This skill generates **conceptual/illustrative diagrams**, not data-driven plots or charts
