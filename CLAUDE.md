@@ -112,16 +112,17 @@ Key files:
 
 ---
 
-## Skills Catalog (36 skills)
+## Skills Catalog (37 skills)
 
-### 🔬 Research & Analysis (6 skills)
+### 🔬 Research & Analysis (7 skills)
 
 - **research-ideation**: Research ideation startup (5W1H, literature review, gap analysis, research question formulation)
 - **results-analysis**: Experiment results analysis (statistical tests, visualization, ablation studies); plotting implementation delegates to `scientific-figure-making`
 - **scientific-figure-making**: Publication-quality matplotlib figures (grouped bars, trends, heatmaps, scatter) with standardized API, semantic palette, and print-safe patterns (upstream: [figures4papers](https://github.com/ChenLiu-1996/figures4papers), via `vendor/figures4papers` submodule)
+- **fireworks-tech-graph**: Technical diagram generation (flowcharts, sequence diagrams, UML, state machines, decision trees, DFD, BPMN) with 7 visual styles and semantic shape system (upstream: [fireworks-tech-graph](https://github.com/yizhiyanhua-ai/fireworks-tech-graph), via `vendor/fireworks-tech-graph` submodule). 用户可将 `paper-figure-generator` 的 `method.txt` 直接迁移到此 skill
 - **citation-verification**: Citation verification (multi-layer: format → API → metadata → content)
 - **daily-paper-generator**: Daily paper generator for research tracking
-- **paper-figure-generator**: Academic paper figure generation (system overview, pipeline, architecture diagrams, etc., powered by AutoFigure-Edit, produces editable SVG)
+- **paper-figure-generator**: Academic paper figure generation (system overview, pipeline, architecture diagrams, etc., powered by AutoFigure-Edit, produces editable SVG). 论文概念图的默认选择
 
 ### 📝 Paper Writing & Publication (7 skills)
 
