@@ -21,7 +21,7 @@ A systematic experimental results analysis workflow connecting experimental data
 | `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
 | `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式 |
 | `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色 |
-| `FIG.SELF_CONTAINED_CAPTION` | Caption三要素 |
+| `FIG.SELF_CONTAINED_CAPTION` | Caption 自包含（实验图表仅 what） |
 | `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
 | `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
