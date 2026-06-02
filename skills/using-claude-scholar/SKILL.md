@@ -33,7 +33,7 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
 | `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式 |
 | `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色 |
-| `FIG.SELF_CONTAINED_CAPTION` | Caption三要素 |
+| `FIG.SELF_CONTAINED_CAPTION` | Caption 自包含（实验图表仅 what） |
 | `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
 | `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
 | `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
