@@ -103,6 +103,7 @@ Mix sentence lengths. End paragraphs differently.
 **Check**:
 - Three consecutive sentences same length? Break one.
 - Paragraph ends with punchy one-liner? Vary it.
+- Sentence with ≥4 commas? Split it or use semicolons—comma-chained clauses read as AI meandering. <!-- policy:PROSE.COMMA_OVERUSE -->
 
 ### 4. Trust Readers
 State facts directly. Skip softening, justification, hand-holding.
