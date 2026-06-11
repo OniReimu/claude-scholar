@@ -90,7 +90,7 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 
 **Patterns to avoid**:
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
-- Negation-contrast: "X, not Y" comma form (state the positive, or use "rather than") <!-- policy:PROSE.NEGATION_CONTRAST -->
+- Unnecessary contrast: "X, not Y" / "X rather than Y" / "X instead of Y" — default to plain positive "X is A"; keep the contrast only when ruling out Y carries real information (don't reflexively swap "not Y" → "rather than Y") <!-- policy:PROSE.NEGATION_CONTRAST -->
 - Rule of three: "A, B, and C" (prefer two or four items)
 - Em-dash overuse: "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including") <!-- policy:PROSE.COLON_LIST_OVERUSE -->
