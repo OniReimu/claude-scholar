@@ -17,7 +17,11 @@
 - **NO Unicode arrows**: → ← ↔ ⇒ → use `$\rightarrow$` etc.
 - **NO rhetorical self-answers**: "The result? A new framework." → state directly
 - **NO negative parallelism**: "It's not X — it's Y" / "not just X, but Y"
+- **NO negation-contrast**: "X, not Y" comma form → state the positive, or use "rather than"
 - **NO colon-numbered lists**: "we: (1)...(2)...(3)..." → use `enumerate` or prose
+- **NO mid-sentence colons**: "key observation: the model fails" → full sentence or split (heading colons `\textbf{X:}` exempt)
+- **NO trailing afterthoughts**: "..., as editable." comma + short tag → fold into main clause
+- **Comma overuse**: max 3 commas per sentence (≥4 → split or use semicolons)
 - **NO despite-dismissal**: "Despite challenges, X continues to thrive" → analyze the challenge
 - **NO superficial -ing suffixes**: trailing ", enabling/ensuring/providing..." → be specific
 - **NO dangling cross-references**: "Fig.~\ref{} illustrates X." → weave ref into analytical sentence; delete `\ref{}` and check if claim remains
