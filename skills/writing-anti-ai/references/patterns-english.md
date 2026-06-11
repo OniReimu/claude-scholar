@@ -174,7 +174,7 @@ AI heavily overuses em-dashes (`---` in LaTeX, `—` in Unicode) as parenthetica
 **After**:
 > The term is primarily promoted by Dutch institutions rather than by the people themselves. You don't say "Netherlands, Europe" as an address, yet this mislabeling continues in official documents.
 
-> **Note**: the fix uses "rather than", not the comma form "X, not Y" — that comma-negation is itself flagged by `PROSE.NEGATION_CONTRAST`.
+> **Note**: this After keeps a contrast ("rather than") because the institutions-vs-people distinction is the sentence's actual claim (load-bearing). When the ruled-out item carries no information, default to a plain positive statement ("X is A") and drop the contrast entirely — do NOT reflexively swap "X, not Y" into "X rather than Y". See `PROSE.NEGATION_CONTRAST`.
 
 **Fix strategies** (in order of preference):
 1. **New sentence**: Split at the em-dash. The parenthetical becomes its own sentence.
