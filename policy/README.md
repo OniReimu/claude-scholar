@@ -218,6 +218,10 @@ SoK 规则集合（语义规则）：
 | PROSE.GERUND_FRAGMENT_LITANY | prose-gerund-fragment-litany | domain | warn | false | doc | guidance | none |
 | PROSE.SHORT_PUNCHY_FRAGMENTS | prose-short-punchy-fragments | domain | warn | false | doc | guidance | none |
 | PROSE.UNICODE_ARROWS | prose-unicode-arrows | domain | warn | false | lint_script | guardrail | safe |
+| PROSE.TRAILING_AFTERTHOUGHT | prose-trailing-afterthought | domain | warn | false | lint_script | guardrail | none |
+| PROSE.COMMA_OVERUSE | prose-comma-overuse | domain | warn | false | lint_script | guardrail | none |
+| PROSE.MIDSENTENCE_COLON | prose-midsentence-colon | domain | warn | false | lint_script | guardrail | none |
+| PROSE.NEGATION_CONTRAST | prose-negation-contrast | domain | warn | false | lint_script | guardrail | none |
 | ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc | guidance | none |
 | ANON.DOUBLE_BLIND_ANONYMIZATION | anon-double-blind-anonymization | venue | error | true | doc | guidance | none |
 | SUBMIT.PAGE_LIMIT_STRICT | submit-page-limit-strict | venue | error | false | doc | guidance | none |
