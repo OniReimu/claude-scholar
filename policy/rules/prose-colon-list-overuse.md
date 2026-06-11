@@ -30,6 +30,8 @@ lint_targets: "**/*.tex"
 
 Contribution section 中的编号列表除外（使用 `enumerate` 环境）。
 
+本规则只管「冒号 + 编号列表」这一最重形式；句中任意解释性/定义性冒号（`We define X: ...`）由更宽的 `PROSE.MIDSENTENCE_COLON` 管。
+
 ## Rationale
 
 冒号后直接跟编号列表是 AI 生成文本的典型模式。人类学术写作要么用正式的 LaTeX 列表环境，要么用散文形式的 "First, ... Second, ... Third, ..." 表达。
