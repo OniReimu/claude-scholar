@@ -22,20 +22,34 @@ lint_targets: "**/*.tex"
 
 ## Requirement
 
-避免 `X, not Y` 的逗号否定对比句式，如 `promoted by Dutch institutions, not by the people themselves`、`a property of the data, not the model`。直接陈述肯定的一方，或用 `rather than` 重组。
+避免用不必要的对比构造去陈述一个本可以直接正面说出的事实。三种同源句式都在范围内：
 
-这是 `PROSE.NEGATIVE_PARALLELISM` 的短变体：`NEGATIVE_PARALLELISM` 抓 `It's not X, it's Y` / `not just X, but Y` 的整句排比，本规则抓 `X, not Y` 的逗号挂尾否定。两者都靠"先否定再确认"制造伪强调。
+- `X, not Y`（逗号否定）
+- `X rather than Y`
+- `X instead of Y`
+
+**默认改法：直接正面陈述 `X is A`，把对比整个去掉。** 不要把 `, not Y` 反射性地换成 `rather than Y` / `instead of Y`——那只是换件衣服的同一个对比，没有解决问题。
+
+**仅当"排除 Y"本身承载信息时才保留对比**，例如：
+
+- 反过度声称（`the gain comes from the data, not the architecture`——排除架构是一个实证主张）
+- 安全 / 威胁模型里需要明确划界（`the adversary controls the client, not the server`）
+- 纠正读者大概率会有的误解
+
+判断标准：删掉 `not Y / rather than Y / instead of Y` 后，句子是否丢了**实质信息**？没丢 → 删对比，只留正面；丢了 → 保留，这才是"必要的 highlight"。
+
+与 `PROSE.NEGATIVE_PARALLELISM` 的关系：后者抓 `It's not X, it's Y` / `not just X, but Y` 的整句排比，本规则抓 `X, not/rather than/instead of Y` 的短对比。
 
 ## Rationale
 
-`X, not Y` 是 LLM 用来制造对比张力的廉价手法——通过否定一个对照项来强调主张，而非直接给出证据。Pre-LLM 学术写作偶尔用，但密集出现就是 AI 痕迹。优先用 `rather than`，或干脆只陈述肯定项。
+LLM 习惯用"否定一个对照项"来制造强调或深度感，即使那个对照项根本没人会误以为。Pre-LLM 学术写作默认直接正面陈述，对比是稀缺的、用在刀刃上的工具。把 `, not Y` 反射性改成 `rather than Y` 不是去 AI 味，只是换一种 AI 味——作者偏好是**能正面说就正面说，对比只留给真正需要 highlight 的地方**。
 
 ## Check
 
-- **regex 搜索**: 匹配 `, not ` 后接词
-- **排除**: 列举/枚举中的合法否定（`A, B, not C, and D` 这类罕见，需人工判断）
+- **regex 搜索**: 匹配 `, not ` 后接词（最机械的形式）
+- **LLM 补充**: `rather than` / `instead of` 是同源构造，但合法用法太多，不做硬 regex；self-review 时逐句判断「排除项是否 load-bearing」
+- **改写优先级**: ① 删对比、只留正面 `X is A`；② 确认排除 Y 是实质主张时才保留，并在三种形式里选语义最自然的一种
 - **排除**: `, not only ... but also ...`（由 `PROSE.NEGATIVE_PARALLELISM` 限频管理，每篇≤2 次）
-- **改写优先级**: ① 只留肯定项；② `X rather than Y`；③ 拆成两句各自陈述
 - **检查范围**: `.tex` 文件正文区域
 
 ## Examples
@@ -43,15 +57,17 @@ lint_targets: "**/*.tex"
 ### Pass
 
 ```latex
-The term is primarily promoted by Dutch institutions rather than by
-the people themselves.
-% 用 rather than，不用逗号否定对比
+% 默认：直接正面陈述，无对比
+The improvement comes from the larger training set.
+
+% 必要时保留——排除"架构"是实证主张，load-bearing
+Our ablation shows the gain comes from the data, not the architecture.
 ```
 
 ### Fail
 
 ```latex
-The term is primarily promoted by Dutch institutions, not by the
-people themselves.
-% X, not Y 否定对比
+The method is efficient, not slow.               % → The method is efficient.
+The framework is modular rather than monolithic. % → The framework is modular.
+% 把 ", not Y" 反射性换成 "rather than Y" 只是换衣服，不是去对比
 ```
