@@ -17,7 +17,7 @@
 - **NO Unicode arrows**: → ← ↔ ⇒ → use `$\rightarrow$` etc.
 - **NO rhetorical self-answers**: "The result? A new framework." → state directly
 - **NO negative parallelism**: "It's not X — it's Y" / "not just X, but Y"
-- **NO negation-contrast**: "X, not Y" comma form → state the positive, or use "rather than"
+- **NO unnecessary contrast**: "X, not Y" / "X rather than Y" / "X instead of Y" → default to plain positive "X is A"; keep the contrast ONLY when ruling out Y carries information (don't just swap "not Y"→"rather than Y")
 - **NO colon-numbered lists**: "we: (1)...(2)...(3)..." → use `enumerate` or prose
 - **NO mid-sentence colons**: "key observation: the model fails" → full sentence or split (heading colons `\textbf{X:}` exempt)
 - **NO trailing afterthoughts**: "..., as editable." comma + short tag → fold into main clause
