@@ -89,10 +89,13 @@ Remove throat-clearing openers and emphasis crutches.
 Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 
 **Patterns to avoid**:
-- Negative parallelisms: "It's not just X, it's Y"
+- Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
+- Negation-contrast: "X, not Y" comma form (state the positive, or use "rather than") <!-- policy:PROSE.NEGATION_CONTRAST -->
 - Rule of three: "A, B, and C" (prefer two or four items)
 - Em-dash overuse: "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
-- Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including")
+- Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including") <!-- policy:PROSE.COLON_LIST_OVERUSE -->
+- Mid-sentence colon: "key observation: the model fails" — rewrite as a full sentence or split; only heading colons (`\textbf{X:}`) are exempt <!-- policy:PROSE.MIDSENTENCE_COLON -->
+- Trailing afterthought: "..., as editable." comma + short tag tacked onto a sentence end (fold into the main clause) <!-- policy:PROSE.TRAILING_AFTERTHOUGHT -->
 
 ### 3. Vary Rhythm
 Mix sentence lengths. End paragraphs differently.
