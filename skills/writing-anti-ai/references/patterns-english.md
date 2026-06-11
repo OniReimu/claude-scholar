@@ -213,7 +213,9 @@ AI frequently uses colons to introduce inline enumerations, especially in introd
 **Fix strategies:**
 1. **Separate sentences**: Each item in the list becomes its own sentence with specific detail
 2. **"such as" / "including"**: For short enumerations (≤ 3 items), replace colon with "such as"
-3. **Keep as-is**: Numbered step lists (e.g., "(1)...(2)...(3)...") and definition-style colons ("We define X: ...") are standard academic usage, not AI signals
+3. **Keep as-is**: Numbered step lists (e.g., "(1)...(2)...(3)...") after a colon are standard academic usage, not AI signals
+
+**Author-style override**: definition-style colons ("We define X: ...") and any other mid-sentence explanatory colon are NOT exempt — they are flagged by `PROSE.MIDSENTENCE_COLON`. Only heading colons (`\paragraph{X.}`, `\textbf{X:}`, bullet `\item \textbf{X:}`) are exempt. Rewrite mid-sentence colons into full sentences or split the clause.
 
 ---
 
