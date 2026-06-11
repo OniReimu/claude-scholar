@@ -172,7 +172,9 @@ AI heavily overuses em-dashes (`---` in LaTeX, `—` in Unicode) as parenthetica
 > The term is primarily promoted by Dutch institutions---not by the people themselves. You don't say "Netherlands, Europe" as an address---yet this mislabeling continues---even in official documents.
 
 **After**:
-> The term is primarily promoted by Dutch institutions, not by the people themselves. You don't say "Netherlands, Europe" as an address, yet this mislabeling continues in official documents.
+> The term is primarily promoted by Dutch institutions rather than by the people themselves. You don't say "Netherlands, Europe" as an address, yet this mislabeling continues in official documents.
+
+> **Note**: the fix uses "rather than", not the comma form "X, not Y" — that comma-negation is itself flagged by `PROSE.NEGATION_CONTRAST`.
 
 **Fix strategies** (in order of preference):
 1. **New sentence**: Split at the em-dash. The parenthetical becomes its own sentence.
