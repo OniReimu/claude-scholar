@@ -188,6 +188,10 @@ SoK 规则集合（语义规则）：
 | SOK.METHODOLOGY_REPORTING | sok-methodology-reporting | domain | warn | false | doc | guidance | none |
 | SOK.BIG_TABLE_REQUIRED | sok-big-table-required | domain | error | false | doc | guidance | none |
 | SOK.RESEARCH_AGENDA_REQUIRED | sok-research-agenda-required | domain | error | false | doc | guidance | none |
+| SE.RESEARCH_QUESTIONS_EXPLICIT | se-research-questions-explicit | domain | error | false | doc | guidance | none |
+| SE.RQ_SECTION_BINDING | se-rq-section-binding | domain | warn | false | doc | guidance | none |
+| SE.THREATS_TO_VALIDITY_STRUCTURED | se-threats-to-validity-structured | domain | error | false | doc | guidance | none |
+| SE.ACTIONABLE_IMPLICATIONS | se-actionable-implications | domain | warn | false | doc | guidance | none |
 | PROSE.CRYPTO_CONSTRUCTION_TEMPLATE | prose-crypto-construction-template | domain | warn | false | doc | guidance | none |
 | PROSE.INTENSIFIERS_ELIMINATION | prose-intensifiers-elimination | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.EM_DASH_RESTRICTION | prose-em-dash-restriction | domain | warn | false | lint_script | guardrail | assisted |
