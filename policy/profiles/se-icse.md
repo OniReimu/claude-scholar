@@ -83,6 +83,7 @@ venue: icse
 - **统计严谨**：effect size + CI + 校正后 p 值，并**同时报支持与不支持的证据**，不挑单边（参 `exp-error-bars-required`）。
 - **公开 replication package**：tool versions、environment、released dataset 与 quote provenance（参 `repro-*` 规则）。
   涉及工具/系统实现时显式给 open-source link 或 Artifact Evaluation 说明。
+- **Baseline 选择论证**：解释为何选择特定 baseline，覆盖近两年 SOTA，并说明可比性边界。
 
 ### C. Results presentation（最容易丢失 legibility 的地方）
 
