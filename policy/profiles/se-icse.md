@@ -33,6 +33,11 @@ venue: icse
 - `policy/rules/submit-section-numbering-consistency.md`
 - `policy/rules/prose-intensifiers-elimination.md`
 - `policy/rules/prose-em-dash-restriction.md`
+- `policy/rules/prose-sentence-length.md`
+- `policy/rules/prose-comma-overuse.md`
+- `policy/rules/prose-midsentence-colon.md`
+- `policy/rules/prose-negation-contrast.md`
+- `policy/rules/prose-paragraph-topic-sentence.md`
 - `policy/rules/ethics-limitations-section-mandatory.md`
 - `policy/rules/anon-double-blind-anonymization.md`
 - `policy/rules/submit-page-limit-strict.md`
