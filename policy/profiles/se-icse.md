@@ -42,6 +42,10 @@ venue: icse
 - `policy/rules/anon-double-blind-anonymization.md`
 - `policy/rules/submit-page-limit-strict.md`
 - `policy/rules/bibtex-consistent-citation-key-format.md`
+- `policy/rules/se-research-questions-explicit.md`
+- `policy/rules/se-rq-section-binding.md`
+- `policy/rules/se-threats-to-validity-structured.md`
+- `policy/rules/se-actionable-implications.md`
 
 ## Overrides
 
