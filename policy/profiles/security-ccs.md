@@ -47,6 +47,7 @@ venue: ccs
 | Rule ID | 字段 | 新值 | 原因 |
 |---------|------|------|------|
 | PAPER.SECTION_HEADINGS_MAX_6 | params.max_sections | 8 | 安全攻击/系统类论文常含 Threat Model、Design、Implementation、Evaluation、Defense/Discussion、Related Work 独立 section |
+| SE.RESEARCH_QUESTIONS_EXPLICIT | severity | warn | AI-security 下 RQ 为强默认而非绝对必需：单一主结果/同质评估的论文可不用 RQ（边界见下方 RQ-Driven Numerical Evaluation 节） |
 
 ## Domain-Specific Rules
 
