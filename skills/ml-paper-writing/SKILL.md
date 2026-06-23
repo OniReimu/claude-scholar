@@ -607,6 +607,10 @@ The final paper follows this structure. Strictly control to **6 top-level number
 - Same rule applies to `\subsubsection` — thin content uses `\noindent\textbf{}` instead
 - Never create a sub(sub)section containing only one paragraph or a single short list
 
+**RQ-driven experiments (when to use):**
+- For **AI-security / empirical / measurement** papers (and any eval with ≥3 *heterogeneous* dimensions), drive §5 with numbered RQs — each subsection answers exactly one RQ, owns a cluster of figures/tables, and closes with a takeaway box carrying the load-bearing number. Full convention + boundary lives in `policy/profiles/security-ccs.md` (RQ-Driven Numerical Evaluation).
+- For **pure ML/theory** papers (NeurIPS/ICML/ICLR) whose eval is homogeneous (one central claim, same metric across settings), the native idiom is **Main Results → Ablations → Analysis**; do not force explicit `RQ1…RQn` headers. Keep the *principle* (every experiment traces to a claim) without the heavy labeling — a claims-to-experiments mapping achieves the same closure.
+
 **Bibliography rules:**
 - **Default to BibTeX** (not BibLaTeX) — use `\bibliographystyle{...}` + `\bibliography{refs}` with `bibtex main` compilation. Most top venue templates (NeurIPS, ICML, ICLR, ACL) use BibTeX by default.
 - Store all entries in a single `.bib` file (e.g., `refs.bib` or `references.bib`)
