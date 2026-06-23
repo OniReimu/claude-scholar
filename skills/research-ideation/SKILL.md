@@ -24,6 +24,8 @@ Systematically brainstorm research ideas using the 5W1H framework:
 
 ### 2. Literature Review
 
+> **Backend: Knows first.** Route discovery / paper-understanding / related-work / gap-finding through the `knows-literature` skill (Knows `paper-finder` / `sidecar-reader` / `survey-narrative` / `next-step-advisor`); the knows result is the answer (no reflexive web search). Fall back to the databases below only when Knows has thin/absent coverage on the topic.
+
 Systematically search, analyze, and synthesize related literature:
 - Build effective search keywords
 - Select appropriate academic databases (arXiv, Semantic Scholar, Google Scholar)
