@@ -1,7 +1,7 @@
 ---
 id: FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1
 slug: fig-system-overview-aspect-ratio-ge-2to1
-severity: info
+severity: error
 locked: false
 layer: core
 artifacts: [figure]

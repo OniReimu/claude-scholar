@@ -1,7 +1,7 @@
 ---
 id: FIG.COLORBLIND_SAFE_PALETTE
 slug: fig-colorblind-safe-palette
-severity: info
+severity: warn
 locked: false
 layer: core
 artifacts: [figure, code]

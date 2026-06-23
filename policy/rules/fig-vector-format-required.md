@@ -1,7 +1,7 @@
 ---
 id: FIG.VECTOR_FORMAT_REQUIRED
 slug: fig-vector-format-required
-severity: info
+severity: error
 locked: false
 layer: core
 artifacts: [figure, code]

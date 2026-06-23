@@ -1,7 +1,7 @@
 ---
 id: FIG.FONT_GE_24PT
 slug: fig-font-ge-24pt
-severity: info
+severity: error
 locked: false
 layer: core
 artifacts: [figure]

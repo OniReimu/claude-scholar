@@ -1,7 +1,7 @@
 ---
 id: FIG.SELF_CONTAINED_CAPTION
 slug: fig-self-contained-caption
-severity: info
+severity: warn
 locked: false
 layer: core
 artifacts: [figure, text]
