@@ -166,12 +166,12 @@ Check submission requirements:
 - Is there at least one taxonomy-aligned big comparison table? <!-- policy:SOK.BIG_TABLE_REQUIRED -->
 - Does conclusion/discussion include a concrete research agenda? <!-- policy:SOK.RESEARCH_AGENDA_REQUIRED -->
 
-### 10. Empirical-SE Scope Checks (When se-* profile is active)
+### 10. Empirical-SE / AI-security Scope Checks (When se-* or security-* profile is active)
 
-- Are there 2–4 explicit numbered RQs (open-ended, each with a justification)? <!-- policy:SE.RESEARCH_QUESTIONS_EXPLICIT -->
-- Is each RQ bound to its results section (heading reprints the RQ + "to answer RQx" signpost + RQ column in the glance table)? <!-- policy:SE.RQ_SECTION_BINDING -->
-- Is Threats to Validity structured by category (construct/internal/external/conclusion), each a named threat + mitigation citing Wohlin? <!-- policy:SE.THREATS_TO_VALIDITY_STRUCTURED -->
-- Are implications actionable and stakeholder-segmented (For tool builders / standards bodies / practitioners), each tied to an RQ? <!-- policy:SE.ACTIONABLE_IMPLICATIONS -->
+- Are there explicit numbered RQs (2–4 typical; up to ~6 for multi-faceted security/systems evals), open-ended, each with a justification? Single-main-result / homogeneous evals may skip RQs (rule is then N/A). <!-- policy:SE.RESEARCH_QUESTIONS_EXPLICIT -->
+- Is each RQ bound to its results section (heading reprints the RQ + "to answer RQx" signpost + RQ column in the glance table)? For numerical evals, does each RQ-subsection own a figure/table cluster closed by a takeaway box carrying the key number? <!-- policy:SE.RQ_SECTION_BINDING -->
+- _(se-* only)_ Is Threats to Validity structured by category (construct/internal/external/conclusion), each a named threat + mitigation citing Wohlin? <!-- policy:SE.THREATS_TO_VALIDITY_STRUCTURED -->
+- _(se-* only)_ Are implications actionable and stakeholder-segmented (For tool builders / standards bodies / practitioners), each tied to an RQ? <!-- policy:SE.ACTIONABLE_IMPLICATIONS -->
 
 ## Quality Checklist
 
