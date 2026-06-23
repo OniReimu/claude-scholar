@@ -104,6 +104,7 @@ Verify the logical coherence of the paper:
 
 Check the completeness and accuracy of citations:
 - Are all citations present in the references? <!-- policy:CITE.VERIFY_VIA_API -->
+- Does every concrete claim/quote have verifiable source support (quote → exact text + locator; paraphrase → matching span + page/§), with zero unresolved `[CLAIM NOT VERIFIED]` / `[QUOTE NOT VERIFIED]` markers? <!-- policy:CITE.CLAIM_SUPPORT_REQUIRED -->
 - Is the reference format consistent? <!-- policy:BIBTEX.CONSISTENT_CITATION_KEY_FORMAT -->
 - Are key related works cited?
 - Do citations accurately reflect the original content?
