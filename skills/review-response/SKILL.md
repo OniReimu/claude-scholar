@@ -104,6 +104,7 @@ For detailed guides, refer to:
 - `references/response-strategies.md` - Response strategy library
 - `references/rebuttal-templates.md` - Rebuttal templates and examples
 - `references/tone-guidelines.md` - Tone and expression guidelines
+- `../ml-paper-writing/references/nature-journal-guide.md` §6 - **Journal rebuttal cadence** (editor + each reviewer, multi-round, standalone "Response to Reviewers" + tracked-changes manuscript) — differs from a conference rebuttal's single short window. Use for Nature/Science/PNAS/Cell revisions.
 
 ## Related Tools
 
