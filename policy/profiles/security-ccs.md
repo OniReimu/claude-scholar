@@ -66,7 +66,7 @@ Security 领域特有规则：
 
 **结构** `<!-- policy:SE.RESEARCH_QUESTIONS_EXPLICIT -->` `<!-- policy:SE.RQ_SECTION_BINDING -->`：
 
-1. Evaluation 开头一段 overview，列出 **2–6 条编号 RQ**（建议 ≤6）；每条 RQ 要么对应一个 contribution，要么对应一个 validity/positioning 检查（robustness / baseline / end-to-end）。
+1. Evaluation 开头一段 overview，列出编号 RQ（**2–4 典型、≤6 封顶**）；每条 RQ 要么对应一个 contribution，要么对应一个 validity/positioning 检查（robustness / baseline / end-to-end）。
 2. 每个 §6.x **恰好回答一个 RQ**：标题逐字复述 RQ；小节开头一句 `To answer RQx, we …`。
 3. **数值适配（与 qualitative SE 的关键差异）**：每个 RQ-subsection 拥有一*簇* figures/tables，并以一个 **takeaway box** 收口；box 里拎出*那一个* load-bearing 的数字。`<!-- policy:EXP.TAKEAWAY_BOX -->`
    - 对比：measurement 论文数字在 prose、box 写 insight（见 `se-icse.md`）；数值论文数字在图表、box 反而要点出关键数。取决于数字主要落在哪。
