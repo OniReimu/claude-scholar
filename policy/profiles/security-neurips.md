@@ -47,6 +47,7 @@ venue: neurips
 |---------|------|------|------|
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | severity | error | NeurIPS 篇幅紧（9 页正文），Conclusion 必须紧凑 |
 | FIG.FONT_GE_24PT | params.min_font_pt | 28 | Security 图表符号密集，需要更大字号确保可读性 |
+| SE.RESEARCH_QUESTIONS_EXPLICIT | severity | warn | AI-security 下 RQ 为强默认而非绝对必需：单一主结果/同质评估的论文可不用 RQ |
 
 > 注：FIG.FONT_GE_24PT 规则卡片声明 `params: {min_font_pt: 24}`，此处覆盖为 28。
 > FIG.NO_IN_FIGURE_TITLE 为 locked=true，不可覆盖。
