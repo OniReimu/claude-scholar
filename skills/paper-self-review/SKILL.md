@@ -132,6 +132,14 @@ Check writing clarity and readability:
 - Are sentence structures clear?
 - Is paragraph organization logical?
 
+### 5b. Prose Rule Coverage (anti-AI patterns + academic style)
+
+Full policy-rule sweep (fixes live in `writing-anti-ai`; definitions in `policy/rules/`):
+- No AI-tell sentence patterns — anaphora abuse, gerund-fragment litany, short punchy fragments, rhetorical self-answer, "Despite …" dismissal, superficial `-ing` analysis, copula dodge ("serves as"), "X, not Y" negation contrast, trailing afterthought, mid-sentence explanatory colon, ≥4-comma chains? <!-- policy:PROSE.ANAPHORA_ABUSE --> <!-- policy:PROSE.GERUND_FRAGMENT_LITANY --> <!-- policy:PROSE.SHORT_PUNCHY_FRAGMENTS --> <!-- policy:PROSE.RHETORICAL_SELF_ANSWER --> <!-- policy:PROSE.DESPITE_DISMISSAL --> <!-- policy:PROSE.SUPERFICIAL_ING_SUFFIX --> <!-- policy:PROSE.COPULA_DODGE --> <!-- policy:PROSE.NEGATION_CONTRAST --> <!-- policy:PROSE.TRAILING_AFTERTHOUGHT --> <!-- policy:PROSE.MIDSENTENCE_COLON --> <!-- policy:PROSE.COMMA_OVERUSE -->
+- No AI-tell word/format tells — filler phrases, promotional language, formatting over-use, informal vocabulary, reflexive rule-of-three, Unicode arrows, vague attributions ("experts argue"), elegant variation (drifting terms)? <!-- policy:PROSE.FILLER_PHRASES --> <!-- policy:PROSE.PROMOTIONAL_LANGUAGE --> <!-- policy:PROSE.FORMATTING_RESTRAINT --> <!-- policy:PROSE.INFORMAL_VOCABULARY --> <!-- policy:PROSE.RULE_OF_THREE --> <!-- policy:PROSE.UNICODE_ARROWS --> <!-- policy:PROSE.VAGUE_ATTRIBUTIONS --> <!-- policy:PROSE.ELEGANT_VARIATION -->
+- Academic style holds — sentence length bounded, paragraph topic-sentence first, disciplined hedging, abbreviations defined on first use, number-expression convention, no vague quantifiers, consistent tense, complete subsections, equations explained, related work organized by evolution? <!-- policy:PROSE.SENTENCE_LENGTH --> <!-- policy:PROSE.PARAGRAPH_TOPIC_SENTENCE --> <!-- policy:PROSE.HEDGING_DISCIPLINE --> <!-- policy:PROSE.ABBREVIATION_FIRST_USE --> <!-- policy:PROSE.NUMBER_EXPRESSION --> <!-- policy:PROSE.VAGUE_QUANTIFIERS --> <!-- policy:PROSE.TENSE_CONSISTENCY --> <!-- policy:PROSE.SUBSECTION_COMPLETENESS --> <!-- policy:PROSE.EQUATION_EXPLANATION --> <!-- policy:PROSE.RELATED_WORK_EVOLUTION -->
+- Are cross-references woven into the prose (not bare "see Fig. 3")? <!-- policy:REF.WOVEN_CROSS_REFERENCE -->
+
 ### 6. LaTeX Math Conformance
 
 Check whether math notation follows project rules:
