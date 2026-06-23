@@ -615,6 +615,7 @@ The final paper follows this structure. Strictly control to **6 top-level number
 - **Default to BibTeX** (not BibLaTeX) — use `\bibliographystyle{...}` + `\bibliography{refs}` with `bibtex main` compilation. Most top venue templates (NeurIPS, ICML, ICLR, ACL) use BibTeX by default.
 - Store all entries in a single `.bib` file (e.g., `refs.bib` or `references.bib`)
 - NEVER generate BibTeX entries from memory — always fetch programmatically via DOI/Semantic Scholar (see citation-verification skill) <!-- policy:CITE.VERIFY_VIA_API --> <!-- policy:BIBTEX.CONSISTENT_CITATION_KEY_FORMAT -->
+- Every citation on a concrete claim must have verifiable support: quote → exact text + locator, paraphrase → matching source span + page/§. No source access → general-contribution cite only + `[CLAIM NOT VERIFIED]`; never invent quotes/pages; if the cited paper is wrong, suggest the real one (see citation-verification skill) <!-- policy:CITE.CLAIM_SUPPORT_REQUIRED -->
 - Compilation order: `pdflatex → bibtex → pdflatex → pdflatex`
 
 **Punctuation rules (anti-AI):**
