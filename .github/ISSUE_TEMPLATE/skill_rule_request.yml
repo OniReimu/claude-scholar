@@ -1,0 +1,38 @@
+name: Skill / rule / capability request
+description: Propose a new skill, command, agent, or policy rule (or an enhancement)
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Proposed addition
+      options:
+        - Skill
+        - Command
+        - Agent
+        - Policy rule / profile
+        - Workflow / orchestrator stage
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: Gap / motivation
+      description: What research-lifecycle or writing-quality gap does this fill? Which stage (ideation → … → post-acceptance)?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Proposed behavior
+      description: What it should do, its trigger conditions, and how it fits existing skills/rules (avoid duplicating an existing one).
+    validations:
+      required: true
+  - type: textarea
+    id: prior-art
+    attributes:
+      label: Prior art / source
+      description: Upstream skill, paper, or external tool this is borrowed/adapted from (note its license if copying).
+    validations:
+      required: false
