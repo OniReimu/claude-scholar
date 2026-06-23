@@ -175,6 +175,7 @@ SoK 规则集合（语义规则）：
 | PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | false | lint_script | guidance | none |
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc | guidance | none |
 | CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script | guidance | none |
+| CITE.CLAIM_SUPPORT_REQUIRED | cite-claim-support-required | core | warn | false | lint_script | guidance | none |
 | EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc | guidance | none |
 | EXP.TAKEAWAY_BOX | exp-takeaway-box | core | warn | false | doc | guidance | none |
 | EXP.ABLATION_IN_RESULTS | exp-ablation-in-results | core | warn | false | doc | guidance | none |
