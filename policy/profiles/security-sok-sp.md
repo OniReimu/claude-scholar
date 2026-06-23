@@ -16,6 +16,7 @@ venue: sp
 - `policy/rules/paper-conclusion-single-paragraph.md`
 - `policy/rules/exp-takeaway-box.md`
 - `policy/rules/cite-verify-via-api.md`
+- `policy/rules/cite-claim-support-required.md`
 - `policy/rules/exp-error-bars-required.md`
 - `policy/rules/latex-notation-consistency.md`
 - `policy/rules/fig-vector-format-required.md`

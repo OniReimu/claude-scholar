@@ -22,6 +22,7 @@ venue: ccs
 - `policy/rules/paper-section-headings-max-6.md`
 - `policy/rules/paper-conclusion-single-paragraph.md`
 - `policy/rules/cite-verify-via-api.md`
+- `policy/rules/cite-claim-support-required.md`
 - `policy/rules/exp-error-bars-required.md`
 - `policy/rules/exp-takeaway-box.md`
 - `policy/rules/exp-ablation-in-results.md`
