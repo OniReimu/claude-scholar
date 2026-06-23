@@ -1,0 +1,59 @@
+name: policy-validate
+
+# Smoke test for the policy engine + plugin structure. Gates on the four
+# structural integrity sections of policy/validate.sh (profile includes resolve,
+# integration markers valid, no orphan rules, registry consistent). Pre-existing
+# cosmetic findings (e.g. fig severity=info) are tolerated; this guards against
+# real regressions: a broken include path, an orphaned rule, a dangling marker,
+# or a registry desync.
+
+on:
+  push:
+    paths:
+      - 'policy/**'
+      - 'skills/**'
+      - 'commands/**'
+      - 'agents/**'
+      - '.claude-plugin/**'
+      - '.github/workflows/policy-validate.yml'
+  pull_request:
+    paths:
+      - 'policy/**'
+      - 'skills/**'
+      - 'commands/**'
+      - 'agents/**'
+      - '.claude-plugin/**'
+  workflow_dispatch:
+
+jobs:
+  structural-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Policy engine structural validation
+        run: |
+          out=$(bash policy/validate.sh 2>&1 | sed 's/\x1b\[[0-9;]*m//g') || true
+          echo "$out"
+          fail=0
+          for sec in \
+            "Profile validation complete" \
+            "Integration markers checked" \
+            "Orphan detection complete" \
+            "Rule ID Registry consistency checked"; do
+            if ! echo "$out" | grep -q "PASS: $sec"; then
+              echo "::error::structural check missing or failed → $sec"
+              fail=1
+            fi
+          done
+          [ "$fail" -eq 0 ] && echo "✅ Structural policy checks passed." || exit 1
+
+      - name: Plugin manifest version parity
+        run: |
+          pv=$(grep -m1 '"version"' .claude-plugin/plugin.json | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          mv=$(grep -m1 '"version"' .claude-plugin/marketplace.json | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          echo "plugin.json=$pv  marketplace.json=$mv"
+          [ "$pv" = "$mv" ] || { echo "::error::version mismatch between plugin.json ($pv) and marketplace.json ($mv)"; exit 1; }
+
+      - name: Policy lint (informational)
+        run: bash policy/lint.sh || true
