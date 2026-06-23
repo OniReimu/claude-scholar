@@ -28,7 +28,7 @@ Empirical-SE 论文必须用 2–4 条**显式编号的 Research Question (RQ)**
 
 ## Rationale
 
-RQ 是 empirical-SE 论文的导航骨架：reviewer 据此判断 scope、贡献边界与结果完备性。把论点埋成 intro 段落里的陈述句 hypothesis 会让论文失去可导航性，是该领域最常见的 presentational gap。**本规则面向 empirical-SE 论文，通过 `se-*` profile 激活。**
+RQ 是 empirical-SE 论文的导航骨架：reviewer 据此判断 scope、贡献边界与结果完备性。把论点埋成 intro 段落里的陈述句 hypothesis 会让论文失去可导航性，是该领域最常见的 presentational gap。AI-security / 高数值实证类论文继承同一红利：当评估维度异质（viability / mechanism / defense / robustness / baseline / e2e 等）时，编号 RQ 把"实验是否 align claim"从源头锁死。**本规则面向 empirical-SE 与 AI-security 论文，通过 `se-*` / `security-*` profile 激活。**
 
 ## Check
 

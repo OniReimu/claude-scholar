@@ -6,7 +6,7 @@ locked: false
 layer: domain
 artifacts: [text]
 phases: [writing-experiments, self-review]
-domains: [se]
+domains: [se, security]
 venues: [all]
 check_kind: llm_semantic
 enforcement: doc
