@@ -54,8 +54,9 @@ jobs:
               rc=1
             fi
           done
-          # (b) No-new-failures guard. Ratchet BASELINE down as cosmetic findings are fixed.
-          BASELINE=41
+          # (b) No-new-failures guard. validate.sh is now clean (exit 0); keep BASELINE at 0
+          # so ANY new FAIL fails CI. (Raise only with a deliberate, documented reason.)
+          BASELINE=0
           fails=$(echo "$out" | grep -c "FAIL:")
           echo "validate.sh FAIL count: $fails (baseline $BASELINE)"
           if [ "$fails" -gt "$BASELINE" ]; then
