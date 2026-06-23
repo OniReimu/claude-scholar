@@ -28,7 +28,7 @@ autofix: none
 
 ## Rationale
 
-绑定让 reviewer 在任意入口（标题、小节首句、总表）都能回到对应 RQ，结果因此可跳读、可核对完备性。仅靠隐式 `H1→§h1` 对应会迫使 reviewer 自行重建映射，是常见的导航缺陷。**面向 empirical-SE 论文，通过 `se-*` profile 激活。**
+绑定让 reviewer 在任意入口（标题、小节首句、总表）都能回到对应 RQ，结果因此可跳读、可核对完备性。仅靠隐式 `H1→§h1` 对应会迫使 reviewer 自行重建映射，是常见的导航缺陷。对高数值的 AI-security 论文尤其关键：当一个 RQ 底下挂着一簇 figures/tables 时，绑定 + 收口 takeaway box 是防止图表 float free、避免 reviewer 淹没的锚。**面向 empirical-SE 与 AI-security 论文，通过 `se-*` / `security-*` profile 激活。**
 
 ## Check
 
