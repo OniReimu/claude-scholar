@@ -72,14 +72,24 @@ This skill provides verification principles based on WebSearch and Google Schola
 - Year (±1 year difference allowed, considering preprints)
 - Publication venue (conference/journal name)
 
-### 4. Claim Verification
+### 4. Claim Support Verification <!-- policy:CITE.CLAIM_SUPPORT_REQUIRED -->
 
-**Key principle**: When citing a specific claim, you must confirm the claim actually appears in the paper.
+**Key principle**: existence + metadata（§1–§3）保证不了"这篇文献真的支撑你这句话"。每个挂在**具体断言**上的引用，必须在一个可访问的来源 span 里有支撑。按 claim 类型分流：
 
-- Use WebSearch to access the paper PDF
-- Search for relevant keywords
-- Confirm the accuracy of the claim
-- Record the section/page where the claim appears
+- **Direct quote** → 逐字原文 + page/locator。
+- **Paraphrase**（转述某文献的具体结论/数字/方法）→ 语义匹配的来源 span + page/section locator。
+- **General-contribution**（只引文献整体存在/主题，不挂具体断言）→ 走 §1–§3 的存在性/metadata 验证即可。
+
+**核查动作（每条记录 `key + claim text + 类型 + locator + status`）**：
+1. 用 WebSearch / OA 源访问原文，定位支撑 span（quote 比对逐字、paraphrase 确认语义匹配）。
+2. **撤稿 / 勘误检查**：确认被引文献未被 retract（Semantic Scholar / Crossref / OpenAlex 元数据）。
+3. 记录 section/page locator。
+
+**Failure-safe（不可违反，对齐 policy 规则）**：
+- 绝不编造逐字引语、页码或"implied by"式伪支撑。
+- 无法访问来源 → 只允许降级为 general-contribution 引用并标 `[CLAIM NOT VERIFIED]`（引语用 `[QUOTE NOT VERIFIED]`），不得把具体断言强行挂上去。
+- 若被引文献其实不支撑该 claim → **指出作者真正想引的那篇**（suggest the real paper），而不是把错引硬推过去。
+- 成稿前清零所有 `[CLAIM NOT VERIFIED]` / `[QUOTE NOT VERIFIED]` marker（`policy/lint.sh` 会命中未解决 marker）。
 
 ## Verification Workflow
 
