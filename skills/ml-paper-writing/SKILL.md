@@ -527,6 +527,7 @@ The paper writing workflow orchestrates multiple skills at specific steps:
 - `references/knowledge/structure.md` → Section organization patterns (Steps 4, 5, 6)
 - `references/knowledge/writing-techniques.md` → Sentence templates, transitions (Steps 3, 4, 9)
 - `references/knowledge/submission-guides.md` → Venue requirements (Step 11)
+- `references/nature-journal-guide.md` → **Journal delta** for Nature/Science/PNAS/Cell targets (methods-at-end, word/figure caps, significance framing, cover letter, Data/Code Availability + FAIR, journal rebuttal cadence). Use alongside this skill when the target is a journal, not a conference.
 
 ---
 
