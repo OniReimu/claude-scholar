@@ -58,6 +58,7 @@ Security 领域特有规则（M2 补充完整卡片）：
 - **Threat Model 图规范**: System model / threat model 必须包含 adversary capabilities、trust boundaries、attack vectors
 - **安全证明格式**: 安全定义使用 Definition 环境，证明使用 Proof 环境
 - **实验攻击场景**: 每个实验必须明确攻击场景（attack setting）和安全假设（security assumption）
+- **RQ-driven 数值评估**: 当评估维度异质时，用编号 RQ 驱动 Experiments，每个 RQ-subsection 拥有一簇图表 + 一个带关键数字的 takeaway box（详见 `security-ccs.md` 的 RQ-Driven Numerical Evaluation 节）。`<!-- policy:SE.RESEARCH_QUESTIONS_EXPLICIT -->` `<!-- policy:SE.RQ_SECTION_BINDING -->`
 
 ## Venue Quick Facts
 
