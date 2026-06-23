@@ -18,10 +18,10 @@ claude-scholar 的**默认文献后端是 Knows**（agent-native sidecar toolkit
 ⚠️ 搜索时**从当前工作项目的 `.agents/skills/` 往上搜**，不要只看 home / workspace 顶层——Knows 通常装在具体项目里。按以下顺序找：
 
 1. 原生 skill 路径里有 `knows`（`~/.claude/skills/knows` 或 `~/.agents/skills/knows`）→ 直接按其 `description` 触发或 `/knows`。
-2. **当前项目内的安装副本**：`<project>/.agents/skills/knows/SKILL.md`（codex `.agents` 约定）。本机实例：**`~/workspace/GitHub/vibe_paper/.agents/skills/knows/`**（完整 sub-skills + stances 的 live 安装；忽略同级 `knows.backup-*`）。
-3. 独立源仓库：`~/workspace/GitHub/Knows/`（canonical 源；`Knows-dev` 为开发版）。
+2. **当前项目内的安装副本**：`<project>/.agents/skills/knows/`（codex `.agents` 约定）。本机实例：**`~/workspace/GitHub/vibe_paper/.agents/skills/knows/`**（完整 sub-skills + stances 的 live 安装；忽略同级 `knows.backup-*`）。
+3. 独立源仓库的 **skill 根**：`~/workspace/GitHub/Knows/skills/`（canonical 源；`Knows-dev/skills/` 为开发版）。注意 `SKILL.md` 与 `scripts/` 在仓库的 `skills/` 子目录下，**不在 repo 根**。
 
-读到的 `SKILL.md` 进 context，脚本统一走 `python3 scripts/orchestrator.py <subcommand>`（stdlib-only，无需 pip）。两者都找不到 → 见下方 Fallback。
+以上每个结果都是一个 **skill 根**（内含 `SKILL.md` + `scripts/`）：读其 `SKILL.md` 进 context，脚本走 `<skill-root>/scripts/orchestrator.py <subcommand>`（stdlib-only，无需 pip）。都找不到 → 见下方 Fallback。
 
 ## 任务 → Knows sub-skill 映射
 
