@@ -1,0 +1,49 @@
+name: Bug report
+description: A skill, command, agent, hook, or policy rule behaves incorrectly
+labels: [bug]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Skill
+        - Command
+        - Agent
+        - Hook
+        - Policy rule / profile / lint
+        - Orchestrator
+        - Install (Claude Code / Codex)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: component
+    attributes:
+      label: Component name
+      description: e.g. `ml-paper-writing`, `/commit`, `CITE.CLAIM_SUPPORT_REQUIRED`, `security-ccs`
+    validations:
+      required: true
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected vs actual
+      description: What you expected to happen, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Runtime
+      description: Claude Code or Codex, plugin version (.claude-plugin/plugin.json), OS
+    validations:
+      required: true
