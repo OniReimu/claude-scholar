@@ -17,6 +17,7 @@ A reference guide for citation verification in academic paper writing, providing
 | Rule ID | 摘要 |
 |---------|------|
 | `CITE.VERIFY_VIA_API` | 引文API验证 |
+| `CITE.CLAIM_SUPPORT_REQUIRED` | claim 级支撑核查（quote/paraphrase 需来源 span + locator） |
 | `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
 
 **Core Principle**: Proactively verify every citation during the writing process using WebSearch and Google Scholar.
