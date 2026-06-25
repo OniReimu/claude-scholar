@@ -187,6 +187,8 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 
 ## Workflow (工作流程)
 
+> **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
+
 ### For English Text:
 
 1. **Identify patterns** - Scan for AI patterns listed above
