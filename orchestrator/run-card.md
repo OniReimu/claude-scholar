@@ -109,8 +109,8 @@ const run = orch.initPolishRun({
 
 ### Rewrite 阶段的合约
 
-Rewrite 阶段必须：
-1. 读取 `artifacts.self_review.violation_report`
+Rewrite 阶段是 **shared apply stage**，消费 `architecture-review/relocation-map.md`（应用通过的搬迁/合并/删除）和/或 `artifacts.self_review.violation_report`（修复违规）。必须：
+1. 读取 `architecture-review/relocation-map.md`（结构搬迁）和/或 `artifacts.self_review.violation_report`（风格/规则违规）
 2. 加载 `policy/style-guide.md`（⚠️ MANDATORY）
 3. 对每个违规 section 进行改写
 4. 记录 `artifacts.rewrite.sections_rewritten` 和 `artifacts.rewrite.iteration`
