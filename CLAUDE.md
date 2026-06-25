@@ -124,7 +124,7 @@ Key files:
 - **daily-paper-generator**: Daily paper generator for research tracking
 - **paper-figure-generator**: Academic paper figure generation (system overview, pipeline, architecture diagrams, etc., powered by AutoFigure-Edit, produces editable SVG). 论文概念图的默认选择
 
-### 📝 Paper Writing & Publication (7 skills)
+### 📝 Paper Writing & Publication (8 skills)
 
 - **ml-paper-writing**: ML/AI paper writing assistant
   - Conferences: NeurIPS, ICML, ICLR, ACL, AAAI, COLM
