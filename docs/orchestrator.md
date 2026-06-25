@@ -163,7 +163,7 @@ self_review (再次检查)
   "id": "20260310-143052-b2e1",
   "title": "Polish: Federated Unlearning Draft",
   "mode": "polish",
-  "current_stage": "self_review",
+  "current_stage": "architecture_review",
   "stages": {
     "intake": { "status": "done", "note": "Polish mode intake" },
     "literature": { "status": "skipped", "note": "Skipped in polish mode" },
@@ -172,7 +172,8 @@ self_review (再次检查)
     "experiments": { "status": "skipped" },
     "analysis": { "status": "skipped" },
     "writeup": { "status": "done", "note": "Existing draft provided" },
-    "self_review": { "status": "in_progress" },
+    "architecture_review": { "status": "in_progress" },
+    "self_review": { "status": "pending" },
     "rewrite": { "status": "pending" },
     "rebuttal": { "status": "pending" },
     "post_acceptance": { "status": "pending" }
