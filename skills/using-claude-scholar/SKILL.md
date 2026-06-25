@@ -123,7 +123,7 @@ For every user message, scan the available skills list.
 
 If the runtime already provided a skills list, do NOT treat the hardcoded list below as exhaustive.
 
-**Full skill catalog**: See `references/skill-catalog.md` for the complete 35-skill list with trigger conditions, organized by category (Research & Analysis, Paper Writing & Publication, Development, Plugin Development, Tools & Utilities, Web Design, System).
+**Full skill catalog**: See `references/skill-catalog.md` for the complete skill list with trigger conditions, organized by category (Research & Analysis, Paper Writing & Publication, Development, Plugin Development, Tools & Utilities, Web Design, System).
 
 ### Step 2: Decide
 
