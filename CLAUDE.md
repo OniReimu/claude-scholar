@@ -92,7 +92,7 @@ A stateful, resumable run coordination layer that tracks research progress acros
 - **Storage**: `.claude/orchestrator/` (per-project run state, event logs, artifact fingerprints)
 - **Stages**: 12-stage pipeline (`intake` → `literature` → `proposal` → `development` → `experiments` → `analysis` → `writeup` → `architecture_review` → `self_review` → `rewrite` → `rebuttal` → `post_acceptance`)
 - **Status enum**: `pending`, `in_progress`, `blocked`, `done`, `stale`, `skipped`
-- **Polish mode**: 用户说"帮我 polish 这篇论文"/"改写这个 draft" 时，调用 `initPolishRun()` 跳过 stage 2-6，直接从 self_review 开始 review→rewrite 循环
+- **Polish mode**: 用户说"帮我 polish 这篇论文"/"改写这个 draft" 时，调用 `initPolishRun()` 跳过 stage 2-6，直接从 architecture_review 开始 architecture→rewrite→self_review 循环
 - **No new commands**: Orchestrator activates transparently via existing skills/agents/hooks
 - **Stage gates**: Human approval + policy lint at stage boundaries
 - **Invalidation**: Artifact hash mismatch marks stages as `stale`; only affected gates re-run
@@ -112,7 +112,7 @@ Key files:
 
 ---
 
-## Skills Catalog (37 skills)
+## Skills Catalog
 
 ### 🔬 Research & Analysis (7 skills)
 
