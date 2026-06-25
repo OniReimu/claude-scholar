@@ -101,9 +101,11 @@ const run = orch.initPolishRun({
 1. `intake` → 自动 `done`（polish mode intake）
 2. `literature` ~ `analysis` → 自动 `skipped`
 3. `writeup` → 自动 `done`（已有 draft）
-4. `self_review` → `in_progress`（开始检查）
-5. 有违规 → `rewrite`（逐 section 改写）→ 回到 `self_review`
-6. 全部 pass → `rebuttal` 或结束
+4. `architecture_review` → `in_progress`（段落/claim 架构审计，propose-only：paragraph-audit + relocation-map）
+5. `rewrite` → 应用通过的搬迁方案（结构方案 no-op 则 `skipped`）
+6. `self_review` → `in_progress`（在瘦身后的稿上检查 completeness/compliance）
+7. 有违规 → `rewrite`（逐 section 改写）→ 回到 `self_review`
+8. 全部 pass → `rebuttal` 或结束
 
 ### Rewrite 阶段的合约
 
