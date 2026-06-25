@@ -149,7 +149,7 @@
       "id": "rewrite",
       "label": "Section-by-Section Rewrite",
       "order": 8.5,
-      "required_inputs": ["self_review.done"],
+      "required_inputs": ["writeup.done"],
       "expected_artifacts": [
         { "kind": "run_field", "path": "artifacts.rewrite.sections_rewritten", "description": "List of rewritten sections" },
         { "kind": "run_field", "path": "artifacts.rewrite.iteration", "description": "Rewrite iteration number" }
@@ -159,7 +159,7 @@
       ],
       "next_stage": "self_review",
       "optional": true,
-      "notes": "Only active in polish mode. After rewrite, loops back to self_review. Human gate prevents infinite loop."
+      "notes": "Shared apply stage: consumes architecture_review's relocation-map (apply approved moves) and/or self_review's violation report. After rewrite, loops back to self_review. May be marked 'skipped' if the approved plan is a no-op. Human gate prevents infinite loop."
     },
     {
       "id": "rebuttal",
