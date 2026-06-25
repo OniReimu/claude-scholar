@@ -131,6 +131,7 @@ Key files:
   - Journals: Nature, Science, Cell, PNAS
 - **writing-anti-ai**: Remove AI writing patterns, bilingual support (EN/CN)
 - **paper-self-review**: Paper self-review (multi-item quality checklist, including figure and math conformance)
+- **claim-architecture-review**: Post-draft structural edit — paragraph necessity / placement / cross-section redundancy + claim spine + narrative closure (subtractive, propose-only; owns the `architecture_review` stage; runs before paper-self-review and writing-anti-ai)
 - **review-response**: Systematic rebuttal writing
 - **post-acceptance**: Post-acceptance processing (presentations, posters, promotion)
 - **doc-coauthoring**: Document co-authoring workflow
@@ -331,7 +332,7 @@ Claude Scholar supports two runtime environments:
 
 - **Installation**: Clone to `~/.claude` or install as a plugin
 - **Hooks**: 5 automation hooks (session-start, skill-forced-eval, session-summary, stop-summary, security-guard)
-- **Skills**: All 35 skills (including `using-claude-scholar` meta skill)
+- **Skills**: All skills (including `using-claude-scholar` meta skill)
 - **Commands**: 50+ slash commands
 - **Agents**: 14 specialized agents
 
