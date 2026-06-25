@@ -168,8 +168,8 @@ function initRun({ cwd, title, profile, venue } = {}) {
       stages: [
         { id: 'intake' }, { id: 'literature' }, { id: 'proposal' },
         { id: 'development' }, { id: 'experiments' }, { id: 'analysis' },
-        { id: 'writeup' }, { id: 'self_review' }, { id: 'rebuttal' },
-        { id: 'post_acceptance' },
+        { id: 'writeup' }, { id: 'architecture_review' }, { id: 'self_review' },
+        { id: 'rewrite' }, { id: 'rebuttal' }, { id: 'post_acceptance' },
       ],
     };
   }
@@ -260,7 +260,7 @@ function initPolishRun({ cwd, title, mainTexPath, profile, venue } = {}) {
     venue: venue || null,
     created_at: now,
     updated_at: now,
-    current_stage: 'self_review',
+    current_stage: 'architecture_review',
     stages,
     inputs: {
       mode: 'polish',
