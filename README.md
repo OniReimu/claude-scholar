@@ -156,7 +156,7 @@ Claude Scholar includes a stateful **Workflow Orchestrator** that tracks progres
 
 **Key features:**
 - **Single mode, resumable runs**: State persists in `.claude/orchestrator/` across sessions. Resume from where you left off.
-- **10-stage pipeline**: intake -> literature -> proposal -> development -> experiments -> analysis -> writeup -> self_review -> rebuttal -> post_acceptance
+- **12-stage pipeline**: intake -> literature -> proposal -> development -> experiments -> analysis -> writeup -> architecture_review -> self_review -> rewrite -> rebuttal -> post_acceptance
 - **Stage gates**: Human approval and policy lint checks at stage boundaries prevent premature progression.
 - **Artifact fingerprinting**: SHA256 hashes detect file changes and mark affected stages as `stale`.
 - **Contract-backed fingerprinting**: Stage file artifacts are fingerprinted deterministically, and `writeup` expands local LaTeX dependencies from `main_tex`.

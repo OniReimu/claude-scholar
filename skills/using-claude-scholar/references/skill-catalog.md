@@ -1,4 +1,4 @@
-# Skill Catalog (35 Skills)
+# Skill Catalog
 
 ## Research & Analysis (5 skills)
 
