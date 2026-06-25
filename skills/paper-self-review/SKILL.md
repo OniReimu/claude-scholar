@@ -233,11 +233,11 @@ Paper Quality Checklist:
 
 ## Orchestrator Integration
 
-This skill owns stage: **`self_review`**.
+This skill owns stage: **`self_review`**. It is the completeness / compliance review (additive) and runs AFTER `architecture_review`; it does NOT do paragraph-necessity / placement / cross-section-redundancy audit — that is `claim-architecture-review`, which runs first so completeness is judged on a de-bloated draft.
 
 When invoked within an active research run (see `orchestrator/run-card.md`):
 
-1. **Stage start**: Mark `self_review` → `in_progress`; verify `writeup` stage is `done`.
+1. **Stage start**: Mark `self_review` → `in_progress`; verify `architecture_review` is `done` (or explicitly `skipped` with a re-bloat warning) and `writeup` is `done`.
 2. **Step A — Guardrail sweep** (auto-fix pass):
    - Run `bash policy/lint.sh --fix --profile <profile> .` to auto-fix safe guardrail violations.
    - Run `bash policy/lint.sh --constraint-type guardrail --profile <profile> .` to identify any remaining guardrail violations (assisted/none level) for manual review.
