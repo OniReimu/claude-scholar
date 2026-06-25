@@ -752,7 +752,7 @@ function markStage({ cwd, stageId, status, note } = {}) {
 
         // Run Section Checklist and populate gate results
         try {
-          const mainTexPath = run.artifacts && run.artifacts.main_tex_path;
+          const mainTexPath = run.artifacts && run.artifacts.writeup && run.artifacts.writeup.main_tex;
           if (mainTexPath) {
             runChecklistGate({ cwd, mainTexPath });
           }
