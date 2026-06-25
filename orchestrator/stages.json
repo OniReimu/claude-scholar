@@ -103,10 +103,26 @@
         { "kind": "run_field", "path": "artifacts.writeup.figures_dir", "description": "Path to figures directory" }
       ],
       "gates": [
-        { "type": "human_approval", "prompt": "Approve draft for self-review" }
+        { "type": "human_approval", "prompt": "Approve draft for architecture review" }
       ],
-      "next_stage": "self_review",
+      "next_stage": "architecture_review",
       "optional": false
+    },
+    {
+      "id": "architecture_review",
+      "label": "Claim & Paragraph Architecture Review",
+      "order": 7.5,
+      "required_inputs": ["writeup.done"],
+      "expected_artifacts": [
+        { "kind": "file", "path": "architecture-review/paragraph-audit.md" },
+        { "kind": "file", "path": "architecture-review/relocation-map.md" }
+      ],
+      "gates": [
+        { "type": "human_approval", "prompt": "Approve the structural-edit plan (keep/tighten/merge/move/delete). Rewrite will apply the approved moves." }
+      ],
+      "next_stage": "rewrite",
+      "optional": false,
+      "notes": "Post-draft, propose-only paragraph/claim architecture audit (claim-architecture-review skill). Subtractive lens: emits paragraph-audit + relocation-map under architecture-review/; never mutates the manuscript. Bypassable by marking status 'skipped' at the skill/workflow layer when checklist-only review is requested (additive completeness checks may then re-bloat the draft)."
     },
     {
       "id": "self_review",
