@@ -10,11 +10,12 @@
 | **daily-paper-generator** | Generating daily paper summaries, research tracking |
 | **paper-figure-generator** | **AUTO-ACTIVATE during paper writing** when drafting Figure 1, system model, method overview, or any section describing a system/pipeline/architecture. Also on explicit diagram requests. Generates editable SVG via AutoFigure-Edit. |
 
-## Paper Writing & Publication (7 skills)
+## Paper Writing & Publication (8 skills)
 
 | Skill | Trigger Condition |
 |-------|-------------------|
 | **ml-paper-writing** | Writing or editing academic papers for NeurIPS/ICML/ICLR/ACL/AAAI/COLM/Nature/Science/Cell/PNAS |
+| **claim-architecture-review** | Post-draft structural edit: should-this-paragraph-exist, move/merge/cut, cross-section redundancy, claim spine + story closure (before line-level polish) |
 | **writing-anti-ai** | Removing AI writing patterns, improving natural voice, bilingual (EN/CN) |
 | **paper-self-review** | Quality assurance before submission, multi-item checklist (figures + math conformance) |
 | **review-response** | Writing rebuttals, responding to reviewer comments |
