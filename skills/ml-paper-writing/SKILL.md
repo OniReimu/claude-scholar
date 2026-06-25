@@ -519,6 +519,7 @@ The paper writing workflow orchestrates multiple skills at specific steps:
 | Step 8c | `results-analysis` | Statistical analysis, figure/table generation, visualization selection |
 | Step 8c | `figures4papers` reference | Publication-ready Python plotting style |
 | Step 5 | `citation-verification` | Validate references in Background & Related Work |
+| Step 10.5 | `claim-architecture-review` | Post-draft structural edit — paragraph necessity / placement / cross-section redundancy + claim spine + story closure (propose-only; BEFORE self-review and anti-AI polish) |
 | Step 11 | `paper-self-review` | Multi-item quality checklist (includes figure/title and LaTeX math conformance) |
 | Step 11 | `citation-verification` | Final reference validation |
 | Step 11 | `writing-anti-ai` | Remove AI writing patterns if needed |
