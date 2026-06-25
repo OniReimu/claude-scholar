@@ -237,7 +237,10 @@ This skill owns stage: **`self_review`**. It is the completeness / compliance re
 
 When invoked within an active research run (see `orchestrator/run-card.md`):
 
-1. **Stage start**: Mark `self_review` → `in_progress`; verify `architecture_review` is `done` (or explicitly `skipped` with a re-bloat warning) and `writeup` is `done`.
+1. **Stage start**: Mark `self_review` → `in_progress`.
+   - **Attached runs that have the `architecture_review` stage**: require `architecture_review` = `done` (or explicitly `skipped` with a re-bloat warning) AND `rewrite` = `done` or `skipped` — so the checklist runs on the post-relocation draft, not the pre-`rewrite` one. Also require `writeup` = `done`.
+   - **Legacy runs** (`run.stages` has no `architecture_review` entry — created before this stage shipped): skip the above; verify only `writeup` = `done` and proceed (no architecture prerequisite, so the run is not stuck).
+   - **No active run**: standalone, no precondition (see end of this section).
 2. **Step A — Guardrail sweep** (auto-fix pass):
    - Run `bash policy/lint.sh --fix --profile <profile> .` to auto-fix safe guardrail violations.
    - Run `bash policy/lint.sh --constraint-type guardrail --profile <profile> .` to identify any remaining guardrail violations (assisted/none level) for manual review.
