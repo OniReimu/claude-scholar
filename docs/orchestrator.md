@@ -134,7 +134,11 @@ intake (polish mode, 自动 done)
   ↓ stages 2-6 标记为 skipped
 writeup (已有 draft, 自动 done)
   ↓
-self_review (检查违规 → 生成 violation report)
+architecture_review (段落/claim 架构审计 → paragraph-audit + relocation-map, propose-only)
+  ↓ 人工审批结构方案
+rewrite (应用通过的搬迁；若 no-op 则 skipped)
+  ↓
+self_review (在瘦身后的稿上检查违规 → 生成 violation report)
   ↓ 有违规？
 rewrite (逐 section 改写，加载 style-guide + 30 条 PROSE rules)
   ↓ 人工审批
