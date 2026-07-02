@@ -1512,6 +1512,7 @@ CRITICAL DIMENSION REQUIREMENT:
   - Set width="{figure_width}" height="{figure_height}"
 - DO NOT scale or resize the SVG
 - DO NOT include any global figure title or top heading text in the SVG
+- FONTS: every <text>/<tspan> MUST use a clean sans-serif font — set font-family="Helvetica, Arial, sans-serif" and font-style="normal". NEVER use italic, and NEVER use serif / Times New Roman fonts.
 """
 
     if placeholder_mode == "box":
