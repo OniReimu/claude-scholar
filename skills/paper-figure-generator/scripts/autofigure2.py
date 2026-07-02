@@ -1542,7 +1542,7 @@ Your SVG placeholders MUST match this exact style:
 Example placeholder structure:
 <g id="AF01">
   <rect x="100" y="50" width="80" height="80" fill="#808080" stroke="black" stroke-width="2"/>
-  <text x="140" y="90" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="14">&lt;AF&gt;01</text>
+  <text x="140" y="90" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="14" font-family="Helvetica, Arial, sans-serif" font-style="normal">&lt;AF&gt;01</text>
 </g>
 
 Please output ONLY the SVG code, starting with <svg and ending with </svg>. Do not include any explanation or markdown formatting."""
