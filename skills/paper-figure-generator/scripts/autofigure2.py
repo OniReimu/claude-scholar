@@ -1581,6 +1581,9 @@ Please output ONLY the SVG code, starting with <svg and ending with </svg>. Do n
         provider=provider,
     )
 
+    # 强制非斜体 sans-serif，避免 SVG 默认落到斜体 Times New Roman
+    svg_code = normalize_svg_fonts(svg_code)
+
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -1589,6 +1592,27 @@ Please output ONLY the SVG code, starting with <svg and ending with </svg>. Do n
 
     print(f"SVG 模板已保存: {output_path}")
     return str(output_path)
+
+
+_FONT_NORMALIZE_STYLE = (
+    '<style>/* af-font-normalize */'
+    'text,tspan{font-family:Helvetica,Arial,sans-serif !important;'
+    'font-style:normal !important;}</style>'
+)
+
+
+def normalize_svg_fonts(svg_code: str) -> str:
+    """强制所有文本使用非斜体 sans-serif，避免 SVG 默认渲染为斜体 Times New Roman。
+
+    在 <svg> 开标签后注入一条 !important 的 <style> 规则，覆盖生成/占位文本上
+    可能缺失的 font-family 与残留的 font-style="italic"。幂等：已注入则跳过。
+    """
+    if not svg_code or 'af-font-normalize' in svg_code:
+        return svg_code
+    m = re.search(r'<svg\b[^>]*>', svg_code)
+    if not m:
+        return svg_code
+    return svg_code[:m.end()] + '\n  ' + _FONT_NORMALIZE_STYLE + svg_code[m.end():]
 
 
 def extract_svg_code(content: str) -> Optional[str]:
