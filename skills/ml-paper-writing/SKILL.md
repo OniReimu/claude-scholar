@@ -45,6 +45,7 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
 | `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 非实跑结果 caption 强制披露 |
 | `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
+| `EXP.MULTIRUN_AGGREGATE_CONSISTENCY` | 多 run 聚合数字须出自带一致性判定的 aggregate 工件 |
 | `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
 | `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
 | `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |
