@@ -132,7 +132,7 @@ Systematically compare performance across different methods, ensuring fair compa
 > **Implementation delegate**: 绘图代码实现使用 `scientific-figure-making` skill（[figures4papers](https://github.com/ChenLiu-1996/figures4papers)，via `vendor/figures4papers` submodule）。该 skill 提供 `apply_publication_style()`、`make_grouped_bar()`、`make_trend()`、`make_heatmap()` 等 helper 函数和语义化配色系统。
 > 字号、配色、导出格式等细节由 `scientific-figure-making` 的 `FigureStyle` 和 `finalize_figure()` 全权处理。
 >
-> **Tables (data → LaTeX)**: 图 skill 不做表格。生成结果表/消融表/对比矩阵走 `references/publication-tables.md`（CSV/Excel → booktabs LaTeX，siunitx 小数对齐，threeparttable 注脚，方向指示符，bold-best，config-driven 可复现脚本），遵循 `TABLE.BOOKTABS_FORMAT` / `TABLE.DIRECTION_INDICATORS` / `EXP.ERROR_BARS_REQUIRED`。
+> **Tables (data → LaTeX)**: 图 skill 不做表格。生成结果表/消融表/对比矩阵走 `references/publication-tables.md`（CSV/Excel → booktabs LaTeX，siunitx 小数对齐，threeparttable 注脚，方向指示符，bold-best，config-driven 可复现脚本），遵循 `TABLE.BOOKTABS_FORMAT` / `TABLE.DIRECTION_INDICATORS` / `EXP.ERROR_BARS_REQUIRED`。聚合**多个 run** 的表格，源数据必须是带 validity + 一致性判定 + provenance 的 aggregate 工件（而非直接读散装 raw results），一致性 INCONSISTENT 必须在 caption/正文披露差异。 <!-- policy:EXP.MULTIRUN_AGGREGATE_CONSISTENCY -->
 
 #### 4a. Plotting Implementation（delegate 给 scientific-figure-making）
 
