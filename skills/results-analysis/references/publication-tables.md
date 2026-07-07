@@ -19,6 +19,16 @@ use this for the central results table, ablation table, and the comparison matri
 Keep a config-driven `results → table` script (same reproducibility discipline as the figure workflow),
 so a re-run regenerates the table from raw results rather than hand-edited LaTeX.
 
+For tables aggregating **multiple experimental runs**, prefer a validated aggregate artifact over raw
+result files as the script's input: an aggregate carries per-run validity, a cross-run must-match
+consistency verdict, and provenance (run ids / upstream build ids), so the table inherits "these runs
+are real and mutually comparable" instead of assuming it. Reference producer: `exp aggregate
+<family>.spec.json` → `paper_aggregates/<family>.aggregate.json` (runs locally or on a cluster over any
+results tree with config/validity sidecars); any project script emitting the same three field groups
+qualifies. Record the source in the generated `.tex`: `% source: paper_aggregates/<family>.aggregate.json`.
+If the verdict is INCONSISTENT, disclose the deviation in the caption or body — never present
+heterogeneous runs as a homogeneous comparison. <!-- policy:EXP.MULTIRUN_AGGREGATE_CONSISTENCY -->
+
 ```python
 import pandas as pd
 
