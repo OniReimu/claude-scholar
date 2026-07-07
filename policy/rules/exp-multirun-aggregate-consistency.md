@@ -26,7 +26,7 @@ autofix: none
 
 一致性判定为 INCONSISTENT 时只有两条出路：重跑对齐，或在 caption / 正文**显式披露差异**（例如 "Mistral uses r32/3ep while Llama uses r64/5ep due to ..."）。禁止用行文技巧把设定不一致的 run "写顺"成同质对比。
 
-生成工具不限：参考实现为 `exp aggregate <family>.spec.json` → `paper_aggregates/<family>.aggregate.json`（适用于任何带 results sidecar 的目录树，本地或集群均可运行）；项目自有脚本亦可，只要输出含上述三类字段。结果表 `.tex` 中以注释记录来源：`% source: paper_aggregates/<family>.aggregate.json`。
+生成工具不限：参考实现为 `exp aggregate <family>.spec.json` → `paper_aggregates/<family>.aggregate.json`（适用于任何带 results sidecar 的目录树，本地或集群均可运行）；项目自有脚本亦可，只要输出含上述三类字段。合格工件还应携带：**顶层总判定字段**（如 `paper_use_status: clean | requires_disclosure`）——消费方以它为第一读数，不得只依赖嵌套字段；schema 标识（如 `schema: exp.aggregate/1`）；输入哈希（spec 与 sidecar 的 sha256，防"生成后输入被改"的陈旧工件）。结果表 `.tex` 中以注释记录来源与生成时间：`% source: paper_aggregates/<family>.aggregate.json (generated_at ...)`。
 
 ## Rationale
 
