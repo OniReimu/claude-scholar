@@ -182,6 +182,7 @@ SoK 规则集合（语义规则）：
 | EXP.RESULTS_SUBSECTION_STRUCTURE | exp-results-subsection-structure | core | warn | false | doc | guidance | none |
 | EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE | exp-fabricated-results-caption-disclosure | core | error | false | doc | guidance | none |
 | EXP.RESULTS_STATUS_DECLARATION_REQUIRED | exp-results-status-declaration-required | core | warn | false | doc | guidance | none |
+| EXP.MULTIRUN_AGGREGATE_CONSISTENCY | exp-multirun-aggregate-consistency | core | error | false | doc | guardrail | none |
 | REPRO.RANDOM_SEED_DOCUMENTATION | repro-random-seed-documentation | core | error | false | doc | guidance | none |
 | REPRO.COMPUTE_RESOURCES_DOCUMENTED | repro-compute-resources-documented | core | warn | false | doc | guidance | none |
 | SUBMIT.SECTION_NUMBERING_CONSISTENCY | submit-section-numbering-consistency | core | warn | false | lint_script | guidance | none |
