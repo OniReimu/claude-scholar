@@ -22,6 +22,8 @@ A reference guide for citation verification in academic paper writing, providing
 
 **Core Principle**: Proactively verify every citation during the writing process using WebSearch and Google Scholar.
 
+> **读论文步骤走 Knows**：核查 claim 支撑（`CITE.CLAIM_SUPPORT_REQUIRED`）需要"读来源论文"时，优先走 `knows-literature` bridge 的 `sidecar-reader`（单篇 Q&A + span 定位）；BibTeX key 派生可用 Knows CLI 的 `cite-key`。Knows 不可用再 fall back 到 WebSearch/Scholar。
+
 ## Core Problems
 
 Citation issues in academic papers seriously impact research integrity:
