@@ -214,6 +214,9 @@ Paper Quality Checklist:
 - [ ] Each Python plot = 1 file → 1 figure (no subplots); composite via LaTeX \subfigure <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
 - [ ] Tables use booktabs format <!-- policy:TABLE.BOOKTABS_FORMAT -->
 - [ ] Table headers include direction indicators (↑/↓) <!-- policy:TABLE.DIRECTION_INDICATORS -->
+- [ ] Tables resizebox-fit to column width unless naturally fitting <!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->
+- [ ] Comparison tables within 3–4 dimension budget, single-column first <!-- policy:TABLE.DIMENSION_BUDGET -->
+- [ ] No internal provenance in prose/captions (scripts, paths, placeholders, meta-text) <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
 - [ ] Symbols consistent throughout paper <!-- policy:LATEX.NOTATION_CONSISTENCY -->
 - [ ] For crypto-oriented security papers, core mechanism is presented as a structured Construction (Primitives/Parameters + named procedures) <!-- policy:PROSE.CRYPTO_CONSTRUCTION_TEMPLATE -->
 - [ ] Empty intensifiers removed <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
