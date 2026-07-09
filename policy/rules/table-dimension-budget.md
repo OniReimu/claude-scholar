@@ -41,7 +41,7 @@ autofix: none
 % 单栏，3 个维度直接对应论文声明的 gap（accuracy / latency / memory）
 \begin{table}[t]
   \centering
-  \caption{Comparison by resource footprint.}\label{tab:related}
+  \caption{Accuracy--efficiency comparison.}\label{tab:related}
   \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lccc}
     \toprule
