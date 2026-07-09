@@ -133,6 +133,10 @@ Systematically compare performance across different methods, ensuring fair compa
 > 字号、配色、导出格式等细节由 `scientific-figure-making` 的 `FigureStyle` 和 `finalize_figure()` 全权处理。
 >
 > **Tables (data → LaTeX)**: 图 skill 不做表格。生成结果表/消融表/对比矩阵走 `references/publication-tables.md`（CSV/Excel → booktabs LaTeX，siunitx 小数对齐，threeparttable 注脚，方向指示符，bold-best，config-driven 可复现脚本），遵循 `TABLE.BOOKTABS_FORMAT` / `TABLE.DIRECTION_INDICATORS` / `EXP.ERROR_BARS_REQUIRED`。聚合**多个 run** 的表格，源数据必须是带 validity + 一致性判定 + provenance 的 aggregate 工件（而非直接读散装 raw results），一致性 INCONSISTENT 必须在 caption/正文披露差异。 <!-- policy:EXP.MULTIRUN_AGGREGATE_CONSISTENCY -->
+>
+> **Venue 规格先行**: 出图前先查 `references/journal-figure-specs.md`（各 venue 栏宽/字号/DPI/字体硬要求），`figsize` 直接设为目标物理尺寸，不画大再缩。
+>
+> **视觉自检闭环（强制）**: 每张图导出最终矢量版之前，走 `references/figure-visual-qa.md`——渲 150 dpi PNG → 用 Read 实际读图 → 逐条过 8 项清单（裁切/遮挡/子图对齐/灰度可分/数据完整性…）→ 回源头改 → 重渲，最多 3 轮。画完不回看 = 没验证。
 
 #### 4a. Plotting Implementation（delegate 给 scientific-figure-making）
 
