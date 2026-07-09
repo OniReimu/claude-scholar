@@ -35,6 +35,11 @@ claude-scholar 的**默认文献后端是 Knows**（agent-native sidecar toolkit
 | 比较两篇 | `paper-compare` | paper-finder ×2 → paper-compare |
 | 把我的论文做成 agent-ready | `sidecar-author` | `orchestrator.py sidecar-author-pdf my.pdf -o my.knows.yaml` |
 | 这个主题 hub 上有吗 | `coverage-check` | `orchestrator.py coverage-check "<topic>"` |
+| Rebuttal 证据准备（`review-response` 阶段） | `rebuttal-builder` | reviewer 点名的 claim → paper-finder 找反证/支撑 → rebuttal-builder |
+| 审稿人视角自查（`paper-self-review` 阶段） | `review-sidecar` | 对自己的 draft 生成 review sidecar，暴露弱点 |
+| BibTeX citation key 派生 | `cite-key`（CLI） | `orchestrator.py cite-key <rid>` |
+
+以上映射只列 claude-scholar 的常用入口，**不是 Knows 的全集**（Knows 还有 `commentary-builder`、`version-inspector`、`disciplines` 等）——完整 sub-skill 列表以 Knows 自己的 `SKILL.md` 为准，本表滞后时以 Knows 为真。
 
 先 discovery 再下游（`paper-finder → {survey-narrative / survey-table / sidecar-reader / paper-compare}`）是规范链；`coverage-check` 是 2 秒的前置，THIN/ABSENT 时 pivot 到 Scholar/arXiv，别在空覆盖上硬跑。
 
