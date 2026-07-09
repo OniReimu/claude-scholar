@@ -166,6 +166,8 @@ SoK 规则集合（语义规则）：
 | FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required | core | error | false | doc | guidance | none |
 | TABLE.BOOKTABS_FORMAT | table-booktabs-format | core | warn | false | lint_script | guardrail | assisted |
 | TABLE.DIRECTION_INDICATORS | table-direction-indicators | core | warn | false | doc | guidance | none |
+| TABLE.RESIZEBOX_COLUMN_FIT | table-resizebox-column-fit | core | warn | false | doc | guidance | assisted |
+| TABLE.DIMENSION_BUDGET | table-dimension-budget | core | warn | false | doc | guidance | none |
 | LATEX.CMARK_XMARK_PMARK_MACROS | latex-cmark-xmark-pmark-macros | core | error | false | doc | guidance | none |
 | LATEX.EQ.DISPLAY_STYLE | latex-eq-display-style | core | error | true | doc | guardrail | none |
 | LATEX.VAR.LONG_TOKEN_USE_TEXT | latex-var-long-token-use-text | core | warn | false | doc | guidance | none |
@@ -202,6 +204,7 @@ SoK 规则集合（语义规则）：
 | PROSE.RULE_OF_THREE | prose-rule-of-three | domain | warn | false | doc | guidance | none |
 | PROSE.PROMOTIONAL_LANGUAGE | prose-promotional-language | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.FORMATTING_RESTRAINT | prose-formatting-restraint | domain | warn | false | doc | guidance | none |
+| PROSE.NO_INTERNAL_PROVENANCE | prose-no-internal-provenance | core | warn | false | doc | guardrail | assisted |
 | PROSE.TENSE_CONSISTENCY | prose-tense-consistency | domain | warn | false | doc | guidance | none |
 | PROSE.ABBREVIATION_FIRST_USE | prose-abbreviation-first-use | domain | warn | false | doc | guidance | none |
 | PROSE.VAGUE_QUANTIFIERS | prose-vague-quantifiers | domain | warn | false | lint_script | guardrail | assisted |
