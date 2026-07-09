@@ -31,21 +31,21 @@ autofix: none
 
 ## Check
 
-- **LLM 检查**：对比表列数 >5 时，核对是否有显式理由；`table*` 环境核对是否先做过剪列/缩表头；对比维度是否与论文 gap 对应而非单方面有利于 Ours 行
+- **LLM 检查**：数据维度列（不含首列的方法/系统名列）≥6 时，核对是否有显式理由；`table*` 环境核对是否先做过剪列/缩表头；对比维度是否与论文 gap 对应而非单方面有利于 Ours 行
 
 ## Examples
 
 ### Pass
 
 ```latex
-% 单栏，3 个维度直接对应论文声明的 gap（boundary / scoped memory / leakage metric）
+% 单栏，3 个维度直接对应论文声明的 gap（accuracy / latency / memory）
 \begin{table}[t]
   \centering
-  \caption{Comparison by boundary mechanism.}\label{tab:related}
+  \caption{Comparison by resource footprint.}\label{tab:related}
   \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lccc}
     \toprule
-    Approach & Boundary & Scoped Memory & Leakage Metric \\
+    Approach & Accuracy & Latency & Memory \\
     \midrule
     ...
     \bottomrule
