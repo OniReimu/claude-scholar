@@ -1,6 +1,6 @@
 ---
 name: citation-verification
-description: This skill provides reference guidance for citation verification in academic writing. Use when the user asks to "verify citations/references", "check whether these papers are real", "audit the .bib file", "check the claims match the cited sources", "find fake/hallucinated citations", or mentions retraction checks, BibTeX key hygiene, or per-claim support verification (CITE.CLAIM_SUPPORT_REQUIRED with verbatim spans + locators). Covers the multi-layer pipeline: format → API existence → metadata match → claim-level content support. Do not use for literature discovery or related-work drafting (knows-literature / ml-paper-writing) — this skill verifies citations that already exist in the draft.
+description: This skill provides reference guidance for citation verification in academic writing. Use when the user asks to "verify citations/references", "check whether these papers are real", "audit the .bib file", "check the claims match the cited sources", "find fake/hallucinated citations", or mentions retraction checks, BibTeX key hygiene, or per-claim support verification (CITE.CLAIM_SUPPORT_REQUIRED with verbatim spans + locators). Covers the multi-layer pipeline (format → API existence → metadata match → claim-level content support). Do not use for literature discovery or related-work drafting (knows-literature / ml-paper-writing) — this skill verifies citations that already exist in the draft.
 tags: [Research, Academic, Citation, Reference]
 version: 0.1.0
 ---
