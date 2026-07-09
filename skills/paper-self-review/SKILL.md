@@ -121,6 +121,9 @@ Evaluate the quality and effectiveness of figures and tables:
 - Are captions self-contained (what, how, takeaway)? <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
 - Do tables use booktabs format? <!-- policy:TABLE.BOOKTABS_FORMAT -->
 - Do table headers include direction indicators (↑/↓)? <!-- policy:TABLE.DIRECTION_INDICATORS -->
+- Are tables wrapped in `\resizebox` to fit the column width (or do they satisfy all natural-fit exemptions)? <!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->
+- Do comparison tables stay within the 3–4 dimension budget, single-column first, with an explicit reason for anything wider? <!-- policy:TABLE.DIMENSION_BUDGET -->
+- Are captions and prose free of internal provenance (script names, paths, DPI notes, placeholder markers, draft meta-text)? <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
 - Do figures/tables support the text narrative?
 - Are figures/tables clear and readable?
 - Do formats comply with journal/conference requirements?
