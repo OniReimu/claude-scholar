@@ -9,6 +9,8 @@ version: 0.1.0
 
 A systematic review response workflow that helps researchers efficiently and professionally reply to reviewer comments.
 
+> **Rebuttal 证据准备走 Knows**：找反证/支撑文献时，优先走 `knows-literature` bridge 的 `rebuttal-builder`（链：reviewer 点名的 claim → `paper-finder` → `rebuttal-builder`）。Knows 不可用再手动检索（WebSearch/Scholar，经 `citation-verification`）。
+
 ## Core Features
 
 1. **Review Analysis** - Parse and classify reviewer comments (Major/Minor/Typo/Misunderstanding)

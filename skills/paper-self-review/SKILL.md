@@ -84,6 +84,8 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
 | `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
 
+> **审稿人视角自查可选走 Knows**：投稿前想要额外的 reviewer-perspective 检查，可用 `knows-literature` bridge 的 `review-sidecar`，对 draft 生成审稿人视角 sidecar，暴露弱点；不替代本 skill 的 checklist。
+
 ## Core Features
 
 ### 1. Structure Review
