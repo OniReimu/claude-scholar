@@ -158,7 +158,7 @@ SoK 规则集合（语义规则）：
 | Rule ID | slug | layer | severity | locked | enforcement | constraint_type | autofix |
 |---------|------|-------|----------|--------|-------------|-----------------|---------|
 | FIG.NO_IN_FIGURE_TITLE | fig-no-in-figure-title | core | error | true | lint_script | guidance | none |
-| FIG.FONT_GE_24PT | fig-font-ge-24pt | core | error | false | doc | guidance | none |
+| FIG.FONT_GE_24PT | fig-font-ge-24pt (deprecated → scientific-figure-making) | core | error | false | doc | guidance | none |
 | FIG.ONE_FILE_ONE_FIGURE | fig-one-file-one-figure | core | error | true | doc | guidance | none |
 | FIG.COLORBLIND_SAFE_PALETTE | fig-colorblind-safe-palette | core | warn | false | doc | guidance | none |
 | FIG.SELF_CONTAINED_CAPTION | fig-self-contained-caption | core | warn | false | doc | guidance | none |
