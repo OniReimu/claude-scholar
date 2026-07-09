@@ -43,6 +43,8 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `SOK.RESEARCH_AGENDA_REQUIRED` | SoK 必须给出研究议程 |
 | `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
 | `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
+| `TABLE.RESIZEBOX_COLUMN_FIT` | 表格默认 resizebox 对齐栏宽 |
+| `TABLE.DIMENSION_BUDGET` | 对比表 3–4 维预算、单栏优先 |
 | `CITE.VERIFY_VIA_API` | 引文API验证 |
 | `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
 | `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
