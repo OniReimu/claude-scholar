@@ -9,6 +9,9 @@ use this for the central results table, ablation table, and the comparison matri
 
 - **booktabs only** — `\toprule` / `\midrule` / `\bottomrule`; no vertical rules, no `\hline`. `<!-- policy:TABLE.BOOKTABS_FORMAT -->`
 - **Direction indicators** in headers (`$\uparrow$` / `$\downarrow$`) so the reader knows which way is better. `<!-- policy:TABLE.DIRECTION_INDICATORS -->`
+- **Resizebox to column width** by default — `\resizebox{\columnwidth}{!}{...}` (single-column) / `\resizebox{\textwidth}{!}{...}` (`table*`); omit only when the table naturally fits and reads better unscaled. `<!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->`
+- **Dimension budget** — comparison tables default to 3–4 high-signal columns, single-column placement; prune columns and shorten headers before reaching for `table*`; ≥6 dimensions need an explicit reason. `<!-- policy:TABLE.DIMENSION_BUDGET -->`
+- **No internal provenance in captions** — script names, file paths, renderer/DPI notes, placeholder status stay in specs and READMEs, never in the paper. `<!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->`
 - **Caption says WHAT only**; push config/setup into `threeparttable` `\tablenotes`; result interpretation goes to text / takeaway box (mirrors the experiment-artifact caption convention). `<!-- policy:FIG.SELF_CONTAINED_CAPTION -->` `<!-- policy:EXP.TAKEAWAY_BOX -->`
 - **Variation on every quantitative claim** — report `mean ± std` or `mean (95% CI)`; never a bare point estimate for a stochastic result. `<!-- policy:EXP.ERROR_BARS_REQUIRED -->`
 - **Bold the best** per column; consistent significant figures; align decimals (siunitx `S` columns).
