@@ -2,7 +2,7 @@
 name: knows-literature
 description: This skill makes the Knows sidecar toolkit the default literature backend for claude-scholar. Use when the user needs to find/search papers, understand what a paper claims, draft a related-work paragraph or comparison table, find research gaps / next steps, or make a paper agent-ready (generate a sidecar). Triggers on "find papers about X", "what does this paper claim", "draft related work", "compare these papers", "what should I work on next", "make this paper agent-ready", or any mention of sidecars / KnowsRecord / knows.academy. Thin bridge — it routes to the Knows skill and defers to Knows for the actual interface.
 tags: [Research, Literature, Knows, Sidecar, Backend]
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Knows Literature Backend (bridge)
@@ -57,4 +57,7 @@ claude-scholar 的**默认文献后端是 Knows**（agent-native sidecar toolkit
 
 - `research-ideation`：literature scan 步骤先走 `paper-finder` / `coverage-check`。
 - `literature-reviewer` agent：related-work 与 gap 分析走 `survey-narrative` / `survey-table` / `next-step-advisor`。
-- `ml-paper-writing`：Related Work 段落用 `survey-narrative` 起草，引用再过 `citation-verification`。
+- `ml-paper-writing`：Related Work 段落用 `survey-narrative` 起草，引用再过 `citation-verification`（其 Literature Research workflow 已声明 Knows-first）。
+- `citation-verification`：claim 支撑核查的"读来源"步骤走 `sidecar-reader`，key 派生走 `cite-key`。
+- `review-response`：rebuttal 证据准备走 `rebuttal-builder`。
+- `paper-self-review`：投稿前审稿人视角自查可选走 `review-sidecar`。
