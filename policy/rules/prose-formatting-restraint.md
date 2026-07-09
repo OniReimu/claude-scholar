@@ -23,7 +23,8 @@ autofix: none
 1. **Bold**（`\textbf{}`）：仅用于首次定义的核心概念或术语，不用于强调普通词语
 2. **Italic**（`\textit{}`）：仅用于术语引入或外来语，不用于情绪强调
 3. **Bullet/numbered list**：正文段落用连贯散文，不在段落中间插入 itemize。Contribution section 和 algorithm 描述中的 enumerate 除外
-4. 保持论文模板的原生格式，不额外添加装饰性排版
+4. **Monospace**（`\texttt{}`）：仅用于代码字面量、命令名或确属贡献一部分的文件名；方法名、系统名、字段类别定义一次后用正体正文，不持续 `\texttt{}`
+5. 保持论文模板的原生格式，不额外添加装饰性排版
 
 ## Rationale
 
