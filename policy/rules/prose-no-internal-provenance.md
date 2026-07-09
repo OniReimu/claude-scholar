@@ -24,7 +24,12 @@ autofix: assisted
 2. **写作过程元话语**：`this draft`、`this manuscript aims to`、`in the camera-ready version we will`、`(placeholder)`、`[TODO]` 残留；
 3. **placeholder / 验证状态标记**：`[CITATION NEEDED]`、`[CLAIM NOT VERIFIED]` 等 workflow 标记在投稿/camera-ready 前必须全部清除或落实。
 
-这些内容属于 README、artifact spec、review 记录、audit appendix 或代码注释。例外：论文本身以审计方法 / artifact evaluation 为主题、需要实名引用内部工件时。
+这些内容属于 README、artifact spec、review 记录、audit appendix 或代码注释。
+
+**例外（不属于内部工作痕迹）**：
+
+- 论文本身以审计方法 / artifact evaluation 为主题、需要实名引用内部工件时；
+- `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` / `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` **要求**的科学状态披露（如 caption 声明结果为 simulated / projected / 非实跑）——那是科学 claim 的一部分，不是工作痕迹，两条 EXP 规则优先。
 
 ## Rationale
 
