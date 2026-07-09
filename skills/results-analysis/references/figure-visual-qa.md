@@ -43,4 +43,4 @@
 
 ## 与既有规则的关系
 
-本闭环是执行手段，不新增规则；它落地的是 `FIG.COLORBLIND_SAFE_PALETTE`、`FIG.FONT_GE_24PT`、`FIG.NO_IN_FIGURE_TITLE`、`FIG.SELF_CONTAINED_CAPTION`、`FIG.VECTOR_FORMAT_REQUIRED` 的实检。概念图（`paper-figure-generator` 产物）同样适用第 1–3、6 项：接受 `final.svg` 前先 Read 渲染出的 PNG。
+本闭环是执行手段，不新增规则；它落地的是 `FIG.COLORBLIND_SAFE_PALETTE`、`FIG.NO_IN_FIGURE_TITLE`、`FIG.SELF_CONTAINED_CAPTION`、`FIG.VECTOR_FORMAT_REQUIRED` 的实检，以及字号可读性（由 `scientific-figure-making` 的 `FigureStyle` 接管，原 `FIG.FONT_GE_24PT`，已退役）。概念图（`paper-figure-generator` 产物）同样适用第 1–3、6 项：接受 `final.svg` 前先 Read 渲染出的 PNG。
