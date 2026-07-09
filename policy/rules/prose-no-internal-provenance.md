@@ -35,6 +35,8 @@ autofix: assisted
 
 Agentic 写作的高发缺陷：生成流水线把自己的 provenance（脚本名、预览路径、自检备注）带进正文和 caption，人工通读时容易漏掉，被审稿人抓到会直接暴露"AI 生成未经通读"。工作痕迹与论文叙事分离，是投稿前的硬性卫生要求。（改编自 DELONG-L/Academic-Paper-Skills 的 paper body versus audit trail 约定，MIT。）
 
+本条是 `PROSE.*` 中唯一 `layer: core` 的规则：其余 PROSE 规则约束的是文风偏好，归属 `domain` 层；本条约束的是投稿完整性/卫生底线（工作痕迹一旦漏进正文即是硬伤，与具体 domain、venue 无关），因此跨所有 domain 与 venue 生效，归 `core`。
+
 ## Check
 
 - **LLM 检查**：扫描 `.tex` 正文与 caption 中的脚本文件名、相对路径、渲染工具名、DPI/自检字样、写作元话语、未清除的 placeholder 标记
