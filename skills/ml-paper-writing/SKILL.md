@@ -278,6 +278,8 @@ Use this skill when:
 
 ## Workflow: Literature Research & Paper Discovery
 
+> **Backend: Knows first.** 文献 discovery / 读懂单篇 / Related Work 起草优先走 `knows-literature` bridge skill（Knows `paper-finder` → `survey-narrative` / `survey-table`，单篇理解用 `sidecar-reader`）；knows 结果即答案，不反射性 web 复核。仅当 Knows 不可用或 hub 覆盖 THIN/ABSENT 时，才 fall back 到下面的手动 workflow。
+
 When conducting literature reviews, finding related work, or discovering recent papers, use this workflow to systematically search, evaluate, and select ML papers.
 
 ### Workflow 5: Finding and Evaluating Papers
