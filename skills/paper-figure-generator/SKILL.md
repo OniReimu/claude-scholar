@@ -236,6 +236,8 @@ For each iteration (up to 2):
   - **POSITION**: icon images, text elements, arrows, lines/borders
   - **STYLE**: sizes/proportions, font sizes/colors/weights, arrow styles, line styles
 
+  读预览图时同时过 `skills/results-analysis/references/figure-visual-qa.md` 清单的第 1–3、6 项（乱码/方框、文字裁切、文字遮盖重叠、配色可分）——概念图同样适用。
+
 - **(d) Edit the SVG** using the Edit tool to fix identified issues. Preserve:
   - All `<image>` elements with `id` like `icon_AF01`, `icon_AF02` (replaced icons with embedded base64 data) — do not modify the `href` attribute or base64 payload
   - No in-figure title text <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
