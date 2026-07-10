@@ -111,3 +111,51 @@ Voice is subordinate to defensibility, never overrides it:
 | so-what stops at the user | so-what ladders to national benefit |
 | risk in a separate box | risk embedded in the staged plan |
 | vocabulary diffuse | 6–8 core terms hammered |
+
+## 8. Register by mode — the fellowship / track-record inversion
+
+§1–7 lean toward `prospective-project` / commercialisation prose. A **fellowship** (mid-career
+FT-style, or any `narrative-award` judged on the person) inverts several of those rules,
+because **the person is the product** — the CV is not backing, it is the argument. Distilled
+from funded fellowship prose; all examples fictional.
+
+- **Front-load the claimant.** Establish the applicant as credible *before* the intellectual
+  case — an Investigator/Capability + Leadership + National-Standing block comes early and
+  runs long (often ~1/5 of the document). The reader must trust the claimant before weighing
+  the claim.
+- **Quantification is INVERTED.** Where a business case avoids a fragile market number (§5.4),
+  a fellowship *quantifies the person and the field position* and does so freely: papers in
+  flagship venues, students supervised to completion, grants won, cash from partners, awards,
+  keynotes, editorial/committee roles. Both are defensible by the same discipline — every
+  number carries a **scope** (metric + window + role) and, for the boldest, an **external
+  attributor or evidence pointer**.
+  > *"…the field's leading early-career researcher on five-year citation counts, as named by
+  > [ranking body]"* — bounded by metric, window, and attributor, so it reads as fact, not boast.
+- **Sourced eminence — the anti-arrogance move.** Never "I am excellent." Launder every
+  superlative through an external authority ("named by X", "elected to the largest committee
+  of Y", "published in the field's leading journal") and park the boldest personal claims
+  behind a cross-reference to the evidence section. This is the fellowship's `number-defensibility`.
+- **Future-leadership framing (mid-career signal).** Assert *emergence, not arrival*:
+  "established the institution's first group in [area]", "a fast-growing, independent
+  trajectory", mentoring and pipeline-building framed as a *funded outcome*, not a byproduct.
+- **Defensible primacy via tight scoping.** Not "first [technique]" (false) but "first
+  *wideband* [technique] *above [threshold]* in *any* [material]" — the qualifiers make an
+  audacious "first" survive a specialist's probe. (This is `verb-tiering` applied to novelty.)
+- **National-interest register replaces the value proposition.** Instead of TAM/ROI: sovereign
+  capability, supply-chain resilience, verbatim mapping to the government's named priorities,
+  STEM-ecosystem capacity. **Pre-empt the obvious National-Interest hole and rebut it in place**
+  (e.g. "although [step] occurs offshore, the project still contributes to [priority] by…").
+- **Significance over commercial.** Be comfortable that the *science* justifies the spend;
+  pre-commercial ("enabling applications not yet commercially viable") is a feature, not a gap.
+- **Rule-of-four scaffold + underlined thesis lines.** Objectives, significance points,
+  innovation points, and tasks run as parallel numbered fours, each opening with an
+  <u>underlined thesis sentence</u> that does the assessor's highlighting for them.
+- **Altitude gradient.** High-altitude national framing brackets low-altitude method, so the
+  generalist and specialist assessor are each served by the same document.
+- **Genre-tag section openers** ("Motivation —", "Significance —", "Innovation —") make the
+  surface skimmable: every paragraph advertises its function to a fast reader.
+
+Reconciliation: commercialisation prose is **humble about the team, loud (but unquantified)
+about the market**; fellowship prose inverts it — **loud (but sourced and quantified) about the
+person, content to let the science, not a market, justify the spend.** Pick the register from
+`mode`.
