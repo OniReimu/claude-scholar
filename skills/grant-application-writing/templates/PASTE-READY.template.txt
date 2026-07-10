@@ -1,0 +1,39 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  PASTE-READY.txt — web-portal output  [TEMPLATE]                              ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║  One block per portal field, in FORM ORDER. Paste each body into the matching ║
+║  field in the live portal. This is a paste aid, not an official submission —   ║
+║  the portal remains the system of record.                                     ║
+║                                                                                ║
+║  BLOCK HEADER FORMAT:                                                          ║
+║      === [field-id] LABEL — NNNN/LIMIT chars ===                              ║
+║    • field-id  = the scheme.yaml field id (traceable back to the IR)          ║
+║    • LABEL     = the field label as shown on the portal                       ║
+║    • NNNN      = ACTUAL length of the body below                              ║
+║    • LIMIT     = the field's limit; unit shown ("chars" | "words" | "pages")  ║
+║                                                                                ║
+║  CHAR-COUNT CONVENTION (state which the portal uses — they differ):           ║
+║    • Count matches the PORTAL's counter, not a generic one.                    ║
+║    • Note whitespace/newline handling: <includes | excludes> spaces,          ║
+║      <includes | excludes> line breaks — portals vary; verify against the      ║
+║      live counter before trusting NNNN.                                        ║
+║    • NNNN must be <= LIMIT. If a body is over, it is flagged, not silently     ║
+║      truncated (see the OVER-LIMIT marker below).                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+=== [<field-id-1>] <FIELD LABEL AS SHOWN ON PORTAL> — NNNN/<LIMIT> chars ===
+
+<Body text for field 1 goes here. Replace this placeholder with the drafted,
+limit-fitted content. Keep it plain text — portals strip formatting. Recount
+NNNN in the header above to the portal's own counter after every edit.>
+
+
+=== [<field-id-2>] <FIELD LABEL AS SHOWN ON PORTAL> — NNNN/<LIMIT> words ===
+
+<Body text for field 2 goes here. This example uses a WORD limit — set the unit
+in the header to match the field. If a field has nested sub-limits, split it into
+one block per sub-limit and label each sub-part.>
+
+<!-- OVER-LIMIT: remove this marker once NNNN <= LIMIT. While present it means the
+     body above exceeds the field limit and must NOT be pasted as-is. -->
