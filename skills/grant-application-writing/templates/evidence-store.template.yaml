@@ -16,6 +16,16 @@
 #   use_permission    — may it appear in an application: public | internal | embargoed
 #   defensibility     — DERIVED, do not hand-author: computed from status × confidence × source_authority (see note at foot)
 # ─────────────────────────────────────────────────────────────────────────────
+# ROPE + SOURCED-EMINENCE FIELDS (attach to EVERY track-record row — pub/funding/award/service/supervision/impact):
+#   window       — career-relative bound the count is stated against (ROPE): since-PhD | last-5y | since-YYYY
+#   role         — the role the count is claimed under (NEVER upgraded): pub first|corresponding | funding CI|PI|co-I |
+#                  supervision principal|co | service chair|editor|committee-member | award sole|co-recipient | impact lead|contributor
+#   attributor   — external validator that makes a superlative SOURCED: ranking body | award name | flagship venue |
+#                  units-sold/adoption figure | an evidence-store id.  null ⇒ statable, but NOT as a superlative
+#   The drafting layer renders "sourced eminence" + "relative-to-opportunity" FROM these fields — never improvised.
+#   A superlative with no attributor derives to a LOWER defensibility tier. Feeds number-defensibility prong 2
+#   (fellowship) in method-passes.md + author-voice.md §8.
+# ─────────────────────────────────────────────────────────────────────────────
 
 # ─── Owner — top-level applicant block + disambiguation anchors (resolve every ingest against these) ───
 owner:
