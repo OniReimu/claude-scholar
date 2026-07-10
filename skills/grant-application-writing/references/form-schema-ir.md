@@ -161,3 +161,24 @@ unmatched control (scheme, field, why it doesn't fit), extend the `type-model.md
 table with a provenance note, and only then encode it in `scheme.yaml`. The widget set grew
 from 6 to its current size precisely by this rule; `scheme.yaml` inherits the same
 discipline. A parse gap is a visible TODO, never a guessed value.
+
+### Composite fields & the no-silent-fallback rule
+
+A control that *partly* matches a widget is more dangerous than one that matches none —
+the falsifiability log fires, but Stage A can still emit a plausible-looking default that
+buries the flag. Two hard rules:
+
+1. **Composite fields are two (or more) sub-fields, never one.** A pick-N paired with a
+   bounded justification (an "Eight Characteristics: tick ≤2 + describe in 600 chars"
+   box; an "AEA TRL: pick 3–5 + justify" box; a "focus area + rationale" box) is a
+   `section`/`fieldset` holding a `multi-choice` (or `single-choice`) **and** a separate
+   `narrative` **with its own limit** — not a single `narrative` sized to the visible box.
+   Collapsing it invents a wrong `limit`.
+2. **A flagged widget/limit ambiguity must be RESOLVED before Stage A finalizes the
+   field — never defaulted.** If the true widget or its `limit` is uncertain, do not fall
+   back to `narrative @ <whatever-max-is-visible>`; go back to the form/guidelines (or the
+   live portal) and read the real sub-structure and per-sub-field limits. A guessed limit
+   silently defeats the `char-fit` pass downstream: it validates the draft against the
+   wrong number and reports a **false PASS** on an over-limit field. If the real limit
+   genuinely cannot be found, encode it as `limit: {value: null, note: "UNVERIFIED — do
+   not char-fit"}` so the pass fails closed instead of green-washing.
