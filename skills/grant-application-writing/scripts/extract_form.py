@@ -119,7 +119,7 @@ def extract_docx(path: Path) -> dict:
         style = (para.style.name or "") if para.style else ""
         if style.startswith("Heading") and para.text.strip() and _slug(para.text) not in control_labels:
             fields.append({
-                "id": _slug(para.text),
+                "id": uniq(_slug(para.text)),
                 "label": para.text.strip(),
                 "widget": "narrative",
                 "role": "TODO",
