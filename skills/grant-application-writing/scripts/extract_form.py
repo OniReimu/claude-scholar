@@ -77,6 +77,7 @@ def extract_docx(path: Path) -> dict:
 
     doc = Document(str(path))
     fields: list[dict] = []
+    uniq = _Unique()
 
     # 1. Content controls (SDT). python-docx has no public API for these, so walk
     #    the raw XML. An SDT that is really a form control is high-signal.
