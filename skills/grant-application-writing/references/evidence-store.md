@@ -118,13 +118,50 @@ patents:
     # "filed" ≠ "granted": a reviewer will check. Verb-tiering must not upgrade this.
 
 service:
-  - {id: svc-neurips-ac-25, role: "Area Chair", org: "NeurIPS", year: 2025,
-     status: confirmed, source_authority: official-record, provenance: "corpus/invite-email.eml"}
+  - {id: svc-flagship-ac-25, role: chair,          # role: chair | editor | committee-member
+     window: last-5y, attributor: null,            # attributor: named body/size — required for "largest committee of…"
+     org: "NeurIPS", year: 2025, status: confirmed,
+     source_authority: official-record, provenance: "corpus/invite-email.eml"}
+
+supervision:
+  - id: sup-phd-alpha
+    student: "<anonymised student id>"
+    level: PhD                          # PhD | MPhil | Masters | Honours | postdoc
+    role: principal                     # principal | co — the supervisory role the count is claimed under
+    window: since-PhD                   # ROPE bound for "students supervised to completion" tallies
+    attributor: null                    # graduation record / evidence id — required to state a superlative
+    status: completed                   # ongoing | completed | withdrawn   ("graduated" ≠ "enrolled")
+    confidence: high
+    source_authority: official-record
+    as_of: 2026-07-01
+    validity_window: {from: 2023-06, to: perpetual}
+    sensitivity: internal
+    use_permission: internal
+    provenance: "corpus/graduation-record.pdf"
 
 awards:
   - {id: awd-best-paper-24, title: "Best Paper Award", org: "KDD", year: 2024,
+     role: sole, window: since-PhD,                # role: sole | co-recipient
+     attributor: "KDD Best Paper committee",       # the conferring body IS the attributor that sources the superlative
      status: awarded, confidence: high, source_authority: official-record,
      provenance: "corpus/kdd-cert.pdf"}
+
+impact:
+  - id: imp-toolkit-adoption
+    claim: "open-source toolkit adopted by external deployments"
+    kind: adoption                      # adoption | policy | deployment | commercial | community
+    role: lead                          # lead | contributor
+    window: last-5y                     # ROPE bound for reach tallies
+    attributor: "12,000 installs (package registry)"  # units/adoption figure or evidence id that sources the eminence claim; null ⇒ no superlative
+    metric: {value: 12000, unit: installs}            # optional quantified reach
+    status: realised                    # realised | in-progress
+    confidence: medium
+    source_authority: self-reported
+    as_of: 2026-07-01
+    validity_window: {from: 2022-01, to: perpetual}
+    sensitivity: public
+    use_permission: public
+    provenance: "corpus/registry-stats.png (OCR)"
 ```
 
 Every leaf item carries the six hardening fields (`status`, `confidence`,
