@@ -89,7 +89,9 @@ funding:
   - id: <grant-key>
     title: "<grant title>"
     scheme: "<funder + scheme>"
-    role: <lead-CI | CI | co-I | named-personnel>
+    role: <CI | PI | co-I>                        # the role the grant count is claimed under (NOT scholarship/stipend)
+    window: <since-PhD | last-5y | since-YYYY>    # ROPE bound for grant tallies (e.g. "grants won since PhD")
+    attributor: <null | scheme/award name | evidence id>   # required to state a superlative ("largest…"); null ⇒ no superlative
     amount: {value: <NNNNN>, currency: "<CUR>"}
     period: {from: "<YYYY-MM>", to: "<YYYY-MM>"}
     provenance: "<award letter / record path>"
