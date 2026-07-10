@@ -185,8 +185,8 @@ def self_test():
     assert d["declared[requested]"][0] is True, d["declared[requested]"]  # requested=10000
     assert abs(tot[0] - 20000) < 1e-6, tot                                 # credit excluded → 20000
 
-    # ── FIX #7: dual denominator — total=100000(含in-kind 50000), total-cash=50000 ──
-    # overseas 6000: 6% of total → PASS(会漏); 12% of total-cash → FAIL(被抓)
+    # ── FIX #7: dual denominator — total=100k(含in-kind 50k), total-cash=50k; overseas 6000:
+    #    6% of total PASS(会漏) vs 12% of total-cash FAIL(被抓) ──
     tc_rows = [
         {"category": "overseas", "funding_source": "requested", "kind": "cash", "years": {2026: 6000}},
         {"category": "labour", "funding_source": "requested", "kind": "cash", "years": {2026: 44000}},
