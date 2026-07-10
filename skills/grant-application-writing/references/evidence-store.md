@@ -57,8 +57,8 @@ owner:                                   # top-level owner + disambiguation anch
   scopus_author_id: "57200000000"
   known_name_variants: ["J. Q. Researcher", "J.Q. Researcher", "Q. Jane"]
   affiliation_history:
-    - {org: "UTS", from: 2022-03, to: null}
-    - {org: "CSIRO Data61", from: 2019-01, to: 2022-02}
+    - {org: "Northbridge University", from: 2022-03, to: null}
+    - {org: "Meridian Research Institute", from: 2019-01, to: 2022-02}
   as_of: 2026-07-01                      # store-wide last full refresh
 
 metrics:
