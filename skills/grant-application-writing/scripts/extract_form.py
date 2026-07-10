@@ -101,7 +101,7 @@ def extract_docx(path: Path) -> dict:
         content = "".join(n.text or "" for n in sdt.iter(qn("w:t")))
         label = alias or tag or _slug(content)
         fields.append({
-            "id": _slug(tag or alias or content),
+            "id": uniq(_slug(tag or alias or content)),
             "label": label,
             "widget": sdt_type(sdtpr) if sdtpr is not None else "scalar",
             "role": "TODO",
