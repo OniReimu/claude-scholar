@@ -30,6 +30,22 @@
 
 ---
 
+## Renderer input contract — `scheme.yaml` (structure) + `values.yaml` (content)
+
+Every renderer takes **two** inputs, never one: it loads **structure + limits** from
+`scheme.yaml` (`sections[].fields[]` — the widget, role, `limit`, required flag) and the
+**filled content** from a sidecar **`values.yaml`** (`{field-id: value}` — see
+`templates/values.template.yaml`). Back-compat: `values.yaml` *is* a flat `{field-id: value}`
+map, the same shape the scripts already accept as a bare IR.
+
+Resolution is **fail-closed** (see the honesty rule): a value whose `field-id` is not in
+`scheme.yaml`, or a **required** `scheme.yaml` field with **no** value in `values.yaml`, is a
+**resolution failure** — the renderer exits non-zero and does **not** emit an "official" partial
+(`render_pdf.py` / `render_docx.py`), unless an explicit `--allow-partial` marks the output
+non-official.
+
+---
+
 ## 1. web-portal → PASTE-READY.txt  (first-class, most-used)
 
 The dominant path: Symplectic Elements, ARC RMS, NHMRC Sapphire, Submittable-style portals.
