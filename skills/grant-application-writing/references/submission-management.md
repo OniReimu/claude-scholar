@@ -67,14 +67,21 @@ format_rules:                                # format IS a compliance rule, not 
   filename_pattern: "{surname}_{scheme}_{doc}.pdf"   # portals reject on mismatch
   reference_style: null
 
-certifications_signatures:                   # who must sign what, in wet/e-sign
+certifications:                              # who must sign what, in wet/e-sign
   - id: sig.nominator
+    name: "Nominator statement signature"
     on: doc.nominator_statement
-    signer_role: nominator                   # nominee | nominator | associate-dean | partner | DVC-R
+    signatory: nominator                     # applicant | nominator | associate-dean | partner | DVC-R
+    kind: eligibility-attestation
     method: e-signature
+    status: pending
   - id: sig.faculty
+    name: "Faculty endorsement signature"
     on: doc.faculty_endorsement
-    signer_role: associate-dean
+    signatory: associate-dean
+    kind: eligibility-attestation
+    method: e-signature
+    status: pending
 
 deadlines:
   funder_deadline: 2026-03-01T17:00+11:00    # the real, external cutoff
