@@ -216,7 +216,7 @@ people:
     name: "Jane Q. Researcher"
     role: CI                            # CI | PI | co-I | AI | PhD | RA
     fte_commitment: {value: 0.2, basis: "0.2 FTE across 3 yrs"}
-    org: person-org-uts
+    org: person-org-lead
     approvals: [{type: "Head-of-School sign-off", status: obtained, as_of: 2026-06-20}]
     profile_ref: "evidence-store.yaml#owner"       # links back to the evidence store
 
