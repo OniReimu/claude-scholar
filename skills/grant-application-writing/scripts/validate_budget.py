@@ -185,21 +185,18 @@ def self_test():
     assert d["declared[requested]"][0] is True, d["declared[requested]"]  # requested=10000
     assert abs(tot[0] - 20000) < 1e-6, tot                                 # credit excluded → 20000
 
-    # ── FIX #7: dual denominator — total=100k(含in-kind 50k), total-cash=50k; overseas 6000:
-    #    6% of total PASS(会漏) vs 12% of total-cash FAIL(被抓) ──
+    # ── FIX #7: dual denominator — total=100k(含in-kind 50k), total-cash=50k; overseas 6000
+    #    → 6% of total PASS(会漏) vs 12% of total-cash FAIL(被抓) ──
     tc_rows = [
         {"category": "overseas", "funding_source": "requested", "kind": "cash", "years": {2026: 6000}},
         {"category": "labour", "funding_source": "requested", "kind": "cash", "years": {2026: 44000}},
         {"category": "in_kind", "funding_source": "co-contribution", "kind": "in-kind", "years": {2026: 50000}},
     ]
-    r_cash = run({"row_caps": [{"category": "overseas", "max_pct": 10.0, "of": "total-cash"}],
-                  "rows": tc_rows})[0]
-    r_total = run({"row_caps": [{"category": "overseas", "max_pct": 10.0}], "rows": tc_rows})[0]
-    assert dict((n, ok) for n, ok, _ in r_cash)["row-cap[overseas]"] is False, "total-cash must FAIL"
-    assert dict((n, ok) for n, ok, _ in r_total)["row-cap[overseas]"] is True, "total wrongly PASSes"
+    pick = lambda caps: dict((n, ok) for n, ok, _ in run({"row_caps": caps, "rows": tc_rows})[0])
+    assert pick([{"category": "overseas", "max_pct": 10.0, "of": "total-cash"}])["row-cap[overseas]"] is False
+    assert pick([{"category": "overseas", "max_pct": 10.0}])["row-cap[overseas]"] is True  # total 会漏
 
-    # ── FIX #8: cash-flow — 前置支出/后置现金 必须 FAIL 即使 row cap 全过 ──
-    # spend all 2026 = 50000; overseas 4000 = 8% ≤ 10% (PASS); cash-in 后置 → FY2026 FAIL
+    # ── FIX #8: cash-flow — 前置支出/后置现金 必须 FAIL 即使 row cap 全过 (overseas 8%<10%) ──
     cf = {"cash_flow_check": True, "cash_in": {2026: 5000, 2027: 45000},
           "row_caps": [{"category": "overseas", "max_pct": 10.0}],
           "rows": [{"category": "labour", "funding_source": "requested", "kind": "cash", "years": {2026: 46000}},
