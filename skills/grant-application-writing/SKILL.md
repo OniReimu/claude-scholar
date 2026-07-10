@@ -76,7 +76,10 @@ B2  people/orgs/partners → entity-store      project mode: CI/PI/partner/subaw
 C   fill: per field → select evidence + mode-aware method passes
 D   render to native modality                paste-ready / docx write-back / AcroForm / honest degrade
 E   review: checklist-driven contract        eligibility·compliance·evidence·consistency·budget-math·
-                                             attachments·panel-fit·risk·portal dry-run
+                                             attachments·panel-fit·risk·portal dry-run — the mechanical
+                                             items run as ONE gate: `scripts/validate_ir.py` (single
+                                             pre-submit dry-run; composes charcount + validate_budget,
+                                             enforces cross-field couplings). Judgement items stay adversarial.
 F   submission_plan.yaml                      owners, due dates, internal cutoffs, approvals, dependency graph
 ```
 
