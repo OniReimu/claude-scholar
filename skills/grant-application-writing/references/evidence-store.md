@@ -51,14 +51,15 @@ a stale `as_of` or a downgraded source automatically lowers it. Never hand-write
 
 ```yaml
 # ── evidence-store.yaml — one per applicant, reused across all applications ──
-applicant: "Jane Q. Researcher"
-identity:                               # disambiguation anchors (see below)
+owner:                                   # top-level owner + disambiguation anchors (see below)
+  name: "Jane Q. Researcher"
   orcid: "0000-0002-1825-0097"
   scopus_author_id: "57200000000"
   known_name_variants: ["J. Q. Researcher", "J.Q. Researcher", "Q. Jane"]
   affiliation_history:
     - {org: "UTS", from: 2022-03, to: null}
     - {org: "CSIRO Data61", from: 2019-01, to: 2022-02}
+  as_of: 2026-07-01                      # store-wide last full refresh
 
 metrics:
   h_index:        {value: 18, source_authority: scholar, as_of: 2026-07-01}
