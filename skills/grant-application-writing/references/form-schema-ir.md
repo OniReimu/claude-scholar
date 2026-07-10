@@ -1,0 +1,163 @@
+# Form-Schema IR — `scheme.yaml` (Stage A)
+
+> Layer-1 abstraction. Stage A ingests **a blank form + its guidelines** and emits one
+> normalized `scheme.yaml`. Every field in that file is expressed in the **widget × role +
+> attributes** model — this file does **not** re-list the widget/role/attribute sets; that is
+> `type-model.md`, which is load-bearing and must be read first. Here we specify only the
+> *container* schema that holds those fields, and the protocol for producing it.
+>
+> The IR is the contract between parsing (Stage A) and drafting (Stage C): a value the
+> drafter needs — a limit, a weight, a gate, a phase lock — must be captured here or it does
+> not exist downstream. If it is not in `scheme.yaml`, the drafter cannot see it.
+
+## Why an IR at all
+
+A scheme is never one document. The **form** carries the fields, their order, and their
+limits; the **guidelines** carry the rubric, the weights, the eligibility rules, and the
+compliance obligations. Neither alone is sufficient. `scheme.yaml` is the join: it fuses
+both (and any addenda — CFP page, portal help text, funding rules PDF) into a single
+machine-checkable object so the rest of the pipeline reads structure, not prose.
+
+The A0 `compliance_matrix.yaml` (see `submission-management.md`) is authored *alongside*
+`scheme.yaml` from the same sources — it captures the rulebook (fonts, certs, internal
+deadlines, submission owner); `scheme.yaml` captures the fillable structure. They cross-
+reference by `scheme` + `scheme_version`.
+
+## The `scheme.yaml` schema
+
+```yaml
+scheme: "UTS Early Career Researcher Grant"    # human name
+mode: narrative-award                          # narrative-award | prospective-project | retroactive-impact
+scheme_version: "2026-R1"                       # round/year tag; taxonomy + option sets are bound to this
+portal: "web-form"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | web-form | docx | ...
+source_docs:                                    # every doc that fed this IR — provenance for every value below
+  - {id: form,  path: "ecr-2026-form.docx",       role: fields+limits}
+  - {id: guide, path: "ecr-2026-guidelines.pdf",  role: rubric+eligibility+weights}
+
+eligibility_gates:                              # role=eligibility-gate, hoisted to the top; run BEFORE drafting
+  - id: within-window
+    rule: "≤5 years since PhD conferral at close of round"
+    binding: hard            # hard = submit-blocker | soft = disadvantage only
+    derived: "(round_close - phd_conferral_date) - career_interruption_total <= 5y"   # a `computed` gate: expr over other fields, recomputed not stored
+    check: "phd_conferral_date, career_interruption_total"                            # fields the expr depends on
+  - id: employed-at-inst
+    rule: "Continuing/fixed-term appointment at the institution at time of application"
+    binding: hard
+    check: "appointment_status"                 # plain gate: no derived expr, just a field to validate
+
+submission:
+  modality: web-form        # web-form | docx | pdf-acroform | pdf-xfa | pdf-flat | pdf-scanned | latex | xlsx | sf424-xml
+  phases: [full]            # ordered subset of [minimum-data, EOI, full, post-award]; gates/locks are per-phase
+  deadline: "2026-08-14T17:00+10:00"
+  timeout: "portal session 30min"               # portal idle-logout, if any
+  who_submits: "Research Office (not applicant)" # matters for submission_plan (F)
+  hard_fail_rules:                              # scheme-level auto-reject conditions, distinct from per-field gates
+    - "over char limit on any narrative field"
+    - "missing mandatory attachment"
+
+sections:                                       # CONTAINERS, not a flat field list — preserve form order
+  - id: track-record
+    title: "Research Track Record"
+    repeating: null                             # or {min, max} for list-of-section (e.g. per-CI blocks)
+    fields:                                     # each field = the type-model.md object
+      - id: significance
+        label: "Significance & impact of research"
+        widget: narrative
+        role: criterion-scored
+        limit: {value: 4000, unit: chars}
+        visibility: [assessor, institution]
+        stage_lock: null                        # or {authored_at, editable_at[], locked_from}
+        submission_phase: full
+        # ...any further attrs from type-model.md §attributes apply here
+
+rubric:                                         # role=criterion-scored fields link here by criterion
+  - criterion: "Significance & impact"
+    weight: 0.40
+    evidence_types: [publication, citation-metric, grant, invited-talk]
+    reviewer_panel: null                        # panel/college that scores it, if scheme routes by classification
+
+attachments:                                    # every upload; kind is NEVER "just a blob" (type-model.md structured-upload)
+  - name: "CV"
+    kind: system-generated                      # free | proforma | composite | heading-sequenced | system-generated
+    source: "ORCID export"
+    constraints: {pages: 2, headings: null, filename: "surname_cv.pdf"}
+```
+
+### Field notes
+
+| key | rule |
+|-----|------|
+| `mode` | Set from the funding-mode dispatch (SKILL.md). Selects which passes run; a mismatch here mis-routes the whole pipeline. |
+| `scheme_version` | Mandatory. Option enums, taxonomy code sets, weights, and limits all drift between rounds; a value with no version is unciteable. |
+| `source_docs[].role` | Records *which document* a value came from, so a later conflict (form says 4000ch, guide says 500 words) is traceable, not silently resolved. |
+| `eligibility_gates[].derived` | Present only for `computed` gates. The expr is stored as text and **recomputed at check time** — never cache a stale boolean. Omit for plain gates. |
+| `sections[].repeating` | `null` for a normal section; `{min,max}` when the whole section repeats (per-CI, per-partner). Per-*item* repetition inside a field stays a `repeating-group` widget on the field, not here. |
+| `fields[]` | Each entry is exactly a `type-model.md` field object. This file adds no new field keys — it only nests them under sections. |
+| `rubric[]` | Derived from the **guidelines**, not the form. Every `criterion-scored` field must resolve to one `criterion` here; a scored box with no rubric weight is a parse gap, not a zero. |
+| `attachments[].kind` | One of the five `structured-upload` sub-kinds. `free` is rare and must be justified — most "uploads" are `proforma`/`heading-sequenced`/`system-generated`. |
+
+## Extraction protocol (form + guidelines → `scheme.yaml`)
+
+Both documents are inputs; run the two passes and then reconcile.
+
+1. **Form pass (structure + limits).** Walk the blank form in order. For each control emit a
+   `field` under its `section`: assign `widget` (type-model.md Axis 1), read the `limit`
+   verbatim (never assume max-only or a single unit — check for min, page vs char vs word,
+   nested sub-limits), capture `stage_lock`/`submission_phase` if the portal shows them.
+   Preserve document order — reviewers read in it, and `depends_on` couplings often follow it.
+2. **Guidelines pass (meaning + scoring + gates).** Read the guidelines for: the **rubric**
+   (criteria + weights + accepted evidence types) → `rubric[]`; **eligibility rules** →
+   `eligibility_gates[]` (mark `binding`, write `derived` for computed ones); **compliance
+   obligations** (ethics/COI/foreign-interference) → fields with `role: compliance`;
+   **hard-fail conditions** → `submission.hard_fail_rules`.
+3. **Reconcile + assign roles.** Join the two: attach each `criterion-scored` field to its
+   `rubric` criterion; set `visibility` (guidelines/portal reveal who reads what — often ≥3
+   audiences); resolve any form-vs-guide conflict explicitly in `source_docs` provenance
+   rather than picking one silently.
+4. **Multi-doc schemes.** List every source in `source_docs` (funding-rules PDF, CFP page,
+   portal help, addenda). When two disagree, the more authoritative/binding document wins and
+   the loser is recorded — do not average or guess. Round-specific addenda override the base
+   template for that `scheme_version`.
+
+## Worked mini-example
+
+Three real fields, expressed in the IR (abridged to the load-bearing keys):
+
+```yaml
+# 1. A scored narrative box: limit from the FORM, weight from the GUIDELINES
+- id: significance
+  label: "Significance and innovation of the proposed research"
+  widget: narrative
+  role: criterion-scored
+  limit: {value: 4000, unit: chars}
+  visibility: [assessor, institution]
+# ...and its rubric row (from the guidelines):
+rubric:
+  - criterion: "Significance and innovation"
+    weight: 0.40
+    evidence_types: [publication, prior-grant]
+
+# 2. A taxonomy field with %-allocation summing to 100, version-bound
+- id: for-codes
+  label: "Fields of Research (FoR)"
+  widget: taxonomy-code
+  role: classification
+  taxonomy: {scheme: "ANZSRC-FoR", version: "2020", levels: 4, max_codes: 3, allocation_sums_to: 100}
+  visibility: [assessor, funder]   # drives panel routing
+
+# 3. A derived eligibility gate (computed over other fields, recomputed not stored)
+- id: within-window          # lives under eligibility_gates[], not a section field
+  rule: "≤5 years since PhD conferral, net of career interruptions, at round close"
+  binding: hard
+  derived: "(round_close - phd_conferral_date) - career_interruption_total <= 5y"
+  check: "phd_conferral_date, career_interruption_total"
+```
+
+## Falsifiability
+
+If a form control maps to **no** widget in `type-model.md`, do not coerce it into the
+nearest fit — a wrong widget produces a silently broken application. Instead: log the
+unmatched control (scheme, field, why it doesn't fit), extend the `type-model.md` widget
+table with a provenance note, and only then encode it in `scheme.yaml`. The widget set grew
+from 6 to its current size precisely by this rule; `scheme.yaml` inherits the same
+discipline. A parse gap is a visible TODO, never a guessed value.
