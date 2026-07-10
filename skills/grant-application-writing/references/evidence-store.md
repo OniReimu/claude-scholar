@@ -79,13 +79,13 @@ publications:
     year: 2024
     role: first                         # first | co-first | corresponding | supervising | co-author
     metrics: {citations: {value: 41, source_authority: scholar, as_of: 2026-07-01}}
-    status: published                   # published | in-press | under-review
+    status: published                   # published | in-press | in-review
     confidence: high
     source_authority: orcid
     as_of: 2026-07-01
     validity_window: {from: 2024-12, to: perpetual}
     sensitivity: public
-    use_permission: free
+    use_permission: public              # public | internal | embargoed
     provenance: "corpus/cv.pdf#p3 ; orcid:0000-0002-1825-0097"
 
 funding:
