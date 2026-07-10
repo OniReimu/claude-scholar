@@ -50,7 +50,7 @@ submission:
   phases: [full]            # ordered subset of [minimum-data, EOI, full, post-award]; gates/locks are per-phase
   deadline: "2026-08-14T17:00+10:00"
   timeout: "portal session 30min"               # portal idle-logout, if any
-  who_submits: "Research Office (not applicant)" # matters for submission_plan (F)
+  submission_authority: "Research Office (not applicant)" # matters for submission_plan (F)
   hard_fail_rules:                              # scheme-level auto-reject conditions, distinct from per-field gates
     - "over char limit on any narrative field"
     - "missing mandatory attachment"
