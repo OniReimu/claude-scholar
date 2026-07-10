@@ -6,17 +6,26 @@
 
 Fills values into the *same* template so the funder's formatting, headers, and mandated
 structure survive. Two write strategies, tried in order per field:
-  1. content-control  — match a Word content control (SDT) by tag/alias, replace its text.
+  1. content-control  — match a Word content control (SDT) by TAG then ALIAS; write into it
+     with the CORRECT control type (text / checkbox / dropdown / date).
   2. under-heading    — match a mandated heading, insert the value as a paragraph beneath it.
-A field whose target cannot be located is REPORTED (never silently dropped) so the caller
-can fix the mapping rather than ship a form with a missing box.
 
-    uv run render_docx.py filled.yaml template.docx -o application.docx
+FAIL-CLOSED rules (C5):
+  * Type-specific SDT: a checkbox/dropdown/date content-control gets a type-correct write.
+    If a value cannot be written as the correct control type (e.g. free text into a checkbox,
+    a value not in a dropdown's option list) the field is marked UNRESOLVED and the run exits
+    NON-ZERO — never write text into a checkbox and call it done.
+  * Multi-paragraph answers are split into paragraphs/runs, preserving the template style.
+  * Match by TAG, then ALIAS; a colliding/ambiguous match is reported.
+  * A field whose target cannot be located is REPORTED (never silently dropped) → non-zero.
 
-IR format (any of):
-    field_id: "text"                       # flat mapping
-    {fields: {field_id: "text", ...}}      # nested
-    [{id: field_id, text: "..."}]          # list of objects
+C6: CONTENT from values.yaml (flat {field-id: value}); STRUCTURE from scheme.yaml. A value
+not in scheme, or a required scheme field with no value, is a resolution failure → non-zero.
+
+    uv run render_docx.py values.yaml template.docx -o application.docx --scheme scheme.yaml
+    uv run render_docx.py filled.yaml template.docx -o application.docx     # back-compat flat map
+
+IR/values format: flat mapping | {fields:{...}} | [{id,text}].
 """
 from __future__ import annotations
 
@@ -28,13 +37,18 @@ from pathlib import Path
 import yaml
 
 W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+W14 = "http://schemas.microsoft.com/office/word/2010/wordml"
+XMLSPACE = "{http://www.w3.org/XML/1998/namespace}space"
+
+_TRUTHY = {"yes", "true", "1", "x", "checked", "on", "y"}
+_FALSY = {"no", "false", "0", "unchecked", "off", "n", ""}
 
 
 def norm(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", (s or "").lower())
 
 
-def load_ir(path: Path) -> dict[str, str]:
+def load_values(path: Path) -> dict[str, str]:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if isinstance(raw, dict) and "fields" in raw and isinstance(raw["fields"], dict):
         raw = raw["fields"]
@@ -47,77 +61,216 @@ def load_ir(path: Path) -> dict[str, str]:
             if isinstance(item, dict) and "id" in item:
                 out[str(item["id"])] = str(item.get("text", item.get("value", "")))
     else:
-        sys.exit("error: IR must be a mapping or a list of {id,text} objects")
+        sys.exit("error: values must be a mapping or a list of {id,text} objects")
     return out
 
 
-def fill_content_controls(doc, ir: dict[str, str], filled: set[str]) -> None:
-    """Replace text inside SDTs whose tag/alias matches an IR key. python-docx has no
-    SDT API, so operate on raw XML: clear existing w:t runs, write the value into the first."""
-    from docx.oxml.ns import qn
+def load_scheme(path: Path) -> dict[str, dict]:
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    out: dict[str, dict] = {}
 
-    keys = {norm(k): k for k in ir}
+    def walk(fields):
+        for f in fields or []:
+            fid = f.get("id")
+            if fid:
+                out[str(fid)] = f
+            walk(f.get("sub_fields"))
+    for sec in data.get("sections", []):
+        walk(sec.get("fields"))
+    return out
+
+
+def resolve_against_scheme(values, scheme):
+    unknown = [k for k in values if k not in scheme]
+    missing = [fid for fid, f in scheme.items()
+               if bool(f.get("required")) and not str(values.get(fid, "")).strip()]
+    return unknown, missing
+
+
+# ----------------------------------------------------------------- SDT -------
+def _attr(el, tagname):
+    from docx.oxml.ns import qn
+    child = el.find(qn(tagname))
+    return child.get(qn("w:val")) if child is not None else None
+
+
+def _localnames(el):
+    return {c.tag.split("}")[-1] for c in el.iter()}
+
+
+def sdt_kind(sdtpr) -> str:
+    lns = _localnames(sdtpr)
+    if "checkbox" in lns:
+        return "checkbox"
+    if "dropDownList" in lns:
+        return "dropdown"
+    if "comboBox" in lns:
+        return "combo"
+    if "date" in lns:
+        return "date"
+    return "text"
+
+
+def _as_bool(v):
+    s = str(v).strip().lower()
+    if s in _TRUTHY:
+        return True
+    if s in _FALSY:
+        return False
+    return None
+
+
+def _content_texts(sdt):
+    from docx.oxml.ns import qn
+    content = sdt.find(qn("w:sdtContent"))
+    if content is None:
+        return None, []
+    return content, list(content.iter(qn("w:t")))
+
+
+def _set_text(sdt, val) -> bool:
+    """Write (possibly multi-paragraph) text; extra lines become <w:br/> in the same run."""
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+    _content, texts = _content_texts(sdt)
+    if not texts:
+        return False
+    lines = str(val).split("\n")
+    first = texts[0]
+    first.text = lines[0]
+    first.set(XMLSPACE, "preserve")
+    for extra in texts[1:]:
+        extra.text = ""
+    run = first.getparent()  # w:r
+    for ln in lines[1:]:
+        run.append(OxmlElement("w:br"))
+        t = OxmlElement("w:t")
+        t.text = ln
+        t.set(XMLSPACE, "preserve")
+        run.append(t)
+    return True
+
+
+def _set_checkbox(sdt, sdtpr, checked: bool) -> None:
+    cb = next((c for c in sdtpr.iter() if c.tag.split("}")[-1] == "checkbox"), None)
+    if cb is not None:
+        chk = next((c for c in cb.iter() if c.tag.split("}")[-1] == "checked"), None)
+        if chk is not None:
+            chk.set(f"{{{W14}}}val", "1" if checked else "0")
+    _content, texts = _content_texts(sdt)
+    glyph = "☒" if checked else "☐"   # ☒ / ☐
+    if texts:
+        texts[0].text = glyph
+        for extra in texts[1:]:
+            extra.text = ""
+
+
+def _dropdown_items(sdtpr):
+    from docx.oxml.ns import qn
+    items = []
+    for li in sdtpr.iter(qn("w:listItem")):
+        items.append((li.get(qn("w:value")), li.get(qn("w:displayText"))))
+    return items
+
+
+def _set_dropdown(sdt, sdtpr, val) -> bool:
+    s = str(val).strip()
+    disp = None
+    for value, display in _dropdown_items(sdtpr):
+        if s in (value, display):
+            disp = display or value
+            break
+    if disp is None:
+        return False
+    _content, texts = _content_texts(sdt)
+    if texts:
+        texts[0].text = disp
+        for extra in texts[1:]:
+            extra.text = ""
+    return True
+
+
+def fill_content_controls(doc, values, filled, unresolved_type, collisions):
+    from docx.oxml.ns import qn
+    by_norm = {norm(k): k for k in values}
     for sdt in list(doc.element.body.iter(qn("w:sdt"))):
         sdtpr = sdt.find(qn("w:sdtPr"))
         if sdtpr is None:
             continue
-        ident = None
-        for tagname in ("w:tag", "w:alias"):
-            el = sdtpr.find(qn(tagname))
-            if el is not None and el.get(qn("w:val")):
-                ident = el.get(qn("w:val"))
+        tag, alias = _attr(sdtpr, "w:tag"), _attr(sdtpr, "w:alias")
+        key = None
+        for ident in (tag, alias):                       # C5: tag first, then alias
+            if ident and norm(ident) in by_norm:
+                cand = by_norm[norm(ident)]
+                if cand in filled:
+                    collisions.append((cand, tag, alias))
+                else:
+                    key = cand
                 break
-        key = keys.get(norm(ident)) if ident else None
-        if not key or key in filled:
+        if not key:
             continue
-        content = sdt.find(qn("w:sdtContent"))
-        if content is None:
-            continue
-        texts = list(content.iter(qn("w:t")))
-        if not texts:
-            continue
-        texts[0].text = ir[key]
-        texts[0].set(qn("xml:space"), "preserve")
-        for extra in texts[1:]:
-            extra.text = ""
+        kind, val = sdt_kind(sdtpr), values[key]
+        if kind == "checkbox":
+            b = _as_bool(val)
+            if b is None:
+                unresolved_type.append((key, "checkbox", val))
+                continue
+            _set_checkbox(sdt, sdtpr, b)
+        elif kind in ("dropdown", "combo"):
+            if not _set_dropdown(sdt, sdtpr, val):
+                unresolved_type.append((key, kind, val))
+                continue
+        else:  # text / date  (dates are text-backed)
+            if not _set_text(sdt, val):
+                unresolved_type.append((key, kind, val))
+                continue
         filled.add(key)
 
 
-def fill_under_headings(doc, ir: dict[str, str], filled: set[str], report: list) -> None:
-    """For each unfilled IR key, find a heading whose text matches and insert the value
-    as a new paragraph right after it, inheriting the body ('Normal') style."""
-    from docx.text.paragraph import Paragraph
-
-    remaining = {norm(k): k for k in ir if k not in filled}
+def fill_under_headings(doc, values, filled):
+    remaining = {norm(k): k for k in values if k not in filled}
     if not remaining:
         return
-    paras = doc.paragraphs
-    for idx, para in enumerate(paras):
+    for para in doc.paragraphs:
         style = (para.style.name or "") if para.style else ""
         if not style.startswith("Heading"):
             continue
         key = remaining.get(norm(para.text))
         if not key:
             continue
-        new_p = para.insert_paragraph_before(ir[key])  # placeholder, then move after heading
-        # insert_paragraph_before puts it above; move the new element to sit after `para`
+        new_p = para.insert_paragraph_before(str(values[key]).split("\n")[0])
         para._p.addnext(new_p._p)
         try:
             new_p.style = doc.styles["Normal"]
         except KeyError:
             pass
+        # additional paragraphs preserve the same style
+        anchor = new_p
+        for extra in str(values[key]).split("\n")[1:]:
+            xp = anchor.insert_paragraph_before(extra)
+            anchor._p.addnext(xp._p)
+            try:
+                xp.style = doc.styles["Normal"]
+            except KeyError:
+                pass
+            anchor = xp
         filled.add(key)
         del remaining[norm(para.text)]
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("ir", type=Path, help="filled IR YAML (field-id -> text)")
+    ap.add_argument("ir", type=Path, nargs="?", help="flat IR/values YAML (back-compat; or --values)")
     ap.add_argument("template", type=Path, help="official .docx template to write into")
     ap.add_argument("-o", "--out", type=Path, required=True, help="output .docx path")
+    ap.add_argument("--scheme", type=Path, help="scheme.yaml (structure + limits) for C6")
+    ap.add_argument("--values", type=Path, help="values.yaml (field-id -> value) for C6")
     args = ap.parse_args()
 
-    for p in (args.ir, args.template):
+    values_path = args.values or args.ir
+    if values_path is None:
+        ap.error("need a values source: positional IR or --values")
+    for p in [values_path, args.template] + ([args.scheme] if args.scheme else []):
         if not p.exists():
             sys.exit(f"error: file not found: {p}")
     if args.template.suffix.lower() != ".docx":
@@ -128,29 +281,54 @@ def main() -> None:
     except ImportError:
         sys.exit("error: python-docx not available. Run via `uv run` so PEP 723 deps install.")
 
-    ir = load_ir(args.ir)
-    if not ir:
-        sys.exit("error: IR contained no fields")
+    values = load_values(values_path)
+    if not values:
+        sys.exit("error: values contained no fields")
+
+    scheme_errors: list[str] = []
+    if args.scheme:
+        scheme = load_scheme(args.scheme)
+        unknown, missing = resolve_against_scheme(values, scheme)
+        scheme_errors += [f"unknown-field: {k!r} not in scheme.yaml" for k in unknown]
+        scheme_errors += [f"required-missing: scheme field {fid!r} has no value" for fid in missing]
 
     doc = Document(str(args.template))
     filled: set[str] = set()
-    report: list = []
+    unresolved_type: list = []
+    collisions: list = []
 
-    fill_content_controls(doc, ir, filled)
+    fill_content_controls(doc, values, filled, unresolved_type, collisions)
     n_cc = len(filled)
-    fill_under_headings(doc, ir, filled, report)
+    fill_under_headings(doc, values, filled)
     n_head = len(filled) - n_cc
 
-    unresolved = [k for k in ir if k not in filled]
+    unresolved = [k for k in values if k not in filled and k not in {u[0] for u in unresolved_type}]
     doc.save(str(args.out))
 
     print(f"wrote {args.out}")
-    print(f"  filled: {len(filled)}/{len(ir)}  (content-control: {n_cc}, under-heading: {n_head})")
+    print(f"  filled: {len(filled)}/{len(values)}  (content-control: {n_cc}, under-heading: {n_head})")
+    fail = False
+    if collisions:
+        print(f"  AMBIGUOUS/COLLIDING ({len(collisions)}) — key already filled by another control:")
+        for key, tag, alias in collisions:
+            print(f"    - {key} (tag={tag!r} alias={alias!r})")
+    if unresolved_type:
+        fail = True
+        print(f"  TYPE-UNRESOLVED ({len(unresolved_type)}) — value not writable as the control's type:")
+        for key, kind, val in unresolved_type:
+            print(f"    - {key}: cannot write {val!r} into a {kind} control")
     if unresolved:
-        print(f"  UNRESOLVED ({len(unresolved)}) — no content-control tag or matching heading found:")
+        fail = True
+        print(f"  UNRESOLVED ({len(unresolved)}) — no content-control tag/alias or matching heading:")
         for k in unresolved:
             print(f"    - {k}")
-        print("  These were NOT written. Fix the field-id to match a control tag/heading, or place them by hand.")
+    if scheme_errors:
+        fail = True
+        print(f"  SCHEME ERRORS ({len(scheme_errors)}):")
+        for e in scheme_errors:
+            print(f"    - {e}")
+    if fail:
+        print("  These did NOT resolve. Fix field-id/type/scheme, or place them by hand.")
         sys.exit(2)
 
 
