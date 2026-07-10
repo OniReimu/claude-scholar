@@ -169,17 +169,13 @@ def self_test():
         "row_caps": [{"category": "audit", "max_pct": 1.0},
                      {"category": "overseas", "max_pct": 10.0}],
         "declared_totals": {"requested": 10000},
-        "rows": [
-            {"category": "audit", "funding_source": "requested", "kind": "cash",
-             "org": "lead", "years": {2026: 300}},              # 300/20300 = 1.48% > 1% → FAIL
-            {"category": "overseas", "funding_source": "requested", "kind": "cash",
-             "org": "lead", "years": {2026: 700}},              # 700/20300 = 3.4% ≤ 10% → PASS
-            {"category": "salary", "funding_source": "requested", "kind": "cash",
-             "org": "lead", "years": {2026: 9000}},
-            {"category": "salary", "funding_source": "co-contribution", "kind": "in-kind",
-             "org": "partner", "years": {2026: 10000}},         # cocon 10000 / requested 10000 = 1.0 → PASS
+        "rows": [  # total(counted)=20000: audit 300 + overseas 700 + salary 9000 + in-kind 10000
+            {"category": "audit", "funding_source": "requested", "kind": "cash", "years": {2026: 300}},      # 1.5%>1% FAIL
+            {"category": "overseas", "funding_source": "requested", "kind": "cash", "years": {2026: 700}},   # 3.5%<10% PASS
+            {"category": "salary", "funding_source": "requested", "kind": "cash", "years": {2026: 9000}},
+            {"category": "salary", "funding_source": "co-contribution", "kind": "in-kind", "years": {2026: 10000}},  # match 1.0
             {"category": "compute", "funding_source": "requested", "kind": "credit",
-             "org": "lead", "counts_toward_total": False, "years": {2026: 50000}},  # excluded
+             "counts_toward_total": False, "years": {2026: 50000}},  # credit excluded from total
         ],
     }
     results, tot, _ = run(data)
