@@ -37,10 +37,14 @@
 - **In:** all drafted `evidence`-role fields. **Out:** each item tagged with its single home field; overlaps rewritten as different facets (funding vs the paper it produced vs the talk it seeded), not repeats.
 - **Example (ECR):** a grant that also yielded a flagship paper appears once as *funding secured* and once as *a distinct research output* — same event, two honestly-different contributions — never counted twice under "total funding."
 
-### 1.4 number-defensibility
-- **Does:** every quantitative claim must be (a) **true**, (b) **internally consistent across all fields** (totals, counts, dates reconcile), (c) **within the eligibility timeline**, and (d) **not so abnormal it taints its neighbours** (one implausible figure makes a reviewer distrust the surrounding true ones).
-- **In:** all numeric claims across the IR. **Out:** each number verified, cross-field-reconciled, in-window, and flagged if it reads as an outlier needing context.
-- **Example (ECR):** "total competitive funding $X" must equal the sum of the itemised grants, every grant dated inside the ECR window, and citation/h-index figures must match the profile authority — an inflated total next to a modest publication count invites disbelief in both.
+### 1.4 number-defensibility — two strategies, one discipline
+- **Does:** enforce the unifying rule — **never a number you can't defend** — which resolves mode-aware into one of two moves, *omit* or *scope+source*:
+  - **Forward / market claims** (esp. `prospective-project`): prefer confident **qualitative** momentum ("rapidly expanding demand", "clear market pull"); do **not** put an unsourced TAM/ROI figure on the page. If a number is genuinely required, it must be sourced or explicitly caveated. The defensible move is **omit** — leave no fragile figure to attack (`author-voice.md` §5.4).
+  - **Track-record / person claims** (esp. fellowship / `narrative-award`): quantify **freely**, but every number = **value + scope + attributor**, where scope = metric ∧ time-window ∧ role and attributor = an external validator or an evidence-store pointer. An unscoped superlative is indefensible; a scoped, sourced one reads as fact. The defensible move is **scope+source** (`author-voice.md` §8; rendered from the evidence-store `window` / `role` / `attributor` fields, never improvised).
+  - **Baseline for every number, both modes:** (a) **true**, (b) **internally consistent across all fields** (totals, counts, dates reconcile), (c) **within the eligibility timeline**, (d) **not so abnormal it taints its neighbours** (one implausible figure makes a reviewer distrust the surrounding true ones).
+- **In:** all numeric claims across the IR + the funding `mode`. **Out:** market figures omitted for qualitative momentum (or sourced/caveated where required); track-record figures emitted as value+scope+attributor; all cross-field-reconciled, in-window, outliers flagged.
+- **Example — market (fictional):** a serviceable-market size is **not** stated as "$X M/year"; it becomes "rapidly expanding as [regulation] tightens; demand is clear" — no figure to source, none to defend.
+- **Example — track record (ECR):** "total competitive funding $X" must equal the sum of the itemised grants, every grant dated inside the ECR window and tagged with the `role` it was held under (PI/CI), and citation/h-index figures must match — and cite — the profile authority (`attributor`); an inflated total next to a modest publication count invites disbelief in both.
 
 ### 1.5 role/credit discipline
 - **Does:** frame authorship / project role honestly — first / corresponding / co-first / CI / supervising — and **pre-empt the "not sole first" objection** by stating the shared credit before a reviewer infers it.
