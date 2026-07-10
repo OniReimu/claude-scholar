@@ -218,7 +218,7 @@ people:
     fte_commitment: {value: 0.2, basis: "0.2 FTE across 3 yrs"}
     org: person-org-uts
     approvals: [{type: "Head-of-School sign-off", status: obtained, as_of: 2026-06-20}]
-    profile_ref: "evidence-store.yaml#applicant"   # links back to the evidence store
+    profile_ref: "evidence-store.yaml#owner"       # links back to the evidence store
 
 organizations:
   - id: person-org-uts
