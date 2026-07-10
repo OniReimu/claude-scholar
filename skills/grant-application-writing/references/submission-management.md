@@ -93,7 +93,7 @@ deadlines:
       what: "Associate Dean endorsement returned"
       due: 2026-02-20T17:00+11:00
 
-who_submits:                                 # authorised submitter — often NOT the nominee
+submission_authority:                        # authorised submitter — often NOT the nominee
   authorised_role: research-office           # nominee drafts; RO/Associate Dean submits
   note: "Nominee cannot self-submit; submission is via the nominating Faculty"
 
