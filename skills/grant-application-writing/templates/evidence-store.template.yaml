@@ -219,5 +219,7 @@ negative_evidence:                               # absence recorded explicitly, 
 # profile — roughly, strong = {status settled, confidence high, authority official,
 # inside validity_window, use_permission != embargoed}. It is NOT hand-authored
 # here; splitting status vs confidence vs authority is the whole point (v1's single
-# defensibility tag conflated legal-status with certainty).
+# defensibility tag conflated legal-status with certainty). For a track-record claim
+# written as a SUPERLATIVE, absence of an `attributor` degrades defensibility one tier —
+# the item stays statable, just not as a superlative (see ROPE fields note in the header).
 # ─────────────────────────────────────────────────────────────────────────────
