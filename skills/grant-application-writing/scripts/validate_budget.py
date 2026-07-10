@@ -141,20 +141,23 @@ def per_year_org(rows):
 
 def run(data):
     rows = data.get("rows") or []
-    total, requested, cocon = totals(rows)
+    total, requested, cocon, total_cash = totals(rows)
     results = []
-    results += check_row_caps(rows, data.get("row_caps") or [], total, requested)
+    results += check_row_caps(rows, data.get("row_caps") or [], total, requested, total_cash)
     results += check_matched(data.get("matched_funding_min_ratio"), requested, cocon)
     results += check_credits(rows)
     results += check_declared(rows, data.get("declared_totals"), total, requested)
-    return results, (total, requested, cocon), per_year_org(rows)
+    if data.get("cash_flow_check"):
+        results += check_cash_flow(rows, data.get("cash_in") or {})
+    return results, (total, requested, cocon, total_cash), per_year_org(rows)
 
 
 def render(results, tot, yo):
-    total, requested, cocon = tot
+    total, requested, cocon, total_cash = tot
     years, orgs = yo
     print("== live totals ==")
-    print(f"  total(counted): {total:.0f}   requested: {requested:.0f}   co-contribution: {cocon:.0f}")
+    print(f"  total(counted): {total:.0f}   total-cash: {total_cash:.0f}   "
+          f"requested: {requested:.0f}   co-contribution: {cocon:.0f}")
     print("  by year: " + ", ".join(f"{y}:{v:.0f}" for y, v in sorted(years.items())))
     print("  by org:  " + ", ".join(f"{o}:{v:.0f}" for o, v in sorted(orgs.items())))
     print("== rules ==")
