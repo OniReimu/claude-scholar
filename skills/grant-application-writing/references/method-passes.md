@@ -164,9 +164,44 @@ But the deliverable is the checklist verdict, item by item:
 - **cross-field consistency** — numbers, totals, roles, and dates reconcile across all fields; no double-count (1.3, 1.4).
 - **budget-math** — all caps, ratios, phase totals, and credit/cash separation validated (2.8); zero hard breaches.
 - **attachments-complete** — every `structured-upload` present in its correct sub-kind, within page/heading limits, proforma wording unaltered, filenames matching the required pattern.
-- **panel-fit** — framing matches the `reviewer_model` (3.1); no red-flag claim for this panel; effort ∝ criterion weight.
+- **panel-fit** — framing matches the `reviewer_model` (4.1); no red-flag claim for this panel; effort ∝ criterion weight.
 - **risk-coverage** — material risks each mitigated with a residual (2.4), within row bounds.
 - **portal validation dry-run** — modality-appropriate final check (char counts under limit, required web-form fields non-empty, AcroForm fields filled, hidden-required satisfied) simulating the portal's own submit-time validation before the human pastes/uploads.
 
+**Mechanized gate.** The checkable, non-judgement items above are run mechanically by
+`scripts/validate_ir.py` — the IR-level integrity gate and single pre-submit dry-run. It
+**composes** the existing validators rather than duplicating their math: `charcount.py` for the
+char roll-up and `validate_budget.py` for budget-math, and adds the cross-field couplings prose
+cannot self-check: `allocation_sums_to` (taxonomy-code / repeating-group % rows sum to 100 ±tol),
+contribution↔budget-matrix integrity (the F.2↔H.1 reconciliation; no double-count), `computed`
+eligibility / co-contribution / matched-funding gates recomputed from the actual values,
+conditional-annex triggers (a fired `decision-tree`/`conditional-group` answer → its required
+attachment present), `stage_lock`/`submission_phase` ordering (no field edited where `locked_from`),
+and attachment rules (correct `structured-upload` sub-kind, filename pattern, page limit). Non-zero
+exit on any hard fail. The human-judgement items — panel-fit, verb-tier audit, sensitive-content —
+stay in the adversarial + cross-model reading; the gate does not adjudicate them.
+
 A failing item returns to its Stage C pass, not to ad-hoc editing. Ship only when the
 whole contract is green under both the adversarial and the cross-model reading.
+
+### Stage E — retroactive-impact contract
+
+For `mode = retroactive-impact` the contract **replaces** budget-math, feasibility, and
+risk-coverage with impact-provenance, Sybil, and freshness checks. Green means:
+
+- **impact-provenance** — every claimed contribution resolves to a live artifact (`link` × `evidence`) with provenance + as-of date (3.1); unreachable artifacts excluded, not asserted.
+- **attestation** — verified claims carry a third-party attestation pointer; self-reported impact is marked and downgraded (3.2).
+- **no-double-claim / netting** — one contribution, one primary claimant across entities; figures reported net of prior funding (3.3); Sybil overlaps resolved.
+- **freshness** — every impact metric / attestation dated inside the round's measurement window (3.4).
+- **past-impact scoring** — mapped to the round's delivered-impact rubric (3.5); no requested amount, milestones, budget-math, or feasibility asserted.
+- **still applies** — Group 1 char-fit, any round eligibility gate (1.1), and badgeholder/panel framing (4.1).
+
+The budget-math, risk-coverage, and compliance-annex items **do not** run in this mode; scoring is
+judgement, not arithmetic, so `validate_ir.py` here covers only char roll-up and any attachment rules.
+
+> **Maturity note.** The `retroactive-impact` mode is **built but not yet validated on a live retro
+> round** — the passes above and this contract are modelled on Optimism RetroPGF / Gitcoin mechanics
+> (past-impact reporting, live-artifact + on-chain-attestation evidence, funding-history netting,
+> Sybil resistance), not yet regression-tested against a real submission. Treat its output as
+> draft-grade until a live round exercises it — honest, in the same spirit as an unproven modality is
+> downgraded rather than faked.
