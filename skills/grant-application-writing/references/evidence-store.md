@@ -45,7 +45,10 @@ dimensions, and derive `defensibility` from them.
 `defensibility` = a function of the row: high `status` + high `confidence` +
 `source_authority ∈ {official-record, orcid, scopus}` + inside `validity_window` +
 `use_permission ∈ {public, internal}` (≠ `embargoed`) → **defensible**; degrade otherwise. Recomputed on read, so
-a stale `as_of` or a downgraded source automatically lowers it. Never hand-write it.
+a stale `as_of` or a downgraded source automatically lowers it. Never hand-write it. One
+extra input for track-record items: a claim written as a **superlative** ("first / only /
+leading / largest") with no `attributor` derives to a **lower tier** — statable, but not as a
+superlative (see ROPE + sourced-eminence fields below).
 
 ## `evidence-store.yaml` schema
 
