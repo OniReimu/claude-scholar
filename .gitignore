@@ -31,6 +31,10 @@ telemetry/
 stats-cache.json
 statsig/
 
+# Python bytecode caches (e.g. from uv-run skill scripts)
+__pycache__/
+*.pyc
+
 # AutoFigure-Edit Python virtual environment
 skills/paper-figure-generator/scripts/.venv/
 # Legacy clone directory (if exists)
