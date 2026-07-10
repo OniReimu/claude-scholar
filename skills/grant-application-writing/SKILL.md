@@ -65,6 +65,12 @@ The three modes barely overlap in required fields; a single flat approach cannot
 | `prospective-project` | judged on a future project; budget + team + compliance | ARC DP/LP/FT, CRC-P, AEA, NHMRC Ideas, NSF, ERC B2, EF-ESP, big-tech | aims→methods→milestones→budget coherence; feasibility; impact pathway |
 | `retroactive-impact` | judged on past impact delivered; no future plan | Optimism RetroPGF, Gitcoin | impact-evidence marshalling → attestation → Sybil/netting → freshness → past-impact scoring (`method-passes.md` Group 3; built, lightly-validated — not yet run on a live retro round) |
 
+**`mode` also picks the drafting register** (`author-voice.md`): `prospective-project` /
+commercialisation → §1–7 (humble team, unquantified market, partner-as-anchor); `narrative-award`
+/ fellowship → §8 (person-as-product, quantified-but-sourced eminence, ROPE, future-leadership).
+Using the wrong register — a market TAM in a fellowship, or bare self-eminence in a project grant —
+reads as off-genre to an assessor. Pick the register from `mode` before drafting.
+
 ## Pipeline
 
 ```
