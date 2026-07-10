@@ -95,14 +95,16 @@ def resolve_against_scheme(values, scheme):
 
 
 def detect_subtype(reader) -> str:
-    try:
-        if reader.xfa:
-            return "pdf-xfa"
-    except Exception:
-        pass
+    # AcroForm-backed wins: a PDF with fillable fields is pdf-acroform even if it also
+    # carries an XFA packet (don't over-degrade an AcroForm-backed form to pdf-xfa).
     try:
         if reader.get_fields():
             return "pdf-acroform"
+    except Exception:
+        pass
+    try:
+        if reader.xfa:
+            return "pdf-xfa"
     except Exception:
         pass
     try:
