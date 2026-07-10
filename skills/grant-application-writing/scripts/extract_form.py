@@ -16,6 +16,7 @@ not resolve meaning (rubric/roles/gates come from the guidelines, done by hand).
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import sys
 from pathlib import Path
