@@ -1,0 +1,155 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# evidence-store.yaml — reusable track-record base (Stage B)  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# Every claim a drafted field makes must trace to a row here with a provenance
+# pointer and a trust profile. This module is reusable across every application
+# (and graduates to `research-profile-evidence-base` for CVs / biosketches).
+# Ships ABSTRACTIONS ONLY — replace every <PLACEHOLDER> row.
+#
+# HARDENED TRUST FIELDS (attach to EVERY evidentiary row; see references/evidence-store.md):
+#   status           — legal / publication state:  granted|filed | published|in-press|under-review | funded|submitted
+#   confidence        — evidentiary certainty:      high | medium | low   (SEPARATE from status)
+#   source_authority  — who vouches for it:         official-record | orcid | scopus | scholar | self-reported
+#   as_of             — date this row was verified:  YYYY-MM-DD
+#   validity_window   — {from, to} the claim is true within (e.g. eligibility timeline); to: null = open
+#   sensitivity       — disclosure risk:            public | embargoed | confidential
+#   use_permission    — may it be quoted:           free | attributed-only | do-not-cite
+#   defensibility     — DERIVED, do not hand-author: computed from status × confidence × source_authority (see note at foot)
+# ─────────────────────────────────────────────────────────────────────────────
+
+meta:
+  owner: "<applicant full name>"
+  orcid: "<0000-0000-0000-0000>"
+  as_of: "<YYYY-MM-DD>"                          # store-wide last full refresh
+  source_precedence: [official-record, orcid, scopus, scholar, self-reported]   # conflict-resolution order when sources disagree
+  refresh_policy: "<e.g. re-verify metrics + in-press items before every submission>"
+
+# ─── Publications ───
+publications:
+  - id: <pub-key>                               # stable local key referenced by drafted fields
+    citation: "<full citation string>"
+    year: <YYYY>
+    venue: "<venue name>"
+    role: <first | corresponding | co-first | senior | co-author>   # NEVER upgraded; the drafted verb must survive this
+    doi: "<10.xxxx/...>"
+    provenance: "<source file / path this row was extracted from>"
+    # ── trust profile ──
+    status: <published | in-press | under-review>
+    confidence: <high | medium | low>
+    source_authority: <official-record | orcid | scopus | scholar | self-reported>
+    as_of: "<YYYY-MM-DD>"
+    validity_window: {from: "<YYYY-MM-DD>", to: null}
+    sensitivity: <public | embargoed | confidential>
+    use_permission: <free | attributed-only | do-not-cite>
+    # defensibility: <DERIVED — leave to the pipeline; do not hand-set>
+
+# ─── Funding (grants held / applied) ───
+funding:
+  - id: <grant-key>
+    title: "<grant title>"
+    scheme: "<funder + scheme>"
+    role: <lead-CI | CI | co-I | named-personnel>
+    amount: {value: <NNNNN>, currency: "<CUR>"}
+    period: {from: "<YYYY-MM>", to: "<YYYY-MM>"}
+    provenance: "<award letter / record path>"
+    status: <funded | submitted | not-funded>
+    confidence: <high | medium | low>
+    source_authority: <official-record | self-reported>
+    as_of: "<YYYY-MM-DD>"
+    validity_window: {from: "<YYYY-MM-DD>", to: "<YYYY-MM-DD>"}
+    sensitivity: <public | confidential>
+    use_permission: <free | attributed-only | do-not-cite>
+
+# ─── Patents ───
+patents:
+  - id: <patent-key>
+    title: "<patent title>"
+    number: "<application or grant number>"
+    jurisdiction: "<e.g. US / AU / WO(PCT)>"
+    role: <inventor | co-inventor>
+    provenance: "<patent office record path>"
+    status: <granted | filed>                   # "granted" != "filed" — the drafted claim must match exactly
+    confidence: <high | medium | low>
+    source_authority: <official-record | self-reported>
+    as_of: "<YYYY-MM-DD>"
+    validity_window: {from: "<YYYY-MM-DD>", to: null}
+    sensitivity: <public | confidential>
+    use_permission: <free | attributed-only | do-not-cite>
+
+# ─── Metrics (citation counts, h-index, etc.) — most volatile; date every one ───
+metrics:
+  - id: <metric-key>
+    kind: <h-index | total-citations | field-weighted-citation-impact | i10>
+    value: <N>
+    provenance: "<source, e.g. scopus profile URL>"
+    confidence: <high | medium | low>
+    source_authority: <scopus | scholar | self-reported>   # differs by source — record which one
+    as_of: "<YYYY-MM-DD>"                        # metrics change daily; a metric with no date is uncitable
+    validity_window: {from: "<YYYY-MM-DD>", to: "<YYYY-MM-DD>"}   # short window — metrics go stale fast
+    sensitivity: public
+    use_permission: <free | attributed-only>
+
+# ─── Career dates (drive eligibility windows + scoring_adjustment) ───
+dates:
+  - id: phd-conferral
+    kind: phd-conferral
+    value: "<YYYY-MM-DD>"
+    provenance: "<testamur / official record path>"
+    source_authority: official-record
+    confidence: high
+    as_of: "<YYYY-MM-DD>"
+    sensitivity: public
+    use_permission: free
+  - id: <interruption-key>
+    kind: career-interruption
+    value: {from: "<YYYY-MM>", to: "<YYYY-MM>", fte_fraction: <0.0-1.0>, reason: "<e.g. parental leave>"}
+    provenance: "<HR record / declaration path>"
+    source_authority: <official-record | self-reported>
+    confidence: <high | medium | low>
+    as_of: "<YYYY-MM-DD>"
+    sensitivity: <confidential>                  # personal circumstances — usually not assessor-visible
+    use_permission: <attributed-only | do-not-cite>
+
+# ─── Service (editorial, review, committee, community) ───
+service:
+  - id: <service-key>
+    kind: <editorial-board | pc-member | reviewer | chair | community-lead>
+    detail: "<venue / body + years>"
+    provenance: "<invitation / record path>"
+    status: <ongoing | completed>
+    confidence: <high | medium | low>
+    source_authority: <official-record | self-reported>
+    as_of: "<YYYY-MM-DD>"
+    validity_window: {from: "<YYYY-MM-DD>", to: null}
+    sensitivity: public
+    use_permission: free
+
+# ─── Awards / honours ───
+awards:
+  - id: <award-key>
+    title: "<award name>"
+    year: <YYYY>
+    awarding_body: "<body>"
+    provenance: "<citation / record path>"
+    status: <awarded | nominated>
+    confidence: <high | medium | low>
+    source_authority: <official-record | self-reported>
+    as_of: "<YYYY-MM-DD>"
+    validity_window: {from: "<YYYY-MM-DD>", to: null}
+    sensitivity: public
+    use_permission: free
+
+# ─── Contradiction records — log source disagreements; do NOT silently pick one ───
+contradictions:
+  - claim_id: "<row id above>"
+    field: "<which value disagrees, e.g. citation-count>"
+    values: [{source: <scopus>, value: "<...>"}, {source: <scholar>, value: "<...>"}]
+    resolution: "<which won + why, per source_precedence>"
+    as_of: "<YYYY-MM-DD>"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# defensibility (DERIVED): the pipeline computes a single tag from the trust
+# profile — roughly, strong = {status settled, confidence high, authority official}.
+# It is NOT hand-authored here; splitting status vs confidence vs authority is the
+# whole point (v1's single defensibility tag conflated legal-status with certainty).
+# ─────────────────────────────────────────────────────────────────────────────
