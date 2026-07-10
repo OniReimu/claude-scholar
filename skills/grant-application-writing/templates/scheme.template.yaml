@@ -94,9 +94,14 @@ sections:
         label: "<budget table label>"
         widget: budget-matrix
         role: budget-resource
-        matrix: {axes: [category, year, org], value_types: [cash, in-kind]}   # shape of the grid
-        row_caps: ["<e.g. audit <=1% of total>", "<e.g. overseas <=10%>"]      # per-row caps enforced by the portal
-        cross_validation: ["<e.g. matched-funding >= 1:1 (see computed gate)>"]
+        # `phase` is a FIRST-CLASS axis (not a years-axis hack) — include it when the scheme phases the budget
+        matrix: {axes: [category, phase, year, org], value_types: [cash, in-kind, credit]}   # shape of the grid
+        row_caps:                               # per-row caps; each carries an explicit denominator `of` — REQUIRED, no silent default
+          - {category: audit,    max_pct: 1,  of: total-cash}   # of ∈ total | total-cash | requested  (total-cash EXCLUDES in-kind + credit)
+          - {category: overseas, max_pct: 10, of: total-cash}
+        phased_if_min: 200000                   # if requested >= this amount, >=2 costed phases are required, else FAIL (C8 phased-budget gate)
+        cross_validation: ["matched-funding >= 1:1 (see computed gate)"]
+        # credit rows (value_type: credit) carry `counts_toward_total: <bool>` — credits excluded from the cash total when false
         depends_on: ["<field this budget is coupled to, e.g. teaching-relief request>"]  # referential integrity across parts
         visibility: [assessor, institution, funder]
 
