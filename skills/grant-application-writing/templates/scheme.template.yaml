@@ -84,7 +84,7 @@ sections:
         label: "<yes/no self-assessment question>"
         widget: boolean-gate
         role: eligibility-gate
-        blocking: true                          # true = a "wrong" answer blocks submission; conditional_trigger: <annex-id> if it opens an annex
+        binding: hard                           # hard = a "wrong" answer blocks submission | soft = disadvantage only; conditional_trigger: <annex-id> if it opens an annex
         visibility: [assessor, institution]
 
       # ── Example field 4 — BUDGET-MATRIX reference ──
