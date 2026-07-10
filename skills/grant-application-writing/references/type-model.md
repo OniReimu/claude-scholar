@@ -87,6 +87,7 @@ The same widget means different things and is evidenced/scored differently by it
 - CRC-P partner contributions = `contribution-matrix` × role `team-partner`/`budget-resource` + attr `depends_on` (cross-validates the budget matrix + drives the matched-funding `computed` gate).
 - Microsoft Azure line = `credit-request` × role `budget-resource` + attr `counts_toward_total: false`.
 - ARC career-interruption total = `computed` × role `eligibility-gate` (derived boolean: PhD date + interruption total vs cutoff).
+- "Eight Characteristics: tick ≤2 + describe in 600 chars" = a `section`/`fieldset` of **two** sub-fields — a `multi-choice` (pick-N) × role `classification` **and** a `narrative @600` × role `criterion-scored` — **not** one `narrative` sized to the visible box. Same shape as AEA "TRL: pick 3–5 + justify" and any "focus area + rationale". A composite field is always decomposed; collapsing it invents a wrong `limit` and produces a false `char-fit` PASS (see `form-schema-ir.md` → *Composite fields & the no-silent-fallback rule*).
 
 ## Falsifiability
 
