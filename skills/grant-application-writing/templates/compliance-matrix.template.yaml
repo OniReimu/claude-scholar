@@ -46,8 +46,10 @@ format_rules:
 certifications:
   - id: <cert-id>
     name: "<certification / declaration name>"
-    signatory: <applicant | head-of-school | authorised-officer | partner>
+    on: "<doc/attachment id it certifies>"      # e.g. a mandatory_docs id
+    signatory: <applicant | head-of-school | associate-dean | authorised-officer | partner>
     kind: <ethics | coi | foreign-interference | data-management | eligibility-attestation>
+    method: <e-signature | wet-signature>
     status: <pending | signed>
     date: "<YYYY-MM-DD>"
 
