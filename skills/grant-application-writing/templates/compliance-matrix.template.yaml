@@ -59,7 +59,7 @@ deadlines:
 
 # ─── Submission authority — who is allowed to press submit ───
 submission_authority:
-  who_submits: "<applicant | research-office | authorised-officer>"   # mirror scheme.yaml.submission.who_submits
+  authorised_role: "<applicant | research-office | authorised-officer>"   # mirror scheme.yaml.submission.submission_authority
   portal_account: "<whose portal login submits>"
   notes: "<e.g. applicant drafts, research office certifies + submits>"
 
