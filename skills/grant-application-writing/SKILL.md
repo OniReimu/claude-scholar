@@ -63,7 +63,7 @@ The three modes barely overlap in required fields; a single flat approach cannot
 |------|------|----------|----------------|
 | `narrative-award` | judged on track record; char-limited prose + ranked outputs | UTS ECR, ARC DECRA track-record, NHMRC Investigator, ERC track-record | past achievements, defensibility, criterion-weighted prose |
 | `prospective-project` | judged on a future project; budget + team + compliance | ARC DP/LP/FT, CRC-P, AEA, NHMRC Ideas, NSF, ERC B2, EF-ESP, big-tech | aims→methods→milestones→budget coherence; feasibility; impact pathway |
-| `retroactive-impact` | judged on past impact delivered; no future plan | Optimism RetroPGF, Gitcoin | live-artifact links + attestations as scored evidence |
+| `retroactive-impact` | judged on past impact delivered; no future plan | Optimism RetroPGF, Gitcoin | impact-evidence marshalling → attestation → Sybil/netting → freshness → past-impact scoring (`method-passes.md` Group 3; built, lightly-validated — not yet run on a live retro round) |
 
 ## Pipeline
 
