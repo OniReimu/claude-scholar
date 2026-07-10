@@ -13,6 +13,10 @@
 
 ## Group 1 — narrative-award passes (Stage C)
 
+> These passes govern *what you may claim*. The *register* the drafted prose is written in —
+> composition, sentence patterns, lexicon, the funded-vs-first-draft moves — is `author-voice.md`.
+> Draft in that voice; these passes keep it defensible.
+
 ### 1.1 gate-check — RUNS FIRST, blocks on fail
 - **Does:** evaluate every `eligibility_gates[]` entry (incl. `computed`/`derived` gates) before any drafting. A failed hard gate (`binding: hard`) stops the pipeline — do not draft an application the applicant cannot submit (a `binding: soft` gate is a disadvantage, not a blocker).
 - **In:** `eligibility_gates`, evidence-store dates/facts. **Out:** pass/block verdict per gate + one-line reason; on block, a stop report, not a draft.
