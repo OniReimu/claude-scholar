@@ -44,7 +44,7 @@ dimensions, and derive `defensibility` from them.
 
 `defensibility` = a function of the row: high `status` + high `confidence` +
 `source_authority ∈ {official-record, orcid, scopus}` + inside `validity_window` +
-`use_permission ≠ do-not-use` → **defensible**; degrade otherwise. Recomputed on read, so
+`use_permission ∈ {public, internal}` (≠ `embargoed`) → **defensible**; degrade otherwise. Recomputed on read, so
 a stale `as_of` or a downgraded source automatically lowers it. Never hand-write it.
 
 ## `evidence-store.yaml` schema
