@@ -1,0 +1,72 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# compliance_matrix.yaml — the A0 rulebook  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# Authored FIRST — BEFORE any drafting — from the same sources as scheme.yaml.
+# scheme.yaml captures the fillable STRUCTURE; this file captures the RULEBOOK:
+# who can apply, what must be attached, format/limit rules, certifications,
+# internal-vs-funder deadlines, who may press submit, and policy constraints.
+# Cross-references scheme.yaml by `scheme` + `scheme_version`.
+# Ships ABSTRACTIONS ONLY — replace every <PLACEHOLDER>.
+# ─────────────────────────────────────────────────────────────────────────────
+
+scheme: "<HUMAN-READABLE SCHEME NAME>"          # must match scheme.yaml.scheme
+scheme_version: "<ROUND-OR-YEAR TAG>"           # must match scheme.yaml.scheme_version
+source_docs:                                    # every doc that sets a rule below — provenance for each rule
+  - {id: guide, path: "<guidelines.pdf>",      role: eligibility+format+certs}
+  - {id: rules, path: "<funding-rules.pdf>",   role: policy+deadlines}
+
+# ─── Eligibility rules (the pass/fail gates, expanded with WHO checks them) ───
+eligibility:
+  - id: <rule-id>
+    rule: "<eligibility condition in words>"
+    binding: hard                               # hard = auto-ineligible | soft = disadvantage
+    evidence: "<evidence-store row / entity-store field that proves it>"
+    verified_by: <applicant | research-office | funder>
+    status: <pending | met | not-met>
+
+# ─── Mandatory documents (every attachment that MUST be present) ───
+mandatory_docs:
+  - id: <doc-id>
+    name: "<document name>"
+    kind: <free | proforma | composite | heading-sequenced | system-generated>   # from type-model.md structured-upload
+    required: true
+    owner: "<who produces it>"
+    linked_attachment: "<scheme.yaml attachments[].name>"   # keep consistent with the IR
+    status: <not-started | drafting | ready>
+
+# ─── Limits + format rules (fonts, margins, page/char counts, filename patterns) ───
+format_rules:
+  - id: <format-rule-id>
+    applies_to: "<field id / attachment / whole document>"
+    rule: "<the constraint, e.g. 11pt Arial, 2cm margins, <=5 pages>"
+    hard_fail: <true | false>                   # true if breaching it is an auto-reject (mirror into scheme.yaml.hard_fail_rules)
+    source: "<which source_doc states it>"
+
+# ─── Certifications / declarations (attestations that must be signed) ───
+certifications:
+  - id: <cert-id>
+    name: "<certification / declaration name>"
+    signatory: <applicant | head-of-school | authorised-officer | partner>
+    kind: <ethics | coi | foreign-interference | data-management | eligibility-attestation>
+    status: <pending | signed>
+    date: "<YYYY-MM-DD>"
+
+# ─── Deadlines — internal (institution) vs funder; the internal one is the real one ───
+deadlines:
+  funder_close:    "<YYYY-MM-DDThh:mm+ZZ:ZZ>"   # the funder's hard deadline (mirror scheme.yaml.submission.deadline)
+  internal_cutoffs:                             # institution's earlier gates — these bind the working schedule
+    - {id: <cutoff-id>, name: "<e.g. research-office review>", due: "<YYYY-MM-DDThh:mm+ZZ:ZZ>", owner: "<who>"}
+
+# ─── Submission authority — who is allowed to press submit ───
+submission_authority:
+  who_submits: "<applicant | research-office | authorised-officer>"   # mirror scheme.yaml.submission.who_submits
+  portal_account: "<whose portal login submits>"
+  notes: "<e.g. applicant drafts, research office certifies + submits>"
+
+# ─── Policy constraints (award-vehicle / open-access / IP / conditional obligations) ───
+policy_constraints:
+  - id: <policy-id>
+    constraint: "<the obligation, e.g. open-source release / OA deposit / IP assignment>"
+    award_vehicle: <unrestricted_gift | grant | credits_only>   # bindingness may depend on this
+    conditional_obligation: "<intent under a gift, but mandatory under a constrained topic — state which applies>"
+    status: <acknowledged | pending>
