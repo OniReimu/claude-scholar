@@ -7,7 +7,7 @@
 > passes for `retroactive-impact`; cross-cutting passes run in all. Stage E re-checks their
 > outputs as a contract before submission.
 >
-> Worked example throughout: **UTS ECR** (`narrative-award`) — regenerated from its corpus.
+> Worked example throughout: an **internal ECR scheme** (`narrative-award`) — regenerated from its corpus.
 
 ---
 
