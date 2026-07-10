@@ -9,7 +9,7 @@
 > - **F `submission_plan.yaml`** is built before submit — the execution tracker.
 >
 > `scheme.yaml` (Stage A) is **derived with** the compliance matrix, not before it: the matrix's
-> `limits`, `format_rules`, `phases`, and `who_submits` populate `scheme.yaml`'s `submission:` head
+> `limits`, `format_rules`, `phases`, and `submission_authority` populate `scheme.yaml`'s `submission:` head
 > and each field's `limit`/`stage_lock`/`submission_phase` attributes. Build A0 first; A0 → A → … → F.
 
 ## Stage A0 — `compliance_matrix.yaml`
@@ -35,7 +35,7 @@ eligibility:                                 # hard pass/fail — resolve BEFORE
     binding: hard
     check: unresolved
 
-mandatory_documents:                         # every artifact that MUST accompany the form
+mandatory_docs:                              # every artifact that MUST accompany the form
   - id: doc.nominee_statement
     name: "Nominee statement (main narrative)"
     kind: heading-sequenced                  # structured-upload sub-kind (see type-model.md)
