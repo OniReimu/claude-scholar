@@ -248,7 +248,7 @@ def extract_pdf(path: Path) -> dict:
         "modality": modality,
         "detected_via": "pypdf (AcroForm / XFA / text-density heuristic)",
         "page_count": len(reader.pages),
-        "field_count": len([f for f in fields if f["id"] != "flat-document"]),
+        "field_count": len([f for f in fields if f["id"] not in ("flat-document", "xfa-document")]),
         "sections": [{"id": "extracted", "title": "Auto-extracted fields", "fields": fields}],
     }
 
