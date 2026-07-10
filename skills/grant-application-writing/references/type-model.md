@@ -102,6 +102,12 @@ Container/computed widgets carry sharper rules than the table row implies — lo
 - **`budget-matrix` cross-validation includes cumulative cash-flow, not just row caps.** A
   per-financial-year liquidity check (cumulative spend ≤ cumulative cash-in) can fail a budget
   whose spend is front-loaded and cash back-loaded, even when every row cap passes.
+- **`budget-matrix` phasing is first-class, not a years-axis hack.** A scheme that forces
+  phasing above a threshold (AEA / CRC-P: requested ≥ $200k → the budget must split into ≥2
+  costed phases) carries a `phase` **axis** on the matrix and a **`phased_if_min: <amount>`**
+  rule: if `requested ≥ amount`, ≥2 phases each with costed lines are required, else FAIL.
+  Model the phase as its own axis — do not coerce it onto the year axis (a delivery phase ≠ a
+  calendar year) — and validate it with `validate_budget` (see `method-passes.md` §2.8).
 - **`contribution-matrix` partner-axis ownership.** When a `contribution-matrix` is nested inside a
   per-partner `repeating-group` (each partner item holds its own type×FY sub-table), the
   `repeating-group` owns the partner axis — do not double-count it inside the matrix widget.
