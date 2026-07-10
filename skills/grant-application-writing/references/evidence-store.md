@@ -33,13 +33,13 @@ dimensions, and derive `defensibility` from them.
 
 | dimension | question it answers | example values |
 |-----------|--------------------|----------------|
-| `status` | legal / lifecycle state | `granted` `filed` · `published` `in-press` `under-review` · `awarded` `submitted` |
+| `status` | legal / lifecycle state | `granted` `filed` · `published` `in-press` `in-review` · `awarded` `submitted` `not-funded` |
 | `confidence` | how certain is the *value* | `high` `medium` `low` |
 | `source_authority` | who vouches for it | `official-record` > `orcid` `scopus` `scholar` > `screenshot` > `self-reported` |
 | `as_of` | when was it last observed | ISO date |
 | `validity_window` | when does it stop being current | `{from, to}` or `perpetual` |
 | `sensitivity` | disclosure constraint | `public` `internal` `embargoed` `confidential` |
-| `use_permission` | may it appear in an application | `free` `attribution-required` `restricted` `do-not-use` |
+| `use_permission` | may it appear in an application | `public` `internal` `embargoed` |
 | `defensibility` | **DERIVED, not stored** | computed from the above (see below) |
 
 `defensibility` = a function of the row: high `status` + high `confidence` +
