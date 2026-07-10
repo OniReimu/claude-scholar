@@ -16,6 +16,12 @@
 > These passes govern *what you may claim*. The *register* the drafted prose is written in —
 > composition, sentence patterns, lexicon, the funded-vs-first-draft moves — is `author-voice.md`.
 > Draft in that voice; these passes keep it defensible.
+>
+> **National-benefit ladder (both exemplars).** Every scored claim ladders its so-what up to
+> national / societal benefit — the scheme scores it — so a claim that stops at the direct user
+> is under-pitched. Escalate direct user → sector → national economy / sovereign capability
+> (`author-voice.md` §1 altitude ladder, §5.3): "cuts [task] cost for [users]" becomes "…,
+> strengthening [sector] productivity and the nation's [strategic capability]."
 
 ### 1.1 gate-check — RUNS FIRST, blocks on fail
 - **Does:** evaluate every `eligibility_gates[]` entry (incl. `computed`/`derived` gates) before any drafting. A failed hard gate (`binding: hard`) stops the pipeline — do not draft an application the applicant cannot submit (a `binding: soft` gate is a disadvantage, not a blocker).
