@@ -133,7 +133,7 @@ def extract_docx(path: Path) -> dict:
     for i, tbl in enumerate(doc.tables):
         header = " | ".join(c.text.strip() for c in tbl.rows[0].cells) if tbl.rows else ""
         fields.append({
-            "id": f"table-{i+1}",
+            "id": uniq(f"table-{i+1}"),
             "label": header or f"table {i+1}",
             "widget": "budget-matrix" if re.search(r"\$|cash|year|amount|budget", header, re.I) else "repeating-group",
             "role": "TODO",

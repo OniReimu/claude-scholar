@@ -11,7 +11,7 @@
 scheme: "<HUMAN-READABLE SCHEME NAME>"          # match scheme.yaml / compliance_matrix.yaml
 scheme_version: "<ROUND-OR-YEAR TAG>"
 funder_deadline:  "<YYYY-MM-DDThh:mm+ZZ:ZZ>"    # from compliance_matrix.deadlines.funder_deadline
-internal_deadline:"<YYYY-MM-DDThh:mm+ZZ:ZZ>"    # the binding institution deadline — plan to THIS, not the funder's (earliest compliance_matrix.deadlines.internal_cutoffs)
+internal_deadline: "<YYYY-MM-DDThh:mm+ZZ:ZZ>"   # the binding institution deadline — plan to THIS, not the funder's (earliest compliance_matrix.deadlines.internal_cutoffs)
 submission_authority: "<applicant | research-office | authorised-officer>"   # who presses submit; from compliance_matrix.submission_authority
 
 # ─── Artifacts — one row per fillable output + attachment ───
