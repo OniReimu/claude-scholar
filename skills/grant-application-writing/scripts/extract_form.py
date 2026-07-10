@@ -91,20 +91,21 @@ def extract_docx(path: Path) -> dict:
 
     # 2. Mandated headings -> heading-sequenced narrative boundaries. The prose that
     #    follows a heading is the field body; the limit often sits in the heading text.
-    if not fields:  # if the doc is content-control-driven, headings are usually labels only
-        for para in doc.paragraphs:
-            style = (para.style.name or "") if para.style else ""
-            if style.startswith("Heading") and para.text.strip():
-                fields.append({
-                    "id": _slug(para.text),
-                    "label": para.text.strip(),
-                    "widget": "narrative",
-                    "role": "TODO",
-                    "limit": detect_limit(para.text),
-                    "_source": f"heading ({style})",
-                    "confidence": "low",
-                    "note": "inferred from a heading; widget=narrative is a default guess",
-                })
+    #    Skip a heading that only labels a content control already captured above.
+    control_labels = {_slug(f["label"]) for f in fields}
+    for para in doc.paragraphs:
+        style = (para.style.name or "") if para.style else ""
+        if style.startswith("Heading") and para.text.strip() and _slug(para.text) not in control_labels:
+            fields.append({
+                "id": _slug(para.text),
+                "label": para.text.strip(),
+                "widget": "narrative",
+                "role": "TODO",
+                "limit": detect_limit(para.text),
+                "_source": f"heading ({style})",
+                "confidence": "low",
+                "note": "inferred from a heading; widget=narrative is a default guess",
+            })
 
     # 3. Tables -> likely matrices / repeating groups; never a plain narrative.
     for i, tbl in enumerate(doc.tables):
