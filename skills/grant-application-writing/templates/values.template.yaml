@@ -1,0 +1,33 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# values.yaml — filled field CONTENT sidecar (Stage D)  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# The canonical filled-value input for every renderer. Maps each scheme.yaml
+# field id to its drafted value. Renderers load STRUCTURE + limits from
+# scheme.yaml (sections[].fields[]) and CONTENT from HERE — the two are separate
+# files (see references/modality-renderers.md → "Input contract").
+#
+# BACK-COMPAT: this file IS a flat {field-id: value} map — the same shape the
+# renderers already accept as a bare IR. Scalars/text for prose boxes; a nested
+# value for a structured widget (taxonomy codes, budget cells).
+#
+# RESOLUTION RULES (fail-closed — see modality-renderers.md C4/C5/C6):
+#   • A field-id here that is NOT in scheme.yaml            → resolution failure → non-zero exit.
+#   • A REQUIRED scheme.yaml field with NO value here       → resolution failure → non-zero exit.
+#   • Ships ABSTRACTIONS ONLY — replace every <PLACEHOLDER>.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── prose / narrative fields — key = scheme.yaml field id, value = the drafted body ──
+significance: |
+  <multi-line drafted, limit-fitted prose for the `significance` narrative field.
+  A block scalar (|) preserves line breaks; the renderer splits it into paragraphs.>
+
+track-record: |
+  <drafted prose for the `track-record` field>
+
+# ── scalar fields ──
+phd-conferral-date: "<YYYY-MM-DD>"        # a single typed value (scalar widget)
+requested-amount: <NNNNN>                 # money value (currency lives in scheme.yaml)
+
+# ── structured widgets — nested value matching the field's shape ──
+for-codes: ["<code-1>", "<code-2>"]       # taxonomy-code multi-pick
+eligibility-confirmed: <hard-pass | fail> # boolean-gate answer (maps to binding: hard|soft)
