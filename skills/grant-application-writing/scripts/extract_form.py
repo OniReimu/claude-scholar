@@ -168,9 +168,9 @@ def extract_pdf(path: Path) -> dict:
             maxlen = f.get("/MaxLen")
             widget, note = _acro_widget(ft, maxlen, f)
             fields.append({
-                "id": _slug(name),
+                "id": _slug(str(name)),
                 "label": str(f.get("/TU") or name),
-                "field_name": name,          # exact AcroForm name — render_pdf matches on this
+                "field_name": str(name),     # exact AcroForm name — render_pdf matches on this
                 "widget": widget,
                 "role": "TODO",
                 "limit": {"value": int(maxlen), "unit": "chars"} if maxlen else None,
