@@ -4,35 +4,27 @@
 # ///
 """IR-level integrity orchestrator (Stage E: portal validation dry-run) — FAIL-CLOSED.
 
-The single pre-submit gate that enforces the cross-field couplings the docs acknowledge
-but no shipped script checked (Codex top-3 #3; Phase-2's F.2↔H.1↔matched "hardest thing to
-model"). It reads the `scheme.yaml` IR (+ values / evidence / entity / budget / paste-ready
-sidecars) and runs 9 checks, each emitting `[PASS]/[FAIL]/[SKIP]/[WARN] <located reason>`.
+The single pre-submit gate for the cross-field couplings the docs acknowledged but no shipped
+script checked (Codex top-3 #3; Phase-2's F.2↔H.1↔matched "hardest thing to model"). Reads the
+`scheme.yaml` IR (+ optional values/evidence/entity/budget/paste-ready sidecars) and runs 9
+checks, each emitting `[PASS]/[FAIL]/[SKIP]/[WARN] <located reason>`. It COMPOSES the siblings —
+budget math is delegated to `validate_budget.py`, char counting to `charcount.py` (subprocesses;
+their exit codes + output fold into this report), never reimplemented here.
 
-It COMPOSES the sibling scripts — it does NOT reimplement their math: budget arithmetic is
-delegated to `validate_budget.py` and char counting to `charcount.py` (invoked as
-subprocesses; their exit codes + output fold into this report).
+  1. schema             widget×role ∈ type-model.md sets; criterion/gate/ref pointers resolve.
+  2. allocation_sums_to taxonomy-code / repeating-group %-rows sum to 100 (±0.01).
+  3. contribution↔budget entity partner contributions reconcile with budget co-contribution rows.
+  4. computed gates     recompute derived eligibility/co-contribution/matched gates; hard fail=block.
+  5. rubric sub_weights indicator points present + consistent with field sub_indicators.
+  6. conditional annexes a triggered conditional-group's required annex is present in attachments.
+  7. stage_lock/phase   no value for a phase-locked field; phase order valid.
+  8. attachment rules   each structured-upload has a valid kind + matching attachments[] entry.
+  9. char roll-up       delegates the paste-ready to charcount.py; folds its verdict.
 
-Checks:
-  1. schema             — every field's widget×role is in type-model.md's sets; criterion refs
-                          resolve to a rubric criterion; gate/`ref` pointers are not dangling.
-  2. allocation_sums_to — taxonomy-code / repeating-group %-rows sum to 100 (±0.01).
-  3. contribution↔budget— entity-store partner contributions reconcile with the budget
-                          co-contribution rows (the F.2↔H.1 double-count enforcer).
-  4. computed gates     — recompute every derived eligibility/co-contribution/matched gate from
-                          values+budget+entity; hard-binding fail = block. Budget math delegated.
-  5. rubric sub_weights — declared indicator points present + consistent with field sub_indicators.
-  6. conditional annexes— a triggered decision-tree/conditional-group annex is present in attachments.
-  7. stage_lock/phase   — no value set for a field locked in the current phase; phase order valid.
-  8. attachment rules   — each structured-upload has a valid kind + matching attachments[] entry.
-  9. char roll-up       — delegates the paste-ready to charcount.py; folds its verdict.
-
-SKIP vs FAIL policy (fail-closed): a check FAILs when the input it needs WAS supplied but the
-data violates the rule / cannot be evaluated (a hard gate that cannot resolve is a FAIL). A
-check SKIPs — non-blocking, with a stated reason — only when the OPTIONAL sidecar it needs was
-not supplied on the command line, or the scheme genuinely lacks that construct.
-
-Exit: non-zero if any HARD check FAILs (or a delegated sibling exits non-zero). soft = WARN.
+SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
+rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
+OPTIONAL sidecar was not supplied, or the scheme lacks that construct. Exit non-zero on any HARD
+FAIL (or a delegated sibling non-zero exit); soft binding = WARN.
 
     uv run validate_ir.py --scheme scheme.yaml --entity entity-store.yaml --budget budget.yaml
     uv run validate_ir.py --self-test
