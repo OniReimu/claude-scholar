@@ -12,6 +12,9 @@
 #   • scheme_version is mandatory — options, taxonomies, weights, limits drift by round.
 #   • If a control maps to NO widget in type-model.md, log it + extend the table;
 #     never coerce it into the nearest fit.
+#   • This file holds STRUCTURE + limits ONLY. Drafted field CONTENT lives in a sibling
+#     values.yaml ({field-id: value}); Stage D renderers read STRUCTURE here and CONTENT
+#     from values.yaml (see templates/values.template.yaml + references/modality-renderers.md).
 # ─────────────────────────────────────────────────────────────────────────────
 
 scheme: "<HUMAN-READABLE SCHEME NAME>"          # e.g. the funder's official title for this call
@@ -42,7 +45,7 @@ submission:
   phases: [<full>]                              # ordered subset of [minimum-data, EOI, full, post-award]; gates/locks are per-phase
   deadline: "<YYYY-MM-DDThh:mm+ZZ:ZZ>"          # funder's hard close (include timezone)
   timeout: "<portal idle-logout, if any>"       # e.g. "portal session 30min" — else null
-  who_submits: "<who presses submit>"           # e.g. "Research Office (not applicant)" — feeds submission_plan (F)
+  submission_authority: "<who presses submit>"  # e.g. "Research Office (not applicant)" — feeds submission_plan (F)
   hard_fail_rules:                              # scheme-level auto-reject conditions, distinct from per-field gates
     - "<condition that auto-rejects, e.g. over char limit on any narrative field>"
     - "<condition, e.g. missing mandatory attachment>"
