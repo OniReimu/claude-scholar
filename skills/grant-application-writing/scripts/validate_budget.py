@@ -45,26 +45,51 @@ def counts(r):
     return r.get("counts_toward_total", True)
 
 
+def is_in_kind(r):
+    return r.get("kind") == "in-kind"
+
+
 def totals(rows):
-    """计入总额的口径下算 total / requested / co-contribution。"""
+    """计入总额的口径下算 total / requested / co-contribution / total-cash。"""
     incl = [r for r in rows if counts(r)]
     total = sum(row_total(r) for r in incl)
+    total_cash = sum(row_total(r) for r in incl if not is_in_kind(r))  # EXCLUDE in-kind
     requested = sum(row_total(r) for r in incl if r.get("funding_source") == "requested")
     cocon = sum(row_total(r) for r in incl if r.get("funding_source") == "co-contribution")
-    return total, requested, cocon
+    return total, requested, cocon, total_cash
 
 
-def check_row_caps(rows, caps, total, requested):
+def check_row_caps(rows, caps, total, requested, total_cash):
+    bases = {"requested": (requested, "requested"), "total-cash": (total_cash, "total-cash")}
     out = []
     for cap in caps:
         cat, max_pct = cap["category"], float(cap["max_pct"])
-        base = requested if cap.get("of") == "requested" else total
+        base, base_name = bases.get(cap.get("of"), (total, "total"))  # 默认 total
         amt = sum(row_total(r) for r in rows if r.get("category") == cat and counts(r))
         pct = (amt / base * 100) if base else 0.0
         ok = pct <= max_pct + 1e-9
         out.append((f"row-cap[{cat}]", ok,
-                    f"{amt:.0f} = {pct:.2f}% of {'requested' if cap.get('of')=='requested' else 'total'} "
-                    f"(cap {max_pct}%)"))
+                    f"{amt:.0f} = {pct:.2f}% of {base_name} (cap {max_pct}%)"))
+    return out
+
+
+def check_cash_flow(rows, cash_in):
+    """逐年累计现金流动性: 累计现金支出不得超过累计现金流入 (in-kind 非现金,排除)。"""
+    if not cash_in:
+        return []
+    spend = {}
+    for r in rows:
+        if not counts(r) or is_in_kind(r):
+            continue
+        for y, v in (r.get("years") or {}).items():
+            spend[y] = spend.get(y, 0.0) + float(v)
+    out, cum_s, cum_i = [], 0.0, 0.0
+    for fy in sorted(set(spend) | set(cash_in)):
+        cum_s += spend.get(fy, 0.0)
+        cum_i += float(cash_in.get(fy, 0.0))
+        ok = cum_s <= cum_i + 1e-6
+        out.append((f"cash-flow[FY{fy}]", ok,
+                    f"cum spend {cum_s:.0f} vs cum cash-in {cum_i:.0f}"))
     return out
 
 
