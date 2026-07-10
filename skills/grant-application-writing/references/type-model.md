@@ -34,7 +34,7 @@
 |--------|-------|-----------|
 | `repeating-group` | list-of-objects; `{min, max}`; per-item nested fields **with their own limits** | NHMRC Top-10-in-10 (10 × {citation ≤500 + explanation ≤1000}), AEA objectives (≤4 × 750ch), milestones, personnel |
 | `conditional-group` / `decision-tree` | branching questionnaire; answers **conditionally require** annexes/prose | ERC Ethics & Security self-assessment, NHMRC Sex/Gender statement, foreign-interference blocks |
-| `budget-matrix` | categories × year × org × cash/in-kind; **per-row caps** + **cross-field validation** + **live totals** | CRC-P (audit ≤1%, overseas ≤10%), ARC, AEA phased, NHMRC |
+| `budget-matrix` | categories × **phase?** × year × org × cash/in-kind/credit; **per-row caps (each carries a denominator `of`)** + **cross-field validation** + **live totals**; first-class **`phase` axis** + **`phased_if_min`** gate | CRC-P (audit ≤1%, overseas ≤10%), ARC, AEA phased (≥$200k → ≥2 phases), NHMRC |
 | `contribution-matrix` | partner × contribution-type × financial-year (CRC-P's 3-way cash / cash-staff / in-kind), auto-subtotalled | CRC-P |
 | `relational-table` | multiple linked tables encoding a graph | NSF Collaborators & Other Affiliations (5 relational tables = conflict graph) |
 | `milestone-table` / `stage-gate` | rows `{milestone, deliverable, measure-of-success (picked from list), date/month, status}`; **two representations: proposed (in application) vs contracted (at award)** | AEA B2, CRC-P G9, EF post-award milestones, MS timeline |
