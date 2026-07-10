@@ -70,6 +70,8 @@ publications:
     year: <YYYY>
     venue: "<venue name>"
     role: <first | corresponding | co-first | senior | co-author>   # NEVER upgraded; the drafted verb must survive this
+    window: <since-PhD | last-5y | since-YYYY>    # ROPE bound a paper-count is stated against
+    attributor: <null | flagship-venue name | evidence id>   # external validator for a superlative; null ⇒ NOT statable as a superlative
     doi: "<10.xxxx/...>"
     provenance: "<source file / path this row was extracted from>"
     # ── trust profile ──
