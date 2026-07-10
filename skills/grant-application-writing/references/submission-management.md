@@ -111,7 +111,7 @@ Notes:
   is the last one, not the first. Work backwards from `funder_deadline` through every cutoff.
 - `format_rules` feed `scheme.yaml` field validation and the Stage E format check.
 - For project modes, expand `policy_constraints` (DMP mandate, budget-cap rules, matched-funding
-  thresholds) and `mandatory_documents` (budget, partner letters, ethics annexes).
+  thresholds) and `mandatory_docs` (budget, partner letters, ethics annexes).
 
 ## Stage F — `submission_plan.yaml`
 
@@ -121,9 +121,10 @@ owned, dated, dependency-ordered plan and tracks approval + attachment state to 
 ```yaml
 scheme: "UTS Early Career Researcher Award 2026"
 funder_deadline: 2026-03-01T17:00+11:00
+internal_deadline: 2026-02-23T17:00+11:00
 portal: "Symplectic Elements"
 portal_notes: "session timeout ~20 min; save often; no autosave on narrative boxes"
-who_submits: {role: research-office, person: "TBC"}
+submission_authority: {authorised_role: research-office, person: "TBC"}
 
 artifacts:                                   # one row per fillable field OR attachment
   - id: art.nominee_statement
