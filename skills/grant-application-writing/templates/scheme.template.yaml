@@ -1,0 +1,112 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# scheme.yaml — Form-Schema IR (Stage A)   [TEMPLATE — copy into your app folder]
+# ─────────────────────────────────────────────────────────────────────────────
+# One normalized object fused from a blank form + its guidelines. Every field is
+# expressed in the type-model.md model: widget × role + attributes.
+# This scaffold ships ABSTRACTIONS ONLY — replace every <PLACEHOLDER> and the
+# example fields with your scheme's real controls. Do NOT keep these examples.
+#
+# Rules of thumb (see references/form-schema-ir.md):
+#   • If a value the drafter needs (limit/weight/gate/phase-lock) is not captured
+#     here, it does not exist downstream.
+#   • scheme_version is mandatory — options, taxonomies, weights, limits drift by round.
+#   • If a control maps to NO widget in type-model.md, log it + extend the table;
+#     never coerce it into the nearest fit.
+# ─────────────────────────────────────────────────────────────────────────────
+
+scheme: "<HUMAN-READABLE SCHEME NAME>"          # e.g. the funder's official title for this call
+mode: <narrative-award | prospective-project | retroactive-impact>   # set from funding-mode dispatch; mis-set mis-routes the pipeline
+scheme_version: "<ROUND-OR-YEAR TAG>"           # e.g. "2026-R1" — taxonomy + option sets are bound to THIS value
+portal: "<PORTAL>"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | web-form | docx | ...
+
+source_docs:                                    # provenance for every value below; a form-vs-guide conflict is traced here, not silently resolved
+  - {id: form,  path: "<blank-form.ext>",       role: fields+limits}
+  - {id: guide, path: "<guidelines.pdf>",       role: rubric+eligibility+weights}
+  # - {id: rules, path: "<funding-rules.pdf>",  role: eligibility+compliance}   # add every addendum / CFP page / portal help
+
+# ─── Eligibility gates (role=eligibility-gate) — hoisted to top; run BEFORE drafting ───
+eligibility_gates:
+  - id: <plain-gate-id>
+    rule: "<the eligibility condition in words>"
+    binding: hard                               # hard = submit-blocker | soft = disadvantage only
+    check: "<field_the_gate_validates>"         # plain gate: no derived expr, just a field to validate
+  - id: <computed-gate-id>
+    rule: "<condition that is derived from other fields>"
+    binding: hard
+    derived: "<expr over other fields>"         # a `computed` gate — stored as TEXT, recomputed at check time, never cached
+    check: "<field_a, field_b>"                 # fields the expr depends on
+
+# ─── Submission envelope ───
+submission:
+  modality: <web-form | docx | pdf-acroform | pdf-xfa | pdf-flat | pdf-scanned | latex | xlsx | sf424-xml>
+  phases: [<full>]                              # ordered subset of [minimum-data, EOI, full, post-award]; gates/locks are per-phase
+  deadline: "<YYYY-MM-DDThh:mm+ZZ:ZZ>"          # funder's hard close (include timezone)
+  timeout: "<portal idle-logout, if any>"       # e.g. "portal session 30min" — else null
+  who_submits: "<who presses submit>"           # e.g. "Research Office (not applicant)" — feeds submission_plan (F)
+  hard_fail_rules:                              # scheme-level auto-reject conditions, distinct from per-field gates
+    - "<condition that auto-rejects, e.g. over char limit on any narrative field>"
+    - "<condition, e.g. missing mandatory attachment>"
+
+# ─── Sections = CONTAINERS (preserve form order); each field is a type-model.md object ───
+sections:
+  - id: <section-id>
+    title: "<section heading as shown on the form>"
+    repeating: null                             # or {min, max} when the WHOLE section repeats (per-CI, per-partner blocks)
+    fields:
+
+      # ── Example field 1 — NARRATIVE criterion box ──
+      # widget: narrative | role: criterion-scored (maps to a rubric weight)
+      # limit: {value, unit: chars|words|pages, min?, nested_sublimits[]?}  — never assume max-only / single unit
+      - id: <narrative-field-id>
+        label: "<field label>"
+        widget: narrative
+        role: criterion-scored
+        limit: {value: <NNNN>, unit: chars}     # e.g. words / pages; add min: <N> and nested_sublimits[] if the box nests
+        visibility: [assessor, institution]     # subset of [assessor, institution, funder, minister-public] — ≥3 audiences is common
+        stage_lock: null                        # or {authored_at: <phase>, editable_at: [<phase>], locked_from: <phase>}
+        submission_phase: <full>                # minimum-data | EOI | full | post-award
+
+      # ── Example field 2 — TAXONOMY-CODE with %-allocation summing to 100 ──
+      # widget: taxonomy-code | role: classification (drives reviewer/panel routing)
+      - id: <taxonomy-field-id>
+        label: "<field label, e.g. research classification codes>"
+        widget: taxonomy-code
+        role: classification
+        taxonomy: {scheme: "<CONTROLLED-VOCAB>", version: "<YYYY>", levels: <N>, max_codes: <N>, allocation_sums_to: 100}
+        visibility: [assessor, funder]          # classification is usually funder-visible; drives panel fit
+
+      # ── Example field 3 — ELIGIBILITY GATE surfaced as a form control ──
+      # widget: boolean-gate | role: eligibility-gate (some are HARD submit-blockers; may conditional-trigger an annex)
+      - id: <boolean-gate-field-id>
+        label: "<yes/no self-assessment question>"
+        widget: boolean-gate
+        role: eligibility-gate
+        blocking: true                          # true = a "wrong" answer blocks submission; conditional_trigger: <annex-id> if it opens an annex
+        visibility: [assessor, institution]
+
+      # ── Example field 4 — BUDGET-MATRIX reference ──
+      # widget: budget-matrix | role: budget-resource
+      # categories × year × org × cash/in-kind, with per-row caps + cross-field validation + live totals
+      - id: <budget-field-id>
+        label: "<budget table label>"
+        widget: budget-matrix
+        role: budget-resource
+        matrix: {axes: [category, year, org], value_types: [cash, in-kind]}   # shape of the grid
+        row_caps: ["<e.g. audit <=1% of total>", "<e.g. overseas <=10%>"]      # per-row caps enforced by the portal
+        cross_validation: ["<e.g. matched-funding >= 1:1 (see computed gate)>"]
+        depends_on: ["<field this budget is coupled to, e.g. teaching-relief request>"]  # referential integrity across parts
+        visibility: [assessor, institution, funder]
+
+# ─── Rubric (from the GUIDELINES, not the form) — every criterion-scored field must resolve here ───
+rubric:
+  - criterion: "<criterion name matching a scored field>"
+    weight: <0.00>                              # fraction; effort ∝ weight
+    evidence_types: [<publication>, <grant>, <invited-talk>]   # accepted evidence classes for this criterion
+    reviewer_panel: null                        # panel/college that scores it, if the scheme routes by classification
+
+# ─── Attachments — kind is NEVER "just a blob" (type-model.md structured-upload sub-kinds) ───
+attachments:
+  - name: "<attachment name>"
+    kind: <free | proforma | composite | heading-sequenced | system-generated>   # free is rare — justify it
+    source: "<where it comes from, e.g. ORCID export / template file>"
+    constraints: {pages: <N>, headings: null, filename: "<required-pattern>"}     # page-limit, mandated heading order, filename rule
