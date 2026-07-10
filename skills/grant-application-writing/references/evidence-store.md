@@ -78,6 +78,8 @@ publications:
     venue: "NeurIPS"
     year: 2024
     role: first                         # first | co-first | corresponding | supervising | co-author
+    window: since-PhD                   # ROPE: career-relative bound a count is stated against — since-PhD | last-5y | since-2019
+    attributor: null                    # external validator for a superlative (ranking body / flagship venue / evidence id); null ⇒ statable but NOT as a superlative
     metrics: {citations: {value: 41, source_authority: scholar, as_of: 2026-07-01}}
     status: published                   # published | in-press | in-review
     confidence: high
