@@ -21,9 +21,7 @@ YAML schema:
     row_caps:
       - {category: audit, max_pct: 1.0}   # of: total(默认) | total-cash | requested
       - {category: overseas, max_pct: 10.0, of: total-cash}
-      #   total       = 所有计入行 (含 in-kind)   —— 默认，向后兼容
-      #   total-cash  = 计入行但 EXCLUDE in-kind (kind==in-kind) —— 现金口径
-      #   requested   = funding_source==requested 的计入行
+      #   of: total(默认,含in-kind) | total-cash(计入行 EXCLUDE kind==in-kind) | requested
     declared_totals: {requested: 100000}  # 可省，存在即比对
     cash_flow_check: true                 # 可省; true 时启用累计现金流检查
     cash_in: {2026: 100000, 2027: 400000} # 逐年现金流入 (现金配套 + grant drawdown)
