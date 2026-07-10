@@ -428,9 +428,6 @@ def check_stage_lock(rep, scheme, values):
 def check_attachments(rep, scheme):
     ups = [f for f in iter_field_nodes(scheme.get("sections")) if f.get("widget") == "structured-upload"]
     atts = scheme.get("attachments") or []
-    for a in walk_dicts(atts):  # nested conditional uploads too
-        if a.get("kind") and a not in atts:
-            pass
     if not ups and not atts:
         rep.add("attachment-rules", "SKIP", "hard", "scheme declares no attachments")
         return
