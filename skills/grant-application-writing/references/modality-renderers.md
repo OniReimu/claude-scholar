@@ -62,20 +62,22 @@ block per field, so the applicant copies each block into its box with zero editi
   is still in the (round-scoped) enum, budget totals match. In browser-assisted mode, optionally
   type into the live form and read back the portal's own validation messages, then **clear the
   fields** — dry-run means observe, never submit.
-- **render** — emit `PASTE-READY.txt`, **ordered by field id**, one block per field:
+- **render** — emit `PASTE-READY.txt`, **ordered by field id**, one block per field, in the
+  canonical block grammar (identical to `templates/PASTE-READY.template.txt`; the SAME grammar
+  `charcount.py` parses and `render_pdf.py` produces):
 
 ```
-════════════════════════════════════════════════════════════════
-[B2.1] Research Opportunity and Performance Evidence (ROPE)
-role: criterion-scored (weight 40%) · limit: 2000 chars · used: 1936 · OK
-────────────────────────────────────────────────────────────────
+=== rope | Research Opportunity and Performance Evidence (ROPE) | limit: 2000 chars ===
 <the exact text to paste, already fitted to the limit>
-════════════════════════════════════════════════════════════════
+=== /rope ===
 ```
 
-Header line carries **field id + label**; the meta line carries **role / limit / used-count /
-OK|OVER**. Blocks are separated by a rule so a human can scan-and-paste. An `OVER` count is a
-hard stop reported at the top of the file — never silently truncate.
+The header carries **`<field-id> | <LABEL> | limit: <N|null> <unit>`** (`unit` ∈
+chars|words|pages; `limit` may be literal `null` = UNVERIFIED). The **terminator
+`=== /<field-id> ===` closes each block** so the last box cannot absorb trailing text — a missing
+terminator is a hard error. The **body is everything strictly between the header line and its
+matching terminator**. `charcount.py` counts the body and reports OVER / BLOCK (null limit) /
+NEEDS-RENDER (`pages`) at the top of the file — never silently truncate.
 
 **Optional live-fill.** When the portal permits and the applicant asks, browser-assisted mode
 can type each validated block into the real form and pause before the final submit for human
