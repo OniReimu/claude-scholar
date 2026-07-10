@@ -8,6 +8,16 @@
 > Distilled from funded competitive-grant prose. Every example here is FICTIONAL — never
 > paste a real applicant's wording; apply the pattern to the applicant's own evidence.
 
+## 0. How to use this
+
+1. **Pick the register from `mode`** (SKILL.md dispatch): `prospective-project` / commercialisation
+   → the commercialisation lean of §1–7; `narrative-award` / fellowship → the inversion in §8.
+   Shared craft (§1–4, §6–7) applies to both.
+2. **Draft in that register**, applying the composition (§1), sentence patterns (§3), lexicon (§4),
+   and strategic moves (§5 / §8).
+3. **The method passes keep it defensible** — voice is subordinate (§6). Run the smell test (§7)
+   and the worked rewrites (§9) as a target.
+
 ## 1. Composition (macro)
 
 - **Headings ARE the scored criteria.** For a `heading-sequenced` upload, each internal
