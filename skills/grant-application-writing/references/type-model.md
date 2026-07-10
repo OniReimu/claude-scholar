@@ -57,7 +57,7 @@ The same widget means different things and is evidenced/scored differently by it
 
 | role | what it is | drives |
 |------|-----------|--------|
-| `eligibility-gate` | hard pass/fail (may be `computed`/derived) | run first; block drafting on failure |
+| `eligibility-gate` | hard pass/fail (`binding: hard \| soft`; may be `computed`/derived) | run first; block drafting on failure |
 | `criterion-scored` | maps to a rubric item + weight — the persuasive content | effort ∝ weight; verb-tiering; anti-double-count |
 | `admin-metadata` | contact, IDs, dates | validation only |
 | `classification` | FoR / panel / theme | reviewer routing / panel fit |
