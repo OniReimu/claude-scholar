@@ -87,7 +87,7 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 - **In:** entity-store, aims. **Out:** capability-coverage matrix + gap flags.
 
 ### 2.8 budget-math validation
-- **Does:** mechanically validate the `budget-matrix` / `contribution-matrix` arithmetic and every scheme rule: **per-row caps** (e.g. audit ≤ 1%, overseas ≤ 10%), **matched-funding ratio ≥ threshold**, **phased-budget gating** (per-phase totals), and **credit-vs-cash separation** (credit-request lines respect `counts_toward_total`).
+- **Does:** mechanically validate the `budget-matrix` / `contribution-matrix` arithmetic and every scheme rule: **per-row caps with an explicit denominator** (`of: total | total-cash | requested` — e.g. audit/overseas ≤ 10% of total *cash*, excludes in-kind), **matched-funding ratio ≥ threshold**, **phased-budget gating** (per-phase totals), **credit-vs-cash separation** (credit-request lines respect `counts_toward_total`), and **opt-in cumulative cash-flow liquidity** (`cash_flow_check`: per-FY cumulative spend ≤ cumulative cash-in).
 - **In:** budget/contribution matrices, `computed` ratio gates. **Out:** pass/fail per rule with the offending cell + amount; blocks submission on a hard cap breach.
 - **Example (CRC-P family):** overseas spend computed as % of total must be ≤ 10%; matched cash/in-kind must meet the co-contribution ratio the `computed` gate enforces — recompute, never trust the portal's cached total.
 
