@@ -3,8 +3,9 @@
 > Mode-aware operations on the `scheme.yaml` IR. Every pass reads and writes the IR
 > (or the drafted field values attached to it); none is scheme-specific. Which passes
 > run is decided by `mode` (§ Funding-mode dispatch in SKILL.md). Narrative-award passes
-> always run; project passes are *added* for `prospective-project`; cross-cutting passes
-> run in both. Stage E re-checks their outputs as a contract before submission.
+> always run; project passes are *added* for `prospective-project`, retroactive-impact
+> passes for `retroactive-impact`; cross-cutting passes run in all. Stage E re-checks their
+> outputs as a contract before submission.
 >
 > Worked example throughout: **UTS ECR** (`narrative-award`) — regenerated from its corpus.
 
