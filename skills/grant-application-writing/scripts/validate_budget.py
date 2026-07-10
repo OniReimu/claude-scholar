@@ -191,6 +191,39 @@ def self_test():
     assert d["matched-funding"][0] is True, d["matched-funding"]
     assert d["declared[requested]"][0] is True, d["declared[requested]"]  # requested=10000
     assert abs(tot[0] - 20000) < 1e-6, tot                                 # credit excluded → 20000
+
+    # ── FIX #7: dual denominator — total-cash 抓到 total 会漏的 overseas 超限 ──
+    # total = 100000 (含 in-kind 50000); total-cash = 50000; overseas = 8000
+    #   8000/100000 = 8%  ≤ 10% → PASS under `of: total`  (会漏)
+    #   8000/50000  = 16% > 10% → FAIL under `of: total-cash` (被抓)
+    tc_rows = [
+        {"category": "overseas", "funding_source": "requested", "kind": "cash", "years": {2026: 8000}},
+        {"category": "labour", "funding_source": "requested", "kind": "cash", "years": {2026: 42000}},
+        {"category": "in_kind", "funding_source": "co-contribution", "kind": "in-kind", "years": {2026: 50000}},
+    ]
+    r_cash = {n: ok for n, ok, _ in run({"row_caps": [{"category": "overseas", "max_pct": 10.0,
+             "of": "total-cash"}], "rows": tc_rows})[0]}
+    r_total = {n: ok for n, ok, _ in run({"row_caps": [{"category": "overseas", "max_pct": 10.0}],
+             "rows": tc_rows})[0]}
+    assert r_cash["row-cap[overseas]"] is False, "total-cash must FAIL overseas"
+    assert r_total["row-cap[overseas]"] is True, "total must (wrongly) PASS overseas — discrimination"
+
+    # ── FIX #8: cash-flow — 前置支出 / 后置现金 必须 FAIL,即使所有 row cap 都过 ──
+    cf = {"cash_flow_check": True, "cash_in": {2026: 5000, 2027: 45000},
+          "row_caps": [{"category": "overseas", "max_pct": 10.0}],
+          "rows": [{"category": "labour", "funding_source": "requested", "kind": "cash",
+                    "years": {2026: 42000}},
+                   {"category": "overseas", "funding_source": "requested", "kind": "cash",
+                    "years": {2026: 8000}}]}
+    r_cf = {n: ok for n, ok, _ in run(cf)[0]}
+    assert r_cf["row-cap[overseas]"] is True, "row caps all pass"
+    assert r_cf["cash-flow[FY2026]"] is False, "front-loaded spend must FAIL FY2026"
+    assert r_cf["cash-flow[FY2027]"] is True, "recovers by FY2027"
+    # 现金先到 → 全过
+    cf_ok = dict(cf, cash_in={2026: 60000, 2027: 0})
+    r_ok = {n: ok for n, ok, _ in run(cf_ok)[0]}
+    assert all(v for n, v in r_ok.items() if n.startswith("cash-flow")), "well-funded passes cash-flow"
+
     print("self-test OK")
     return 0
 
