@@ -140,11 +140,11 @@ and third-party attestations, scored first-class.
 - **In:** scheme rubric + panel description. **Out:** a `reviewer_model` object + per-field framing notes.
 - **Reframing the one project across panels:** **ARC** — significance + national benefit, ROPE-aware, restrained tone; **NHMRC** — health translation, RtO normalisation, structured track-record; **NSF** — intellectual merit + broader impacts as co-equal, US-centric; **ERC** — high-risk/high-gain frontier, PI-centric, ambition rewarded; **industry (Google/MS/Amazon)** — product relevance and open-source/data intent, concise; **internal (UTS ECR)** — early-career trajectory and institutional fit over raw scale.
 
-### 3.2 prior-submission / review-response
+### 4.2 prior-submission / review-response
 - **Does:** for resubmissions, thread prior reviewer feedback into the draft and (where the scheme has a response field) produce a point-by-point response; align claims with what changed.
 - **In:** prior reviews, current draft. **Out:** response-to-reviewers + a change-log the narrative reflects. (Integrates the `review-response` skill.)
 
-### 3.3 COI / reviewer-management
+### 4.3 COI / reviewer-management
 - **Does:** populate reviewer-management fields — NSF COA relational tables, **excluded reviewers**, **suggested reviewers** — consistently with the entity-store's collaboration graph.
 - **In:** entity-store relationships, COA rules. **Out:** filled conflict tables + exclusion/suggestion lists, cross-checked against co-authorship within the scheme's lookback window.
 
