@@ -89,6 +89,7 @@ Each stage is specified in a `references/` file. Read the ones the task needs:
 - **`references/form-schema-ir.md`** — the `scheme.yaml` IR (Stage A) and the A0 compliance matrix. `scripts/extract_form.py` bootstraps the field skeleton from a blank .docx/.pdf.
 - **`references/evidence-store.md`** — Stage B: building/hardening the reusable evidence store; the entity store (B2).
 - **`references/method-passes.md`** — Stage C/E: the mode-aware drafting and review passes.
+- **`references/author-voice.md`** — Stage C: the register funded grant prose is written in (composition, sentence patterns, lexicon, strategic moves). Read when drafting `criterion-scored` narrative.
 - **`references/modality-renderers.md`** — Stage D: the modality registry and each renderer's contract.
 - **`references/submission-management.md`** — Stage A0 + F: compliance matrix and submission plan.
 
