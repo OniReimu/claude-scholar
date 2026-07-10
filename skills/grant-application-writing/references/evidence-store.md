@@ -169,8 +169,33 @@ impact:
 
 Every leaf item carries the six hardening fields (`status`, `confidence`,
 `source_authority`, `as_of`, `validity_window`, `sensitivity`/`use_permission`) plus
-`provenance`. Missing a field is a load-bearing signal, not a default — see
-negative-evidence handling.
+`provenance`. Track-record items additionally carry the three ROPE + sourced-eminence
+fields (`window`, `role`, `attributor`; see next section). Missing a field is a
+load-bearing signal, not a default — see negative-evidence handling.
+
+## ROPE + sourced-eminence fields (track-record items)
+
+Beyond the trust profile, every track-record item (publication, funding, award, service,
+supervision, impact) may carry three fields that turn a raw count into a *defensible* one —
+the two moves a fellowship application lives on:
+
+| field | what it fixes | example values |
+|-------|---------------|----------------|
+| `window` | the career-relative bound a count is stated against — makes every count **relative-to-opportunity (ROPE)** | `since-PhD` · `last-5y` · `since-2019` |
+| `role` | the role a count is claimed under (never upgraded) | pubs `first`/`corresponding` · funding `CI`/`PI`/`co-I` · supervision `principal`/`co` · service `chair`/`editor`/`committee-member` · awards `sole`/`co-recipient` · impact `lead`/`contributor` |
+| `attributor` | the external validator that makes a superlative **sourced** — a ranking body, award name, named flagship venue, a units-sold/adoption figure, or an evidence-store id | `"[ranking body]"` · `"12,000 installs"` · `pub-2024-unlearn` |
+
+The drafting layer **renders** "sourced eminence" and "relative-to-opportunity" prose *from*
+these fields — it never improvises either. A count is only written with its `window` and
+`role` attached (*"[N] papers in flagship venues since the PhD, as corresponding author"*),
+and a superlative is only written when an `attributor` is present (*"the field's leading
+early-career researcher, as named by [ranking body]"*). **A superlative with no `attributor`
+derives to a lower `defensibility` tier** — the item may be stated, but not as a superlative.
+
+These fields feed **prong 2 (the fellowship prong) of the `number-defensibility` pass** in
+`method-passes.md` and the "sourced eminence" / ROPE / defensible-primacy moves of
+`author-voice.md` §8. They are inert in `prospective-project` mode, where the defensible move
+on a market number is *omit*, not *scope + source* (prong 1).
 
 ## Governance blocks (store-level, alongside the item lists)
 
