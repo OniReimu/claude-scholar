@@ -53,7 +53,7 @@ certifications:
 
 # ─── Deadlines — internal (institution) vs funder; the internal one is the real one ───
 deadlines:
-  funder_close:    "<YYYY-MM-DDThh:mm+ZZ:ZZ>"   # the funder's hard deadline (mirror scheme.yaml.submission.deadline)
+  funder_deadline: "<YYYY-MM-DDThh:mm+ZZ:ZZ>"   # the funder's hard deadline (mirror scheme.yaml.submission.deadline)
   internal_cutoffs:                             # institution's earlier gates — these bind the working schedule
     - {id: <cutoff-id>, name: "<e.g. research-office review>", due: "<YYYY-MM-DDThh:mm+ZZ:ZZ>", owner: "<who>"}
 
