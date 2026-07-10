@@ -169,7 +169,7 @@ the falsifiability log fires, but Stage A can still emit a plausible-looking def
 buries the flag. Two hard rules:
 
 1. **Composite fields are two (or more) sub-fields, never one.** A pick-N paired with a
-   bounded justification (an "Eight Characteristics: tick ≤2 + describe in 600 chars"
+   bounded justification (a "strategic-priorities: tick ≤2 + describe in ≤N chars"
    box; an "AEA TRL: pick 3–5 + justify" box; a "focus area + rationale" box) is a
    `section`/`fieldset` holding a `multi-choice` (or `single-choice`) **and** a separate
    `narrative` **with its own limit** — not a single `narrative` sized to the visible box.
