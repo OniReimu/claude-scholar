@@ -214,9 +214,10 @@ with a ~20-min session timeout and a hard deadline.
 ```yaml
 scheme: "UTS ECR Award 2026"
 funder_deadline: 2026-03-01T17:00+11:00
+internal_deadline: 2026-02-23T17:00+11:00
 portal: "Symplectic Elements"
 portal_notes: "~20 min timeout; draft narrative offline, paste last"
-who_submits: {role: research-office, person: "Faculty RO"}
+submission_authority: {authorised_role: research-office, person: "Faculty RO"}
 
 artifacts:
   - {id: art.nominee_statement, owner: nominee, due: 2026-02-16,
