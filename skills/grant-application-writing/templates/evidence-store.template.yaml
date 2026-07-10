@@ -154,6 +154,41 @@ awards:
     sensitivity: public
     use_permission: public
 
+# ─── Supervision (HDR / postdoc mentoring — a fellowship track-record staple) ───
+supervision:
+  - id: <supervision-key>
+    student: "<anonymised student id>"
+    level: <PhD | MPhil | Masters | Honours | postdoc>
+    role: <principal | co>                        # principal | co — the supervisory role the count is claimed under
+    window: <since-PhD | last-5y | since-YYYY>     # ROPE bound for "students supervised to completion" tallies
+    attributor: <null | graduation record | evidence id>   # required to state a superlative; null ⇒ no superlative
+    provenance: "<thesis / graduation record path>"
+    status: <ongoing | completed | withdrawn>      # "graduated to completion" != "enrolled" — the drafted claim must match
+    confidence: <high | medium | low>
+    source_authority: <official-record | self-reported>
+    as_of: "<YYYY-MM-DD>"
+    validity_window: {from: "<YYYY-MM-DD>", to: null}
+    sensitivity: <internal | confidential | public>   # student privacy — usually not public
+    use_permission: <internal | public | embargoed>
+
+# ─── Impact (adoption / policy / deployment reach — sourced by an external figure) ───
+impact:
+  - id: <impact-key>
+    claim: "<what changed in the world — adoption / policy / deployment>"
+    kind: <adoption | policy | deployment | commercial | community>
+    role: <lead | contributor>                    # lead | contributor — the role the reach is claimed under
+    window: <since-PhD | last-5y | since-YYYY>     # ROPE bound for reach tallies
+    attributor: <null | units-sold/adoption figure | named adopter | evidence id>   # the external figure that sources the eminence claim; null ⇒ no superlative
+    metric: {value: <N>, unit: "<installs | sites | citations-in-policy>"}   # optional quantified reach
+    provenance: "<adoption letter / usage record / press path>"
+    status: <realised | in-progress>
+    confidence: <high | medium | low>
+    source_authority: <official-record | self-reported>
+    as_of: "<YYYY-MM-DD>"
+    validity_window: {from: "<YYYY-MM-DD>", to: null}
+    sensitivity: <public | internal | confidential>
+    use_permission: <public | internal | embargoed>
+
 # ─── Governance blocks (store-level) — conflict resolution, refresh, audit, absence ───
 source_precedence:                               # conflict-resolution ordering (high → low)
   default: [official-record, orcid, scopus, scholar, self-reported]
