@@ -22,7 +22,7 @@
 | `single-choice` | enum pick; options **round-scoped & version-bound**; `Other → conditional field` | EF `domain`/`output`, Google/Amazon rotating tracks, AEA focus areas |
 | `multi-choice` | pick-N from enum | AEA priority areas, keywords |
 | `taxonomy-code` | controlled-vocab classification; hierarchical/searchable; often **% allocation summing to 100**; carries scheme version | FoR/SEO/ANZSIC (ARC, AEA, NHMRC), NSF/ERC panels |
-| `boolean-gate` | Yes/No; some are **hard submit-blockers**; often conditional-trigger | CRC-P §B eligibility self-assessment, EF `paymentAcknowledgement`, AEA/ARC disclosures |
+| `boolean-gate` | Yes/No; bindingness encoded **`binding: hard \| soft`** (hard = submit-blocker, soft = disadvantage only); often conditional-trigger | CRC-P §B eligibility self-assessment, EF `paymentAcknowledgement`, AEA/ARC disclosures |
 | `declaration` | attestation / consent / COI / ethics agreement | NSF, ARC, all |
 | `link` | URL / external id; **attr `role: metadata \| evidence`** | EF repo link (metadata) vs RetroPGF contribution links (scored evidence) |
 | `payout-target` | discriminated union: `crypto{wallet, ens_resolved}` \| `fiat{beneficiary, IBAN, SWIFT}` | EF GranteeFinance (post-award) |
