@@ -169,11 +169,12 @@ def extract_pdf(path: Path) -> dict:
     reader = PdfReader(str(path))
     modality = "pdf-flat"
     fields: list[dict] = []
+    uniq = _Unique()
 
-    # XFA? (dynamic forms — pypdf can see the packet but cannot reliably fill it)
+    # XFA packet present? (dynamic forms — pypdf sees the packet but cannot reliably fill it)
+    xfa_present = False
     try:
-        if reader.xfa:
-            modality = "pdf-xfa"
+        xfa_present = bool(reader.xfa)
     except Exception:
         pass
 
@@ -184,13 +185,17 @@ def extract_pdf(path: Path) -> dict:
         acro = None
 
     if acro:
-        modality = "pdf-acroform" if modality != "pdf-xfa" else "pdf-xfa"
+        # AcroForm-backed WINS: fillable fields exist, so this is pdf-acroform even if an XFA
+        # packet is also present. Do NOT over-degrade an AcroForm-backed form to pdf-xfa.
+        modality = "pdf-acroform"
         for name, f in acro.items():
             ft = str(f.get("/FT", ""))
             maxlen = f.get("/MaxLen")
             widget, note = _acro_widget(ft, maxlen, f)
+            if xfa_present:
+                note += " (XFA packet also present; treated as AcroForm-backed)"
             fields.append({
-                "id": _slug(str(name)),
+                "id": uniq(_slug(str(name))),
                 "label": str(f.get("/TU") or name),
                 "field_name": str(name),     # exact AcroForm name — render_pdf matches on this
                 "widget": widget,
