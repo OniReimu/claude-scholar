@@ -5,10 +5,11 @@
 """预算矩阵校验 (Stage E: budget-math pass)
 
 对 budget-matrix (categories × year × org × cash/in-kind/credit) 跑机械校验:
-  1. 逐行百分比上限     (row_caps, 如 audit ≤ 1% / overseas ≤ 10% of total)
+  1. 逐行百分比上限     (row_caps, 如 audit ≤ 1% / overseas ≤ 10%; 支持双分母)
   2. 配套资金比例       (matched_funding: co-contribution / requested ≥ 阈值)
   3. credit vs cash 计入 (counts_toward_total=false 的 credit 不进 cash total)
   4. live totals        (逐年 / 逐机构 / 总计；若 declared_totals 存在则比对)
+  5. 累计现金流动性     (cash_flow_check: 逐年累计支出 ≤ 累计现金流入; opt-in)
 逐规则报告 PASS/FAIL。纯机械，不臆造数字。
 
 用法:
@@ -18,9 +19,14 @@
 YAML schema:
     matched_funding_min_ratio: 1.0        # co-contribution / requested，可省
     row_caps:
-      - {category: audit, max_pct: 1.0}   # of: total(默认) | requested
-      - {category: overseas_travel, max_pct: 10.0}
+      - {category: audit, max_pct: 1.0}   # of: total(默认) | total-cash | requested
+      - {category: overseas, max_pct: 10.0, of: total-cash}
+      #   total       = 所有计入行 (含 in-kind)   —— 默认，向后兼容
+      #   total-cash  = 计入行但 EXCLUDE in-kind (kind==in-kind) —— 现金口径
+      #   requested   = funding_source==requested 的计入行
     declared_totals: {requested: 100000}  # 可省，存在即比对
+    cash_flow_check: true                 # 可省; true 时启用累计现金流检查
+    cash_in: {2026: 100000, 2027: 400000} # 逐年现金流入 (现金配套 + grant drawdown)
     rows:
       - {category: audit, funding_source: requested, kind: cash,
          org: leadco, counts_toward_total: true, years: {2026: 500, 2027: 500}}
