@@ -95,6 +95,8 @@ funding:
     title: "Scalable Privacy-Preserving Data Systems"
     amount: {value: 480000, currency: AUD}
     role: CI                            # CI | PI | co-I  (NOT scholarship/stipend — see screenshot note)
+    window: since-PhD                   # ROPE bound for grant tallies (e.g. "grants won since PhD")
+    attributor: null                    # scheme / award name or evidence id — required to state a superlative ("largest…")
     dates: {from: 2023-01, to: 2025-12}
     project_code: "DP230100000"
     status: awarded
