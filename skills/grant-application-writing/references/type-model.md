@@ -26,7 +26,7 @@
 | `declaration` | attestation / consent / COI / ethics agreement | NSF, ARC, all |
 | `link` | URL / external id; **attr `role: metadata \| evidence`** | EF repo link (metadata) vs RetroPGF contribution links (scored evidence) |
 | `payout-target` | discriminated union: `crypto{wallet, ens_resolved}` \| `fiat{beneficiary, IBAN, SWIFT}` | EF GranteeFinance (post-award) |
-| `credit-request` | cloud/compute ask distinct from cash: `{amount, justification, products[], datasets[], counts_toward_cash_total: bool}` | AFMR (credits-only), Amazon ARA (parallel to cash), Microsoft (in budget table but excluded from total) |
+| `credit-request` | cloud/compute ask distinct from cash: `{amount, justification, products[], datasets[], counts_toward_total: bool}` | AFMR (credits-only), Amazon ARA (parallel to cash), Microsoft (in budget table but excluded from total) |
 
 ### Container / computed widgets
 
