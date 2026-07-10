@@ -43,8 +43,28 @@ def detect_limit(text: str) -> dict | None:
 
 
 def _slug(text: str, n: int = 6) -> str:
-    words = re.findall(r"[A-Za-z0-9]+", (text or "").lower())
-    return "-".join(words[:n]) or "field"
+    # Keep Unicode word chars (don't drop non-ASCII labels to a generic "field"); if a label
+    # is punctuation-only / empty, derive a STABLE token from its bytes instead of colliding
+    # every such field onto "field".
+    words = re.findall(r"\w+", (text or "").lower(), re.UNICODE)
+    slug = "-".join(words[:n])
+    if not slug:
+        return "fld-" + hashlib.sha1((text or "").encode("utf-8")).hexdigest()[:6]
+    return slug
+
+
+class _Unique:
+    """Suffix duplicate slugs (-2, -3, …) so every field id in a document is unique."""
+
+    def __init__(self):
+        self._seen: dict[str, int] = {}
+
+    def __call__(self, base: str) -> str:
+        if base not in self._seen:
+            self._seen[base] = 1
+            return base
+        self._seen[base] += 1
+        return f"{base}-{self._seen[base]}"
 
 
 # ---------------------------------------------------------------- docx ------
