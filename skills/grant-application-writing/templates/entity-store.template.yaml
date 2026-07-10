@@ -1,0 +1,66 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# entity-store.yaml — people / orgs / partners (Stage B2)  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# Project-mode companion to the evidence store. Holds the human + institutional
+# side of a `prospective-project` application: CIs/PIs, participating orgs, and
+# partner organisations with their roles, effort commitments, approvals, and
+# cash + in-kind contributions. Ships ABSTRACTIONS ONLY — replace <PLACEHOLDER>s.
+#
+# Why a store: a partner org is often ONE logical entity spanning several form
+# locations (pick-list + budget sub-table + classification + proforma letter)
+# cross-validated by the portal. Model it once here; reference it by id everywhere.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ─── People (CIs / PIs / named personnel) ───
+people:
+  - id: <person-key>                            # stable key referenced by scheme.yaml fields + contributions below
+    name: "<full name>"
+    orcid: "<0000-0000-0000-0000>"
+    organization: <org-key>                     # → organizations[].id
+    role: <lead-CI | CI | co-I | PI | co-PI | AI | named-personnel>   # scheme's role vocabulary; never upgraded
+    fte:                                         # effort commitment on THIS project
+      fraction: <0.0-1.0>                        # per-person effort; may replicate per phase/year (per_person_multiplicity)
+      by_year: {"<YYYY>": <0.0-1.0>}             # optional year-by-year split if the form asks
+    approvals:                                   # sign-offs this person needs before submission
+      - {kind: <head-of-school | co-investigator-consent | conflict-declaration>, status: <pending | obtained>, date: "<YYYY-MM-DD>"}
+    profile_authority: "<RMS / SciENcv / ORCID record backing this person's CV>"   # linked-profile source, if used
+    provenance: "<where these details came from>"
+
+# ─── Organizations (applicant + participating institutions) ───
+organizations:
+  - id: <org-key>
+    name: "<legal entity name>"
+    kind: <administering | participating | eligible-recipient>
+    identifiers: {abn_or_ein: "<...>", ror: "<https://ror.org/...>"}
+    role: <administering-org | collaborating-org>
+    approvals:
+      - {kind: <authorised-officer-signoff | eligibility-attestation>, status: <pending | obtained>, date: "<YYYY-MM-DD>"}
+    provenance: "<source record>"
+
+# ─── Partner organizations (industry / non-admin partners with contributions) ───
+# One partner is often a single entity spanning multiple form locations — model once here.
+partners:
+  - id: <partner-key>
+    name: "<partner legal name>"
+    kind: <industry | government | ngo | academic-external>
+    classification: "<scheme partner-type code, if required>"     # e.g. G3/G4-style classification field
+    contact: {name: "<contact>", role: "<title>", email: "<...>"}
+    approvals:
+      - {kind: <partner-declaration | letter-of-support | co-funding-commitment>, status: <pending | obtained>, date: "<YYYY-MM-DD>"}
+    # ── contributions: partner × contribution-type × year (mirrors contribution-matrix widget) ──
+    contributions:
+      - {type: cash,    fy: "<YYYY-YY>", amount: {value: <NNNNN>, currency: "<CUR>"}}
+      - {type: in-kind, fy: "<YYYY-YY>", amount: {value: <NNNNN>, currency: "<CUR>"}, description: "<staff time / equipment / access>"}
+      - {type: cash-staff, fy: "<YYYY-YY>", amount: {value: <NNNNN>, currency: "<CUR>"}, description: "<seconded personnel>"}
+    depends_on:                                  # form locations this partner must stay consistent across (referential integrity)
+      - "<scheme.yaml field id: partner pick-list>"
+      - "<scheme.yaml field id: budget sub-table>"
+      - "<attachment: partner proforma letter>"
+    provenance: "<source record>"
+
+# ─── Contribution roll-up (matches the funder's matched-funding / co-contribution gate) ───
+# Recompute at check time — do not cache; the `computed` co-contribution gate reads this.
+totals:
+  cash_total:    {value: <NNNNN>, currency: "<CUR>"}
+  in_kind_total: {value: <NNNNN>, currency: "<CUR>"}
+  matched_ratio_required: "<e.g. 1:1 | 10%>"    # from compliance-matrix; validated as a computed gate
