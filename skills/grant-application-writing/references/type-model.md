@@ -89,6 +89,32 @@ The same widget means different things and is evidenced/scored differently by it
 - ARC career-interruption total = `computed` × role `eligibility-gate` (derived boolean: PhD date + interruption total vs cutoff).
 - A "strategic-priorities" box (fictional: "tick ≤2 of six priorities + describe fit in ≤N chars") = a `section`/`fieldset` of **two** sub-fields — a `multi-choice` (pick-N) × role `classification` **and** a `narrative @N` × role `criterion-scored` — **not** one `narrative` sized to the whole visible box. Same shape as AEA "TRL: pick 3–5 + justify" and any "focus area + rationale". A composite field is always decomposed; collapsing it invents a wrong `limit` and produces a false `char-fit` PASS (see `form-schema-ir.md` → *Composite fields & the no-silent-fallback rule*). Read the sub-field's real limit from the scheme's own form — never from an example here.
 
+## Project-grant machinery notes (from CRC-P validation)
+
+Container/computed widgets carry sharper rules than the table row implies — logged when
+`prospective-project` mode was validated end-to-end on CRC-P R19:
+
+- **`budget-matrix` caps carry a denominator.** A `max_pct` cap is meaningless without saying
+  *percent of what*. Schemes mix denominators in one form: CRC-P computes audit/overseas/travel
+  caps against **total cash** (excludes the in-kind row) but computes the ≤50% grant rule against
+  **total incl. in-kind**. Encode `of: total-cash | total | requested` per cap — never assume a
+  single total. Wrong denominator = a silent false-pass on the exact cap the scheme cares about.
+- **`budget-matrix` cross-validation includes cumulative cash-flow, not just row caps.** A
+  per-financial-year liquidity check (cumulative spend ≤ cumulative cash-in) can fail a budget
+  whose spend is front-loaded and cash back-loaded, even when every row cap passes.
+- **`contribution-matrix` partner-axis ownership.** When a `contribution-matrix` is nested inside a
+  per-partner `repeating-group` (each partner item holds its own type×FY sub-table), the
+  `repeating-group` owns the partner axis — do not double-count it inside the matrix widget.
+- **External calculator artifact.** A mandatory offline workbook (e.g. CRC-P's `.xlsx` financial
+  workbook) that back-stops in-form matrices is not a field, an upload, or a `computed` — model it
+  as `link` × attr `role: external-calc`; its computed cells must be **re-derived and validated
+  in-form**, never trusted blind.
+- **`rubric[].weight` may nest sub-indicators.** A single `criterion-scored` box can carry
+  internal point weights (CRC-P C1 = 10/8/7; C4 = 6/6/4/9). Capture them as `rubric[].sub_weights`
+  so effort ∝ sub-weight within the box, distinct from `narrative.nested_sublimits` (char budgets).
+- **`allocation_sums_to` is a general attribute,** not taxonomy-code-only — it also applies to a
+  `repeating-group` whose rows carry percentages (e.g. per-site % of project value summing to 100).
+
 ## Falsifiability
 
 This set is a hypothesis. When ingesting a new scheme (Stage A), if a field maps to no
