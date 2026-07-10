@@ -1,0 +1,53 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# submission_plan.yaml — the F-stage execution tracker  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# The operational plan that carries a drafted application to submission: every
+# artifact's owner, due date, approval state, and attachment status; the
+# dependency graph between artifacts; phase tracking; and the final pre-submit
+# checklist. Reads deadlines/authority from compliance_matrix.yaml.
+# Ships ABSTRACTIONS ONLY — replace every <PLACEHOLDER>.
+# ─────────────────────────────────────────────────────────────────────────────
+
+scheme: "<HUMAN-READABLE SCHEME NAME>"          # match scheme.yaml / compliance_matrix.yaml
+scheme_version: "<ROUND-OR-YEAR TAG>"
+funder_close:   "<YYYY-MM-DDThh:mm+ZZ:ZZ>"      # from compliance_matrix.deadlines.funder_close
+internal_cutoff:"<YYYY-MM-DDThh:mm+ZZ:ZZ>"      # the binding institution deadline — plan to THIS, not the funder's
+
+# ─── Artifacts — one row per fillable output + attachment ───
+artifacts:
+  - id: <artifact-id>                           # e.g. a narrative field, a CV, a budget, a partner letter
+    name: "<what it is>"
+    kind: <narrative-field | attachment | budget | certification | portal-entry>
+    owner: "<person responsible>"
+    due: "<YYYY-MM-DD>"                          # working due date, ahead of internal_cutoff
+    approval_state: <not-started | drafting | review | approved | signed>
+    attachment_status: <n/a | not-attached | uploaded | verified>   # for upload artifacts; n/a for inline fields
+    linked: {scheme_field: "<scheme.yaml field id>", compliance_doc: "<compliance_matrix doc/cert id>"}   # keep IDs consistent
+    blocked_by: [<artifact-id>]                 # dependency edges (see graph below); [] if independent
+
+# ─── Dependency graph — explicit edges so nothing is drafted before its input exists ───
+# Format: "<upstream-artifact> -> <downstream-artifact>"  (downstream cannot finish until upstream is ready)
+dependency_graph:
+  - "<evidence-store-refresh> -> <narrative-field-id>"
+  - "<entity-store-partners>  -> <budget-artifact-id>"
+  - "<budget-artifact-id>     -> <justification-field-id>"
+
+# ─── Phase tracking — mirrors submission.phases; each phase has its own gate ───
+phases:
+  - id: <minimum-data | EOI | full | post-award>
+    status: <pending | in-progress | submitted | locked>
+    due: "<YYYY-MM-DDThh:mm+ZZ:ZZ>"
+    gate: "<what must be true to advance, e.g. all hard eligibility gates pass>"
+    locks_forward: [<field-id>]                 # fields that become read-only in the next phase (stage_lock)
+
+# ─── Final pre-submission checklist — the Stage E contract, one togglable line each ───
+final_checklist:
+  - {check: "all hard eligibility gates pass",              status: <pending | pass | fail>}
+  - {check: "every criterion-scored field within char/word/page limit", status: <pending | pass | fail>}
+  - {check: "every claim traces to an evidence-store row",  status: <pending | pass | fail>}
+  - {check: "budget math validates (row caps, ratios, matched-funding threshold)", status: <pending | pass | fail>}
+  - {check: "all mandatory attachments uploaded + verified", status: <pending | pass | fail>}
+  - {check: "all certifications signed",                    status: <pending | pass | fail>}
+  - {check: "cross-field consistency (numbers, roles, dates agree everywhere)", status: <pending | pass | fail>}
+  - {check: "portal dry-run / validation clean",            status: <pending | pass | fail>}
+  - {check: "submission authority confirmed (who presses submit)", status: <pending | pass | fail>}
