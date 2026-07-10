@@ -142,6 +142,9 @@ awards:
     title: "<award name>"
     year: <YYYY>
     awarding_body: "<body>"
+    role: <sole | co-recipient>                   # sole vs shared — the role/credit the honour is claimed under
+    window: <since-PhD | last-5y | since-YYYY>     # ROPE bound for award tallies
+    attributor: <null | award/conferring-body name | evidence id>   # the conferring body sources the superlative; null ⇒ no superlative
     provenance: "<citation / record path>"
     status: <awarded | nominated>
     confidence: <high | medium | low>
