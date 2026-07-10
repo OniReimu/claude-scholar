@@ -1,39 +1,42 @@
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  PASTE-READY.txt — web-portal output  [TEMPLATE]                              ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
-║  One block per portal field, in FORM ORDER. Paste each body into the matching ║
-║  field in the live portal. This is a paste aid, not an official submission —   ║
-║  the portal remains the system of record.                                     ║
+║  One block per portal field, in FORM ORDER. Paste each body (the lines        ║
+║  BETWEEN the header and its terminator) into the matching field in the live   ║
+║  portal. A paste aid, not an official submission — the portal is the record.   ║
 ║                                                                                ║
-║  BLOCK HEADER FORMAT:                                                          ║
-║      === [field-id] LABEL — NNNN/LIMIT chars ===                              ║
-║    • field-id  = the scheme.yaml field id (traceable back to the IR)          ║
-║    • LABEL     = the field label as shown on the portal                       ║
-║    • NNNN      = ACTUAL length of the body below                              ║
-║    • LIMIT     = the field's limit; unit shown ("chars" | "words" | "pages")  ║
+║  BLOCK GRAMMAR (exact — charcount.py parses this; render_pdf.py produces it):  ║
+║      === <field-id> | <LABEL> | limit: <N|null> <unit> ===                    ║
+║      <body text, may span multiple lines>                                     ║
+║      === /<field-id> ===                                                       ║
 ║                                                                                ║
-║  CHAR-COUNT CONVENTION (state which the portal uses — they differ):           ║
-║    • Count matches the PORTAL's counter, not a generic one.                    ║
-║    • Note whitespace/newline handling: <includes | excludes> spaces,          ║
-║      <includes | excludes> line breaks — portals vary; verify against the      ║
-║      live counter before trusting NNNN.                                        ║
-║    • NNNN must be <= LIMIT. If a body is over, it is flagged, not silently     ║
-║      truncated (see the OVER-LIMIT marker below).                             ║
+║    • field-id = scheme.yaml field id (traceable back to the IR)               ║
+║    • LABEL    = the field label as shown on the portal                        ║
+║    • limit    = the numeric limit, or literal `null` when UNVERIFIED          ║
+║    • unit     ∈ chars | words | pages                                         ║
+║    • The terminator  === /<field-id> ===  CLOSES the block so the last box     ║
+║      cannot absorb trailing text. Body = everything strictly between the       ║
+║      header line and its matching terminator. A MISSING terminator is a hard   ║
+║      error — never omit it.                                                    ║
+║                                                                                ║
+║  FAIL-CLOSED SEMANTICS (charcount.py):                                         ║
+║    • limit: null → UNVERIFIED → BLOCK (a green count against no limit is       ║
+║      forbidden; pass --allow-unverified only if you truly accept it).          ║
+║    • unit: pages → NEEDS-RENDER (unmeasurable from text; supply a rendered     ║
+║      page count). unit: chars/words → counted against the limit.              ║
+║    • body length must be <= limit; over-limit is flagged, never truncated.     ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 
-=== [<field-id-1>] <FIELD LABEL AS SHOWN ON PORTAL> — NNNN/<LIMIT> chars ===
+=== significance | Significance & impact of research | limit: 4000 chars ===
+<Body text for this field. Replace this placeholder with the drafted, limit-fitted
+content. Keep it plain text — portals strip formatting. Everything between this
+header and the terminator below is the body charcount.py counts against 4000 chars.>
+=== /significance ===
 
-<Body text for field 1 goes here. Replace this placeholder with the drafted,
-limit-fitted content. Keep it plain text — portals strip formatting. Recount
-NNNN in the header above to the portal's own counter after every edit.>
 
-
-=== [<field-id-2>] <FIELD LABEL AS SHOWN ON PORTAL> — NNNN/<LIMIT> words ===
-
-<Body text for field 2 goes here. This example uses a WORD limit — set the unit
-in the header to match the field. If a field has nested sub-limits, split it into
-one block per sub-limit and label each sub-part.>
-
-<!-- OVER-LIMIT: remove this marker once NNNN <= LIMIT. While present it means the
-     body above exceeds the field limit and must NOT be pasted as-is. -->
+=== track-record | Research track record | limit: 750 words ===
+<Second example block, using a WORD limit — set the unit in the header to match the
+field. If a field has nested sub-limits, emit one block per sub-limit, each with its
+own <field-id> and terminator; never fold two sub-limits into a single block.>
+=== /track-record ===
