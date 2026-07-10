@@ -205,8 +205,21 @@ def extract_pdf(path: Path) -> dict:
                 "confidence": "medium",
                 "note": note,
             })
+    elif xfa_present:
+        # XFA packet but NO AcroForm fields -> genuine dynamic XFA (degrade path).
+        modality = "pdf-xfa"
+        fields.append({
+            "id": "xfa-document",
+            "label": path.stem,
+            "widget": "structured-upload",
+            "role": "TODO",
+            "limit": None,
+            "_source": "XFA dynamic form (no AcroForm fields)",
+            "confidence": "low",
+            "note": "XFA dynamic form; pypdf cannot reliably fill — degrade to paste-ready",
+        })
     else:
-        # No AcroForm: flat text or scanned? Extractable text decides.
+        # No AcroForm, no XFA: flat text or scanned? Extractable text decides.
         text_len = 0
         try:
             text_len = sum(len(p.extract_text() or "") for p in reader.pages)
@@ -215,7 +228,7 @@ def extract_pdf(path: Path) -> dict:
         per_page = text_len / max(1, len(reader.pages))
         if per_page < 40:  # essentially no selectable text -> image-only
             modality = "pdf-scanned"
-        elif modality != "pdf-xfa":
+        else:
             modality = "pdf-flat"
         fields.append({
             "id": "flat-document",
