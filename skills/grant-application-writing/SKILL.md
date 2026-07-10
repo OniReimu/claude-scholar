@@ -30,9 +30,14 @@ number — a different genre with its own machinery.
    verb-tiering).
 4. **Honesty about modality.** A form modality without a working renderer is declared
    unsupported and downgraded to paste-ready — never faked as an official fill.
-5. **Zero scheme instances in this skill.** The skill ships the type model, protocol,
-   passes, templates, and renderers. Each application is an IR instance in its own
-   project folder. Never hardcode a specific scheme's boxes here.
+5. **Zero real applicant data in this skill.** The skill ships the type model, protocol,
+   passes, templates, and renderers; worked examples use a fictional applicant. Each real
+   application is an IR instance in its own project folder — never hardcode a scheme's
+   boxes or a real person's evidence here.
+6. **Narrative fields obey the repo author-voice policy.** `narrative`/`criterion-scored`
+   prose is a writing task: it follows `policy/style-guide.md` + relevant `PROSE.*` rules,
+   applied at line-edit via `writing-anti-ai`. This is distinct from the grant-specific
+   evidentiary rules above.
 
 ## IO contract
 
