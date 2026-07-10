@@ -123,6 +123,9 @@ patents:
 service:
   - id: <service-key>
     kind: <editorial-board | pc-member | reviewer | chair | community-lead>
+    role: <chair | editor | committee-member>     # the role the service count is claimed under
+    window: <since-PhD | last-5y | since-YYYY>     # ROPE bound for service tallies
+    attributor: <null | named body/size | evidence id>   # required for "largest committee of…" etc.; null ⇒ no superlative
     detail: "<venue / body + years>"
     provenance: "<invitation / record path>"
     status: <ongoing | completed>
