@@ -193,29 +193,28 @@ def self_test():
     assert abs(tot[0] - 20000) < 1e-6, tot                                 # credit excluded → 20000
 
     # ── FIX #7: dual denominator — total=100000(含in-kind 50000), total-cash=50000 ──
-    # overseas 3000: 6% of total → PASS(会漏) 但 6%? no. 3000/50000=6% pass both. 用 6000:
-    #   6000/100000=6% ≤10% PASS under total(漏) ; 6000/50000=12% >10% FAIL under total-cash(抓)
+    # overseas 6000: 6% of total → PASS(会漏); 12% of total-cash → FAIL(被抓)
     tc_rows = [
         {"category": "overseas", "funding_source": "requested", "kind": "cash", "years": {2026: 6000}},
         {"category": "labour", "funding_source": "requested", "kind": "cash", "years": {2026: 44000}},
         {"category": "in_kind", "funding_source": "co-contribution", "kind": "in-kind", "years": {2026: 50000}},
     ]
-    r_cash = {n: ok for n, ok, _ in run({"row_caps": [{"category": "overseas", "max_pct": 10.0,
-             "of": "total-cash"}], "rows": tc_rows})[0]}
-    r_total = {n: ok for n, ok, _ in run({"row_caps": [{"category": "overseas", "max_pct": 10.0}],
-             "rows": tc_rows})[0]}
-    assert r_cash["row-cap[overseas]"] is False, "total-cash must FAIL overseas"
-    assert r_total["row-cap[overseas]"] is True, "total wrongly PASSes — discrimination"
+    r_cash = run({"row_caps": [{"category": "overseas", "max_pct": 10.0, "of": "total-cash"}],
+                  "rows": tc_rows})[0]
+    r_total = run({"row_caps": [{"category": "overseas", "max_pct": 10.0}], "rows": tc_rows})[0]
+    assert dict((n, ok) for n, ok, _ in r_cash)["row-cap[overseas]"] is False, "total-cash must FAIL"
+    assert dict((n, ok) for n, ok, _ in r_total)["row-cap[overseas]"] is True, "total wrongly PASSes"
 
     # ── FIX #8: cash-flow — 前置支出/后置现金 必须 FAIL 即使 row cap 全过 ──
+    # spend all 2026 = 50000; overseas 4000 = 8% ≤ 10% (PASS); cash-in 后置 → FY2026 FAIL
     cf = {"cash_flow_check": True, "cash_in": {2026: 5000, 2027: 45000},
           "row_caps": [{"category": "overseas", "max_pct": 10.0}],
           "rows": [{"category": "labour", "funding_source": "requested", "kind": "cash",
-                    "years": {2026: 44000}},
+                    "years": {2026: 46000}},
                    {"category": "overseas", "funding_source": "requested", "kind": "cash",
-                    "years": {2026: 6000}}]}
+                    "years": {2026: 4000}}]}
     r_cf = {n: ok for n, ok, _ in run(cf)[0]}
-    assert r_cf["row-cap[overseas]"] is True, "row caps all pass"      # 6000/50000=12%? no
+    assert r_cf["row-cap[overseas]"] is True, "row caps all pass"
     assert r_cf["cash-flow[FY2026]"] is False, "front-loaded spend must FAIL FY2026"
     assert r_cf["cash-flow[FY2027]"] is True, "recovers by FY2027"
     r_ok = {n: ok for n, ok, _ in run(dict(cf, cash_in={2026: 60000, 2027: 0}))[0]}
