@@ -221,8 +221,8 @@ people:
     profile_ref: "evidence-store.yaml#owner"       # links back to the evidence store
 
 organizations:
-  - id: person-org-uts
-    name: "University of Technology Sydney"
+  - id: person-org-lead
+    name: "Northbridge University"
     role: lead                          # lead | partner | subaward
     approvals: [{type: "DVCR authorization", status: pending}]
 
