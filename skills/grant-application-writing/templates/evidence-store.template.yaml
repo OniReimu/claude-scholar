@@ -7,22 +7,51 @@
 # Ships ABSTRACTIONS ONLY — replace every <PLACEHOLDER> row.
 #
 # HARDENED TRUST FIELDS (attach to EVERY evidentiary row; see references/evidence-store.md):
-#   status           — legal / publication state:  granted|filed | published|in-press|under-review | funded|submitted
+#   status           — legal / publication state:  granted|filed | published|in-press|in-review | awarded|submitted|not-funded
 #   confidence        — evidentiary certainty:      high | medium | low   (SEPARATE from status)
 #   source_authority  — who vouches for it:         official-record | orcid | scopus | scholar | self-reported
 #   as_of             — date this row was verified:  YYYY-MM-DD
 #   validity_window   — {from, to} the claim is true within (e.g. eligibility timeline); to: null = open
-#   sensitivity       — disclosure risk:            public | embargoed | confidential
-#   use_permission    — may it be quoted:           free | attributed-only | do-not-cite
+#   sensitivity       — disclosure risk:            public | internal | embargoed | confidential
+#   use_permission    — may it appear in an application: public | internal | embargoed
 #   defensibility     — DERIVED, do not hand-author: computed from status × confidence × source_authority (see note at foot)
 # ─────────────────────────────────────────────────────────────────────────────
 
-meta:
-  owner: "<applicant full name>"
+# ─── Owner — top-level applicant block + disambiguation anchors (resolve every ingest against these) ───
+owner:
+  name: "<applicant full name>"
   orcid: "<0000-0000-0000-0000>"
+  scopus_author_id: "<scopus author id>"
+  known_name_variants: ["<J. Q. Researcher>", "<Q. Jane>"]   # collision guard — name-only matches are quarantined, never auto-merged
+  affiliation_history:
+    - {org: "<current org>", from: "<YYYY-MM>", to: null}     # to: null = current; scopes name-variant matching by date
   as_of: "<YYYY-MM-DD>"                          # store-wide last full refresh
-  source_precedence: [official-record, orcid, scopus, scholar, self-reported]   # conflict-resolution order when sources disagree
-  refresh_policy: "<e.g. re-verify metrics + in-press items before every submission>"
+
+# ─── Metrics — a MAP keyed by metric name (NOT a list); most volatile, date every one ───
+metrics:
+  h_index:         {value: <N>, source_authority: <scopus | scholar | orcid>, as_of: "<YYYY-MM-DD>", confidence: <high | medium | low>}
+  i10_index:       {value: <N>, source_authority: <scopus | scholar | orcid>, as_of: "<YYYY-MM-DD>"}
+  total_citations: {value: <N>, source_authority: <scopus | scholar | orcid>, as_of: "<YYYY-MM-DD>"}
+  # metrics are source-stamped: Scholar h-index != Scopus h-index; never merge silently. A metric with no as_of is uncitable.
+
+# ─── Career dates — a MAP keyed by date id (NOT a list); drives eligibility windows + scoring_adjustment ───
+dates:
+  phd_conferral:
+    value: "<YYYY-MM-DD>"
+    provenance: "<testamur / official record path>"
+    source_authority: official-record
+    confidence: high
+    as_of: "<YYYY-MM-DD>"
+    sensitivity: public
+    use_permission: public
+  <career-interruption-id>:                      # feeds the eligibility-window computed gate + scoring_adjustment
+    value: {from: "<YYYY-MM>", to: "<YYYY-MM>", fte_fraction: <0.0-1.0>, reason: "<e.g. parental leave>"}
+    provenance: "<HR record / declaration path>"
+    source_authority: <official-record | self-reported>
+    confidence: <high | medium | low>
+    as_of: "<YYYY-MM-DD>"
+    sensitivity: confidential                     # personal circumstances — usually not assessor-visible
+    use_permission: internal
 
 # ─── Publications ───
 publications:
@@ -34,13 +63,13 @@ publications:
     doi: "<10.xxxx/...>"
     provenance: "<source file / path this row was extracted from>"
     # ── trust profile ──
-    status: <published | in-press | under-review>
+    status: <published | in-press | in-review>
     confidence: <high | medium | low>
     source_authority: <official-record | orcid | scopus | scholar | self-reported>
     as_of: "<YYYY-MM-DD>"
     validity_window: {from: "<YYYY-MM-DD>", to: null}
-    sensitivity: <public | embargoed | confidential>
-    use_permission: <free | attributed-only | do-not-cite>
+    sensitivity: <public | internal | embargoed | confidential>
+    use_permission: <public | internal | embargoed>
     # defensibility: <DERIVED — leave to the pipeline; do not hand-set>
 
 # ─── Funding (grants held / applied) ───
@@ -52,13 +81,13 @@ funding:
     amount: {value: <NNNNN>, currency: "<CUR>"}
     period: {from: "<YYYY-MM>", to: "<YYYY-MM>"}
     provenance: "<award letter / record path>"
-    status: <funded | submitted | not-funded>
+    status: <awarded | submitted | not-funded>
     confidence: <high | medium | low>
     source_authority: <official-record | self-reported>
     as_of: "<YYYY-MM-DD>"
     validity_window: {from: "<YYYY-MM-DD>", to: "<YYYY-MM-DD>"}
-    sensitivity: <public | confidential>
-    use_permission: <free | attributed-only | do-not-cite>
+    sensitivity: <public | internal | confidential>
+    use_permission: <public | internal | embargoed>
 
 # ─── Patents ───
 patents:
@@ -73,42 +102,8 @@ patents:
     source_authority: <official-record | self-reported>
     as_of: "<YYYY-MM-DD>"
     validity_window: {from: "<YYYY-MM-DD>", to: null}
-    sensitivity: <public | confidential>
-    use_permission: <free | attributed-only | do-not-cite>
-
-# ─── Metrics (citation counts, h-index, etc.) — most volatile; date every one ───
-metrics:
-  - id: <metric-key>
-    kind: <h-index | total-citations | field-weighted-citation-impact | i10>
-    value: <N>
-    provenance: "<source, e.g. scopus profile URL>"
-    confidence: <high | medium | low>
-    source_authority: <scopus | scholar | self-reported>   # differs by source — record which one
-    as_of: "<YYYY-MM-DD>"                        # metrics change daily; a metric with no date is uncitable
-    validity_window: {from: "<YYYY-MM-DD>", to: "<YYYY-MM-DD>"}   # short window — metrics go stale fast
-    sensitivity: public
-    use_permission: <free | attributed-only>
-
-# ─── Career dates (drive eligibility windows + scoring_adjustment) ───
-dates:
-  - id: phd-conferral
-    kind: phd-conferral
-    value: "<YYYY-MM-DD>"
-    provenance: "<testamur / official record path>"
-    source_authority: official-record
-    confidence: high
-    as_of: "<YYYY-MM-DD>"
-    sensitivity: public
-    use_permission: free
-  - id: <interruption-key>
-    kind: career-interruption
-    value: {from: "<YYYY-MM>", to: "<YYYY-MM>", fte_fraction: <0.0-1.0>, reason: "<e.g. parental leave>"}
-    provenance: "<HR record / declaration path>"
-    source_authority: <official-record | self-reported>
-    confidence: <high | medium | low>
-    as_of: "<YYYY-MM-DD>"
-    sensitivity: <confidential>                  # personal circumstances — usually not assessor-visible
-    use_permission: <attributed-only | do-not-cite>
+    sensitivity: <public | internal | confidential>
+    use_permission: <public | internal | embargoed>
 
 # ─── Service (editorial, review, committee, community) ───
 service:
@@ -122,7 +117,7 @@ service:
     as_of: "<YYYY-MM-DD>"
     validity_window: {from: "<YYYY-MM-DD>", to: null}
     sensitivity: public
-    use_permission: free
+    use_permission: public
 
 # ─── Awards / honours ───
 awards:
@@ -137,19 +132,37 @@ awards:
     as_of: "<YYYY-MM-DD>"
     validity_window: {from: "<YYYY-MM-DD>", to: null}
     sensitivity: public
-    use_permission: free
+    use_permission: public
+
+# ─── Governance blocks (store-level) — conflict resolution, refresh, audit, absence ───
+source_precedence:                               # conflict-resolution ordering (high → low)
+  default: [official-record, orcid, scopus, scholar, self-reported]
+  # metrics: [scopus, scholar, orcid]            # per-field override allowed
+
+refresh_policy:                                  # on read past ttl → freshness warning; past warn_after → block use until re-verified
+  metrics:      {ttl_days: 30, warn_after_days: 45}   # citation counts drift fast
+  publications: {ttl_days: 180}
+  funding:      {ttl_days: 365}
 
 # ─── Contradiction records — log source disagreements; do NOT silently pick one ───
-contradictions:
+contradiction_records:
   - claim_id: "<row id above>"
     field: "<which value disagrees, e.g. citation-count>"
     values: [{source: <scopus>, value: "<...>"}, {source: <scholar>, value: "<...>"}]
     resolution: "<which won + why, per source_precedence>"
+    status: <open | resolved | wont-fix>
     as_of: "<YYYY-MM-DD>"
+
+audit_log:                                       # append-only ingest / refresh trail
+  - {ts: "<ISO8601>", action: <ingest | refresh>, target: "<row / metric id>", source: "<...>", method: "<text-extract | vision-ocr>"}
+
+negative_evidence:                               # absence recorded explicitly, not left blank — a load-bearing signal
+  - {claim: "<e.g. corresponding-author on pub-x>", status: unverified, reason: "<why it cannot be claimed yet>"}
 
 # ─────────────────────────────────────────────────────────────────────────────
 # defensibility (DERIVED): the pipeline computes a single tag from the trust
-# profile — roughly, strong = {status settled, confidence high, authority official}.
-# It is NOT hand-authored here; splitting status vs confidence vs authority is the
-# whole point (v1's single defensibility tag conflated legal-status with certainty).
+# profile — roughly, strong = {status settled, confidence high, authority official,
+# inside validity_window, use_permission != embargoed}. It is NOT hand-authored
+# here; splitting status vs confidence vs authority is the whole point (v1's single
+# defensibility tag conflated legal-status with certainty).
 # ─────────────────────────────────────────────────────────────────────────────
