@@ -203,10 +203,8 @@ def self_test():
     # spend all 2026 = 50000; overseas 4000 = 8% ≤ 10% (PASS); cash-in 后置 → FY2026 FAIL
     cf = {"cash_flow_check": True, "cash_in": {2026: 5000, 2027: 45000},
           "row_caps": [{"category": "overseas", "max_pct": 10.0}],
-          "rows": [{"category": "labour", "funding_source": "requested", "kind": "cash",
-                    "years": {2026: 46000}},
-                   {"category": "overseas", "funding_source": "requested", "kind": "cash",
-                    "years": {2026: 4000}}]}
+          "rows": [{"category": "labour", "funding_source": "requested", "kind": "cash", "years": {2026: 46000}},
+                   {"category": "overseas", "funding_source": "requested", "kind": "cash", "years": {2026: 4000}}]}
     r_cf = {n: ok for n, ok, _ in run(cf)[0]}
     assert r_cf["row-cap[overseas]"] is True, "row caps all pass"
     assert r_cf["cash-flow[FY2026]"] is False, "front-loaded spend must FAIL FY2026"
