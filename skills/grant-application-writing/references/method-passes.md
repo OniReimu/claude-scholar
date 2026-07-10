@@ -98,9 +98,44 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 
 ---
 
-## Group 3 — cross-cutting passes (both modes)
+## Group 3 — retroactive-impact passes (ADDED for `retroactive-impact`)
 
-### 3.1 reviewer/panel tailoring (`reviewer_model`)
+Run these *in addition* to Group 1's evidentiary discipline (verb-tiering, anti-double-counting,
+number-defensibility, char-fit still apply) when `mode = retroactive-impact`. There is **no future
+project**, so **Group 2 does not run** — no budget-matrix, no milestones, no feasibility, no
+requested amount. The application reports **impact already delivered**; evidence is live artifacts
+and third-party attestations, scored first-class.
+
+### 3.1 impact-evidence marshalling
+- **Does:** resolve each claimed contribution to its **live artifact** — repo / deployment / dashboard / on-chain address — as a `link` × role `evidence` (**scored, not decorative `metadata`**), each carrying provenance (what the URL points to, who controls it) + an **as-of date** it was checked live. A claim with no reachable artifact is downgraded to unverifiable, not asserted.
+- **In:** contribution list, evidence-store `link`/`evidence` items. **Out:** per-contribution artifact set, each `{url, provenance, as_of}`; contributions with no live artifact flagged.
+- **Example (RetroPGF-shaped, fictional):** "shipped a public indexer used by N downstream apps" resolves to the repo + the deployed endpoint + a usage dashboard, each dated as-of the round census — the dashboard number *is* the scored claim, not the prose around it.
+
+### 3.2 attestation / third-party verification
+- **Does:** back each impact claim with **third-party verification** — an on-chain attestation, an independent audit, or a named external confirmation — ranked above self-report. Self-asserted impact with no external corroboration is **downgraded**, never presented as verified.
+- **In:** attestation records (`declaration`/`link` × `evidence`), external confirmations. **Out:** each claim tagged verified (with the attestation pointer) or self-reported (downgraded); a verification-gap list.
+- **Example:** an on-chain attestation of "audited contract, no criticals" outranks the applicant's own "we audited it"; a claim backed by neither is marked self-reported and de-emphasised.
+
+### 3.3 duplication / Sybil / netting
+- **Does:** ensure one contribution is **not double-claimed across collaborating entities** (one contribution, one primary claimant — anti-double-counting applied across *applicants*, not just fields), and **subtract prior funding already received** for that work (funding-history netting) so the round rewards *unrewarded* impact only.
+- **In:** contribution↔entity map (entity-store B2), prior-funding records. **Out:** each contribution assigned one claimant + a net-of-prior-funding figure; overlap / Sybil flags where two entities claim one artifact.
+- **Example:** two team members each listing the same repo as their sole contribution collapse to one primary claim with the other as contributor; a contribution that already drew a prior grant reports impact **net** of that funding.
+
+### 3.4 freshness
+- **Does:** confirm every impact metric and attestation is **dated inside the round's measurement window**. Stale numbers (a dashboard snapshot predating the window, an attestation from a prior round) are out of scope and excluded.
+- **In:** each metric/attestation's date, round measurement window. **Out:** in-window / stale verdict per metric; stale items re-fetched live or dropped.
+- **Example:** a "10k users" figure as-of eight months before the window opened is not evidence for *this* round; re-pull it as-of a date inside the window or drop it.
+
+### 3.5 retroactive scoring
+- **Does:** map contributions to a **past-impact rubric** — delivered impact, reach, and verification strength — **not** a future plan. There is **no requested amount, no milestones, no budget-math, no feasibility**; scoring rewards what shipped and can be verified, weighted by the round's own criteria.
+- **In:** verified contribution set, round rubric. **Out:** per-contribution impact score + the evidence tier that licensed it (parallels verb-tiering 1.2), framed for the round's badgeholders/panel (see 4.1).
+- **Example:** two contributions of equal prose ambition score differently purely on verification — the one with a live dashboard + an on-chain attestation outscores the one resting on self-report.
+
+---
+
+## Group 4 — cross-cutting passes (all modes)
+
+### 4.1 reviewer/panel tailoring (`reviewer_model`)
 - **Does:** build a `reviewer_model` for the target panel — **expertise level, jargon tolerance, scoring emphasis (which criteria carry weight), and red-flag claims that panel punishes** — then reframe the *same project* to fit it.
 - **In:** scheme rubric + panel description. **Out:** a `reviewer_model` object + per-field framing notes.
 - **Reframing the one project across panels:** **ARC** — significance + national benefit, ROPE-aware, restrained tone; **NHMRC** — health translation, RtO normalisation, structured track-record; **NSF** — intellectual merit + broader impacts as co-equal, US-centric; **ERC** — high-risk/high-gain frontier, PI-centric, ambition rewarded; **industry (Google/MS/Amazon)** — product relevance and open-source/data intent, concise; **internal (UTS ECR)** — early-career trajectory and institutional fit over raw scale.
