@@ -99,6 +99,11 @@ official document — never a re-typed lookalike.
   template uses headings rather than controls, insert body text **under the mandated heading**
   in the fixed order. **Preserve template formatting** (styles, fonts, section breaks, headers/
   footers) — write into the existing structure, do not rebuild the document.
+- **type-specific content controls (fail-closed).** A checkbox / dropdown / date SDT must be
+  written **as that control type** — never plain text stuffed into a checkbox and called done. If
+  a value cannot be written as the correct control type it is marked **UNRESOLVED** and the
+  renderer **exits non-zero**. Match by **tag first, then alias**; report ambiguous/colliding
+  matches. Multi-paragraph answers split into paragraphs/runs preserving the template style.
 
 ## 3. .pdf → route by sub-type
 
