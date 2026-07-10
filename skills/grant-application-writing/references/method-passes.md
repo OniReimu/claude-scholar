@@ -13,7 +13,7 @@
 ## Group 1 — narrative-award passes (Stage C)
 
 ### 1.1 gate-check — RUNS FIRST, blocks on fail
-- **Does:** evaluate every `eligibility_gates[]` entry (incl. `computed`/`derived` gates) before any drafting. A failed hard gate (`binding: true`) stops the pipeline — do not draft an application the applicant cannot submit.
+- **Does:** evaluate every `eligibility_gates[]` entry (incl. `computed`/`derived` gates) before any drafting. A failed hard gate (`binding: hard`) stops the pipeline — do not draft an application the applicant cannot submit (a `binding: soft` gate is a disadvantage, not a blocker).
 - **In:** `eligibility_gates`, evidence-store dates/facts. **Out:** pass/block verdict per gate + one-line reason; on block, a stop report, not a draft.
 - **Example (ECR):** "years-since-PhD ≤ 5 at the round census date" is a `computed` gate: PhD-conferral date − career-interruption total vs cutoff. Compute it from the record, don't trust a remembered number. If it fails, report the exact margin and stop.
 
