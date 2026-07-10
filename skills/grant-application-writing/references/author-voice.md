@@ -169,3 +169,22 @@ Reconciliation: commercialisation prose is **humble about the team, loud (but un
 about the market**; fellowship prose inverts it — **loud (but sourced and quantified) about the
 person, content to let the science, not a market, justify the spend.** Pick the register from
 `mode`.
+
+## 9. Worked rewrites (weak → funded) — fictional
+
+**Commercialisation register.** A market claim, first-draft then funded:
+> ✗ *"We estimate the addressable market at roughly $40M/year for our tool."*
+> ✓ *"The serviceable market — organisations deploying the technology under compliance
+> obligations — is rapidly expanding as regulation tightens; demand is clear and the barrier
+> we remove is the one blocking adoption today."*
+Why: the figure invited "$40M from where?"; the rewrite asserts momentum with no fragile number
+to defend (§5.4), stacks the benefit, and speaks the assessor's vernacular.
+
+**Fellowship register.** A track-record claim, first-draft then funded:
+> ✗ *"I am a leading researcher in the field and have published many strong papers."*
+> ✓ *"Named the field's leading early-career researcher by [ranking body] on five-year
+> citation counts, the applicant has published [N] papers in its flagship venues since the PhD,
+> and — as principal supervisor — has graduated [M] doctoral students (evidence: §track-record)."*
+Why: "I am leading" is bare self-praise; the rewrite launders eminence through an external
+attributor, scopes every count by window + role, and points to the evidence — loud but
+defensible (§8, and `number-defensibility` prong 2).
