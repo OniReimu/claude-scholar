@@ -164,9 +164,9 @@ negative_evidence:                       # absence recorded explicitly, not left
 ## Identity disambiguation (name ambiguity)
 
 Author-name collisions silently poison metrics and publication lists (two "J. Zhang"
-merged; a namesake's h-index imported). The `identity` block is the disambiguation anchor:
-resolve every ingested item against `orcid` / `scopus_author_id` first, fall back to
-`known_name_variants` **scoped by `affiliation_history` dates**. An item that matches on
+merged; a namesake's h-index imported). The top-level `owner` block is the disambiguation
+anchor: resolve every ingested item against `owner.orcid` / `owner.scopus_author_id` first,
+fall back to `owner.known_name_variants` **scoped by `owner.affiliation_history` dates**. An item that matches on
 name but not on ORCID/affiliation is quarantined with `confidence: low` and a
 `negative_evidence` note — never auto-merged into the applicant's record.
 
