@@ -1153,6 +1153,8 @@ def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=N
     check_benefits_realisation(rep, scheme, plan, mode)
     check_additionality_vfm(rep, scheme, plan, bdata, mode)
     check_risk_triggers(rep, scheme, plan, mode)
+    check_institutional_support_reconciliation(rep, scheme, entity, bdata, mode)
+    check_outputs_context_completeness(rep, scheme, evidence, mode)
     rep.render()
     return 1 if rep.hard_failed() else 0
 
