@@ -166,6 +166,29 @@ impact:
     use_permission: public
     provenance: "corpus/registry-stats.png (OCR)"
 
+# ── Outputs context — ROPE FIELD-CALIBRATION (narrative-award mode) — teach the assessor the field's esteem terms ──
+# Rendered by the drafting layer, never improvised. Read by method-passes.md §1.10 + §1.5; validated by validate_ir outputs-context-completeness.
+outputs_context:
+  field_norms:
+    venue_tiers:                           # every venue → tier + PLAIN-LANGUAGE rank (gloss for a generalist assessor)
+      - {venue: "NeurIPS",         tier: "CORE A*", plain_rank: "top-3 venue in the field"}
+      - {venue: "<Field Journal>", tier: "JCR Q1",  plain_rank: "leading journal in the subfield"}
+    authorship_convention:                 # DECODE what author position MEANS in THIS subfield (bounded credit, NOT a role upgrade) — defuses "why not first author?"
+      - pattern: "last/second author on a co-supervised student paper"
+        meaning: "candidate contributed the main idea, design, and writing; first author ran the experiments"
+        applies_to: [pub-2024-unlearn]
+    ranking_attributor:                    # sourced-eminence via an external ranking SERVICE (the service IS the attributor, not a self-assertion)
+      {claim: "ranked Nth in the field in <country>", service: "<a ranking service>", as_of: 2026-06-01}
+  clusters:                                # group outputs into ~3-5 NAMED research threads
+    - {thread: "certified machine unlearning", outputs: [pub-2024-unlearn], venues: ["NeurIPS"],
+       primacy: {claim: "first certified-unlearning method under distribution shift", attributor: pub-2024-unlearn}}
+    - {thread: "privacy-preserving data systems", outputs: [pub-2023-x], venues: ["<Field Journal>"],
+       primacy: {claim: "milestone in a tightly-scoped area", attributor: null}}   # null ⇒ statable, but NOT written as a superlative
+  career_best:
+    label_scheme: {best: "[*]", journal: "[J*]", conference: "[C*]"}   # stable ids linking the listing ↔ the context narrative
+    ids: [pub-2024-unlearn]                # every id here MUST appear in >=1 clusters[].outputs (completeness discipline)
+  contribution_summary: {significant_conceptual: "4 of 6 papers", basis: "lead conceptual contributor: idea + design + writing"}   # bounded credit, not "all mine"
+
 # ── Multi-CI investigator model — one row per named investigator, person-indexed ──
 # Single-applicant schemes: the `owner` block above IS the lead-CI shorthand (owner == investigators[0]);
 # investigators[] may be omitted. Multi-CI schemes populate one row per CI/PI/partner. ROPE
