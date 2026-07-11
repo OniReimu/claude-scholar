@@ -401,6 +401,9 @@ echo -e "  Total rule cards: $count"
 # ─── Summary ─────────────────────────────────────────────────────────────────
 echo ""
 echo -e "${BOLD}═══ Validation Summary ═══${NC}"
+if (( WARNINGS > 0 )); then
+  echo -e "  ${YELLOW}$WARNINGS warning(s) — review, non-blocking${NC}"
+fi
 if (( ERRORS > 0 )); then
   echo -e "  ${RED}$ERRORS error(s) found${NC}"
   exit 1
