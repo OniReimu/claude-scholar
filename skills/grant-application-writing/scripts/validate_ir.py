@@ -300,7 +300,7 @@ def _evidence_present(evidence):
     return {_canon_evidence_class(k) for k, v in (evidence or {}).items() if v}
 
 
-# ── the 16 checks ────────────────────────────────────────────────────────────
+# ── the 18 checks ────────────────────────────────────────────────────────────
 def check_schema(rep, scheme):
     crit = {c.get("criterion") for c in (scheme.get("rubric") or []) if isinstance(c, dict)}
     gate_ids = {g.get("id") for g in (scheme.get("eligibility_gates") or []) if isinstance(g, dict)}
