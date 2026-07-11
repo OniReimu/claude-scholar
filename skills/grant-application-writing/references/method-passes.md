@@ -285,6 +285,7 @@ But the deliverable is the checklist verdict, item by item:
 - **eligibility** — every hard gate re-evaluated green (gate-check, 1.1) at the census date; no drafted content assumes an unmet gate.
 - **compliance** — all `compliance`-role fields present and consistent; conditional annexes triggered (2.9).
 - **evidence-provenance** — every claim traces to an evidence-store item with `status` / `source_authority` / date; no orphan claim; verbs match their tier (1.2).
+- **criterion-readiness** — every scored criterion mapped to `unsupported | partial | substantiated | submission-ready` from its `rubric[].minimum_evidence` (4.4); in submission mode no hard-required scored criterion at `unsupported` (hard block) and every `partial` lifted to `blockers.md`. Machine-run by `validate_ir.py`.
 - **claim–evidence proportionality** — no guarantee exceeds its method, no legal effect exceeds the cited clause, no "first/only" rests on the applicant's own survey alone (1.9); over-reaches narrowed or marked `[VERIFY]`/`[EXTERNAL COMPARATOR NEEDED]`.
 - **novelty-boundary** — the claimed contribution is the new unresolved problem, not an extension of already-published work (2.10); "scale-up vs new research" pre-empted.
 - **cross-field consistency** — numbers, totals, roles, and dates reconcile across all fields; no double-count (1.3, 1.4).
