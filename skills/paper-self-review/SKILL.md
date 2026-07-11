@@ -135,7 +135,7 @@ Evaluate the quality and effectiveness of figures and tables:
 Check writing clarity and readability:
 - Is the language concise and clear?
 - Are empty intensifiers removed? <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
-- Are em-dashes used sparingly? <!-- policy:PROSE.EM_DASH_RESTRICTION -->
+- Are em-dashes fully eliminated (zero allowed — split into sentences, relative clauses, commas, or parentheses)? <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Is technical terminology used appropriately?
 - Are sentence structures clear?
 - Is paragraph organization logical?
@@ -222,7 +222,7 @@ Paper Quality Checklist:
 - [ ] Symbols consistent throughout paper <!-- policy:LATEX.NOTATION_CONSISTENCY -->
 - [ ] For crypto-oriented security papers, core mechanism is presented as a structured Construction (Primitives/Parameters + named procedures) <!-- policy:PROSE.CRYPTO_CONSTRUCTION_TEMPLATE -->
 - [ ] Empty intensifiers removed <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
-- [ ] Em-dashes used sparingly <!-- policy:PROSE.EM_DASH_RESTRICTION -->
+- [ ] Em-dashes fully eliminated (zero allowed) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - [ ] Experiment results include error bars <!-- policy:EXP.ERROR_BARS_REQUIRED -->
 - [ ] Experiment results subsections each end with \fbox Takeaway box <!-- policy:EXP.TAKEAWAY_BOX -->
 - [ ] Ablation studies in Results section <!-- policy:EXP.ABLATION_IN_RESULTS -->

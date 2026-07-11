@@ -73,6 +73,28 @@ Two failure modes that "never invent evidence" must catch even when the prose *l
 - **Mark invented specifics `[TO SET]`.** When drafting needs a concrete technical figure the input did not supply — a threshold (ε, accuracy, overhead %), a metric, a dataset, a budget unit-rate, a spec — the writer may propose a *plausible placeholder* to keep the prose concrete, but MUST tag it `[APPLICANT/DOMAIN-EXPERT TO SET]` (or `[VERIFY]`). Never present a skill-generated number as if it were real: a reviewer probing "why ε = 0.02?" must not be met with a figure the applicant never chose. This extends `number-defensibility`: an invented spec is a number you cannot defend until the applicant owns it.
 - **Never smooth an unverified context into a favourable framing.** Employment, load, role, and status facts (e.g. "research-focused position", "principal supervisor", "since 2021") must be verified as *current* against the evidence store, with a `source_authority`/`as_of`. If the corpus may be stale or a context fact is unconfirmed, state the honest or unknown version — **never the flattering one**. A teaching-heavy Lectureship is drafted as teaching-heavy (then reframed as productivity-relative-to-opportunity, `author-voice.md` §8), not laundered into "research-focused" — which is both weaker and, on stale input, factually wrong. Flag a possibly-stale corpus rather than trusting its most favourable reading.
 
+### 1.9 claim–evidence proportionality (over-claim guard)
+The claim's *strength* must not exceed what its backing actually delivers — distinct from
+verb-tiering (verb ↔ role) and number-defensibility (numbers true/scoped). This is the single
+most common way a competent draft loses a panel: guarantees, legal effects and firsts that
+over-reach. Three checks, each with a downgrade-or-mark action:
+- **Capability over-reach.** A claim to "prove / guarantee / certify X" must be backed by a method
+  that actually delivers X. If the method delivers a weaker thing — e.g. "proves the aggregation
+  was computed correctly" ≠ "proves *which data* a model learned from"; "output deviation ≤ ε" ≠
+  "legal erasure" — narrow the claim to what the method gives, or state the exact gap as a caveat.
+  **Never let the guarantee exceed the mechanism.**
+- **Legal / regulatory over-reach.** A claim of legal effect ("satisfies GDPR Art. 17",
+  "certified right to erasure", "meets the Privacy Act") must be backed by the clause's *actual*
+  effect, verified — not asserted from a one-line summary. Unverified → mark `[LEGAL EFFECT —
+  VERIFY]` and state the defensible weaker form ("supports compliance with", not "certifies").
+- **Primacy over-reach.** "first / only / no prior system does X" must cite **≥1 INDEPENDENT
+  external comparator** — never the applicant's own survey or a self-made comparison table as the
+  sole support. Absent one → scope the claim (defensible-primacy, §1.2) or mark `[EXTERNAL
+  COMPARATOR NEEDED]`.
+- **In:** every `criterion-scored` claim + its backing (method spec, cited clause, comparators).
+  **Out:** each strong claim either backed, narrowed, or marked; the "guarantees exceed methods"
+  panel concern pre-empted. (Cross-ref `author-voice.md` §5.4/§8; audited in Stage E.)
+
 ---
 
 ## Group 2 — prospective-project passes (ADDED for `prospective-project`)
