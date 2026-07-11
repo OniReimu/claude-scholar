@@ -247,7 +247,8 @@ outputs_context:
   career_best:
     label_scheme: {best: "[*]", journal: "[J*]", conference: "[C*]"}   # stable ids linking the listing ↔ the context narrative
     ids: [<output ids flagged career-best>]      # every id here MUST appear in >=1 clusters[].outputs (completeness discipline)
-  contribution_summary: {significant_conceptual: "<M of N papers>", basis: "<how counted>"}   # bounded credit, not "all mine"
+  # denominator renders the DENOMINATOR RULE (§1.10): high-tier out of ALL outputs, never a bare count.
+  contribution_summary: {significant_conceptual: "<M of N papers>", basis: "<how counted>", denominator: {high_tier: <M>, all: <N>}}   # bounded credit, not "all mine"
 
 # ─── Governance blocks (store-level) — conflict resolution, refresh, audit, absence ───
 source_precedence:                               # conflict-resolution ordering (high → low)

@@ -158,6 +158,15 @@ over-reach. Three checks, each with a downgrade-or-mark action:
   - **(e) bounded credit.** Aggregate contribution is stated from `contribution_summary` ("M of N
     papers", with `basis`) — **bounded, never "all of it mine"**, and never role-upgraded (§1.5,
     §1.4 number-defensibility value+scope+attributor).
+  - **(f) denominator rule.** a high-tier count is stated **out of ALL outputs**, never as a bare number
+    — "M top-tier of N total" (`denominator: {high_tier: M, all: N}` from `contribution_summary` /
+    `field_norms`, Agent B), the §1.4 value+scope+attributor discipline applied to counts. A bare "N
+    top-tier papers" with no denominator over-states selectivity (it hides the base rate) and is flagged.
+  - **(g) one-to-one citation resolution.** every context reference — a `clusters[].outputs` id, a
+    `career_best.ids` entry — resolves to **exactly one** listing entry (one `publications[].id` in the
+    evidence store), with **no duplication** across the context block, the career narrative, and the
+    listing. A **dangling** id (resolves to nothing) or a **duplicated** id (the same output claimed in
+    two places) is a flag — the §1.3 anti-double-counting discipline applied to the outputs listing.
 - **Submission mode:** a career-best output **unclustered or untiered** is a **WARN + a `blockers.md`
   entry** (structural — the calibration is incomplete, not fatal). A **cluster primacy claim with no
   attributor written as a superlative** is a **BLOCK** (an unsourced "first / milestone" is an
