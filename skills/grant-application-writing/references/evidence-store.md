@@ -575,9 +575,16 @@ backing it (`corpus/host-statement.pdf`), never an assumed intention.
   numbers that can disagree are stored side by side so a mismatch is **VISIBLE**, not silently
   reconciled into one. If the statement's headline total says AUD 300k but the itemised lines
   sum to 260k, that gap is a finding — not something the store papers over.
-- `strategic_fit` / `continuing_offer` — the institution's third-party framing: why it
-  recruited the candidate and where the project finds a home, and whether a continuing position
-  is offered on success (or `null`).
+- `protected_capacity` — **capacity-conversion**: the reconciliation must not stop at the dollar.
+  `teaching_relief_to_research_days` (int, or `null` if committed-but-unquantified) and
+  `continuing_position` (bool) convert teaching-relief / salary-cover / a continuing offer into
+  **protected research time + execution capacity** — the thing that actually lets the project run,
+  not just a co-investment figure. Read by the institutional-reconciliation pass
+  (`method-passes.md` §4.5).
+- `strategic_fit` — states the **host-strategy ↔ candidate ↔ project triangle** (all three legs:
+  the org's strategy, why it recruited the candidate, and where this project advances it / finds a
+  home), not a one-sided "good fit." `continuing_offer` is the institution's continuing-position
+  commitment on success (or `null`).
 - `statement_provenance` — the source document for the statement as a whole.
 
 Consumed by the **institutional-statement reconciliation pass (`method-passes.md` §4.5**; analog
