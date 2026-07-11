@@ -256,8 +256,10 @@ one used sparingly (§6: at most one signature move per paragraph):
   *statable but never written as a superlative* — say "an early contribution to" not "the first",
   exactly the defensible-primacy discipline of §8 and `method-passes.md` §1.9/§1.10. Every
   career-best id (`career_best.ids`) must land in some cluster, and the credit stays bounded by
-  `contribution_summary` ("significant conceptual contribution on M of N papers") — never "all
-  mine". `validate_ir`'s **`outputs-context-completeness`** check enforces both: an unclustered
+  `contribution_summary` ("significant conceptual contribution on M of N papers"); any *high-tier*
+  count is stated against its denominator (`outputs_context.…denominator {high_tier, all}` — Agent B;
+  the denominator rule of `method-passes.md` §1.10), a share of the whole corpus and never a bare
+  number nor "all mine". `validate_ir`'s **`outputs-context-completeness`** check enforces both: an unclustered
   career-best id, or a cluster primacy with no attributor written as a superlative, FAILs under
   `--mode submission` (WARNs in draft).
 
