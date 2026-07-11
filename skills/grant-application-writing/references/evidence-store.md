@@ -372,13 +372,30 @@ partners:
   - id: partner-acme
     name: "ACME Analytics Pty Ltd"
     role: partner
-    contributions:
+    legal_entity:                       # which entity SIGNS vs OPERATES — a partnership is a legal relationship, not a name
+      signing_entity:   "ACME Group Holdings Ltd"   # who signs the letter / agreement (has the authority to commit)
+      operating_entity: "ACME Analytics Pty Ltd"    # who actually does the work / hosts the platform or data access
+      relationship: parent-subsidiary   # parent-subsidiary | jv | division | branch | same | consortium-member
+      jurisdiction: "AU"                # ISO country of the COMMITTING entity — feeds the eligibility gate (offshore-partner / national-interest)
+      registration: {type: ABN, id: "00 000 000 000", source_authority: official-record}
+      capacity_evidence:                # does the signer have authority + resources to commit?
+        - {claim: "signing authority", provenance: "corpus/letter-signatory-title.pdf", confidence: high}
+      flow_note: "offshore parent commits cash; disbursed via onshore operating_entity"  # or null
+    contributions:                      # the APPLICATION's figures (what the budget/narrative claims)
       cash:   [{fy: 2026, value: 100000, currency: AUD, status: committed,
                 provenance: "corpus/loi-acme.pdf", confidence: high}]
       in_kind:[{fy: 2026, value: 60000, currency: AUD, description: "engineer time",
                 status: committed, source_authority: official-record}]
+    letter_commitment:                  # what the SUPPORT LETTER literally states — kept SEPARATE from contributions so #8 can see a mismatch
+      cash:    {value: 100000, currency: AUD, conditional: false}
+      in_kind: {value: 60000,  currency: AUD, conditional: false, description: "engineer time"}
+      role_stated: "co-investigator"    # the role the letter asserts — reconciled vs the claimed role
+      personnel: ["<named contact>"]    # people the letter names as committed — must appear in the team table
+      provenance: "corpus/loi-acme.pdf"
+      as_of: 2026-06-25
     approvals: [{type: "signed Letter of Support", status: obtained, as_of: 2026-06-25}]
-    # cash + in-kind feed the contribution-matrix and the matched-funding `computed` gate.
+    # contributions feed the contribution-matrix + matched-funding `computed` gate;
+    # letter_commitment is reconciled against them by §2.13 / validate_ir partner-commitment-reconciliation.
 ```
 
 Same hardening applies: partner contributions carry `status` (committed vs indicative),
