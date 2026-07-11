@@ -1484,6 +1484,102 @@ rows:
     assert any(e[1] == "WARN" for e in d16) and not any(e[1] == "FAIL" for e in d16), \
         "triggerless high-impact risk only WARNs in draft mode"
 
+    # 17. institutional-support-reconciliation — call directly (mirrors #11): a reconciled
+    #     host-institution statement PASSes; a total≠sum(items) mismatch, or a committed VALUED
+    #     item with no provenance, FAILs submission / WARNs draft; no block → SKIP. Fictional
+    #     orgs only (ACME University; a null-value teaching-relief line is exempt from provenance).
+    def instrecon(orgs, bdata, m):
+        r = Report()
+        check_institutional_support_reconciliation(r, scheme, {"organizations": orgs}, bdata, m)
+        return r.entries
+
+    good_org = {"id": "org-lead", "name": "ACME University", "role": "lead",
+                "institutional_support": {
+                    "items": [
+                        {"kind": "establishment-grant", "value": 120000, "currency": "AUD",
+                         "status": "committed", "provenance": "corpus/host-statement.pdf"},
+                        {"kind": "stipend-topup", "value": 30000, "currency": "AUD",
+                         "status": "committed", "provenance": "corpus/host-statement.pdf"},
+                        {"kind": "teaching-relief", "value": None,
+                         "basis": "reduced load from salary savings", "status": "committed"}],
+                    "total": {"value": 150000, "currency": "AUD"},
+                    "statement_provenance": "corpus/host-statement.pdf"}}
+    assert any(e[1] == "PASS" and e[0].startswith("institutional-support-reconciliation[")
+               for e in instrecon([good_org], None, "submission")), \
+        "reconciled institutional_support must PASS"
+
+    bad_org = {"id": "org-lead", "name": "ACME University", "role": "lead",
+               "institutional_support": {
+                   "items": [
+                       {"kind": "establishment-grant", "value": 120000, "status": "committed",
+                        "provenance": "corpus/host-statement.pdf"},
+                       {"kind": "stipend-topup", "value": 30000, "status": "committed",
+                        "provenance": "corpus/host-statement.pdf"}],
+                   "total": {"value": 200000, "currency": "AUD"}}}   # 150000 ≠ 200000
+    assert any(e[1] == "FAIL" and e[0].startswith("institutional-support-reconciliation[")
+               for e in instrecon([bad_org], None, "submission")), \
+        "total ≠ sum(items) must FAIL submission"
+    d17 = instrecon([bad_org], None, "draft")
+    assert any(e[1] == "WARN" for e in d17) and not any(e[1] == "FAIL" for e in d17), \
+        "same total mismatch only WARNs in draft mode"
+
+    noprov_org = {"id": "org-lead", "institutional_support": {
+        "items": [{"kind": "establishment-grant", "value": 150000, "status": "committed"}],
+        "total": {"value": 150000}}}
+    assert any(e[1] == "FAIL" for e in instrecon([noprov_org], None, "submission")), \
+        "committed valued item with no provenance must FAIL submission (fail-closed)"
+    assert any(e[1] == "SKIP" for e in instrecon([{"id": "org-lead", "name": "ACME University"}],
+                                                 None, "submission")), \
+        "org with no institutional_support block must SKIP"
+
+    # 18. outputs-context-completeness — call directly (mirrors #11): a fully clustered +
+    #     sourced-primacy outputs_context PASSes under narrative-award; an unclustered
+    #     career-best id, or a cluster primacy.claim with no attributor, FAILs submission /
+    #     WARNs draft. Non-narrative-award mode (or absent block) SKIPs. Fictional ids only.
+    na_scheme = _clean_scheme(); na_scheme["mode"] = "narrative-award"
+
+    def outctx(sch, ev, m):
+        r = Report(); check_outputs_context_completeness(r, sch, ev, m); return r.entries
+
+    good_oc = {"outputs_context": {
+        "clusters": [
+            {"thread": "shared-ledger throughput", "outputs": ["C1", "J1"],
+             "primacy": {"claim": "first sub-second finality in <tightly-scoped area>",
+                         "attributor": "J1"}},
+            {"thread": "privacy-preserving audit", "outputs": ["J2"],
+             "primacy": {"claim": None, "attributor": None}}],
+        "career_best": {"label_scheme": {"best": "[*]"}, "ids": ["C1", "J2"]}}}
+    goc = outctx(na_scheme, good_oc, "submission")
+    assert any(e[1] == "PASS" for e in goc) and not any(e[1] == "FAIL" for e in goc), \
+        "fully clustered + sourced-primacy outputs_context must PASS"
+
+    bad_oc = {"outputs_context": {
+        "clusters": [{"thread": "shared-ledger throughput", "outputs": ["C1"],
+                      "primacy": {"claim": None, "attributor": None}}],
+        "career_best": {"ids": ["C1", "J9"]}}}   # J9 in no cluster
+    assert any(e[1] == "FAIL" and e[0].startswith("outputs-context-completeness[")
+               for e in outctx(na_scheme, bad_oc, "submission")), \
+        "an unclustered career-best id must FAIL submission"
+    d18 = outctx(na_scheme, bad_oc, "draft")
+    assert any(e[1] == "WARN" for e in d18) and not any(e[1] == "FAIL" for e in d18), \
+        "same unclustered id only WARNs in draft mode"
+
+    unsourced_oc = {"outputs_context": {
+        "clusters": [{"thread": "shared-ledger throughput", "outputs": ["C1"],
+                      "primacy": {"claim": "milestone in <tightly-scoped area>", "attributor": None}}],
+        "career_best": {"ids": ["C1"]}}}
+    assert any(e[1] == "FAIL" and e[0].startswith("outputs-context-completeness[")
+               for e in outctx(na_scheme, unsourced_oc, "submission")), \
+        "a cluster primacy claim with no attributor must FAIL submission"
+    du = outctx(na_scheme, unsourced_oc, "draft")
+    assert any(e[1] == "WARN" for e in du) and not any(e[1] == "FAIL" for e in du), \
+        "same unsourced primacy only WARNs in draft mode"
+
+    assert any(e[1] == "SKIP" for e in outctx(scheme_pp, good_oc, "submission")), \
+        "non-narrative-award mode must SKIP outputs-context"
+    assert any(e[1] == "SKIP" for e in outctx(na_scheme, {}, "submission")), \
+        "absent outputs_context block must SKIP"
+
     # project-substance end-to-end: complete plan passes submission; a broken plan (triggerless
     # high-impact risk) fails submission-mode orchestrate but only WARNs (exit 0) in draft.
     plan_ok_p = _write(tmp, "plan.yaml", __import__("yaml").safe_dump(_plan()))
