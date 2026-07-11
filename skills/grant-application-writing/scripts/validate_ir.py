@@ -59,9 +59,25 @@ green-washed. `--mode submission` FAILs, `--mode draft` WARNs (mirrors partner-c
                         provenance, and (when --budget declares them) total.value matches the
                         budget's non-ARC/institutional contribution lines; else FAILs submission (per org).
  18. outputs-context-completeness (narrative-award) every career_best.ids entry sits in ≥1 named
-                        cluster and every cluster primacy.claim carries an attributor; an
+                        cluster and every cluster primacy.claim carries an attributor; every
+                        clusters[].outputs / career_best.ids entry resolves to exactly one
+                        publications[].id (a dangling or duplicated id FAILs); an
                         uncontextualised output or an unsourced superlative FAILs submission
                         (per output / per cluster).
+
+Check 19 is a `prospective-project`-mode pass gated on a traceability spine in the `--plan`
+sidecar (objectives/tasks/outputs/validations); otherwise a labelled SKIP. When the spine IS
+present it is fail-closed — every id must resolve. `--mode submission` FAILs, `--mode draft` WARNs.
+
+ 19. traceability-spine     referential integrity + four-way crosswalk over the --plan spine:
+                        every objectives[].aim→aims[].id, tasks[].objective→objectives[].id,
+                        tasks[].depends_on→a task id, subtasks[].output→outputs[].id,
+                        outputs[].task→a task id, outputs[].benefit→benefits[].id (when declared),
+                        validations[].task→a task id resolves; every task carries ≥1 person AND
+                        ≥1 years (person→investigators[].id when --entity supplied); with --budget
+                        each tasks[].budget_lines→a budget row id AND every non-institutional
+                        budget row is referenced by ≥1 task; no id is duplicated. A broken edge /
+                        dangling / duplicate / unstaffed / unfunded task FAILs submission (per edge).
 
 SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
 rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
