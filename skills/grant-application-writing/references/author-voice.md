@@ -110,6 +110,20 @@ Voice is subordinate to defensibility, never overrides it:
 - `writing-anti-ai` (repo `policy/style-guide.md` + `PROSE.*`) runs at line-edit — this voice
   guide sets the target register; the anti-AI pass removes the tells.
 
+### Register moves vs the anti-AI pass — resolve the tension
+The signature moves here (rule-of-three, participial benefit-tails, "not X but Y", long
+subordinated sentences) can **collide** with the repo's `PROSE.*` anti-AI rules (which flag
+rule-of-three *repetition*, superficial `-ing` tails, negative parallelism, run-on length). They
+are **not** adversarial — they are **sequential**: this guide sets the register; `writing-anti-ai`
+strips the *tells*. The resolution:
+- These are register tools used with **restraint** — **at most one signature move per paragraph**,
+  and vary sentence length deliberately. A device becomes an AI *tell* only when **mechanically
+  repeated** (a rule-of-three in every sentence, a participial tail on every claim).
+- The anti-AI pass strips **overuse**, not principled sparing use. When a move and a `PROSE.*` rule
+  genuinely conflict, **clarity + defensibility win** — drop the device, don't force it.
+- So: draft in the register (sparingly), then run `writing-anti-ai` to de-tic. If the line-edit
+  keeps removing the same device, that device was overused — thin it at the source, here.
+
 ## 7. Smell test — first-draft vs funded
 
 | reads as first-draft | reads as funded |
