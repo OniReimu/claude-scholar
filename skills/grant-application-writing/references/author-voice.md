@@ -189,6 +189,11 @@ about the market**; fellowship prose inverts it — **loud (but sourced and quan
 person, content to let the science, not a market, justify the spend.** Pick the register from
 `mode`.
 
+§8 sets the *drafting* register for the narrative-award body. The **presentation-layer register**
+in §10 covers how the surrounding, evidence-heavy fields — the outputs-context statement, the
+collaborator environment, the host-institution statement, the budget justification — are surfaced
+*from the store blocks*, so read §10 alongside §8 for any `narrative-award` run.
+
 ## 9. Worked rewrites (weak → funded) — fictional
 
 **Commercialisation register.** A market claim, first-draft then funded:
