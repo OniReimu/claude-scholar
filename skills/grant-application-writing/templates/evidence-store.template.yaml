@@ -189,6 +189,43 @@ impact:
     sensitivity: <public | internal | confidential>
     use_permission: <public | internal | embargoed>
 
+# ─── Investigators — MULTI-CI schemes: one row per named investigator (person-indexed) ───
+# Single-applicant schemes: the `owner` block above IS the lead-CI shorthand (owner == investigators[0]); omit this list.
+# Multi-CI schemes populate it. ROPE window/role/attributor apply PER investigator, each relative to their OWN
+# opportunity — NEVER pool a senior + an ECR into one tally. Read by the multi-CI ROPE pass (method-passes.md §2.7).
+investigators:
+  - id: <investigator-key>                        # owner == investigators[0] for single-applicant schemes
+    name: "<investigator full name>"
+    role: <lead-CI | CI | PI | partner-investigator>
+    rope_context:                                 # THIS person's opportunity envelope — read ROPE relative to THIS, not the team
+      years_since_phd: <N>
+      career_stage: <ECR | mid-career | senior>
+      interruptions: [{from: "<YYYY-MM>", to: "<YYYY-MM>", fte_fraction: <0.0-1.0>, reason: "<e.g. parental leave>"}]
+    track_record_ref:                             # THIS person's own items; referenced rows' window/role/attributor read relative to THIS investigator
+      publications: [<pub-key>]
+      funding: [<grant-key>]
+      awards: [<award-key>]
+    task_ownership: [<aim-id>, <wp-id>]           # the aim / WP ids this investigator leads
+    distinctive_contribution: "<what only this person brings — method / domain / infrastructure>"
+    fte: {value: <0.0-1.0>, basis: "<e.g. 0.2 FTE across 3 yrs>"}
+    current_commitments:                          # concurrent awards drawing on this person's time (availability check)
+      - {award: <grant-key>, fte: <0.0-1.0>}
+
+# ─── Comparators — external SOTA / prior-art the project is positioned against ───
+# Feeds the SOTA/significance pass (method-passes.md §2.11) + defensible-primacy (§1.9). own-work is NOT an external comparator.
+comparators:
+  - ref: "<comparator work / product / standard>"
+    kind: <scholarly | commercial | standard | own-work>   # own-work grounds primacy but does NOT count as external SOTA
+    provenance: "<source file / doi / product page>"
+
+# ─── Context evidence — source-backed problem-significance (a dated stat, NOT "an important problem") ───
+# Feeds method-passes.md §2.11 significance + author-voice.md §5.1 costed-stake — significance rendered from evidence, not asserted.
+context_evidence:
+  - claim: "<why the problem matters, in one line>"
+    stat: "<the real quantified figure>"
+    source: "<citable source>"
+    as_of: "<YYYY-MM>"
+
 # ─── Governance blocks (store-level) — conflict resolution, refresh, audit, absence ───
 source_precedence:                               # conflict-resolution ordering (high → low)
   default: [official-record, orcid, scopus, scholar, self-reported]
