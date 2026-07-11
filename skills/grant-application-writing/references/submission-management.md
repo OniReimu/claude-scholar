@@ -205,7 +205,7 @@ The plan tracks, per artifact: which `submission_phase` it belongs to, whether t
 open/closed, and — once closed — that its `approval_state: locked` blocks any further edit.
 Schedule phase-2 work only against fields whose phase is open; never plan an edit to a locked field.
 
-## Worked example — UTS ECR (narrative-award, single-phase)
+## Worked example — an ECR scheme (narrative-award, single-phase)
 
 A minimal real instance. Nominator is the nominee's line manager; endorsement comes from the
 Associate Dean; the Discovery Profile link must be refreshed; portal is Symplectic Elements
