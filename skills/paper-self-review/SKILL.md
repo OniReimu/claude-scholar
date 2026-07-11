@@ -129,6 +129,7 @@ Evaluate the quality and effectiveness of figures and tables:
 - Do table headers include direction indicators (↑/↓)? <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - Are tables wrapped in `\resizebox` to fit the column width (or do they satisfy all natural-fit exemptions)? <!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->
 - Do comparison tables stay within the 3–4 dimension budget, single-column first, with an explicit reason for anything wider? <!-- policy:TABLE.DIMENSION_BUDGET -->
+- For any full-width (`table*`) table, does `\resizebox` only shrink (in-table font ≤ body font) — not enlarge a sparse table? If it would enlarge, demote to single-column or add metrics/columns. <!-- policy:TABLE.FULLWIDTH_FONT_DENSITY -->
 - Are captions and prose free of internal provenance (script names, paths, DPI notes, placeholder markers, draft meta-text)? <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
 - Do figures/tables support the text narrative?
 - Are figures/tables clear and readable?
