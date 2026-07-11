@@ -44,6 +44,13 @@ Resolution is **fail-closed** (see the honesty rule): a value whose `field-id` i
 (`render_pdf.py` / `render_docx.py`), unless an explicit `--allow-partial` marks the output
 non-official.
 
+**Markers are stripped at final render (submission mode).** A `values.yaml` value that still
+carries a draft marker — `[TO SET]` / `[VERIFY]` / `[EXTERNAL COMPARATOR NEEDED]` / `[STAT — SOURCE]`
+(`method-passes.md` §1.8) — is an unresolved field: at **submission-mode** render it is lifted into
+`blockers.md` ("resolve before submit") and the field is held, **never shipped with the raw marker
+in the official output** (an assessor scores the submitted text, not the workflow). Draft-mode
+render may keep markers inline for the applicant; submission-mode fails closed on any residual marker.
+
 ---
 
 ## 0. Structural artefacts inside heading-sequenced uploads (figures / tables / timelines)
