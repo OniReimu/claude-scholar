@@ -407,6 +407,48 @@ def self_test():
                         "rows": [{"category": "a", "funding_source": "requested", "kind": "cash", "years": {2026: 100000}}]})
     assert phased_na["phased-budget"] is True, "under threshold → phasing not required"
 
+    # ── D21: double-entry balance — income==expenditure PASS ──
+    bal_ok = _fails({"balance_check": {"enabled": True},
+                     "rows": [{"category": "grant-income", "side": "income", "kind": "cash", "years": {2026: 60000, 2027: 40000}},
+                              {"category": "salaries", "side": "expenditure", "kind": "cash", "years": {2026: 60000, 2027: 40000}}]})
+    assert bal_ok["balance"] is True, "balanced double-entry must PASS"
+    # in-kind on BOTH sides balances naturally (income in-kind + expenditure in-kind) — no special-case
+    bal_ik = _fails({"balance_check": {"enabled": True},
+                     "rows": [{"category": "grant-income", "side": "income", "kind": "cash", "years": {2026: 100000}},
+                              {"category": "partner-inkind", "side": "income", "kind": "in-kind", "years": {2026: 20000}},
+                              {"category": "salaries", "side": "expenditure", "kind": "cash", "years": {2026: 100000}},
+                              {"category": "inkind-effort", "side": "expenditure", "kind": "in-kind", "years": {2026: 20000}}]})
+    assert bal_ik["balance"] is True, "in-kind on both sides still balances"
+
+    # ── D21: unbalanced (income != expenditure) → FAIL ──
+    bal_bad = _fails({"balance_check": {"enabled": True},
+                      "rows": [{"category": "grant-income", "side": "income", "kind": "cash", "years": {2026: 100000}},
+                               {"category": "salaries", "side": "expenditure", "kind": "cash", "years": {2026: 120000}}]})
+    assert bal_bad["balance"] is False, "income != expenditure must FAIL"
+
+    # ── D21: fail-closed — enabled + counted row missing side → FAIL (never default a side) ──
+    bal_missing = _fails({"balance_check": {"enabled": True},
+                          "rows": [{"category": "grant-income", "side": "income", "kind": "cash", "years": {2026: 100000}},
+                                   {"category": "salaries", "kind": "cash", "years": {2026: 100000}}]})
+    assert bal_missing["balance"] is False, "counted row missing side must FAIL (fail-closed)"
+    # non-counted row without side is fine (excluded from balance)
+    bal_ncnt = _fails({"balance_check": {"enabled": True},
+                       "rows": [{"category": "grant-income", "side": "income", "kind": "cash", "years": {2026: 100000}},
+                                {"category": "salaries", "side": "expenditure", "kind": "cash", "years": {2026: 100000}},
+                                {"category": "memo", "counts_toward_total": False, "kind": "cash", "years": {2026: 5}}]})
+    assert bal_ncnt["balance"] is True, "non-counted sideless row excluded → still balances"
+    # tolerance absorbs a small delta
+    bal_tol = _fails({"balance_check": {"enabled": True, "tolerance": 100},
+                      "rows": [{"category": "grant-income", "side": "income", "kind": "cash", "years": {2026: 100000}},
+                               {"category": "salaries", "side": "expenditure", "kind": "cash", "years": {2026: 100050}}]})
+    assert bal_tol["balance"] is True, "delta within tolerance PASSes"
+
+    # ── D21: balance_check absent/disabled → no balance rule (ARC-style budgets unchanged) ──
+    assert "balance" not in _fails(data), "balance_check absent → no balance rule (existing budgets unchanged)"
+    assert "balance" not in _fails({"balance_check": {"enabled": False},
+                                    "rows": [{"category": "x", "kind": "cash", "years": {2026: 1}}]}), \
+        "balance_check disabled → no side required, no rule"
+
     print("self-test OK")
     return 0
 
