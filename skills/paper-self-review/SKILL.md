@@ -20,7 +20,7 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | Rule ID | 摘要 |
 |---------|------|
 | `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
-| `FIG.FONT_GE_24PT` | 图表字号 ≥ 24pt |
+| `FIG.FONT_GE_24PT` | 图表字号自适应（已弃用固定 24pt；由 `scientific-figure-making` 按图型定字号，紧凑图允许 15–16pt） |
 | `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
 | `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式 |
 | `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色 |

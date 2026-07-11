@@ -133,6 +133,16 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 - **Does:** mechanically validate the `budget-matrix` / `contribution-matrix` arithmetic and every scheme rule: **per-row caps with an explicit denominator** (`of: total | total-cash | requested` — e.g. audit/overseas ≤ 10% of total *cash*, excludes in-kind), **matched-funding ratio ≥ threshold**, **phased-budget gating** (per-phase totals), **credit-vs-cash separation** (credit-request lines respect `counts_toward_total`), and **opt-in cumulative cash-flow liquidity** (`cash_flow_check`: per-FY cumulative spend ≤ cumulative cash-in).
 - **In:** budget/contribution matrices, `computed` ratio gates. **Out:** pass/fail per rule with the offending cell + amount; blocks submission on a hard cap breach.
 - **Example (CRC-P family):** overseas spend computed as % of total must be ≤ 10%; matched cash/in-kind must meet the co-contribution ratio the `computed` gate enforces — recompute, never trust the portal's cached total.
+- **Process rule — budget is authored as data, never as prose.** Feasibility/budget content is
+  written as a structured `budget.yaml` FIRST, run through `scripts/validate_budget.py`, and only
+  THEN rendered to prose; the prose totals must equal the validated file. **Never hand-write a
+  budget figure into prose unvalidated** — that is exactly how sub-line arithmetic slips through
+  (two $2,500 items summed as "$4,000/yr"; two $7,000 trips budgeted at $7,000 total). If a number
+  is in the narrative, it came from a `validate_budget.py`-passing `budget.yaml`.
+- **Named-entity type consistency.** A travel/attendance line's named venue must actually be that
+  kind of venue — a *conference* destination must be a conference, not a journal (e.g. "TIFS" is a
+  journal, not a meeting). Cross-check named venues/orgs against their type in the evidence-store;
+  a type mismatch is a flag, not a cost line.
 
 ### 2.9 compliance completeness
 - **Does:** confirm every `compliance`-role field is present and mutually consistent — ethics, security, COI, DMP, foreign-interference — and that `conditional-group` triggers fired their required annexes.
