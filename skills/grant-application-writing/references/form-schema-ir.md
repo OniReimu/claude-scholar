@@ -27,7 +27,7 @@ reference by `scheme` + `scheme_version`.
 `prospective-project` mode the project's *substance* — aims/design, benefits, additionality/VfM,
 and a trigger-driven risk register — is NOT the form structure; it lives in a separate
 `project-plan.yaml` sidecar (B3, see `evidence-store.md`), one per application, and is validated by
-`validate_ir.py --plan` against the §2.14–§2.19 substance passes. Keep it out of `scheme.yaml`:
+`validate_ir.py --plan` against the §2.14–§2.18 substance passes. Keep it out of `scheme.yaml`:
 the IR describes boxes and limits, the plan describes the research.
 
 The project-plan also carries the **traceability spine** (stable ids: aim→objective→task→subtask→
@@ -45,7 +45,7 @@ mode: narrative-award                          # AXIS 1 — narrative-award | pr
 process: [single-stage-review, panel-routed]   # AXIS 2 — SET from the closed archetype vocab (see below); selects Group-5 overlays
 rejoinder: {enabled: true, window: "10 working days", char_limit: 2000}  # within-round right-of-reply CAPABILITY (single-stage-review may carry it); omit if none
 scheme_version: "2026-R1"                       # round/year tag; taxonomy + option sets are bound to this
-portal: "web-form"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | web-form | docx | ...
+portal: "web-form"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | SmartyGrants | web-form | docx | ...
 source_docs:                                    # every doc that fed this IR — provenance for every value below
   - {id: form,  path: "ecr-2026-form.docx",       role: fields+limits}
   - {id: guide, path: "ecr-2026-guidelines.pdf",  role: rubric+eligibility+weights}
