@@ -17,10 +17,10 @@ A systematic experimental results analysis workflow connecting experimental data
 | Rule ID | 摘要 |
 |---------|------|
 | `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
-| `FIG.FONT_GE_24PT` | 图表字号 ≥ 24pt |
+| `FIG.FONT_GE_24PT` | 图表字号自适应（已弃用固定 24pt；交 `scientific-figure-making`，紧凑图允许 15–16pt，详见 L161） |
 | `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
-| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式 |
-| `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色 |
+| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式（已弃用，交 `scientific-figure-making`，详见 L161） |
+| `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色（已弃用，交 `scientific-figure-making`，详见 L161） |
 | `FIG.SELF_CONTAINED_CAPTION` | Caption 自包含（实验图表仅 what） |
 | `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
 | `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
