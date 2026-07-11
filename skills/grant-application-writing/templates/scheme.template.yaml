@@ -18,7 +18,9 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 scheme: "<HUMAN-READABLE SCHEME NAME>"          # e.g. the funder's official title for this call
-mode: <narrative-award | prospective-project | retroactive-impact>   # set from funding-mode dispatch; mis-set mis-routes the pipeline
+mode: <narrative-award | prospective-project | retroactive-impact>   # AXIS 1 — funding-mode dispatch; mis-set mis-routes the pipeline
+process: [<one or more of: single-stage-review | staged | interview-gated | panel-routed | curated | rolling>]  # AXIS 2 — assessment-process dispatch; selects Group-5 overlays (mandatory, closed vocab)
+# rejoinder: {enabled: <true|false>, window: "<e.g. 10 working days>", char_limit: <int>}   # within-round right-of-reply; ONLY if single-stage-review carries one
 scheme_version: "<ROUND-OR-YEAR TAG>"           # e.g. "2026-R1" — taxonomy + option sets are bound to THIS value
 portal: "<PORTAL>"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | web-form | docx | ...
 
