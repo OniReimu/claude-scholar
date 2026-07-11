@@ -108,9 +108,19 @@ over-reach. Three checks, each with a downgrade-or-mark action:
   external comparator** — never the applicant's own survey or a self-made comparison table as the
   sole support. Absent one → scope the claim (defensible-primacy, §1.2) or mark `[EXTERNAL
   COMPARATOR NEEDED]`.
-- **In:** every `criterion-scored` claim + its backing (method spec, cited clause, comparators).
-  **Out:** each strong claim either backed, narrowed, or marked; the "guarantees exceed methods"
-  panel concern pre-empted. (Cross-ref `author-voice.md` §5.4/§8; audited in Stage E.)
+- **The dual — don't UNDER-use what the source DOES support (specificity floor).** Over-reach's
+  mirror failure is over-caution: generalising a **source-backed concrete specific** into a vague
+  noun forfeits credibility at **zero fabrication risk**. If the input names the actual technology,
+  system, artefact, standard, figure or partner (e.g. "Hyperledger Fabric", "ServiceNow", a named
+  API, a deployed N-node pilot), **name it** as a feasibility/impact anchor — do not launder it to
+  "a permissioned ledger" / "an enterprise system". Honesty guards the ceiling of a claim; the
+  specificity floor guards its bottom — say exactly what the evidence supports, no less as well as
+  no more.
+- **In:** every `criterion-scored` claim + its backing (method spec, cited clause, comparators,
+  named source specifics).
+  **Out:** each strong claim either backed, narrowed, or marked; every source-supported concrete
+  specific named (not generalised away); the "guarantees exceed methods" panel concern pre-empted.
+  (Cross-ref `author-voice.md` §5.4/§8; audited in Stage E.)
 
 ---
 
