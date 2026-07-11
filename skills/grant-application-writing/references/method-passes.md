@@ -82,6 +82,13 @@ Two failure modes that "never invent evidence" must catch even when the prose *l
   submit" list while the field is explicitly held pending the applicant — the submission prose
   **never carries a raw marker**. Fail closed: an unresolved marker at final render is a blocker,
   not shipped (mirrors `charcount` fail-closed and `render_*` no-partial-official).
+  - **Purge the workflow shadow too — not just the brackets.** Removing `[TO SET]` is necessary
+    but not sufficient: the submission prose must ALSO carry no *reference* to the drafting
+    workflow — no "see blockers.md", no "to be confirmed during Y1 planning", no "drafting angle",
+    no "figure inserted at submission", no `[Student]`-style role placeholders. An assessor
+    re-detects the same unfinished signal by a different name. Submission prose reads as a
+    **committed final case**; the entire to-do apparatus lives only in `blockers.md`, invisible to
+    the assessor. Grep the submission text for blocker-pointers/hedge-to-later phrasing before render.
 
 ### 1.9 claim–evidence proportionality (over-claim guard)
 The claim's *strength* must not exceed what its backing actually delivers — distinct from
