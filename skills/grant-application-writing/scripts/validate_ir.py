@@ -603,9 +603,16 @@ def _clean_scheme():
             {"id": "late", "widget": "scalar", "role": "logistics", "submission_phase": "post-award"},
             {"id": "gref", "widget": "money", "role": "budget-resource", "gate": "grant-le-50"},
         ]}],
-        "rubric": [{"criterion": "C1", "indicators": [{"id": "a", "points": 6}, {"id": "b", "points": 4}]}],
+        "rubric": [{"criterion": "C1", "weight": 0.40,
+                    "minimum_evidence": ["publication"],
+                    "readiness_rule": ">=1 backed claim per sub-indicator; no [TO SET] markers",
+                    "indicators": [{"id": "a", "points": 6}, {"id": "b", "points": 4}]}],
         "attachments": [{"name": "ATSI evidence", "kind": "proforma"}],
     }
+
+
+def _evidence():
+    return {"publications": [{"id": "pub1", "title": "A backed result", "year": 2024}]}
 
 
 def _entity():
