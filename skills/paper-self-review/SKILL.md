@@ -32,6 +32,7 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
 | `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
 | `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
+| `PROSE.PSEUDOCODE_ABSTRACTION` | 伪代码复用数学 notation、抽象掉标准操作 |
 | `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
 | `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
 | `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |
