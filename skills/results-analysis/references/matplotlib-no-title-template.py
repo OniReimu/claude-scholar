@@ -18,7 +18,8 @@ import matplotlib.pyplot as plt
 def apply_paper_style() -> None:
     # 创建 2x 目标尺寸的图，由 LaTeX 缩放到 column width
     # 7" 宽 → LaTeX 缩放至 3.4" (single column) 时，24pt 字变为 ~12pt，仍可读
-    # 规则：font ≥ 24pt in source（figures4papers 规范）
+    # 24pt 为大面板默认值；字号策略由 scientific-figure-making 的 FigureStyle 按图型自适应
+    # （紧凑图 15-16pt），此处硬编码仅作独立模板默认，非固定阈值
     mpl.rcParams.update(
         {
             "figure.dpi": 200,
