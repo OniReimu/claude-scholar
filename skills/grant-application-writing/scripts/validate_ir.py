@@ -65,6 +65,13 @@ ROLES = {
 UPLOAD_KINDS = {"free", "proforma", "composite", "heading-sequenced", "system-generated"}
 PHASE_ORDER = ["minimum-data", "EOI", "full", "post-award"]
 
+# ── second dispatch axis: closed process-archetype vocabulary (extend only by falsifiability) ──
+PROCESS_VOCAB = {
+    "single-stage-review", "staged", "interview-gated", "panel-routed", "curated", "rolling",
+}
+STAGED_GATING_PHASES = {"EOI", "pre-proposal", "minimum-data"}
+INTERVIEW_MARKERS = ("interview", "defense", "defence")
+
 TOKEN = re.compile(r"[A-Za-z_][A-Za-z0-9_.]*")
 KW = {"and", "or", "not", "True", "False", "None", "in", "is"}
 HERE = os.path.dirname(os.path.abspath(__file__))
