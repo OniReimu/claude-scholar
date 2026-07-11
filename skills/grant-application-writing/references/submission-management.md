@@ -190,6 +190,30 @@ pre_submit_checklist:                        # final gate, run in portal, in ord
   - "[ ] portal dry-run: no hidden-required field, no validation error"
 ```
 
+## Stage F+ — `build-manifest.yaml` (the run-audit gate)
+
+The `submission_plan.yaml` tracks the *logistics* to submit; the **build-manifest** answers a
+different question — *is this run, on these inputs, actually ready?* It is a **generated audit
+record**, produced by `scripts/build_manifest.py`, which **composes `validate_ir.py`** (runs it as a
+subprocess and parses its canonical report) rather than re-implementing the 16 checks. One manifest
+per run; regenerate it, never hand-author it.
+
+It records, for reproducibility and audit: `inputs` (every input file + a `sha256` content hash — so
+a manifest pins exactly which scheme/evidence/plan/budget produced this result), `artifacts` (what
+was built, hashed), the `validation` verdict (the parsed `[STATUS] check[id] (binding): reason`
+lines + counts + `hard_fail`), per-criterion `readiness` (from the criterion-readiness check), open
+`blockers`, and the single derived value everything exists to produce:
+
+**`ready_to_submit` — DERIVED, fail-closed.** `true` **only** when validate_ir `--mode submission`
+has **no hard FAIL**, **zero open hard blockers**, and **every scored criterion is `substantiated`
+or `submission-ready`**. Any unknown/missing/`partial`/`unsupported` piece → `false`, with a
+`ready_blockers` list naming each reason. It never defaults to true — the honest gate is a *no*
+until every input proves *yes*. This is the machine version of the whole skill's discipline: the
+manifest is where "beautiful boxes for a form that can't be submitted" (the original v1 Codex FAIL)
+becomes impossible to miss — a single boolean, computed from hashes and checks, not from optimism.
+
+See `templates/build-manifest.template.yaml` for the full emitted schema.
+
 ## Multi-phase awareness
 
 For schemes with more than one submission round, every artifact and field carries a
