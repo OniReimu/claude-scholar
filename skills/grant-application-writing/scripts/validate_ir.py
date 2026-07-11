@@ -20,11 +20,18 @@ their exit codes + output fold into this report), never reimplemented here.
   7. stage_lock/phase   no value for a phase-locked field; phase order valid.
   8. attachment rules   each structured-upload has a valid kind + matching attachments[] entry.
   9. char roll-up       delegates the paste-ready to charcount.py; folds its verdict.
+ 10. criterion-readiness per rubric criterion (minimum_evidence + readiness_rule), compute a
+                        readiness state; --mode submission FAILs an unsupported scored criterion.
 
 SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
 rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
 OPTIONAL sidecar was not supplied, or the scheme lacks that construct. Exit non-zero on any HARD
 FAIL (or a delegated sibling non-zero exit); soft binding = WARN.
+
+Criterion-readiness never hides a scored-criterion gap behind a SKIP: if a criterion declares
+`minimum_evidence` but the evidence/content backing it was not supplied, that criterion is
+`unsupported` — a [FAIL] in `--mode submission` (default `draft` reports it as [WARN]). Only a
+scheme that declares NO criterion `minimum_evidence` genuinely SKIPs the whole check.
 
     uv run validate_ir.py --scheme scheme.yaml --entity entity-store.yaml --budget budget.yaml
     uv run validate_ir.py --self-test
