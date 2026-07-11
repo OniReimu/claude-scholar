@@ -26,7 +26,7 @@ reference by `scheme` + `scheme_version`.
 ## The `scheme.yaml` schema
 
 ```yaml
-scheme: "UTS Early Career Researcher Grant"    # human name
+scheme: "Example ECR Grant"    # human name (an ECR scheme)
 mode: narrative-award                          # narrative-award | prospective-project | retroactive-impact
 scheme_version: "2026-R1"                       # round/year tag; taxonomy + option sets are bound to this
 portal: "web-form"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | web-form | docx | ...
