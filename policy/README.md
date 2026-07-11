@@ -183,6 +183,7 @@ SoK 规则集合（语义规则）：
 | TABLE.DIRECTION_INDICATORS | table-direction-indicators | core | warn | false | doc | guidance | none |
 | TABLE.RESIZEBOX_COLUMN_FIT | table-resizebox-column-fit | core | warn | false | doc | guidance | assisted |
 | TABLE.DIMENSION_BUDGET | table-dimension-budget | core | warn | false | doc | guidance | none |
+| TABLE.FULLWIDTH_FONT_DENSITY | table-fullwidth-font-density | core | warn | false | doc | guardrail | none |
 | LATEX.CMARK_XMARK_PMARK_MACROS | latex-cmark-xmark-pmark-macros | core | error | false | doc | guidance | none |
 | LATEX.EQ.DISPLAY_STYLE | latex-eq-display-style | core | error | true | doc | guardrail | none |
 | LATEX.VAR.LONG_TOKEN_USE_TEXT | latex-var-long-token-use-text | core | warn | false | doc | guidance | none |
@@ -212,6 +213,7 @@ SoK 规则集合（语义规则）：
 | SE.THREATS_TO_VALIDITY_STRUCTURED | se-threats-to-validity-structured | domain | error | false | doc | guidance | none |
 | SE.ACTIONABLE_IMPLICATIONS | se-actionable-implications | domain | warn | false | doc | guidance | none |
 | PROSE.CRYPTO_CONSTRUCTION_TEMPLATE | prose-crypto-construction-template | domain | warn | false | doc | guidance | none |
+| PROSE.PSEUDOCODE_ABSTRACTION | prose-pseudocode-abstraction | domain | warn | false | doc | guidance | none |
 | PROSE.INTENSIFIERS_ELIMINATION | prose-intensifiers-elimination | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.EM_DASH_RESTRICTION | prose-em-dash-restriction | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.FILLER_PHRASES | prose-filler-phrases | domain | warn | false | lint_script | guardrail | safe |
