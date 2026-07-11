@@ -534,6 +534,36 @@ with a signed-LOI `provenance` (`corpus/loi-acme.pdf`); an email promise does no
 figure as `committed`, and a signature by an entity with no `capacity_evidence` for signing
 authority degrades the commitment rather than upgrading it.
 
+## Host-institution statement (`organizations[].institutional_support`)
+
+The host-institution statement is a **third-party attestation** — the administering
+organisation's own committed co-investment in the fellowship — carried on the lead
+`organizations[]` row and hardened **exactly like partner contributions**: every item carries
+`status` and `provenance`, and a "committed" figure is only defensible with the statement
+backing it (`corpus/host-statement.pdf`), never an assumed intention.
+
+- `items[]` — each `{kind, value, status, provenance}` line of committed support
+  (`establishment-grant`, `stipend-topup`, `salary-shortfall`, `teaching-relief`, …). A
+  non-cash line (e.g. `teaching-relief`) may carry `value: null` with a `basis` instead of a
+  figure — the relief is real but not a dollar the budget can double-count.
+- `total` — the statement's **STATED** total, kept **deliberately SEPARATE from `sum(items)`**
+  — the same discipline as partner `letter_commitment` vs `contributions` (batch 2): two
+  numbers that can disagree are stored side by side so a mismatch is **VISIBLE**, not silently
+  reconciled into one. If the statement's headline total says AUD 300k but the itemised lines
+  sum to 260k, that gap is a finding — not something the store papers over.
+- `strategic_fit` / `continuing_offer` — the institution's third-party framing: why it
+  recruited the candidate and where the project finds a home, and whether a continuing position
+  is offered on success (or `null`).
+- `statement_provenance` — the source document for the statement as a whole.
+
+Consumed by the **institutional-statement reconciliation pass (`method-passes.md` §4.5**; analog
+to §2.13 partner reconciliation): the stated `total` must reconcile with `sum(items)` AND — if a
+budget is present — with the budget's non-ARC / institutional-contribution lines; every
+`committed` item must have `provenance`. Mechanized by `validate_ir.py`
+`institutional-support-reconciliation`: a `total` ≠ `sum(items)` mismatch (>1%), or a
+`committed` item with no `provenance`, FAILs in `--mode submission` / WARNs in draft — exactly
+the fail-closed behaviour of `partner-commitment-reconciliation`.
+
 ## Project-plan store (B3) — prospective-project mode
 
 The evidence store (Stage B) and the entity store (B2) are **reusable applicant assets** —
