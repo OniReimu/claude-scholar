@@ -213,6 +213,29 @@ def check_phase(rows, phased_if_min, requested):
     return [("phased-budget", ok, detail)]
 
 
+def check_balance(rows, cfg):
+    """双录平衡: enabled 时 income==expenditure（|delta| ≤ tolerance）。
+    fail-closed —— 任一计入行缺 side∈{income,expenditure} 即 FAIL，绝不默认 side。
+    in-kind 天然出现在双边（income 行 + expenditure 行各一），按 side 求和即自洽，不特判。"""
+    if not cfg or not cfg.get("enabled"):
+        return []
+    tol = float(cfg.get("tolerance", 0) or 0)
+    counted = [r for r in rows if counts(r)]
+    missing = [r for r in counted if r.get("side") not in ("income", "expenditure")]
+    if missing:
+        cats = ", ".join(str(r.get("category")) for r in missing)
+        return [("balance", False,
+                 f"balance_check.enabled 但 {len(missing)} 个计入行缺 side∈{{income,expenditure}}: "
+                 f"{cats}（fail-closed，无法核平衡）")]
+    income = sum(row_total(r) for r in counted if r.get("side") == "income")
+    expenditure = sum(row_total(r) for r in counted if r.get("side") == "expenditure")
+    delta = income - expenditure
+    ok = abs(delta) <= tol + _EPS
+    return [("balance", ok,
+             f"income {income:.0f} vs expenditure {expenditure:.0f} "
+             f"(delta {delta:+.0f}, tol {tol:.0f})")]
+
+
 def check_declared(rows, declared, total, requested, total_cash):
     if not declared:
         return []
