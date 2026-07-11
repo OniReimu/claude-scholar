@@ -362,3 +362,50 @@ matched-funding ratio, totals) is `validate_budget`'s (SKILL.md Stage E), and th
 co-investment lines that appear here must reconcile with §10.3's `institutional_support.total` under
 `institutional-support-reconciliation`. Keep one such defense per line (§6); a justification that
 stacks the "cannot be done by email" rhetoric on every row reads as padding.
+
+## 11. Spine-surfaced register (prospective-project) — one project, one vocabulary, five resolutions
+
+§5 sets the commercialisation strategic moves; this section sets how a project-mode application keeps
+*the same project* legible across every field once it carries a **traceability spine** — stable ids
+(`aim-1` → `obj-1` → `task-1` → `out-1` → `ben-1`) with each activity tracing up to a purpose and
+across to person / year / budget (`method-passes.md` §2.19). The spine makes the crosswalk
+*checkable*; these three register moves make it *readable*. Each is used sparingly (§6). All examples
+fictional.
+
+### 11.1 Controlled vocabulary — one canonical name per spine id
+
+Extend §4's tight core-term set by **binding each term to a spine id**: the project, each objective,
+each task, each investigator, each output gets *one* canonical name, and that exact noun phrase is
+reused verbatim in every field it surfaces in — public summary, formal aim, objective list, timetable
+label, budget-line justification, figure caption, risk row. `task-1` is "the `<canonical task-1 name>`"
+everywhere or it is nowhere: a task that is "the calibration work" in the summary, "Task 2: instrument
+tuning" in the plan, and "sensor alignment" in the budget reads as three loosely-related activities,
+not one funded task. This is the prose side of the form-schema-ir join — a value referenced in a
+figure / timetable / budget resolves to a spine id (`form-schema-ir.md`) — where the id keeps the
+*reference* honest and the canonical name keeps the *wording* honest. A diffuse vocabulary reads as an
+unfocused project (§7).
+
+### 11.2 Reviewer-memory recaps — re-seat the architecture at section boundaries
+
+A panel reads the design across several pages and loses its shape. At a section open or close, spend
+**one sentence** restating the architecture — not the claims: *how many tasks, which is foundational,
+how they recombine*. *"Recall the three tasks: `task-1` supplies the shared `<theory / data / measure>`
+that `task-2` and `task-3` each consume, recombining at `<out-3>`."* This is a **structural reminder,
+not a re-count** (§6): it names the dependency architecture the spine already encodes
+(`foundational: true`, `depends_on` — §2.19), and it banks no task or output as a fresh achievement.
+One recap per boundary; a recap in every paragraph is padding.
+
+### 11.3 Progressive specification — one thesis, five resolutions
+
+Repeat the *central thesis* at rising resolution rather than restating it verbatim: the **public
+summary** states it in lay terms → the **formal aim** in one scored sentence → the **numbered
+objectives** decompose it → the **task implementations** realise it in the
+gap→consequence→move→mechanism grammar (§2.19) → the **beneficiary consequence** lands its so-what.
+Each pass *adds* resolution — new specificity, a tighter scope, a named mechanism — so the reader zooms
+from headline to method to benefit along a single spine. This is **controlled resolution change, not
+repetition, and not double-counting** (§6): a double-count claims one output as two distinct
+achievements, whereas progressive specification states *one* thesis at five magnifications and banks it
+*once*, at the resolution where it is actually delivered (the task / output), with the higher altitudes
+framing it and the beneficiary altitude drawing its consequence. If two altitudes claim the *same*
+deliverable as *separate* wins, that is the double-count the anti-count pass strips; if they state the
+same deliverable at different magnifications, that is the spine reading as one coherent project.
