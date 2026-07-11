@@ -111,6 +111,15 @@ Container/computed widgets carry sharper rules than the table row implies — lo
 - **`contribution-matrix` partner-axis ownership.** When a `contribution-matrix` is nested inside a
   per-partner `repeating-group` (each partner item holds its own type×FY sub-table), the
   `repeating-group` owns the partner axis — do not double-count it inside the matrix widget.
+- **The partner axis carries a legal-entity dimension.** A `contribution-matrix` partner (or a
+  `team-partner` row) is not just a name and a number: the entity that **signs** the commitment
+  may differ from the one that **operates** (parent vs subsidiary vs JV vs branch), and the
+  **jurisdiction of the committing entity** feeds eligibility. Model this as a
+  `partner-relationship` attribute on the partner item, resolving to the evidence-store
+  `partners[].legal_entity` block (see `evidence-store.md`) — signing vs operating entity,
+  relationship type, jurisdiction, capacity evidence. Authenticity of the commitment is a
+  drafting-time check (`method-passes.md` §2.12 / §2.13), not a widget concern; the widget only
+  needs to know the partner axis references a legal entity, not a loose group label.
 - **External calculator artifact.** A mandatory offline workbook (e.g. CRC-P's `.xlsx` financial
   workbook) that back-stops in-form matrices is not a field, an upload, or a `computed` — model it
   as `link` × attr `role: external-calc`; its computed cells must be **re-derived and validated
