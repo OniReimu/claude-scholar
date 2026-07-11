@@ -309,6 +309,168 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 
 ---
 
+### Project-substance passes §2.14–§2.17 (RUN ONLY in `prospective-project` mode)
+
+> Numbered 2.14–2.17 to avoid renumbering, but read as one cluster appended after §2.13.
+> Where §2.1–§2.11 mostly read the `scheme.yaml` IR and the reusable evidence-store, these four
+> render project SUBSTANCE from a **structured project-plan register** — the `project-plan.yaml`
+> sidecar (B3, `evidence-store.md`), one per application, read by `validate_ir.py --plan`. Each
+> DEEPENS an earlier pass (its coverage counterpart) and is mechanized by a named `validate_ir.py`
+> check, fail-closed on the same BLOCK-vs-WARN discipline as §2.12/§2.13/§4.4. They run **only when
+> `mode = prospective-project`**; outside project mode (or with no `--plan` supplied) they SKIP,
+> labelled. The register is the source of truth: substance is *rendered from structure, not asserted
+> in prose*, and a present-but-empty register field is a load-bearing gap, never a silent default.
+
+### 2.14 research-design adequacy (deepens §2.3 methods-feasibility; register-driven)
+> §2.3 asks *can the methods be DONE in the time with the resources*; this pass asks the harder
+> question *does the design ANSWER the aim* — i.e. will the methodology actually PRODUCE the claimed
+> knowledge. Feasible ≠ adequate: a design can be perfectly deliverable and still not establish what
+> the aim claims.
+- **Does:** for every `aims[]` entry, confirm the `design[]` register answers it — pre-empting the
+  panel's "the methodology won't produce the claimed knowledge." Reads each aim's
+  `success_criterion` (the measurable definition-of-done) against its design rows on four couplings:
+  - **(a) COVERAGE.** every `aims[]` id appears in ≥1 `design[].aim` — no aim without a method. An
+    orphan aim (stated but unanswered by any design) is the fatal gap this pass exists to catch.
+  - **(b) CONTROLS.** each covered design carries `controls` — a baseline / ablation / comparator
+    that *isolates the effect*. A method with no control cannot attribute its result to the aim.
+  - **(c) VALIDITY.** where the aim is empirical, `validity` states `sample_size` / `power` and
+    named `threats` (each with its mitigation); non-empirical aims set these `null` **with a note**,
+    not silently. An empirical aim with no power/threat account is under-designed.
+  - **(d) ANSWERS-AIM.** each covered design has a non-empty `answers_aim` — the explicit
+    justification that this design produces the aim's claimed knowledge, not merely activity near it.
+- **Submission mode:** an aim with **no design coverage** (a) **or** no `success_criterion` is a
+  **BLOCK** — an unanswerable or undefined-done aim cannot be scored. A covered aim missing
+  `answers_aim`, controls, or (for an empirical aim) validity is a **WARN + `blockers.md`** entry.
+  **Draft mode → WARN** throughout, consistent with markers-two-mode §1.8.
+- **Mechanized by `validate_ir.py` `research-design-adequacy`** (Agent C): every `aims[]` id covered
+  by ≥1 `design[].aim`, every aim's `success_criterion` non-empty, every covered design's
+  `answers_aim` non-empty — FAIL (submission) / WARN (draft), per aim.
+- **In:** `project-plan.yaml` `aims[]` (`statement`, `success_criterion`) × `design[]` (`aim`,
+  `methods`, `controls`, `validity`, `answers_aim`). **Out:** a per-aim adequacy verdict
+  (covered ∧ controlled ∧ (empirically) valid ∧ answers_aim) with each uncovered/undefined aim
+  named; the "won't produce the claimed knowledge" concern pre-empted. (Cross-ref §2.3
+  methods-feasibility, §2.1 project-coherence.)
+- **Example (fictional):** *aim-2* — "establish that [method] holds accuracy above [threshold] under
+  [regime]" — has a `success_criterion` but no `design[]` row names `aim: aim-2`. **Uncovered → BLOCK
+  in submission.** *aim-1* is covered but its design lists no `controls` (no baseline to isolate the
+  effect) and `answers_aim` is empty → **WARN + `blockers.md`**. Once a design row with a baseline
+  comparator, a power'd sample, and an `answers_aim` justification is added for each, both pass.
+
+### 2.15 benefits-realisation (deepens §2.5 impact-pathway; register-driven)
+> §2.5 verifies the *pathway* outputs → outcomes → impact has no broken link. This pass verifies each
+> benefit on that pathway is actually REALISABLE — measurable, time-bound, and OWNED — because a
+> traceable pathway to a benefit **no one is accountable for realising** is still aspirational.
+- **Does:** for each `benefits[]` entry, confirm it is realisable rather than hoped-for, reading
+  `{benefit, type, beneficiary, owner, timing, metric, preconditions}`:
+  - **(a) TYPED.** `type` is one of output / outcome / impact — and the three are distinguished, with
+    impact laddering from outputs (mirrors the national-benefit ladder, Group 1 intro / §2.5). A
+    benefit that conflates an output with an impact over-claims its realisation.
+  - **(b) OWNED.** `owner` names who realises/captures it — **a benefit with no owner is aspirational**
+    by construction, no matter how large. `beneficiary` (who gains) is distinct from `owner` (who acts).
+  - **(c) MEASURABLE.** `metric` gives an indicator + target — how realisation is *measured*; a
+    benefit with no metric cannot be shown to have been realised.
+  - **(d) TIMED & CONDITIONED.** `timing` says when (e.g. by Y3 / +2yr post-award) and
+    `preconditions` name what must be true for realisation — an unconditioned benefit hides its risks.
+- **Submission mode:** on a scheme that **scores a realisation / benefits plan**, a benefit with no
+  `owner` **or** no `metric` **or** no `timing` is a **BLOCK** (it is asserted impact, unrealisable
+  as written). **Draft mode → WARN + `blockers.md`** per benefit, consistent with §1.8.
+- **Mechanized by `validate_ir.py` `benefits-realisation`** (Agent C): every `benefits[]` row has
+  non-empty `owner` AND `metric` AND `timing` — FAIL (submission) / WARN (draft), per benefit.
+- **In:** `project-plan.yaml` `benefits[]` (`benefit`, `type`, `beneficiary`, `owner`, `timing`,
+  `metric`, `preconditions`). **Out:** a per-benefit realisation verdict (typed ∧ owned ∧ measured ∧
+  timed) with each ownerless/metricless/untimed benefit flagged as aspirational; a benefits list that
+  reads as a *realisation plan*, not a wish list. (Cross-ref §2.5 impact-pathway, §2.14 success_criterion.)
+- **Example (fictional):** *ben-1* — "[sector] adopts the open toolkit" — is typed `outcome`,
+  `beneficiary: "[sector] SMEs"`, but `owner` is empty and `metric` is "wide uptake" (no target),
+  `timing` blank. Ownerless + no measurable target + untimed → **BLOCK in submission**. Reframed with
+  `owner: "the partner's product team"`, `metric: "≥[N] deployments by +2yr post-award"`,
+  `timing: "+2yr"`, and a `preconditions` line ("toolkit released under [licence]") → realisable, passes.
+
+### 2.16 additionality / value-for-money (new; ties partnership §2.12 + budget §2.8; register-driven)
+> New pass, no earlier coverage counterpart — it answers the two questions a demanding public-funding
+> panel asks that no other Group-2 pass owns: **"why public money?"** (additionality) and **"is it
+> worth it?"** (value-for-money). It reads the `additionality{}` register and cross-checks the
+> §2.8 budget.
+- **Does:** argue **additionality** and **VfM** from the `additionality{}` register, pre-empting
+  "why fund this / why not the partner alone":
+  - **(a) COUNTERFACTUAL.** `counterfactual` states what would NOT happen without THIS grant, and
+    *why* — explicitly **not business-as-usual**, **not already funded**, and **not what the partner
+    (or industry) would do alone** (`not_business_as_usual: true`). A project that would proceed
+    anyway is not additional; public money buys nothing it scores.
+  - **(b) LEVERAGE / VfM.** `leverage: {grant, co_contribution}` yields the VfM ratio
+    `co_contribution / grant`. **The batch-2 partner co-investment IS the leverage story** — the
+    cash + in-kind §2.12 graded as *genuine co-design* (not letterhead-only, not fee-for-service) is
+    exactly what makes the public spend leveraged rather than a straight subsidy. A "co-investment"
+    §2.12 could not evidence must **not** be counted as leverage here.
+  - **(c) COST-PER-OUTCOME (optional).** where the scheme rewards it, `cost_per_outcome:
+    {value, basis}` gives a costed denominator (e.g. grant ÷ trained researchers / ÷ SMEs reached),
+    each figure held to `number-defensibility` §1.4 (value + scope + source, never improvised).
+- **Submission mode:** on a scheme that **scores additionality**, a **missing/empty `counterfactual`**
+  is a **BLOCK** — the additionality criterion has nothing to score. If a `--budget` is supplied, the
+  `leverage.grant` / `leverage.co_contribution` figures must **reconcile with the budget totals**
+  (mismatch > 1% → **BLOCK submission / WARN draft**, the same tolerance as §2.13
+  partner-commitment). **Draft mode → WARN + `blockers.md`** throughout.
+- **Mechanized by `validate_ir.py` `additionality-vfm`** (Agent C): `additionality.counterfactual`
+  non-empty; `leverage.grant` & `leverage.co_contribution` present → reports the ratio and, when a
+  `--budget` is supplied, cross-checks the two figures against budget totals — FAIL (submission) /
+  WARN (draft) on a missing counterfactual or a >1% mismatch.
+- **In:** `project-plan.yaml` `additionality{}` (`counterfactual`, `not_business_as_usual`,
+  `leverage{grant, co_contribution, currency}`, `cost_per_outcome{value, basis}`), the §2.12-graded
+  `partners[]` co-investment, and (if supplied) the `budget-matrix` / `contribution-matrix` totals.
+  **Out:** an additionality statement (a genuine counterfactual, not BAU / not already funded / not
+  partner-alone), a VfM ratio recomputed from co-contribution/grant and reconciled against the
+  budget, an optional costed cost-per-outcome; the "why public money" concern pre-empted. (Cross-ref
+  §2.12 partnership-authenticity — the co-investment IS the leverage; §2.8 budget-math — the totals
+  this reconciles against; `number-defensibility` §1.4.)
+- **Example (fictional):** a proposal claims strong VfM but its `counterfactual` reads "this work is
+  important and timely" — that is not a counterfactual (it does not say what fails to happen without
+  the grant) → **BLOCK in submission**. Reframed: "without this grant the [risky, pre-commercial]
+  method stays unbuilt — the partner funds only near-market work and will not carry this research
+  risk alone." Its `leverage` is `{grant: 500000, co_contribution: 150000}` → **VfM 0.30**, and the
+  $150k is exactly *BorealGrid Pty Ltd*'s §2.12-verified cash + in-kind co-investment; with `--budget`
+  supplied the $150k reconciles to the `contribution-matrix` total (within 1%). Additionality + VfM
+  both land.
+
+### 2.17 trigger-driven risk (deepens §2.4 risk-mitigation; register-driven)
+> §2.4 checks *coverage* — that each material risk has a mitigation and a residual within row bounds.
+> This pass upgrades a static register to a **live trigger→contingency register**: not "there is a
+> risk; it is mitigated" but "**if X by month M → do Y, checked at Z, owned by W**". A panel scores a
+> risk plan it can see FIRE, not a reassurance.
+- **Does:** for each `risks[]` entry, confirm it is a monitored, actionable contingency, reading
+  `{risk, likelihood, impact, trigger, monitoring, contingency, owner}`:
+  - **(a) GRADED.** `likelihood` and `impact` each low / medium / high — the grade sets how hard the
+    trigger/contingency requirement bites (a high-impact risk cannot be left static).
+  - **(b) TRIGGER.** `trigger` is an **observable threshold** — "if milestone M slips past month 9",
+    "if recruitment < N by month 6" — not a vague "if things go wrong". A risk with no observable
+    trigger cannot be acted on in time.
+  - **(c) MONITORING.** `monitoring` says where/when the trigger is checked (e.g. quarterly review),
+    so the trigger is actually watched rather than notional.
+  - **(d) CONTINGENCY + OWNER.** `contingency` is the **pre-committed action** if the trigger fires,
+    and `owner` names who acts — a contingency no one owns does not execute.
+- **Submission mode:** a **high-impact risk** (`impact == high`, or `likelihood == high` AND
+  `impact == high`) with **no `trigger`** **or** **no `contingency`** **or** **no `owner`** is a
+  **BLOCK** — the risk the panel most fears is left without a live response. Lower-graded risks
+  missing a trigger/contingency are a **WARN + `blockers.md`**. **Draft mode → WARN** throughout,
+  consistent with §1.8.
+- **Mechanized by `validate_ir.py` `risk-triggers`** (Agent C): every risk with `impact == high`
+  (or `likelihood == high` AND `impact == high`) has non-empty `trigger` AND `contingency` AND
+  `owner` — FAIL (submission) / WARN (draft), per risk.
+- **In:** `project-plan.yaml` `risks[]` (`risk`, `likelihood`, `impact`, `trigger`, `monitoring`,
+  `contingency`, `owner`). **Out:** a per-risk verdict (graded ∧ triggered ∧ monitored ∧ contingent
+  ∧ owned) with every high-impact risk lacking a trigger/contingency/owner blocked; a risk register
+  that reads as "if X → do Y", not "there is a risk; it is mitigated". (Cross-ref §2.4
+  risk-mitigation completeness; the coverage/row-bounds check stays there, this pass owns the
+  trigger→contingency liveness.)
+- **Example (fictional):** *risk-1* — "key dataset access is withdrawn" — is graded
+  `likelihood: medium`, `impact: high`, mitigation "we will find an alternative". High-impact but no
+  observable `trigger`, no pre-committed `contingency`, no `owner` → **BLOCK in submission**.
+  Reframed: `trigger: "if the data-sharing agreement is unsigned by month 4"`,
+  `monitoring: "checked at each quarterly review"`, `contingency: "switch to the [named public
+  corpus] fallback pipeline already scoped in WP1"`, `owner: "the lead CI"` → a live contingency,
+  passes.
+
+---
+
 ## Group 3 — retroactive-impact passes (ADDED for `retroactive-impact`)
 
 Run these *in addition* to Group 1's evidentiary discipline (verb-tiering, anti-double-counting,
