@@ -148,6 +148,20 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 - **Does:** confirm every `compliance`-role field is present and mutually consistent — ethics, security, COI, DMP, foreign-interference — and that `conditional-group` triggers fired their required annexes.
 - **In:** compliance fields, decision-tree answers. **Out:** presence + consistency check; missing-annex flags. (Often assessor-invisible but hard submit-blockers.)
 
+### 2.10 novelty-boundary (new research vs scale-up)
+- **Does:** draw a sharp line between (a) what is **already done/published** — including the
+  applicant's *own* prior work — and (b) the **specific unresolved problem this project newly
+  solves**. The project's claimed contribution must sit in (b). This pre-empts the panel's
+  "does the grant fund new research, or scale-up/integration of published methods?" — the fatal
+  read when aims say "extends / builds on / integrates" prior papers.
+- **Red flag:** if the aims read as extending, scaling, or integrating the applicant's published
+  work, EITHER reframe them around the new hard problem (name the unsolved sub-questions), OR
+  argue explicitly why the scale-up/integration is *itself* the novel research contribution (with
+  the specific unsolved problems it raises). Never let a project read as "more of my published work".
+- **In:** aims/innovation × the applicant's own outputs (evidence-store). **Out:** a done-vs-new
+  boundary statement; aims that only extend prior work flagged for reframing. (Cross-ref
+  defensible-primacy §1.2, `author-voice.md` §5 scope-frame / §8.)
+
 ---
 
 ## Group 3 — retroactive-impact passes (ADDED for `retroactive-impact`)
