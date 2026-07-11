@@ -557,14 +557,15 @@ def check_criterion_readiness(rep, scheme, values, evidence, mode):
 
 # ── orchestration ────────────────────────────────────────────────────────────
 def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=None,
-                budget_path=None, paste_ready=None):
+                budget_path=None, paste_ready=None, mode="draft"):
     scheme = load_yaml(scheme_path)
     values = load_yaml(values_path) if values_path else {}
+    evidence = load_yaml(evidence_path) if evidence_path else {}
     entity = load_yaml(entity_path) if entity_path else {}
     bdata = load_yaml(budget_path) if budget_path else None
     rep = Report()
     print(f"IR integrity dry-run — scheme: {scheme.get('scheme', scheme_path)} "
-          f"[{scheme.get('mode', '?')}]\n" + "-" * 72)
+          f"[{scheme.get('mode', '?')}] — readiness mode: {mode}\n" + "-" * 72)
     check_schema(rep, scheme)
     check_allocation(rep, scheme, values)
     check_contribution(rep, scheme, entity, bdata)
