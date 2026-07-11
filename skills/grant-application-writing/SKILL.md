@@ -23,6 +23,10 @@ number — a different genre with its own machinery.
    with a provenance pointer and a defensibility status. Patent "granted" ≠ "filed";
    a paper's date must fall inside the eligibility window; a role is first / corresponding
    / co-first / CI / supervising — never upgraded. Under-claim before you over-claim.
+   Two corollaries (`method-passes.md` §1.8): an invented technical spec/number the input
+   didn't supply is tagged **`[TO SET]`**, never shown as real; and an **unverified/stale
+   context** (employment, load, role) is stated honestly, **never smoothed into a favourable
+   framing** ("teaching-heavy", not laundered to "research-focused").
 2. **Eligibility gates run BEFORE drafting.** If a hard gate fails, say so and stop —
    do not draft an application the applicant cannot submit.
 3. **The verb is the evidentiary commitment.** Pick the strongest verb the backing
