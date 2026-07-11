@@ -79,6 +79,17 @@ fix_patterns: []                     # 可选：自动修复映射（仅 autofix
   - `threshold`: count 模式时的阈值（可选）
   - `threshold_param`: 关联的 `params` 键名（可选，Profile 可通过 `params.<key>` 覆盖阈值）
 - **lint_targets**: glob pattern 指定检查目标文件（如 `**/*.tex`、`**/*.bib`、`**/*.py`）
+- **deprecated_by**（可选）: 该规则已被某 skill/规则接管时填写继任者名（如 `scientific-figure-making`）。填写后规则卡保留作历史参考，但引用它的 skill 必须同步（见下节「规则弃用 / 变更流程」）
+
+---
+
+## 规则弃用 / 变更流程
+
+当一条规则被弃用（打 `deprecated_by:`）或其 `params` 值发生变更（如 `FIG.FONT_GE_24PT` 的 24pt 阈值改为自适应）时，**规则卡与引用它的 skill 会漂移**——skill 的 quick-ref 表往往仍在断言旧值。改规则时必须同步：
+
+1. **规则卡**：打 `deprecated_by:` 或改 `params`，并在 body 顶部加 `> **⚠️ Deprecated**` banner 说明继任者做什么。
+2. **同步引用**：`grep -rn 'policy:<RULE_ID>' skills/ commands/` 找出所有 `<!-- policy:X -->` 引用，逐处更新措辞——弃用类加 inline successor note（如「已弃用，交 `scientific-figure-making`」），值变更类改成新值或转指继任者。
+3. **校验**：跑 `policy/validate.sh`。**Section 8b（Deprecated-Rule Citation Acknowledgment）** 会列出所有引用弃用规则却缺 successor note 的位置。这是 **WARNING（非阻塞）**——部分弃用规则合法保留为写作指引（如 `FIG.SELF_CONTAINED_CAPTION` 交 `writing-convention`），逐条确认即可，不必强制加注。
 
 ---
 
