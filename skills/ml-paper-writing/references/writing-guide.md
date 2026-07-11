@@ -388,7 +388,7 @@ Figures should tell a coherent story even if the reader skips the text. Many rea
 
 8% of men have color vision deficiency. Your figures must work for them.
 
-**Solutions**:
+**Solutions** (palette/format details owned by `scientific-figure-making`):
 - Use colorblind-safe palettes: Okabe-Ito or Paul Tol
 - Avoid red-green combinations
 - Verify figures work in grayscale
