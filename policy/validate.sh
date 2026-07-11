@@ -10,6 +10,7 @@
 #   - Profile Includes file existence
 #   - Profile override validity (locked rules, param key existence)
 #   - Integration marker → rule card mapping
+#   - Deprecated-rule citations carry a successor note (WARN, non-blocking)
 #   - Orphan rule detection
 #   - No modification to protected files (rules/, CLAUDE.md, AGENTS.md)
 #
