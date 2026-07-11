@@ -1258,6 +1258,96 @@ rows:
             and not any(e[1] == "FAIL" for e in staged_drf)), \
         "same staged scheme only WARNs in draft mode"
 
+    # 13–16. project-substance passes (prospective-project mode + --plan). Call each check
+    #     directly (mirrors #10/#11/#12): a complete plan PASSes; a broken register (uncovered
+    #     aim / ownerless benefit / missing counterfactual / triggerless high-impact risk) FAILs
+    #     submission and only WARNs draft; a present-but-empty field is never green-washed; a
+    #     non-project scheme (or absent plan) SKIPs the whole pass.
+    scheme_pp = _clean_scheme()          # _clean_scheme already sets mode: prospective-project
+    plan = _plan()
+    bud = load_yaml(budget)
+
+    def design_adq(sch, pl, m):
+        r = Report(); check_research_design_adequacy(r, sch, pl, m); return r.entries
+
+    def benefits(sch, pl, m):
+        r = Report(); check_benefits_realisation(r, sch, pl, m); return r.entries
+
+    def addl(sch, pl, bd, m):
+        r = Report(); check_additionality_vfm(r, sch, pl, bd, m); return r.entries
+
+    def risks(sch, pl, m):
+        r = Report(); check_risk_triggers(r, sch, pl, m); return r.entries
+
+    # complete plan → all four PASS with no FAIL, even in submission mode
+    for entries in (design_adq(scheme_pp, plan, "submission"),
+                    benefits(scheme_pp, plan, "submission"),
+                    risks(scheme_pp, plan, "submission")):
+        assert any(e[1] == "PASS" for e in entries) and not any(e[1] == "FAIL" for e in entries), \
+            "complete plan must PASS its substance pass"
+    addl_ok = addl(scheme_pp, plan, bud, "submission")
+    assert any(e[1] == "PASS" for e in addl_ok) and not any(e[1] == "FAIL" for e in addl_ok), \
+        "complete additionality + matching budget leverage must PASS"
+
+    # non-project scheme (and absent plan) → labelled SKIP, never a FAIL
+    non_pp = _clean_scheme(); non_pp["mode"] = "single-applicant"
+    assert any(e[1] == "SKIP" for e in design_adq(non_pp, plan, "submission")), \
+        "non-project mode must SKIP the design-adequacy pass"
+    assert any(e[1] == "SKIP" for e in risks(scheme_pp, {}, "submission")), \
+        "absent --plan must SKIP the risk-triggers pass"
+
+    # 13. research-design-adequacy — uncovered aim (design row removed) FAILs submission / WARNs draft
+    p13 = _plan(); p13["design"] = []
+    assert any(e[1] == "FAIL" and e[0].startswith("research-design-adequacy[")
+               for e in design_adq(scheme_pp, p13, "submission")), "uncovered aim must FAIL submission"
+    d13 = design_adq(scheme_pp, p13, "draft")
+    assert any(e[1] == "WARN" for e in d13) and not any(e[1] == "FAIL" for e in d13), \
+        "uncovered aim only WARNs in draft mode"
+
+    # 14. benefits-realisation — a present-but-empty owner is fail-closed (not green-washed)
+    p14 = _plan(); p14["benefits"][0]["owner"] = ""
+    assert any(e[1] == "FAIL" and e[0].startswith("benefits-realisation[")
+               for e in benefits(scheme_pp, p14, "submission")), "ownerless benefit must FAIL submission"
+    d14 = benefits(scheme_pp, p14, "draft")
+    assert any(e[1] == "WARN" for e in d14) and not any(e[1] == "FAIL" for e in d14), \
+        "ownerless benefit only WARNs in draft mode"
+
+    # 15. additionality-vfm — missing counterfactual FAILs submission / WARNs draft
+    p15 = _plan(); p15["additionality"]["counterfactual"] = None
+    assert any(e[1] == "FAIL" and e[0] == "additionality-vfm"
+               for e in addl(scheme_pp, p15, None, "submission")), "missing counterfactual must FAIL submission"
+    d15 = addl(scheme_pp, p15, None, "draft")
+    assert any(e[1] == "WARN" for e in d15) and not any(e[1] == "FAIL" for e in d15), \
+        "missing counterfactual only WARNs in draft mode"
+    #     leverage/budget mismatch (>1%) FAILs submission (like partner-commitment)
+    p15b = _plan(); p15b["additionality"]["leverage"]["co_contribution"] = 999999
+    assert any(e[1] == "FAIL" and e[0] == "additionality-vfm"
+               for e in addl(scheme_pp, p15b, bud, "submission")), \
+        "leverage co-contribution vs budget mismatch must FAIL submission"
+
+    # 16. risk-triggers — a triggerless high-impact risk (trigger: null) FAILs submission / WARNs draft
+    p16 = _plan(); p16["risks"][0]["trigger"] = None
+    assert any(e[1] == "FAIL" and e[0].startswith("risk-triggers[")
+               for e in risks(scheme_pp, p16, "submission")), "triggerless high-impact risk must FAIL submission"
+    d16 = risks(scheme_pp, p16, "draft")
+    assert any(e[1] == "WARN" for e in d16) and not any(e[1] == "FAIL" for e in d16), \
+        "triggerless high-impact risk only WARNs in draft mode"
+
+    # project-substance end-to-end: complete plan passes submission; a broken plan (triggerless
+    # high-impact risk) fails submission-mode orchestrate but only WARNs (exit 0) in draft.
+    plan_ok_p = _write(tmp, "plan.yaml", __import__("yaml").safe_dump(_plan()))
+    broken = _plan(); broken["risks"][0]["trigger"] = None
+    plan_bad_p = _write(tmp, "plan_bad.yaml", __import__("yaml").safe_dump(broken))
+    assert orchestrate(scheme_p, values_full, ev_p, ent_p, budget, paste_ok,
+                       mode="submission", plan_path=plan_ok_p) == 0, \
+        "complete plan must pass submission-mode orchestrate"
+    assert orchestrate(scheme_p, values_full, ev_p, ent_p, budget, paste_ok,
+                       mode="submission", plan_path=plan_bad_p) == 1, \
+        "triggerless high-impact risk must fail submission-mode orchestrate"
+    assert orchestrate(scheme_p, values_full, ev_p, ent_p, budget, paste_ok,
+                       mode="draft", plan_path=plan_bad_p) == 0, \
+        "same plan passes (WARN only) in draft-mode orchestrate"
+
     # full doctored orchestrate → non-zero exit
     doctored = _write(tmp, "bad_scheme.yaml", __import__("yaml").safe_dump(bs))
     assert orchestrate(doctored, values_ok, None, ent_p, budget, paste_bad) == 1, "doctored IR must exit 1"
