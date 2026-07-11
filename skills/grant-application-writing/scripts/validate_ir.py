@@ -1139,6 +1139,24 @@ def check_outputs_context_completeness(rep, scheme, evidence, mode):
                 rep.add(f"outputs-context-completeness[{thread}]", status, binding,
                         f"cluster {thread!r} states a primacy claim with no attributor — "
                         "unsourced superlative" + tail)
+    # one-to-one resolution: every referenced output id → exactly one publications[].id
+    pub_counts = {}
+    for pub in (evidence.get("publications") or []):
+        if isinstance(pub, dict) and pub.get("id") is not None:
+            pub_counts[str(pub["id"])] = pub_counts.get(str(pub["id"]), 0) + 1
+    for rid in sorted(clustered | set(best_ids)):
+        any_entry = True
+        n = pub_counts.get(rid, 0)
+        if n == 1:
+            rep.add(f"outputs-context-completeness[{rid}]", "PASS", "hard",
+                    "output id resolves to exactly one publications[].id")
+        elif n == 0:
+            rep.add(f"outputs-context-completeness[{rid}]", status, binding,
+                    f"output id {rid!r} resolves to no publications[].id — dangling reference" + tail)
+        else:
+            rep.add(f"outputs-context-completeness[{rid}]", status, binding,
+                    f"output id {rid!r} resolves to {n} publications[].id entries — "
+                    "duplicated/ambiguous" + tail)
     if not any_entry:
         rep.add("outputs-context-completeness", "SKIP", "soft",
                 "outputs_context present but declares no career_best ids and no cluster primacy claims")
