@@ -27,8 +27,15 @@ reference by `scheme` + `scheme_version`.
 `prospective-project` mode the project's *substance* — aims/design, benefits, additionality/VfM,
 and a trigger-driven risk register — is NOT the form structure; it lives in a separate
 `project-plan.yaml` sidecar (B3, see `evidence-store.md`), one per application, and is validated by
-`validate_ir.py --plan` against the §2.14–§2.17 substance passes. Keep it out of `scheme.yaml`:
+`validate_ir.py --plan` against the §2.14–§2.19 substance passes. Keep it out of `scheme.yaml`:
 the IR describes boxes and limits, the plan describes the research.
+
+The project-plan also carries the **traceability spine** (stable ids: aim→objective→task→subtask→
+output→benefit, crossed by person→year→budget). Those ids are the **join** between otherwise
+disconnected fields: a value referenced in a project figure, a `milestone-table`, or a `budget-matrix`
+line must resolve to a spine id, so cross-field consistency (does this funded line map to a real task?
+does this figure box name a real output?) becomes a deterministic `validate_ir.py` `traceability-spine`
+check rather than a manual read.
 
 ## The `scheme.yaml` schema
 
