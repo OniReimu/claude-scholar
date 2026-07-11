@@ -31,6 +31,24 @@ their exit codes + output fold into this report), never reimplemented here.
                         phases/routing fields/rejoinder it implies; an unknown process tag, or
                         a missing process on a scheme that HAS a rubric, is a hard FAIL.
 
+Checks 13–16 are `prospective-project`-mode project-substance passes reading the `--plan`
+project-plan.yaml sidecar (aims/design, benefits, additionality, risks registers). Each is
+gated on `mode == prospective-project` AND a supplied `--plan`; otherwise a labelled SKIP.
+When the register IS present they are fail-closed — a present-but-empty field is never
+green-washed. `--mode submission` FAILs, `--mode draft` WARNs (mirrors criterion-readiness).
+
+ 13. research-design-adequacy every aims[] id is covered by ≥1 design[].aim, has a non-empty
+                        success_criterion, and each covering design has a non-empty answers_aim;
+                        an uncovered/unmeasured aim FAILs submission (per aim).
+ 14. benefits-realisation every benefits[] row carries a non-empty owner + metric + timing; an
+                        aspirational (unowned/unmeasured/untimed) benefit FAILs submission (per benefit).
+ 15. additionality-vfm  additionality.counterfactual is non-empty; reports the leverage ratio
+                        (co_contribution/grant) and, when --budget is supplied, cross-checks
+                        grant/co-contribution against budget totals (>1% mismatch or a missing
+                        counterfactual FAILs submission).
+ 16. risk-triggers      every risk with impact==high carries a non-empty trigger + contingency +
+                        owner; a triggerless high-impact risk FAILs submission (per risk).
+
 SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
 rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
 OPTIONAL sidecar was not supplied, or the scheme lacks that construct. Exit non-zero on any HARD
