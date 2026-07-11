@@ -685,6 +685,7 @@ def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=N
     check_schema(rep, scheme)
     check_allocation(rep, scheme, values)
     check_contribution(rep, scheme, entity, bdata)
+    check_partner_commitment_reconciliation(rep, scheme, entity, bdata, mode)
     check_computed_gates(rep, scheme, values, entity, budget_path)
     check_rubric_subweights(rep, scheme)
     check_conditional_annexes(rep, scheme, values)
