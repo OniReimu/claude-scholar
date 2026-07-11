@@ -96,6 +96,32 @@ partners:
       - "<attachment: partner proforma letter>"
     provenance: "<source record>"
 
+# ─── Collaborators (specialist reach WITHOUT displacing applicant ownership) ───
+# INDEPENDENCE-PLUS-NETWORK (§10.2): a collaborator extends specialist reach while the applicant keeps
+# intellectual ownership. Name-dropping is defused by fielding the RELATIONSHIP, not the eminent name —
+# a collaborator with no task_expertise + applicant_independence is decoration. Feeds author-voice.md §10.2.
+collaborators:
+  - id: <collaborator-key>
+    name: "<full name>"
+    organization: <org-key | "external org name">
+    prior_relationship: "<how the applicant knows them — e.g. co-authored 1 paper 2yr ago; met at a workshop>"
+    task_expertise: "<the specific capability they add, tied to a spine task / output id>"
+    engagement_mode: <advisory | data-access | co-supervision | method-consult | letter-only>
+    applicant_independence: "<what the applicant leads INDEPENDENTLY of this collaborator — evidences retained intellectual ownership>"
+    provenance: "<support email / letter path>"
+
+# ─── Mentors (differentiated by COMPETENCY GAP, not eminence) ───
+# MENTOR-BY-COMPETENCY-GAP (§10.3): each mentor addresses a DISTINCT capability gap with a DIFFERENTIATED
+# function — not a roster of interchangeable eminent names. A mentor with no competency + function is name-dropping.
+mentors:
+  - id: <mentor-key>
+    name: "<full name>"
+    organization: <org-key | "external org name">
+    competency: "<the specific capability gap this mentor fills — NOT 'general guidance'>"
+    function: "<the differentiated role — e.g. quarterly method review of task-2; industry-translation coaching>"
+    prior_relationship: "<existing relationship, if any — or null>"
+    provenance: "<mentorship statement path>"
+
 # ─── Contribution roll-up (matches the funder's matched-funding / co-contribution gate) ───
 # Recompute at check time — do not cache; the `computed` co-contribution gate reads this.
 totals:
