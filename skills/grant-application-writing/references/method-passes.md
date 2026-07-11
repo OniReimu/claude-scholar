@@ -304,7 +304,9 @@ contribution↔budget-matrix integrity (the F.2↔H.1 reconciliation; no double-
 eligibility / co-contribution / matched-funding gates recomputed from the actual values,
 conditional-annex triggers (a fired `decision-tree`/`conditional-group` answer → its required
 attachment present), `stage_lock`/`submission_phase` ordering (no field edited where `locked_from`),
-and attachment rules (correct `structured-upload` sub-kind, filename pattern, page limit). Non-zero
+attachment rules (correct `structured-upload` sub-kind, filename pattern, page limit), and
+**criterion-readiness** (4.4 — each scored criterion's state computed from `rubric[].minimum_evidence`;
+a scored criterion with no backing evidence is a FAIL in submission mode, not a SKIP). Non-zero
 exit on any hard fail. The human-judgement items — panel-fit, verb-tier audit, sensitive-content —
 stay in the adversarial + cross-model reading; the gate does not adjudicate them.
 
