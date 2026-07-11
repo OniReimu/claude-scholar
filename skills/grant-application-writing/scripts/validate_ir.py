@@ -843,6 +843,50 @@ rows:
     assert any(e[1] == "PASS" and e[0].startswith("criterion-readiness[") for e in good), \
         "evidenced + written scored criterion must PASS (substantiated)"
 
+    # 11. partner-commitment-reconciliation — call the check directly (mirrors #10):
+    #     a fully-reconciled partner PASSes; a mismatched partner (letter cash 100k vs
+    #     budget line 120k) FAILs in submission, only WARNs in draft; an unverified partner
+    #     (cash line, no letter_commitment, no provenance) FAILs submission, WARNs draft.
+    def recon(partners, bdata, mode):
+        r = Report()
+        check_partner_commitment_reconciliation(r, scheme, {"partners": partners}, bdata, mode)
+        return r.entries
+
+    good_partner = {"id": "acme", "status": "committed", "provenance": "corpus/loi-acme.pdf",
+                    "contributions": {"cash": {"fy1": 100000}, "in_kind": {"fy1": 60000}},
+                    "letter_commitment": {"cash": {"value": 100000, "conditional": False},
+                                          "in_kind": {"value": 60000, "conditional": False}}}
+    good_budget = {"rows": [
+        {"funding_source": "co-contribution", "kind": "cash", "partner": "acme", "years": {2026: 100000}},
+        {"funding_source": "co-contribution", "kind": "in-kind", "partner": "acme", "years": {2026: 60000}}]}
+    assert any(e[1] == "PASS" and e[0].startswith("partner-commitment-reconciliation[")
+               for e in recon([good_partner], good_budget, "submission")), \
+        "fully-reconciled partner must PASS"
+
+    bad_partner = {"id": "beacon", "status": "committed", "provenance": "corpus/loi-beacon.pdf",
+                   "contributions": {"cash": {"fy1": 100000}},
+                   "letter_commitment": {"cash": {"value": 100000, "conditional": False}}}
+    bad_budget = {"rows": [
+        {"funding_source": "co-contribution", "kind": "cash", "partner": "beacon", "years": {2026: 120000}}]}
+    assert any(e[1] == "FAIL" and e[0].startswith("partner-commitment-reconciliation[")
+               for e in recon([bad_partner], bad_budget, "submission")), \
+        "letter cash 100k vs budget 120k must FAIL in submission mode"
+    drf_p = recon([bad_partner], bad_budget, "draft")
+    assert (any(e[1] == "WARN" for e in drf_p) and not any(e[1] == "FAIL" for e in drf_p)), \
+        "same mismatch only WARNs in draft mode"
+
+    unverified = {"id": "ghost", "contributions": {"cash": {"fy1": 50000}}}
+    assert any(e[1] == "FAIL" for e in recon([unverified], None, "submission")), \
+        "unverified partner (cash line, no letter, no provenance) must FAIL submission (fail-closed)"
+    assert not any(e[1] == "FAIL" for e in recon([unverified], None, "draft")), \
+        "unverified partner only WARNs in draft mode"
+
+    conditional_partner = {"id": "vega", "status": "committed", "provenance": "corpus/loi-vega.pdf",
+                           "contributions": {"cash": {"fy1": 80000}},
+                           "letter_commitment": {"cash": {"value": 80000, "conditional": True}}}
+    assert any(e[1] == "FAIL" for e in recon([conditional_partner], None, "submission")), \
+        "conditional commitment rendered as status=committed must FAIL submission"
+
     # full doctored orchestrate → non-zero exit
     doctored = _write(tmp, "bad_scheme.yaml", __import__("yaml").safe_dump(bs))
     assert orchestrate(doctored, values_ok, None, ent_p, budget, paste_bad) == 1, "doctored IR must exit 1"
