@@ -119,6 +119,7 @@ Each stage is specified in a `references/` file. Read the ones the task needs:
 - **`paper-self-review`** — the checklist idiom; Stage E adapts it for applications.
 - **`review-response`** — resubmissions: response-to-reviewers on a re-applied scheme.
 - **`knows-literature`** — pull publication metadata / citations for the evidence store.
+- **`fireworks-tech-graph`** / **`paper-figure-generator`** — render the project description's structural artefacts (architecture figure, pipeline diagram) as real figures, not ASCII (`modality-renderers.md` §0).
 - **`research-profile-evidence-base`** *(planned graduation of Stage B)* — the evidence store is reusable for CVs, biosketches, promotion cases, nominations; built as a module here, graduates to its own skill.
 
 ## Generality boundary
