@@ -202,6 +202,19 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
   titles; aims that only extend prior work flagged for reframing. (Cross-ref defensible-primacy
   §1.2, `author-voice.md` §5 scope-frame / §8.)
 
+### 2.11 state-of-the-art & significance (RUNS BEFORE §2.10 in reading order)
+> Numbered 2.11 to avoid renumbering, but it runs *before* §2.10 novelty-boundary: field-ground the
+> problem and the prior art FIRST, then §2.10 draws the done-vs-new line against that grounding.
+> §2.10 guards self-overlap and unsupported "first"; it does **not** ensure the project is
+> field-grounded or the problem important — that is this pass.
+- **Does:** confirm significance and innovation are *field-grounded from evidence*, not asserted. Four checks:
+  - **(i) independent current literature / prior-art coverage.** The state of the art is set by **external comparators**, not the applicant's own survey. Absent an independent current source, reuse §1.9 primacy's `[EXTERNAL COMPARATOR NEEDED]` marker (two-mode per §1.8 — resolved or lifted to `blockers.md` at submission, never shipped raw).
+  - **(ii) an explicit unresolved gap.** The project must target a *named* open problem the current SOTA leaves open — not a vague "more work is needed". No stated gap → flag; the significance has nowhere to land.
+  - **(iii) source-backed problem-significance.** Why the problem matters is carried by a **real, dated statistic** (`context_evidence[]`: `{claim, stat, source, as_of}`), per `author-voice.md` §5.1 costed-stake — a costed, sourced stake, **not** "an important problem" / "a critical challenge". An unsourced significance claim is a `[STAT — SOURCE]` marker, not prose.
+  - **(iv) distinguish comparator classes.** Tag each comparator by `kind` — **scholarly** work / **commercial** alternative / **standard** / the applicant's **own prior work**. **Own-work is NOT an external comparator** (that collapses into §2.10 self-overlap); a commercial product or a standard is not a scholarly baseline. Mixing the classes lets a self-citation masquerade as independent SOTA.
+- **In:** aims/significance/innovation × evidence-store `comparators[]` (`{ref, kind: scholarly|commercial|standard|own-work, provenance}`) and `context_evidence[]` (`{claim, stat, source, as_of}`). **Out:** significance + innovation both field-grounded (independent comparators cited by class, one named unresolved gap, a dated sourced significance stat); a literature-thin-but-coherent narrative flagged; unbacked significance/comparator claims marked `[EXTERNAL COMPARATOR NEEDED]` / `[STAT — SOURCE]`. (Cross-ref §1.9 primacy, §2.10 novelty-boundary, `author-voice.md` §5.1.)
+- **Example (fictional):** a proposal opens "reducing energy waste in edge inference is an important problem." This pass rejects (iii) — no costed stake — and requires a `context_evidence[]` entry: "edge-inference workloads consumed ~[X] TWh in [year] ([named report], as-of [date])". For (i)/(iv) it demands an *external* baseline: the applicant's own workshop paper is tagged `own-work` and does **not** discharge the comparator; a named commercial runtime and a peer-reviewed method are cited as `commercial` / `scholarly`. For (ii) it names the open problem the SOTA leaves — "no method holds accuracy above [threshold] under [regime]" — which §2.10 then tests the "new" claim against. Absent the external comparator, the SOTA claim ships an `[EXTERNAL COMPARATOR NEEDED]` marker to `blockers.md`, not raw prose.
+
 ---
 
 ## Group 3 — retroactive-impact passes (ADDED for `retroactive-impact`)
