@@ -120,7 +120,7 @@ Evaluate the quality and effectiveness of figures and tables:
 - Do all figures/tables have clear captions + labels (no in-figure title text)? <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 - Are figures consistent with `scientific-figure-making` style — colorblind-safe palette, font ≥ venue minimum, vector (PDF) export? <!-- policy:FIG.COLORBLIND_SAFE_PALETTE --> <!-- policy:FIG.FONT_GE_24PT --> <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
 - Does the system-overview / Figure 1 use a wide aspect ratio (≥ 2:1)? <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
-- Are captions self-contained (what, how, takeaway)? <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- Are captions self-contained — non-experiment figures cover what / how / intent, while experiment figures & tables carry only "what" (finding/takeaway goes to prose per `EXP.TAKEAWAY_BOX`, never the caption)? <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
 - Do tables use booktabs format? <!-- policy:TABLE.BOOKTABS_FORMAT -->
 - Do table headers include direction indicators (↑/↓)? <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - Are tables wrapped in `\resizebox` to fit the column width (or do they satisfy all natural-fit exemptions)? <!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->
