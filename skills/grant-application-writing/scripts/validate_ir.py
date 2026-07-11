@@ -6,7 +6,7 @@
 
 The single pre-submit gate for the cross-field couplings the docs acknowledged but no shipped
 script checked (Codex top-3 #3; Phase-2's F.2↔H.1↔matched "hardest thing to model"). Reads the
-`scheme.yaml` IR (+ optional values/evidence/entity/budget/paste-ready sidecars) and runs 10
+`scheme.yaml` IR (+ optional values/evidence/entity/budget/paste-ready sidecars) and runs 11
 checks, each emitting `[PASS]/[FAIL]/[SKIP]/[WARN] <located reason>`. It COMPOSES the siblings —
 budget math is delegated to `validate_budget.py`, char counting to `charcount.py` (subprocesses;
 their exit codes + output fold into this report), never reimplemented here.
