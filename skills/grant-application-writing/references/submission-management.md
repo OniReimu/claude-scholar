@@ -7,6 +7,8 @@
 >
 > - **A0 `compliance_matrix.yaml`** is built at intake, **before any drafting** — the rulebook.
 > - **F `submission_plan.yaml`** is built before submit — the execution tracker.
+> - **F+ `build-manifest.yaml`** is generated at the submit gate — the run-audit record + the one
+>   `ready_to_submit` verdict (`scripts/build_manifest.py`, see the Stage F+ section).
 >
 > `scheme.yaml` (Stage A) is **derived with** the compliance matrix, not before it: the matrix's
 > `limits`, `format_rules`, `phases`, and `submission_authority` populate `scheme.yaml`'s `submission:` head
