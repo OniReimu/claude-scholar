@@ -168,9 +168,18 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
   work, EITHER reframe them around the new hard problem (name the unsolved sub-questions), OR
   argue explicitly why the scale-up/integration is *itself* the novel research contribution (with
   the specific unsolved problems it raises). Never let a project read as "more of my published work".
-- **In:** aims/innovation × the applicant's own outputs (evidence-store). **Out:** a done-vs-new
-  boundary statement; aims that only extend prior work flagged for reframing. (Cross-ref
-  defensible-primacy §1.2, `author-voice.md` §5 scope-frame / §8.)
+- **Self-overlap check (do this literally).** Cross-check each "new" sub-problem against the
+  **titles and scope of the applicant's OWN outputs** in the evidence-store — not just an
+  assertion of novelty. If a prior output already names it (e.g. claiming "streaming-drift
+  unlearning" as new while the applicant has a published *"…Rollback for Streaming Unlearning"*),
+  the claim is self-contradicted: either reconcile (the prior paper is the *starting point*; the
+  new problem must be a genuinely harder object beyond it — name what is beyond it) or drop the
+  "new" framing. A "new problem" the applicant has already published is the fastest way a
+  specialist assessor kills the innovation score.
+- **In:** aims/innovation × the applicant's own outputs (evidence-store, titles + scope). **Out:** a
+  done-vs-new boundary statement, each "new" claim reconciled against the applicant's own output
+  titles; aims that only extend prior work flagged for reframing. (Cross-ref defensible-primacy
+  §1.2, `author-voice.md` §5 scope-frame / §8.)
 
 ---
 
