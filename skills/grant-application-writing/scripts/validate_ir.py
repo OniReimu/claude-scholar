@@ -683,6 +683,113 @@ def check_partner_commitment_reconciliation(rep, scheme, entity, bdata, mode):
             rep.add(f"partner-commitment-reconciliation[{pid}]", "WARN", "soft", reason)
 
 
+def check_process_dispatch(rep, scheme, mode):
+    """Second dispatch axis: the scheme's assessment-PROCESS shape must be a declared subset
+    of the closed archetype vocabulary and consistent with the stages/fields/rejoinder it
+    implies. Fail-closed: an unknown process tag is ALWAYS a hard FAIL; a missing `process`
+    on a scheme that carries a rubric is a parse gap (hard FAIL), not a silent default. A
+    scheme with no rubric and no process has nothing to route → SKIP.
+
+    Per recognised tag: `staged` requires a gating phase in `submission.phases` (FAIL in
+    submission / WARN in draft); `panel-routed` requires a taxonomy-code/classification
+    routing field (WARN if absent or set at low confidence — a routing gap); `interview-gated`
+    expects a defense-prep deliverable (WARN if absent); a top-level `rejoinder.enabled`
+    capability must ride on `single-stage-review` (WARN if not).
+    """
+    proc = scheme.get("process")
+    tags = proc if isinstance(proc, list) else ([proc] if proc else [])
+    has_rubric = bool(scheme.get("rubric"))
+
+    if not tags:
+        if has_rubric:
+            rep.add("process-dispatch", "FAIL", "hard",
+                    "scheme carries a rubric but declares no `process` — a missing assessment "
+                    "process is a parse gap, not a default (fail-closed)")
+        else:
+            rep.add("process-dispatch", "SKIP", "hard",
+                    "scheme declares no `process` and no rubric — nothing to route")
+        return
+
+    unknown = [t for t in tags if t not in PROCESS_VOCAB]
+    known = [t for t in tags if t in PROCESS_VOCAB]
+    if unknown:
+        rep.add("process-dispatch", "FAIL", "hard",
+                f"unknown process tag(s) {unknown} — not in closed vocab "
+                f"{sorted(PROCESS_VOCAB)} (fail-closed)")
+    if not known:
+        return
+    if not unknown:
+        rep.add("process-dispatch", "PASS", "hard", f"process {known} ⊆ closed vocab")
+
+    # staged ⇒ a gating EOI/pre-proposal/minimum-data phase must precede the full
+    if "staged" in known:
+        phases = (scheme.get("submission") or {}).get("phases") or []
+        gating = sorted(set(phases) & STAGED_GATING_PHASES)
+        if gating:
+            rep.add("process-dispatch[staged]", "PASS", "hard",
+                    f"staged process wires to gating phase {gating}")
+        else:
+            reason = (f"staged process but submission.phases {phases} contains no gating phase "
+                      f"{sorted(STAGED_GATING_PHASES)} — no EOI/pre-proposal sub-pipeline to gate")
+            if mode == "submission":
+                rep.add("process-dispatch[staged]", "FAIL", "hard",
+                        reason + " (fail-closed, submission mode)")
+            else:
+                rep.add("process-dispatch[staged]", "WARN", "soft", reason)
+
+    # panel-routed ⇒ the routing taxonomy/classification field is gate-critical
+    if "panel-routed" in known:
+        routing = [f for f in iter_field_nodes(scheme.get("sections"))
+                   if f.get("widget") == "taxonomy-code" or "classification" in roles_of(f)]
+        low = [fid(f) for f in routing
+               if str(f.get("confidence", "")).lower() in ("low", "none", "unset", "guess")
+               or f.get("low_confidence")]
+        if not routing:
+            rep.add("process-dispatch[panel-routed]", "WARN", "soft",
+                    "panel-routed process but no taxonomy-code/classification field present — "
+                    "routing gap (a wrong/absent code silently routes to the wrong panel)")
+        elif low:
+            rep.add("process-dispatch[panel-routed]", "WARN", "soft",
+                    f"panel-routed routing field(s) {low} set at low/unset confidence — verify "
+                    f"the code routes to the intended panel before submission")
+        else:
+            rep.add("process-dispatch[panel-routed]", "PASS", "hard",
+                    f"panel-routed process has routing field(s) {[fid(f) for f in routing]}")
+
+    # rejoinder is a within-round right-of-reply capability — belongs to single-stage-review
+    rej = scheme.get("rejoinder")
+    if isinstance(rej, dict) and rej.get("enabled"):
+        if "single-stage-review" in known:
+            rep.add("process-dispatch[rejoinder]", "PASS", "hard",
+                    "rejoinder.enabled rides on single-stage-review")
+        else:
+            rep.add("process-dispatch[rejoinder]", "WARN", "soft",
+                    f"rejoinder.enabled but process {known} has no single-stage-review — a "
+                    f"within-round right-of-reply belongs to a single-stage review")
+
+    # interview-gated ⇒ a defense-prep deliverable (attachment or field) is expected
+    if "interview-gated" in known:
+        found = None
+        for a in (scheme.get("attachments") or []):
+            name = a.get("name") if isinstance(a, dict) else a
+            if name and any(w in str(name).lower() for w in INTERVIEW_MARKERS):
+                found = name
+                break
+        if not found:
+            for f in iter_field_nodes(scheme.get("sections")):
+                label = f"{f.get('id', '')} {f.get('label', '')}".lower()
+                if any(w in label for w in INTERVIEW_MARKERS):
+                    found = fid(f)
+                    break
+        if found:
+            rep.add("process-dispatch[interview-gated]", "PASS", "hard",
+                    f"interview-gated process has a defense-prep deliverable ({found})")
+        else:
+            rep.add("process-dispatch[interview-gated]", "WARN", "soft",
+                    "interview-gated process but no interview/defense deliverable (attachment or "
+                    "field) — a defense-prep artifact is expected (soft)")
+
+
 # ── orchestration ────────────────────────────────────────────────────────────
 def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=None,
                 budget_path=None, paste_ready=None, mode="draft"):
