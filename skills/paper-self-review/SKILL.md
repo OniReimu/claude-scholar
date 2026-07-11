@@ -120,6 +120,10 @@ Evaluate the quality and effectiveness of figures and tables:
 - Do all figures/tables have clear captions + labels (no in-figure title text)? <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 - Are figures consistent with `scientific-figure-making` style — colorblind-safe palette, font ≥ venue minimum, vector (PDF) export? <!-- policy:FIG.COLORBLIND_SAFE_PALETTE --> <!-- policy:FIG.FONT_GE_24PT --> <!-- policy:FIG.VECTOR_FORMAT_REQUIRED -->
 - Does the system-overview / Figure 1 use a wide aspect ratio (≥ 2:1)? (owned by `paper-figure-generator`; guideline only outside it) <!-- policy:FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 -->
+- Do figures default to single column — is any full-width (`figure*`) figure (esp. system overview) actually dense enough to need `\textwidth`, or would a single column fit (demerit if so)? <!-- policy:FIG.COLUMN_WIDTH_JUSTIFICATION -->
+- Do experiment subfigures avoid a lone subfigure on any row — 2 side-by-side (1×2) or a 4+ grid (2×2+)? <!-- policy:FIG.EXPERIMENT_SUBFIGURE_LAYOUT -->
+- Do heatmaps with long row/col names abbreviate in-figure, define full names in the caption, and stay single-column? <!-- policy:FIG.HEATMAP_LABEL_ABBREVIATION -->
+- If a research-gap teaser figure exists, is it single-column, placed before the system overview, and warranted (gap hard to convey in words)? Not every paper needs one. <!-- policy:FIG.RESEARCH_GAP_TEASER -->
 - Are captions self-contained — non-experiment figures cover what / how / intent, while experiment figures & tables carry only "what" (finding/takeaway goes to prose per `EXP.TAKEAWAY_BOX`, never the caption)? <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
 - Do tables use booktabs format? <!-- policy:TABLE.BOOKTABS_FORMAT -->
 - Do table headers include direction indicators (↑/↓)? <!-- policy:TABLE.DIRECTION_INDICATORS -->
