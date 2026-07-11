@@ -683,6 +683,13 @@ and third-party attestations, scored first-class.
     contradiction a panel reading both catches.
   - **(c) PROVENANCE.** every `status: committed` item carries a non-empty `provenance` pointing to
     the host statement (or its source) — a committed figure with no attestation is **unproven**.
+  - **(d) CAPACITY-CONVERSION.** reconciling the dollars is not enough — convert each support item into
+    the **research capacity it buys**: `teaching-relief` / `salary-cover` / a `continuing-position`
+    become **protected research time + execution capacity** (from `protected_capacity`, Agent B), not a
+    bare line-item value. And check the **host-strategy↔candidate↔project triangle** is stated — the
+    host's strategic reason to back *this* candidate on *this* project — so the support reads as a
+    deliberate investment, not a generic top-up. This is the §4.5 semantic (framing) half; the $
+    couplings (a)/(b) stay the mechanized BLOCK conditions.
 - **Submission mode:** a **total mismatch** (a) or (b) > 1%, **or** a **`committed` item with no
   `provenance`**, is a **BLOCK**. **Draft mode → WARN + a `blockers.md` entry** per finding,
   consistent with markers-two-mode §1.8.
