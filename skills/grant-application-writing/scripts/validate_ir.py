@@ -704,10 +704,28 @@ rows:
     # 9. char roll-up — over-limit paste-ready (delegates to charcount.py)
     r9 = Report(); check_char_rollup(r9, paste_bad)
     assert any(e[1] == "FAIL" for e in r9.entries), "over-limit char roll-up FAIL"
+    # 10. criterion-readiness — a scored criterion with NO backing evidence/content:
+    #     submission mode FAILs it (the key fix), draft mode only WARNs; evidenced → PASS.
+    def readiness(sch, vals, ev, mode):
+        r = Report(); check_criterion_readiness(r, sch, vals, ev, mode); return r.entries
+    sub = readiness(scheme, {}, {}, "submission")
+    assert any(e[1] == "FAIL" and e[0].startswith("criterion-readiness[") for e in sub), \
+        "unevidenced scored criterion must FAIL in submission mode"
+    drf = readiness(scheme, {}, {}, "draft")
+    assert (any(e[1] == "WARN" and e[0].startswith("criterion-readiness[") for e in drf)
+            and not any(e[1] == "FAIL" for e in drf)), "same criterion only WARNs in draft mode"
+    good = readiness(scheme, {"n1": "Prior work backs this."}, _evidence(), "submission")
+    assert any(e[1] == "PASS" and e[0].startswith("criterion-readiness[") for e in good), \
+        "evidenced + written scored criterion must PASS (substantiated)"
 
     # full doctored orchestrate → non-zero exit
     doctored = _write(tmp, "bad_scheme.yaml", __import__("yaml").safe_dump(bs))
     assert orchestrate(doctored, values_ok, None, ent_p, budget, paste_bad) == 1, "doctored IR must exit 1"
+    # readiness gate end-to-end: clean scheme, unevidenced C1 → submission FAILs, draft passes
+    assert orchestrate(scheme_p, values_ok, None, ent_p, budget, paste_ok, mode="submission") == 1, \
+        "unevidenced scored criterion must fail submission-mode orchestrate"
+    assert orchestrate(scheme_p, values_ok, None, ent_p, budget, paste_ok, mode="draft") == 0, \
+        "same IR passes (WARN only) in draft mode"
 
     print("\nself-test OK")
     return 0
