@@ -475,6 +475,25 @@ partners:
     approvals: [{type: "signed Letter of Support", status: obtained, as_of: 2026-06-25}]
     # contributions feed the contribution-matrix + matched-funding `computed` gate;
     # letter_commitment is reconciled against them by §2.13 / validate_ir partner-commitment-reconciliation.
+
+collaborators:                          # specialist reach WITHOUT displacing applicant ownership (§10.2 independence-plus-network)
+  - id: collab-1
+    name: "Dana Q. Specialist"
+    organization: "ACME University"
+    prior_relationship: "co-authored one workshop paper two years ago"
+    task_expertise: "formal-verification techniques for the backpressure controller in out-2"
+    engagement_mode: method-consult      # advisory | data-access | co-supervision | method-consult | letter-only
+    applicant_independence: "applicant designs and leads the ingestion architecture and all WP2 evaluation independently"
+    provenance: "corpus/collab-letter.pdf"
+
+mentors:                                # differentiated by COMPETENCY GAP, not eminence (§10.3 mentor-by-competency-gap)
+  - id: mentor-1
+    name: "Robin Q. Mentor"
+    organization: "Northbridge University"
+    competency: "industry-translation and impact pathways — a gap in the applicant's academic-only record"
+    function: "quarterly review of the benefits-realisation plan and partner-facing translation coaching"
+    prior_relationship: null
+    provenance: "corpus/mentor-statement.pdf"
 ```
 
 Same hardening applies: partner contributions carry `status` (committed vs indicative),
