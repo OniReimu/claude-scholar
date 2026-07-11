@@ -226,6 +226,29 @@ context_evidence:
     source: "<citable source>"
     as_of: "<YYYY-MM>"
 
+# ─── Outputs context — ROPE FIELD-CALIBRATION (narrative-award mode only; inert otherwise) ───
+# Teaches a mixed generalist+specialist panel the field's esteem terms so the drafting layer RENDERS them, never improvises.
+# Completeness: every career_best id MUST appear in >=1 clusters[].outputs; a cluster primacy with no attributor is statable but NOT a superlative.
+# Feeds method-passes.md §1.10 (field-calibration) + §1.5 (authorship decode) + author-voice.md §10; validated by validate_ir outputs-context-completeness.
+outputs_context:
+  field_norms:
+    venue_tiers:                                 # every venue → tier + PLAIN-LANGUAGE rank (gloss for a generalist assessor)
+      - {venue: "<Flagship Conf>", tier: "<CORE A* | JCR Q1 | ...>", plain_rank: "<top-3 venue in the field>"}
+      - {venue: "<Field Journal>", tier: "<JCR Q1>",                 plain_rank: "<leading journal in the subfield>"}
+    authorship_convention:                       # DECODE what author position MEANS in THIS subfield (bounded credit, NOT a role upgrade) — defuses "why not first author?"
+      - pattern: "<e.g. last/second author on a co-supervised student paper>"
+        meaning: "<what that position means here — e.g. candidate supplied idea + design + writing; first author ran experiments>"
+        applies_to: [<output ids the convention applies to>]
+    ranking_attributor:                          # sourced-eminence via an external ranking SERVICE (the service IS the attributor, not a self-assertion)
+      {claim: "<ranked Nth in the field in <country>>", service: "<a ranking service>", as_of: "<YYYY-MM-DD>"}
+  clusters:                                      # group outputs into ~3-5 NAMED research threads
+    - {thread: "<named research direction>", outputs: [<output ids>], venues: ["<venue>"],
+       primacy: {claim: "<milestone / first in a tightly-scoped area>", attributor: <evidence id | null>}}   # null ⇒ statable, NOT as a superlative
+  career_best:
+    label_scheme: {best: "[*]", journal: "[J*]", conference: "[C*]"}   # stable ids linking the listing ↔ the context narrative
+    ids: [<output ids flagged career-best>]      # every id here MUST appear in >=1 clusters[].outputs (completeness discipline)
+  contribution_summary: {significant_conceptual: "<M of N papers>", basis: "<how counted>"}   # bounded credit, not "all mine"
+
 # ─── Governance blocks (store-level) — conflict resolution, refresh, audit, absence ───
 source_precedence:                               # conflict-resolution ordering (high → low)
   default: [official-record, orcid, scopus, scholar, self-reported]
