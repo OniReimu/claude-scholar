@@ -275,6 +275,49 @@ for tag in $all_markers; do
 done
 pass "Integration markers checked"
 
+# ─── 8b. Deprecated-Rule Citation Acknowledgment ────────────────────────────
+# When a rule card carries `deprecated_by:`, every skill/command that cites it
+# via `<!-- policy:ID -->` should carry an inline note pointing at the successor
+# (otherwise a quick-ref table keeps asserting a stale value — e.g. the fixed
+# 24pt font floor). This is a WARNING, not a failure: some deprecated rules are
+# legitimately retained as writing guidance (e.g. FIG.SELF_CONTAINED_CAPTION),
+# so a maintainer confirms each flagged line rather than CI blocking on it.
+section "8b. Deprecated-Rule Citation Acknowledgment"
+
+# Collect deprecated rule IDs (frontmatter carries `deprecated_by:`)
+deprecated_ids=""
+for f in "${RULE_CARDS[@]}"; do
+  if get_fm "$f" | grep -q "^deprecated_by:"; then
+    did=$(get_fm "$f" | awk '/^id: /{print $2; exit}')
+    deprecated_ids="$deprecated_ids $did"
+  fi
+done
+
+# Acknowledgment keywords: same citing line must mention the successor / status
+ACK_RE='[Dd]eprecated|弃用|退役|接管|自适应|scientific-figure-making|paper-figure-generator|writing-convention|successor|交给|详见'
+
+dep_flagged=0
+for id in $deprecated_ids; do
+  while IFS= read -r hit; do
+    [[ -z "$hit" ]] && continue
+    # hit format: path:lineno:content
+    linetext="${hit#*:}"; linetext="${linetext#*:}"
+    if ! echo "$linetext" | grep -Eq "$ACK_RE"; then
+      rel="${hit#$PROJECT_DIR/}"
+      warn "Deprecated rule $id cited without a successor note → ${rel%%:*}:$(echo "$rel" | cut -d: -f2)"
+      ((dep_flagged++)) || true
+    fi
+  done < <(grep -rn "policy:$id" "$PROJECT_DIR/skills/" "$PROJECT_DIR/commands/" 2>/dev/null || true)
+done
+
+if [[ -z "$deprecated_ids" ]]; then
+  pass "No deprecated rules to check"
+elif [[ $dep_flagged -eq 0 ]]; then
+  pass "All deprecated-rule citations carry a successor note"
+else
+  echo -e "  ${YELLOW}$dep_flagged deprecated-rule citation(s) need a review — add an inline successor note or confirm the guidance use is intended${NC}"
+fi
+
 # ─── 9. Orphan Rules (L1: markers, L2: entry skills) ────────────────────────
 section "9. Orphan Rule Detection"
 
