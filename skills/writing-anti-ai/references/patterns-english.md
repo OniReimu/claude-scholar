@@ -148,7 +148,7 @@
 
 AI heavily overuses em-dashes (`---` in LaTeX, `—` in Unicode) as parenthetical insertions. In academic writing this is one of the strongest AI signals. Human writers prefer: (1) starting a new sentence, (2) using a relative clause (`, which...`), or (3) using parenthetical commas.
 
-**Detection rule**: If a paragraph contains ≥ 2 em-dashes, it is almost certainly AI-generated. Even 1 em-dash per paragraph is above typical human frequency in academic prose.
+**Detection rule**: If a paragraph contains ≥ 2 em-dashes, it is almost certainly AI-generated. Even 1 em-dash per paragraph is above typical human frequency in academic prose. **Removal target is zero** — eliminate every em-dash regardless of count (policy `PROSE.EM_DASH_RESTRICTION`, `max_per_paragraph: 0`).
 
 **Example 1 — Parenthetical insertion (most common AI pattern):**
 
