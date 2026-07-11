@@ -272,6 +272,7 @@ def run(data):
     results += check_matched(data.get("matched_funding_min_ratio"), requested, cocon)
     results += check_credits(rows)
     results += check_phase(rows, data.get("phased_if_min"), requested)
+    results += check_balance(rows, data.get("balance_check"))
     results += check_declared(rows, data.get("declared_totals"), total, requested, total_cash)
     if data.get("cash_flow_check"):
         results += check_cash_flow(rows, data.get("cash_in") or {})
