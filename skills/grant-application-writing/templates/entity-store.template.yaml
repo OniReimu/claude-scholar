@@ -35,6 +35,19 @@ organizations:
     role: <administering-org | collaborating-org>
     approvals:
       - {kind: <authorised-officer-signoff | eligibility-attestation>, status: <pending | obtained>, date: "<YYYY-MM-DD>"}
+    # ── institutional_support: the HOST-INSTITUTION STATEMENT's committed co-investment (3rd-party attestation; analog to partner contributions) ──
+    # Only on the administering / lead org. Hardened like partner contributions (status + provenance).
+    # Reconciled by method-passes.md §4.5 / validate_ir institutional-support-reconciliation — omit on participating orgs.
+    institutional_support:
+      items:                                     # each committed line — a non-cash line (teaching-relief) may carry value: null + basis
+        - {kind: establishment-grant, value: <NNNNN>, currency: "<CUR>", status: <committed | indicative>, provenance: "<host-statement path>"}
+        - {kind: stipend-topup,       value: <NNNNN>, currency: "<CUR>", status: <committed | indicative>, provenance: "<host-statement path>"}
+        - {kind: salary-shortfall,    value: <NNNNN>, currency: "<CUR>", status: <committed | indicative>, provenance: "<host-statement path>"}
+        - {kind: teaching-relief,     value: <NNNNN | null>, basis: "<e.g. reduced load funded from salary savings>", status: committed, provenance: "<host-statement path>"}
+      total: {value: <NNNNN>, currency: "<CUR>"}   # the statement's STATED total — kept SEPARATE from sum(items) so a mismatch is VISIBLE (mirror partner letter_commitment)
+      strategic_fit: "<why the org recruited the candidate; where the project finds a home>"
+      continuing_offer: "<continuing position on success — or null>"
+      statement_provenance: "<host-institution statement path>"
     provenance: "<source record>"
 
 # ─── Partner organizations (industry / non-admin partners with contributions) ───
