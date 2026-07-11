@@ -31,7 +31,7 @@ eligibility:                                 # hard pass/fail — resolve BEFORE
     derived: "phd_date + interruptions vs cutoff"   # → scheme.yaml computed eligibility-gate
     check: unresolved                        # unresolved | pass | fail | n/a
   - id: elig.employment
-    rule: "Continuing/fixed-term UTS staff, ≥0.5 FTE at nomination"
+    rule: "Continuing/fixed-term staff at the administering org, ≥0.5 FTE at nomination"
     binding: hard
     check: unresolved
 
