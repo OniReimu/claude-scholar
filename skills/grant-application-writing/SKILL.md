@@ -133,6 +133,9 @@ E   review: checklist-driven contract        eligibility·compliance·evidence·
                                              pre-submit dry-run; composes charcount + validate_budget,
                                              enforces cross-field couplings). Judgement items stay adversarial.
 F   submission_plan.yaml                      owners, due dates, internal cutoffs, approvals, dependency graph
+F+  build-manifest.yaml                       run-audit: input hashes + artifacts + the validate_ir verdict +
+                                             per-criterion readiness + open blockers → ONE fail-closed `ready_to_submit`
+                                             boolean. `scripts/build_manifest.py` composes validate_ir; reproducible, not hand-authored.
 ```
 
 Each stage is specified in a `references/` file. Read the ones the task needs:
