@@ -212,7 +212,7 @@ Associate Dean; the Discovery Profile link must be refreshed; portal is Symplect
 with a ~20-min session timeout and a hard deadline.
 
 ```yaml
-scheme: "UTS ECR Award 2026"
+scheme: "Example ECR Award (2026 round)"
 funder_deadline: 2026-03-01T17:00+11:00
 internal_deadline: 2026-02-23T17:00+11:00
 portal: "Symplectic Elements"
