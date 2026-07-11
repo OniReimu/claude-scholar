@@ -780,8 +780,8 @@ Follow the Algorithm Presentation Pattern from `references/knowledge/structure.m
 Pseudocode guidelines:
 - Use `\begin{algorithm}[t]` with `\caption{}` and `\label{alg:name}`
 - Number lines with `\algorithmic[1]` for easy reference in text
-- Keep pseudocode at the right abstraction level — highlight what is **novel**, abstract away standard operations (e.g., "Train with SGD" not 10 lines of gradient update)
-- Use consistent notation: match variable names between math formulation, pseudocode, and prose
+- Keep pseudocode at the right abstraction level — highlight what is **novel**, abstract away standard operations (e.g., "Train with SGD" not 10 lines of gradient update) <!-- policy:PROSE.PSEUDOCODE_ABSTRACTION -->
+- Use consistent notation: once math notation is established, the pseudocode must reuse those symbols (`θ ← θ − η∇L(θ)`, not verbose prose steps), not restate operations in natural language <!-- policy:PROSE.PSEUDOCODE_ABSTRACTION -->
 - If the algorithm is short (< 5 lines), inline description may suffice; reserve `Algorithm` floats for procedures with ≥ 5 steps or non-obvious control flow
 - For crypto-oriented security papers, present the core protocol as a structured construction (e.g., `Construction 1`) with explicit `Primitives`, `Parameters`, and named procedures (`Setup/Commit/Verify` or equivalent) <!-- policy:PROSE.CRYPTO_CONSTRUCTION_TEMPLATE -->
 
