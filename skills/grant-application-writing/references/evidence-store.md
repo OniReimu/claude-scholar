@@ -439,7 +439,11 @@ organizations:
         - {kind: salary-shortfall,    value: 90000,  currency: AUD, status: committed, provenance: "corpus/host-statement.pdf"}
         - {kind: teaching-relief,     value: null, basis: "reduced teaching load funded from salary savings", status: committed, provenance: "corpus/host-statement.pdf"}
       total: {value: 300000, currency: AUD}   # the statement's STATED total — kept SEPARATE from sum(items) so a mismatch is VISIBLE (mirror partner letter_commitment vs contributions)
-      strategic_fit: "recruited to accelerate the institution's data-systems priority; project finds a home at the host research centre"
+      protected_capacity:                 # capacity-conversion: relief/coverage → protected research time + execution capacity, not just $
+        teaching_relief_to_research_days: 60   # teaching-relief converted to ~60 protected research days/yr; null if unquantified
+        continuing_position: true              # a continuing (not fixed-term) position on success → sustained execution capacity
+        note: "salary-shortfall cover + teaching relief free ~60 days/yr for project execution"
+      strategic_fit: "host-strategy ↔ candidate ↔ project: the org's data-systems priority ↔ the candidate recruited to accelerate it ↔ the project delivers its ingestion-latency milestone; project finds a home at the host research centre"
       continuing_offer: "continuing position on success"   # or null
       statement_provenance: "corpus/host-statement.pdf"
 
