@@ -160,6 +160,98 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
   - **(d) complementarity / synergy.** Confirm the composition *covers every aim* (no aim unstaffed) with *no redundant duplication* (two senior CIs on one narrow aim while another is uncovered). The team's shape must map onto the aim set.
 - **In:** evidence-store `investigators[]` (person-indexed), aims/WP ids, entity-store. **Out:** a per-CI capability × ROPE × availability matrix + a team-composition verdict (every aim staffed by a CI whose own record and FTE support it; no unstaffed aim, no redundant pooling); gaps named and staffed or justified. (Cross-ref `number-defensibility` §1.4, `role/credit discipline` §1.5.)
 
+### 2.12 partnership-authenticity (RUNS BEFORE §2.8 — feeds the budget)
+> Numbered 2.12 to avoid renumbering, but it runs *before* §2.8 budget-math and §2.13:
+> establish whether the partnership is REAL before its cash/in-kind figures enter the
+> `contribution-matrix`. `author-voice.md` §5.2 WRITES the partner as "cash + in-kind, co-design,
+> not fee-for-service"; this pass CHECKS that claim survives evidence — a rhetorical framing is
+> not a verified relationship.
+- **Does:** distinguish a **genuine co-design partnership** from **fee-for-service** or
+  **letterhead-only** support, reading the evidence-store `partners[]` fields (`legal_entity`,
+  `letter_commitment`, `contributions.cash|in_kind` — Agent B). Authenticity is graded from what
+  the partner actually commits, not from how warmly the letter is worded.
+- **Authenticity signals (evidence-backed, each raises authenticity):** partner commits **both
+  cash and in-kind**; **named personnel with FTE**; platform / data / customer / site access; IP
+  co-ownership or explicit background-IP terms; a prior working relationship; a **partner-specific
+  (not boilerplate) letter**; and each contribution **tied to a specific aim/WP** rather than to
+  the project in general.
+- **Red flags (each lowers authenticity → surfaced):** a generic support letter (interchangeable
+  across applicants); **in-kind ONLY** with no cash and no named resource; vague "will provide
+  feedback / guidance" with no deliverable; no named contact; a contribution **not mapped to any
+  aim/WP**; a commitment **conditional on a future decision** ("subject to board approval") stated
+  as if already committed (reconciled hard in §2.13 against `letter_commitment.conditional`).
+- **Fee-for-service tell.** The partner **pays the team to do work FOR the partner**
+  (one-directional, deliverable-for-fee) rather than **co-investing in a shared research risk**.
+  This is a legitimate relationship — but dressing it in co-design language is a
+  **misrepresentation risk**: flag it, and either rewrite the claim to what it is or evidence the
+  genuine co-investment.
+- **Submission mode:** a partner asserted as *co-investing / cash partner* with **no evidenced
+  cash or in-kind commitment** — `contributions` status ≠ `committed`, or no `provenance`, or no
+  `letter_commitment` at all — is a **BLOCK**. **Draft mode → WARN + a `blockers.md` entry**
+  ("evidence the partner's commitment before submit"), consistent with markers-two-mode §1.8.
+- **In:** evidence-store `partners[]` (`legal_entity`, `letter_commitment`,
+  `contributions.cash|in_kind`), aims/WP ids. **Out:** a per-partner authenticity grade
+  (co-design / fee-for-service / letterhead-only) with the signals and red flags that set it;
+  fee-for-service-dressed-as-co-design flagged as a misrepresentation risk; an unevidenced cash
+  partner blocked (submission) or lifted to `blockers.md` (draft). (Cross-ref `author-voice.md`
+  §5.2; the figures this grades are reconciled in §2.13.)
+- **Example (fictional):** *ACME Analytics Pty Ltd* is written as a "co-design cash partner". This
+  pass reads `partners[]`: `contributions.cash` is empty and the only in-kind line is "will
+  provide feedback", the letter is boilerplate, no personnel are named, and the contribution maps
+  to no aim — three red flags, no cash, no named resource. Graded **letterhead-only**; in
+  submission mode the co-investing claim is a **BLOCK**, and in draft it becomes a `blockers.md`
+  entry rather than shipped prose. A second partner, *BorealGrid Pty Ltd*, commits $80k cash + a
+  named 0.2-FTE engineer against WP2 with a partner-specific letter → graded **co-design**, its
+  figures passed to §2.8 and §2.13.
+
+### 2.13 partner-commitment reconciliation (semantic layer; mechanized by validate_ir.py)
+> Runs after §2.12 has graded the partnership real. §2.12 asks *is the partnership authentic*;
+> this pass asks *does the LETTER match the APPLICATION BODY* — a distinct, self-consistency check.
+> Keep them separate: a genuine partner (passes §2.12) can still have a letter whose figure,
+> role, or personnel contradict the budget and narrative (fails §2.13).
+- **Does:** for each `partners[]` entry, reconcile the **support letter** (`letter_commitment` —
+  Agent B, the source of truth for what the letter literally states) against the **application
+  body** — the `contribution-matrix` / `budget-matrix` line, the narrative figure, and the claimed
+  role in the team/entity model. Four couplings, each a finding on mismatch:
+  - **(a) FIGURE.** `letter_commitment.cash` / `.in_kind` must equal the `contribution-matrix`
+    line **and** the figure stated in the narrative. A letter that pledges $100k against a budget
+    line of $120k is a contradiction a reviewer reading both documents catches.
+  - **(b) ROLE.** `letter_commitment.role_stated` (advisory vs co-investigator vs data-provider)
+    must equal the role claimed for that partner in the team / entity model. A letter offering
+    "advisory input" cannot back a "co-investigator" claim in the body.
+  - **(c) PERSONNEL.** every person named in `letter_commitment.personnel` as committed must
+    appear in the team table; a person the letter commits but the application never lists (or vice
+    versa) is a gap.
+  - **(d) CONDITIONALITY.** a commitment the letter makes **conditional**
+    (`letter_commitment.conditional: true`, "subject to…") must **NOT** be rendered as
+    unconditional `committed` in the body — the application may only claim what the letter
+    unconditionally gives.
+- **Submission mode:** any **amount or role mismatch on a scored budget** — (a) or (b) against a
+  `contribution-matrix` line the panel scores — is a **BLOCK**; a conditional-rendered-as-committed
+  (d) is likewise a **BLOCK**. **Draft mode → WARN + a `blockers.md` entry** per mismatch.
+  Fail-closed: a partner carrying a cash line but **no `letter_commitment` and no `provenance`** is
+  **UNVERIFIED → BLOCK in submission** (there is no letter to reconcile against).
+- **Mechanized by `validate_ir.py`.** This pass is the semantic layer; its arithmetic counterpart
+  is the `partner-commitment-reconciliation` check in `scripts/validate_ir.py` (Agent C, added to
+  `--self-test`), which recomputes (a)/(d) mechanically across `contributions.cash|in_kind`, the
+  matching `budget-matrix` line, and `letter_commitment` — **FAIL in submission, WARN in draft**,
+  non-zero exit on any hard mismatch. The mechanical check owns the numbers; this pass owns the
+  role/personnel/framing judgement the numbers cannot self-check. (Cross-ref §2.12
+  partnership-authenticity, §2.8 budget-math, `criterion-readiness` §4.4.)
+- **In:** evidence-store `partners[]` (`letter_commitment`, `contributions.cash|in_kind`, claimed
+  role), `contribution-matrix` / `budget-matrix`, team table, narrative figures. **Out:** a
+  per-partner reconciliation verdict (figure ∧ role ∧ personnel ∧ conditionality) with every
+  mismatch named to its source; scored-budget amount/role mismatches blocked (submission) or lifted
+  to `blockers.md` (draft); an unletter'd cash partner blocked as UNVERIFIED.
+- **Example (fictional):** *BorealGrid Pty Ltd*'s `letter_commitment.cash` is $80k, conditional
+  `false`, `role_stated: "data-provider"`, `personnel: ["<named contact>"]`. The application body,
+  however, lists $95k on the `contribution-matrix` line, claims BorealGrid as a **co-investigator**,
+  and its narrative names a second engineer not in the letter. This pass returns **three findings**
+  — (a) $80k ≠ $95k on a scored line, (b) data-provider ≠ co-investigator, (c) the extra engineer
+  is uncommitted — each a **BLOCK in submission mode**; `validate_ir.py`'s
+  `partner-commitment-reconciliation` catches (a) mechanically (exit 1), and this pass owns (b)/(c).
+  In draft mode the same three become `blockers.md` entries, not shipped prose.
+
 ### 2.8 budget-math validation
 - **Does:** mechanically validate the `budget-matrix` / `contribution-matrix` arithmetic and every scheme rule: **per-row caps with an explicit denominator** (`of: total | total-cash | requested` — e.g. audit/overseas ≤ 10% of total *cash*, excludes in-kind), **matched-funding ratio ≥ threshold**, **phased-budget gating** (per-phase totals), **credit-vs-cash separation** (credit-request lines respect `counts_toward_total`), and **opt-in cumulative cash-flow liquidity** (`cash_flow_check`: per-FY cumulative spend ≤ cumulative cash-in).
 - **In:** budget/contribution matrices, `computed` ratio gates. **Out:** pass/fail per rule with the offending cell + amount; blocks submission on a hard cap breach.
