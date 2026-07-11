@@ -290,7 +290,9 @@ Five registers:
   every `career_best.ids` entry MUST appear in ≥1 `clusters[].outputs`** (a career-best output
   with no thread and no tier is an unplaced claim). `contribution_summary` states bounded
   credit across the corpus (*"significant conceptual contribution on M of N papers"* + how
-  counted), never "all of it is mine".
+  counted), never "all of it is mine". `contribution_summary.denominator` (`{high_tier: M, all: N}`)
+  renders the **denominator rule** (§1.10): a strength is stated as *high-tier out of ALL outputs*
+  (`M of N`), never a bare count — the denominator is what makes the fraction defensible.
 
 Consumed by the **outputs-context / field-calibration pass (`method-passes.md` §1.10)** and
 rendered by `author-voice.md` §10. `validate_ir.py` `outputs-context-completeness` enforces the

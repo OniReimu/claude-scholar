@@ -1088,8 +1088,11 @@ def check_outputs_context_completeness(rep, scheme, evidence, mode):
     mode == narrative-award AND an evidence-store `outputs_context` block (else a labelled
     SKIP). Each `career_best.ids` entry must appear in ≥1 `clusters[].outputs`; each cluster
     carrying a non-empty `primacy.claim` must carry a non-empty `primacy.attributor` (else the
-    superlative is unsourced). A missing cluster placement (per output) or an unsourced primacy
-    (per cluster) is a hard FAIL in `submission`, a WARN in `draft`. Fail-closed.
+    superlative is unsourced). Every `clusters[].outputs` id and `career_best.ids` entry must
+    resolve to EXACTLY ONE `publications[].id` in the evidence store — a dangling (no match) or
+    duplicated (>1 match) id is fail-closed. A missing cluster placement (per output), an
+    unsourced primacy (per cluster), or an unresolved output id is a hard FAIL in `submission`, a
+    WARN in `draft`. Fail-closed.
     """
     if scheme.get("mode") != "narrative-award":
         rep.add("outputs-context-completeness", "SKIP", "soft",
