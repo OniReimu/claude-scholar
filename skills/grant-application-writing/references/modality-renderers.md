@@ -46,6 +46,19 @@ non-official.
 
 ---
 
+## 0. Structural artefacts inside heading-sequenced uploads (figures / tables / timelines)
+
+A funded project description (`structured-upload heading-sequenced`, e.g. an ARC C1) carries
+part of its score in **structural artefacts**, not prose: an **architecture figure**, a
+**"today's technique vs our innovation" comparison table**, and a **phase×year Gantt**. These
+must be *rendered*, not left as ASCII/text mock-ups — an assessor scores a real diagram, not
+layout intent (the honesty rule applies: a described figure is not a rendered figure).
+- **Architecture / concept / pipeline figures** → route to the repo skills **`fireworks-tech-graph`** (flowcharts, architecture, sequence/state diagrams) or **`paper-figure-generator`** (system-overview / pipeline / architecture, editable SVG). Draft the figure *spec* here (nodes, flows, caption); hand it to those skills to render.
+- **Comparison table & Gantt** → real tables (markdown → the upload's `.docx`/`.pdf`), with a live phase×year grid; not ASCII art.
+- Draft may carry a **placeholder** figure block, but it is flagged `[FIGURE — RENDER via fireworks-tech-graph]` (per `method-passes.md` §1.8 invented-specifics marking), never shipped as the final artefact.
+
+---
+
 ## 1. web-portal → PASTE-READY.txt  (first-class, most-used)
 
 The dominant path: Symplectic Elements, ARC RMS, NHMRC Sapphire, Submittable-style portals.
