@@ -84,6 +84,37 @@ commercialisation → §1–7 (humble team, unquantified market, partner-as-anch
 Using the wrong register — a market TAM in a fellowship, or bare self-eminence in a project grant —
 reads as off-genre to an assessor. Pick the register from `mode` before drafting.
 
+## Assessment-process dispatch (axis 2 — do this SECOND, after mode)
+
+`mode` fixes what you're judged on; `process` fixes **how the competition is structured** — and
+that changes which stages and passes run, and how heavy they should be. `process` is a **set** (a
+scheme can be several at once) drawn from a closed archetype vocabulary. It selects the
+**process-archetype overlays** (`method-passes.md` Group 5), which run *on top of* the Group the
+`mode` picked.
+
+| `process` tag | shape | exemplars | what the overlay does |
+|---------------|-------|-----------|-----------------------|
+| `single-stage-review` | one full submission, expert-panel rubric-scored | ARC DP/DECRA/LP/FT | default weight; **+rejoinder-prep** if a right-of-reply window exists (`rejoinder.enabled`) |
+| `staged` | a gating EOI / pre-proposal precedes the full | NHMRC, some ERC, foundations | **+EOI sub-pipeline** drafted to *its own* rubric+limits; the full (phase 2) must not contradict the EOI |
+| `interview-gated` | written shortlist → live interview/pitch decides | ERC Step-2, some fellowships, corporate finals | **+defense-prep** artifact (anticipated Qs from the written weak points); the written *sets up* the interview |
+| `panel-routed` | classification codes route the app to the scoring panel | ARC FoR, NHMRC, NSF directorate | **taxonomy/classification fields become gate-critical** — a wrong code → wrong assessors → silent loss |
+| `curated` | program-officer discretion, light-touch form, no scored rejoinder | industry gift awards, internal seed, philanthropy | **down-scales the machinery** — the failure mode is *over-engineering* |
+| `rolling` | no synchronized deadline; timing is strategic | some foundations, non-retro crypto grants | Stage F timing strategic; freshness matters even outside retro |
+
+`rejoinder` (a within-round right-of-reply) is a **capability**, not an archetype: model it as
+`rejoinder: {enabled, window?, char_limit?}` in the IR; `single-stage-review` may carry it.
+
+**Compose the two axes.** ARC DECRA = `narrative-award` × `{single-stage-review, panel-routed}` +
+rejoinder. NHMRC Investigator = `narrative-award` × `staged`. ERC StG = `prospective-project` ×
+`{staged, interview-gated}`. Google research award = `prospective-project` × `curated`.
+
+**Scale the machinery to the process — don't over-build.** The most common batch-3 error is running
+the full heavyweight pipeline on a `curated` scheme: there is no scored budget to validate, no panel
+rubric to saturate, no rejoinder to reserve for. On `curated`, deliberately *skip* the passes the
+scheme does not score and lead with one fundable hook + program fit (repo simplicity-first
+discipline). Distinct from `mode`, funder-family (ARC/NHMRC/NSF/ERC/industry) only tunes the
+`reviewer_model` register (`method-passes.md` §4.1) — it is a soft framing lens, not a structural axis.
+
 ## Pipeline
 
 ```
