@@ -123,6 +123,8 @@ A0  scheme intake → compliance_matrix.yaml   rulebook BEFORE drafting: eligibi
 A   form + guidelines → scheme.yaml (IR)     parse ANY scheme into the normalized type model
 B   corpus → evidence-store.yaml             reusable across every application (see evidence-store.md)
 B2  people/orgs/partners → entity-store      project mode: CI/PI/partner/subaward/commitments/approvals
+B3  project substance → project-plan.yaml    project mode: aims/design, benefits, additionality/VfM, risk-triggers —
+                                             the registers the §2.14–§2.17 substance passes render from (mechanized by validate_ir --plan)
 C   fill: per field → select evidence + mode-aware method passes
 D   render to native modality                paste-ready / docx write-back / AcroForm / honest degrade
 E   review: checklist-driven contract        eligibility·compliance·evidence·consistency·budget-math·
