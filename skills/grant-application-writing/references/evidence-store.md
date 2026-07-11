@@ -255,6 +255,47 @@ These fields feed **prong 2 (the fellowship prong) of the `number-defensibility`
 `author-voice.md` §8. They are inert in `prospective-project` mode, where the defensible move
 on a market number is *omit*, not *scope + source* (prong 1).
 
+## Outputs-context — field-calibration layer (`outputs_context`, narrative-award mode)
+
+A narrative-award panel mixes generalists with specialists, so a raw outputs listing
+under-reads: a generalist cannot see that a venue is top-3, cannot decode what a last-author
+slot means in this subfield, and cannot weight a "first" without a source. The
+`outputs_context` block is the **field-calibration layer** — it teaches the assessor the
+field's own esteem terms so the drafting layer can *render* them, never improvise. It is gated
+on `mode == narrative-award` and inert otherwise.
+
+Five registers:
+
+- `field_norms.venue_tiers` — every venue the listing leans on gets a `tier` **and** a
+  `plain_rank` gloss (*"CORE A*, top-3 venue in the field"*), so a generalist reads the same
+  signal a specialist does.
+- `field_norms.authorship_convention` — DECODE what an author position means in THIS subfield
+  (*last/second author on a co-supervised student paper = the candidate supplied idea, design,
+  and writing*), pre-empting the "why not first author?" reflex. **A decode is bounded credit,
+  not a role upgrade** — it states what the position already means, evidence-backed, and never
+  promotes the item's `role`. It ties to the role/credit-discipline pass (`method-passes.md`
+  §1.5): where the field's convention differs from "first author = most credit", decode it for
+  the assessor from `authorship_convention` instead of silently capping — a decode is not an
+  upgrade.
+- `field_norms.ranking_attributor` — a sourced-eminence claim via an external ranking
+  **service** (*"ranked Nth in the field, per a ranking service, as of <date>"*). The service
+  IS the `attributor`; same discipline as any superlative — no service, no ranking claim.
+- `clusters` — group the outputs into ~3-5 NAMED research threads, each with a scoped
+  `primacy: {claim, attributor}`. **A cluster `primacy` with no `attributor` (`null`) is
+  statable but NOT as a superlative** — identical discipline to the item-level `attributor`
+  field above (see ROPE + sourced-eminence). Only a sourced primacy is written as a "first".
+- `career_best` — a bounded subset flagged with a stable `label_scheme` (`[*]`/`[J*]`/`[C*]`)
+  linking the listing to the context narrative, plus the `ids`. **Completeness discipline:
+  every `career_best.ids` entry MUST appear in ≥1 `clusters[].outputs`** (a career-best output
+  with no thread and no tier is an unplaced claim). `contribution_summary` states bounded
+  credit across the corpus (*"significant conceptual contribution on M of N papers"* + how
+  counted), never "all of it is mine".
+
+Consumed by the **outputs-context / field-calibration pass (`method-passes.md` §1.10)** and
+rendered by `author-voice.md` §10. `validate_ir.py` `outputs-context-completeness` enforces the
+two invariants: every career-best id is clustered, and every cluster `primacy.claim` carries an
+`attributor` (else the superlative is unsourced) — FAIL in `--mode submission` / WARN in draft.
+
 ## Multi-CI investigator model (`investigators[]`)
 
 The single `owner` block models one applicant. Multi-CI schemes (team, linkage, program
