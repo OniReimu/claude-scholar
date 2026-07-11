@@ -809,9 +809,176 @@ def check_process_dispatch(rep, scheme, mode):
                     "field) — a defense-prep artifact is expected (soft)")
 
 
+# ── project-substance passes (checks 13–16, prospective-project mode + --plan) ──
+def _nonempty(v):
+    """Fail-closed truthiness: a present-but-empty field (None, "", "  ") is NOT satisfied."""
+    if v is None:
+        return False
+    if isinstance(v, str):
+        return bool(v.strip())
+    return bool(v)
+
+
+def _project_gate(rep, check, scheme, plan):
+    """Gate a project-substance check on prospective-project mode + a supplied --plan.
+
+    Returns True when the check should run; otherwise emits a labelled SKIP and returns False.
+    """
+    if scheme.get("mode") != "prospective-project":
+        rep.add(check, "SKIP", "soft",
+                f"scheme mode {scheme.get('mode', '?')!r} ≠ prospective-project — no project plan to assess")
+        return False
+    if not plan:
+        rep.add(check, "SKIP", "soft",
+                "prospective-project mode but no --plan project-plan.yaml supplied")
+        return False
+    return True
+
+
+def _budget_source_total(bdata, source):
+    return sum(sum(float(v) for v in (r.get("years") or {}).values())
+               for r in (bdata.get("rows") or []) if r.get("funding_source") == source)
+
+
+def _pct_mismatch(a, b):
+    """True when a and b differ by more than 1% of the larger magnitude."""
+    return abs(a - b) / max(abs(a), abs(b), 1.0) > 0.01
+
+
+def check_research_design_adequacy(rep, scheme, plan, mode):
+    """#4 deepens methods-feasibility (§2.3): the design must ANSWER each aim. Every aims[] id
+    is covered by ≥1 design[].aim, every aim has a non-empty success_criterion, and every
+    covering design has a non-empty answers_aim. In `submission` mode an uncovered / unmeasured
+    aim is a hard FAIL (per aim); in `draft` mode it WARNs.
+    """
+    if not _project_gate(rep, "research-design-adequacy", scheme, plan):
+        return
+    aims = plan.get("aims") or []
+    if not aims:
+        rep.add("research-design-adequacy", "SKIP", "soft", "project-plan declares no aims register")
+        return
+    covered = {}
+    for d in (plan.get("design") or []):
+        if isinstance(d, dict) and d.get("aim") is not None:
+            covered.setdefault(str(d["aim"]), []).append(d)
+    for a in aims:
+        aid = str(a.get("id") or a.get("statement") or "<aim>")
+        rows = covered.get(aid, [])
+        problems = []
+        if not rows:
+            problems.append("no design row covers this aim")
+        if not _nonempty(a.get("success_criterion")):
+            problems.append("empty success_criterion")
+        if any(not _nonempty(d.get("answers_aim")) for d in rows):
+            problems.append("a covering design has empty answers_aim")
+        if not problems:
+            rep.add(f"research-design-adequacy[{aid}]", "PASS", "hard",
+                    f"answered by {len(rows)} design row(s) with success_criterion + answers_aim")
+        elif mode == "submission":
+            rep.add(f"research-design-adequacy[{aid}]", "FAIL", "hard",
+                    "; ".join(problems) + " (fail-closed, submission mode)")
+        else:
+            rep.add(f"research-design-adequacy[{aid}]", "WARN", "soft", "; ".join(problems))
+
+
+def check_benefits_realisation(rep, scheme, plan, mode):
+    """#5 deepens impact-pathway (§2.5): each benefit must be realisable, measurable, and OWNED.
+    Every benefits[] row carries a non-empty owner AND metric AND timing. A benefit missing any
+    of the three is aspirational — a hard FAIL (per benefit) in `submission`, a WARN in `draft`.
+    """
+    if not _project_gate(rep, "benefits-realisation", scheme, plan):
+        return
+    benefits = plan.get("benefits") or []
+    if not benefits:
+        rep.add("benefits-realisation", "SKIP", "soft", "project-plan declares no benefits register")
+        return
+    for b in benefits:
+        bid = str(b.get("id") or b.get("benefit") or "<benefit>")
+        missing = [f for f in ("owner", "metric", "timing") if not _nonempty(b.get(f))]
+        if not missing:
+            rep.add(f"benefits-realisation[{bid}]", "PASS", "hard",
+                    "realisable — owner + metric + timing all present")
+        elif mode == "submission":
+            rep.add(f"benefits-realisation[{bid}]", "FAIL", "hard",
+                    f"aspirational — missing {', '.join(missing)} (fail-closed, submission mode)")
+        else:
+            rep.add(f"benefits-realisation[{bid}]", "WARN", "soft",
+                    f"aspirational — missing {', '.join(missing)}")
+
+
+def check_additionality_vfm(rep, scheme, plan, bdata, mode):
+    """#12 additionality / value-for-money: a non-empty counterfactual (without THIS grant it
+    wouldn't happen) plus a VfM leverage ratio (co_contribution/grant). When --budget is
+    supplied, the leverage grant/co-contribution are cross-checked against the budget totals
+    (>1% mismatch, like partner-commitment). A missing counterfactual or a budget mismatch is a
+    hard FAIL in `submission`, a WARN in `draft`.
+    """
+    if not _project_gate(rep, "additionality-vfm", scheme, plan):
+        return
+    add = plan.get("additionality")
+    if not isinstance(add, dict) or not add:
+        rep.add("additionality-vfm", "SKIP", "soft", "project-plan declares no additionality register")
+        return
+    problems = []
+    if not _nonempty(add.get("counterfactual")):
+        problems.append("empty counterfactual (the without-this-grant argument)")
+    lev = add.get("leverage") or {}
+    grant, co = lev.get("grant"), lev.get("co_contribution")
+    ratio = (f"; leverage ratio {co / grant:.2f} (co-contribution {co:.0f} / grant {grant:.0f})"
+             if isinstance(grant, (int, float)) and isinstance(co, (int, float)) and grant
+             else "; no leverage grant/co_contribution to compute VfM ratio")
+    if bdata is not None:
+        if isinstance(grant, (int, float)):
+            b_req = _budget_source_total(bdata, "requested")
+            if _pct_mismatch(grant, b_req):
+                problems.append(f"leverage.grant {grant:.0f} ≠ budget requested {b_req:.0f} (>1%)")
+        if isinstance(co, (int, float)):
+            b_co = _budget_source_total(bdata, "co-contribution")
+            if _pct_mismatch(co, b_co):
+                problems.append(f"leverage.co_contribution {co:.0f} ≠ budget co-contribution {b_co:.0f} (>1%)")
+    if not problems:
+        rep.add("additionality-vfm", "PASS", "hard", "counterfactual present" + ratio)
+    elif mode == "submission":
+        rep.add("additionality-vfm", "FAIL", "hard",
+                "; ".join(problems) + " (fail-closed, submission mode)")
+    else:
+        rep.add("additionality-vfm", "WARN", "soft", "; ".join(problems))
+
+
+def check_risk_triggers(rep, scheme, plan, mode):
+    """#14 deepens risk-mitigation (§2.4): upgrade risk from static coverage to a live
+    trigger→contingency register. Every risk with impact==high carries a non-empty trigger AND
+    contingency AND owner. A high-impact risk missing any of the three is a hard FAIL (per risk)
+    in `submission`, a WARN in `draft`. A plan whose risks are all sub-high needs no trigger register.
+    """
+    if not _project_gate(rep, "risk-triggers", scheme, plan):
+        return
+    risks = plan.get("risks") or []
+    if not risks:
+        rep.add("risk-triggers", "SKIP", "soft", "project-plan declares no risks register")
+        return
+    high = [r for r in risks if str(r.get("impact", "")).lower() == "high"]
+    if not high:
+        rep.add("risk-triggers", "PASS", "hard",
+                f"{len(risks)} risk(s) declared, none high-impact — no trigger register required")
+        return
+    for r in high:
+        rid = str(r.get("id") or r.get("risk") or "<risk>")
+        missing = [f for f in ("trigger", "contingency", "owner") if not _nonempty(r.get(f))]
+        if not missing:
+            rep.add(f"risk-triggers[{rid}]", "PASS", "hard",
+                    "high-impact risk has trigger + contingency + owner")
+        elif mode == "submission":
+            rep.add(f"risk-triggers[{rid}]", "FAIL", "hard",
+                    f"high-impact risk missing {', '.join(missing)} (fail-closed, submission mode)")
+        else:
+            rep.add(f"risk-triggers[{rid}]", "WARN", "soft",
+                    f"high-impact risk missing {', '.join(missing)}")
+
+
 # ── orchestration ────────────────────────────────────────────────────────────
 def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=None,
-                budget_path=None, paste_ready=None, mode="draft"):
+                budget_path=None, paste_ready=None, mode="draft", plan_path=None):
     scheme = load_yaml(scheme_path)
     values = load_yaml(values_path) if values_path else {}
     evidence = load_yaml(evidence_path) if evidence_path else {}
