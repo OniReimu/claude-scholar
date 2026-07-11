@@ -175,7 +175,10 @@ over-reach. Three checks, each with a downgrade-or-mark action:
 - **Mechanized by `validate_ir.py` `outputs-context-completeness`** (Agent D): gated on
   `mode == narrative-award` + an `outputs_context` block; every `career_best.ids` entry appears in ≥1
   `clusters[].outputs`, and every cluster carrying a `primacy.claim` has a non-empty
-  `primacy.attributor` — FAIL (submission) / WARN (draft), per output / per cluster.
+  `primacy.attributor` — FAIL (submission) / WARN (draft), per output / per cluster. It also enforces
+  the **one-to-one resolution** rule (f)/(g): every `clusters[].outputs` id and `career_best.ids` entry
+  resolves to **exactly one** `publications[].id` — a dangling or duplicated id → FAIL (submission) /
+  WARN (draft).
 - **In:** `outputs_context` (`field_norms.venue_tiers|authorship_convention|ranking_attributor`,
   `clusters[]`, `career_best`, `contribution_summary`). **Out:** a field-calibrated outputs narrative
   — every career-best tiered + plain-ranked + clustered, author conventions decoded, eminence sourced

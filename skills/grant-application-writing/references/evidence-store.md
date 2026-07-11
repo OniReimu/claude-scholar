@@ -187,7 +187,8 @@ outputs_context:
   career_best:
     label_scheme: {best: "[*]", journal: "[J*]", conference: "[C*]"}   # stable ids linking the listing ↔ the context narrative
     ids: [pub-2024-unlearn]                # every id here MUST appear in >=1 clusters[].outputs (completeness discipline)
-  contribution_summary: {significant_conceptual: "4 of 6 papers", basis: "lead conceptual contributor: idea + design + writing"}   # bounded credit, not "all mine"
+  # denominator renders the denominator rule (§1.10): high-tier out of ALL outputs, never a bare count.
+  contribution_summary: {significant_conceptual: "4 of 6 papers", basis: "lead conceptual contributor: idea + design + writing", denominator: {high_tier: 4, all: 6}}   # bounded credit, not "all mine"
 
 # ── Multi-CI investigator model — one row per named investigator, person-indexed ──
 # Single-applicant schemes: the `owner` block above IS the lead-CI shorthand (owner == investigators[0]);
