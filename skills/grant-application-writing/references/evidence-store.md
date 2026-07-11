@@ -402,6 +402,64 @@ Same hardening applies: partner contributions carry `status` (committed vs indic
 `confidence`, `source_authority`, and `provenance` — a "committed" cash figure backed by a
 signed LOI is defensible; an email promise is not.
 
+## Partner legal-entity model (`partners[].legal_entity`)
+
+A claimed partnership is a **legal relationship between entities**, not a group name. In
+project / linkage mode the partner is the credibility anchor and a reviewer probes it
+hardest — so each `partners[]` row makes the legal entity explicit rather than leaving
+"ACME" to mean whatever the reader assumes.
+
+- **Signing vs operating entity.** `signing_entity` is who has the authority to *commit*
+  (signs the letter / agreement); `operating_entity` is who actually *does the work* or
+  hosts the platform / data / site access. These are often different corporate persons —
+  a parent signs, a subsidiary operates. Recording both stops a letter signed by
+  "ACME Group Holdings Ltd" from being silently read as a commitment by the working entity
+  "ACME Analytics Pty Ltd", and lets `capacity_evidence` test that the signer actually held
+  the authority it exercised (signatory title from an official record, not an assumption).
+- **Relationship types.** `relationship ∈ {parent-subsidiary | jv | division | branch |
+  same | consortium-member}` names how signing and operating entities relate. `same` is the
+  simple case (one entity signs and operates); the others flag that a commitment may cross a
+  corporate boundary and needs a `flow_note` (e.g. an offshore parent commits cash that must
+  be disbursed via an onshore operating subsidiary — the money and the eligibility do not sit
+  on the same entity).
+- **`jurisdiction` feeds the eligibility gate.** `jurisdiction` is the ISO country of the
+  **committing** entity (the one whose resources are pledged), not merely where the work
+  happens. Many schemes require an eligible domestic legal entity, or trigger
+  offshore-partner / national-interest checks when the committing party is foreign. That gate
+  reads `legal_entity.jurisdiction`, so an offshore parent committing cash surfaces as an
+  eligibility question even when the operating subsidiary is onshore — exactly the case a
+  `flow_note` documents.
+
+### Why `letter_commitment` is kept separate from `contributions`
+
+`contributions.cash|in_kind` are the **application's** figures (what the budget and narrative
+claim); `letter_commitment` is the **letter's** figures (what the support letter literally
+states, plus the role and personnel it names, and whether each figure is `conditional`).
+They are deliberately **not** unified — same discipline as `source_precedence` /
+`contradiction_records`: two sources that can disagree are stored side by side so a mismatch
+is **visible**, not silently averaged into one number. If the letter says AUD 100k cash but
+the budget line claims 120k, or the letter makes the cash `conditional: true` ("subject to
+board approval") while the application renders it as unconditional `committed`, that gap is a
+finding — not something the store papers over.
+
+Consumers of these two blocks:
+
+- **`method-passes.md` §2.12 partnership-authenticity** reads `partners[]` (legal entity,
+  contributions, provenance) to distinguish a genuine co-design partner from
+  fee-for-service or letterhead-only support.
+- **`method-passes.md` §2.13 partner-commitment reconciliation** reconciles
+  `letter_commitment` against `contributions`, the contribution-matrix line, and the
+  narrative — figure, role, personnel, and conditionality must all agree.
+- **`validate_ir.py` `partner-commitment-reconciliation` check** does the mechanical
+  cross-check: any numeric mismatch, or a `letter_commitment.conditional: true` rendered as
+  a `committed` contribution, FAILs in submission mode / WARNs in draft. A partner with a
+  cash line but no `letter_commitment` and no `provenance` is UNVERIFIED and fails closed.
+
+Same hardening as the rest of the store: a `letter_commitment` figure is only trustworthy
+with a signed-LOI `provenance` (`corpus/loi-acme.pdf`); an email promise does not qualify a
+figure as `committed`, and a signature by an entity with no `capacity_evidence` for signing
+authority degrades the commitment rather than upgrading it.
+
 ## Graduation note
 
 This module is deliberately grant-agnostic. It is scheduled to graduate into a standalone
