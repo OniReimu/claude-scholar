@@ -85,6 +85,11 @@
 2. **The industry partner is the credibility anchor** (project/prospective mode). Name them
    repeatedly, always tied to `cash and in-kind`, `co-design`, `not fee-for-service`,
    platform/customer access. A named, co-investing partner is worth more than any adjective.
+   *Name the legal entity that actually commits* (per evidence-store `partners[].legal_entity` —
+   the signing/operating entity, not a loose group label); the authenticity of that commitment is
+   an evidence-backed check (`method-passes.md` §2.12 partnership-authenticity + §2.13
+   partner-commitment reconciliation), never a rhetorical flourish — the register makes the claim,
+   the passes keep it honest.
 3. **Ladder every claim to national / societal benefit** and drop a `public-good benefits`
    line — the scheme scores it.
 4. **Market claims: assert momentum qualitatively, don't quantify what you can't source.**
