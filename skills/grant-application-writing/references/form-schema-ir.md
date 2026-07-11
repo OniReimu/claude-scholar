@@ -91,7 +91,9 @@ attachments:                                    # every upload; kind is NEVER "j
 
 | key | rule |
 |-----|------|
-| `mode` | Set from the funding-mode dispatch (SKILL.md). Selects which passes run; a mismatch here mis-routes the whole pipeline. |
+| `mode` | AXIS 1. Set from the funding-mode dispatch (SKILL.md). Selects which passes run; a mismatch here mis-routes the whole pipeline. |
+| `process` | AXIS 2 (SKILL.md assessment-process dispatch). **Mandatory, closed vocab**: a non-empty subset of `{single-stage-review, staged, interview-gated, panel-routed, curated, rolling}`. Selects the Group-5 process overlays. Fail-closed: an unknown tag, or a missing `process` on a rubric-bearing scheme, is a parse gap — `validate_ir.py` (`process-dispatch` check) FAILs it, never defaults it. Wires to existing machinery rather than duplicating it: `staged` → `submission.phases` must carry an EOI/pre-proposal/minimum-data phase; `panel-routed` → the `taxonomy-code`/`classification` fields become gate-critical. |
+| `rejoinder` | A within-round right-of-reply CAPABILITY (distinct from cross-round resubmission, §4.2). `{enabled, window?, char_limit?}`; only `single-stage-review` schemes carry it. Consumed by the §5.1 overlay. Omit when the scheme has no reply window. |
 | `scheme_version` | Mandatory. Option enums, taxonomy code sets, weights, and limits all drift between rounds; a value with no version is unciteable. |
 | `source_docs[].role` | Records *which document* a value came from, so a later conflict (form says 4000ch, guide says 500 words) is traceable, not silently resolved. |
 | `eligibility_gates[].derived` | Present only for `computed` gates. The expr is stored as text and **recomputed at check time** — never cache a stale boolean. Omit for plain gates. |
