@@ -706,6 +706,9 @@ def main():
     ap.add_argument("--entity", help="entity-store.yaml (partners/contributions)")
     ap.add_argument("--budget", help="budget.yaml (delegated to validate_budget.py)")
     ap.add_argument("--paste-ready", dest="paste_ready", help="PASTE-READY.txt (delegated to charcount.py)")
+    ap.add_argument("--mode", choices=("submission", "draft"), default="draft",
+                    help="criterion-readiness gate: submission FAILs an unsupported scored "
+                         "criterion; draft (default) reports it as WARN")
     ap.add_argument("--self-test", action="store_true", help="run built-in self-test")
     args = ap.parse_args()
     if args.self_test:
@@ -713,7 +716,7 @@ def main():
     if not args.scheme:
         ap.error("--scheme is required (or --self-test)")
     return orchestrate(args.scheme, args.values, args.evidence, args.entity,
-                       args.budget, args.paste_ready)
+                       args.budget, args.paste_ready, args.mode)
 
 
 if __name__ == "__main__":
