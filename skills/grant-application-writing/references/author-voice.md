@@ -294,6 +294,27 @@ eminence silently annexed). Where these collaborators are also entity-store peop
 eminence tag itself is evidence-backed the same way a partner commitment is — the register borrows
 it, the store sources it.
 
+**Independence-plus-network — borrow reach, keep ownership.** A rich environment counts *for* the
+applicant only if the applicant is demonstrably not subordinate to it. Tag each collaborator with the
+specialist reach they *add* — capability the applicant does not hold — while evidencing the
+applicant's *own* independent leadership *separately* (own grants, own group, own first/last-author
+line): the collaborator extends the work, the applicant owns it. Render each tag from the entity-store
+collaborator fields (`{prior_relationship, task_expertise, engagement_mode, applicant_independence}` —
+Agent B): `task_expertise` says what reach is borrowed, `applicant_independence` carries the
+separately-sourced leadership so the panel never has to infer it. The honest form — *"the applicant
+contributes `<their own component>` while `<a world-leading collaborator>` supplies
+`<their specialist component>`"* — pre-empts the name-dropping read by showing a partnership of peers,
+not a junior sheltering under a famous name.
+
+**Mentor-by-competency-gap — differentiated functions, not interchangeable eminence.** A mentor list
+persuades only when each mentor closes a *named* gap in the applicant's competency set — one for
+`<a methodological technique>`, one for `<domain translation>`, one for `<scale-up / leadership>` —
+rather than three eminent names supplying the same generic "guidance". Render from
+`mentors[].{competency, function}` (Agent B): `competency` names the gap, `function` names what the
+mentor does about it. Interchangeable eminence reads as borrowed shine; a set where every mentor has a
+distinct, gap-matched role reads as a designed development plan — which is the ROPE argument the
+scheme actually scores.
+
 ### 10.3 Institutional-statement register — the host's third-party voice
 
 The **host-institution statement** is authored in the *institution's* voice, not the applicant's —
