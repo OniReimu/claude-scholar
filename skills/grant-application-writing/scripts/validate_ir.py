@@ -22,6 +22,9 @@ their exit codes + output fold into this report), never reimplemented here.
   9. char roll-up       delegates the paste-ready to charcount.py; folds its verdict.
  10. criterion-readiness per rubric criterion (minimum_evidence + readiness_rule), compute a
                         readiness state; --mode submission FAILs an unsupported scored criterion.
+ 11. partner-commitment  per partner, reconcile the letter_commitment figure against the
+                        application contributions + budget line; --mode submission FAILs a
+                        mismatch, a conditional-as-committed claim, or an unverified partner.
 
 SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
 rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
