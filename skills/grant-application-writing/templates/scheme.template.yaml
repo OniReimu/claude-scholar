@@ -22,7 +22,7 @@ mode: <narrative-award | prospective-project | retroactive-impact>   # AXIS 1 �
 process: [<one or more of: single-stage-review | staged | interview-gated | panel-routed | curated | rolling>]  # AXIS 2 — assessment-process dispatch; selects Group-5 overlays (mandatory, closed vocab)
 # rejoinder: {enabled: <true|false>, window: "<e.g. 10 working days>", char_limit: <int>}   # within-round right-of-reply; ONLY if single-stage-review carries one
 scheme_version: "<ROUND-OR-YEAR TAG>"           # e.g. "2026-R1" — taxonomy + option sets are bound to THIS value
-portal: "<PORTAL>"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | web-form | docx | ...
+portal: "<PORTAL>"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | SmartyGrants | web-form | docx | ...
 
 source_docs:                                    # provenance for every value below; a form-vs-guide conflict is traced here, not silently resolved
   - {id: form,  path: "<blank-form.ext>",       role: fields+limits}
