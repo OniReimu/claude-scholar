@@ -60,6 +60,7 @@ Criterion-readiness never hides a scored-criterion gap behind a SKIP: if a crite
 scheme that declares NO criterion `minimum_evidence` genuinely SKIPs the whole check.
 
     uv run validate_ir.py --scheme scheme.yaml --entity entity-store.yaml --budget budget.yaml
+    uv run validate_ir.py --scheme scheme.yaml --plan project-plan.yaml --budget budget.yaml
     uv run validate_ir.py --self-test
 """
 import argparse
@@ -285,7 +286,7 @@ def _evidence_present(evidence):
     return {_canon_evidence_class(k) for k, v in (evidence or {}).items() if v}
 
 
-# ── the 12 checks ────────────────────────────────────────────────────────────
+# ── the 16 checks ────────────────────────────────────────────────────────────
 def check_schema(rep, scheme):
     crit = {c.get("criterion") for c in (scheme.get("rubric") or []) if isinstance(c, dict)}
     gate_ids = {g.get("id") for g in (scheme.get("eligibility_gates") or []) if isinstance(g, dict)}
