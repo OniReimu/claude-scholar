@@ -11,12 +11,13 @@
 > - Layout patterns → `skills/scientific-figure-making/references/common-patterns.md`
 > - Tutorials → `skills/scientific-figure-making/references/tutorials.md`
 
-## Active Policy Rules（仅 2 条）
+## Active Policy Rules（3 条）
 
 | Rule | 要求 |
 |------|------|
 | `FIG.NO_IN_FIGURE_TITLE` | 禁止 `plt.title()` / `ax.set_title()` / `fig.suptitle()`。标题只放 LaTeX `\caption{}` | <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 | `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图。禁止 `plt.subplots(n, m)` 拼多个独立图。复合布局用 LaTeX `\subfigure` | <!-- policy:FIG.ONE_FILE_ONE_FIGURE -->
+| `FIG.HEATMAP_LABEL_ABBREVIATION` | 热量图行/列名过长时：图内用短代号（`FT`/`RAG`），caption 给全称对照，保持单栏（不为长标签升 `figure*` 或压字号） | <!-- policy:FIG.HEATMAP_LABEL_ABBREVIATION -->
 
 其余 fig-* rules（FONT_GE_24PT、VECTOR_FORMAT_REQUIRED、COLORBLIND_SAFE_PALETTE、SELF_CONTAINED_CAPTION、SYSTEM_OVERVIEW_ASPECT_RATIO）已退役为 `severity: info`，由 `scientific-figure-making` 的 FigureStyle / finalize_figure / PALETTE 接管。
 
