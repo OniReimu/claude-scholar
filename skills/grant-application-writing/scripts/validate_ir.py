@@ -984,6 +984,7 @@ def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=N
     evidence = load_yaml(evidence_path) if evidence_path else {}
     entity = load_yaml(entity_path) if entity_path else {}
     bdata = load_yaml(budget_path) if budget_path else None
+    plan = load_yaml(plan_path) if plan_path else {}
     rep = Report()
     print(f"IR integrity dry-run — scheme: {scheme.get('scheme', scheme_path)} "
           f"[{scheme.get('mode', '?')}] — readiness mode: {mode}\n" + "-" * 72)
