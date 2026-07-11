@@ -636,6 +636,12 @@ stay in the adversarial + cross-model reading; the gate does not adjudicate them
 A failing item returns to its Stage C pass, not to ad-hoc editing. Ship only when the
 whole contract is green under both the adversarial and the cross-model reading.
 
+At the submit gate (Stage F+), `scripts/build_manifest.py` **composes** this whole mechanical gate
+into a reproducible run-audit: it runs `validate_ir.py`, hashes the inputs, records the built
+artifacts and open blockers, and reduces the lot to one **fail-closed `ready_to_submit`** boolean
+(true only when there is no hard FAIL, no open hard blocker, and every scored criterion is
+`substantiated`/`submission-ready`). See `submission-management.md` Stage F+.
+
 ### Stage E — retroactive-impact contract
 
 For `mode = retroactive-impact` the contract **replaces** budget-math, feasibility, and
