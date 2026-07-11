@@ -120,7 +120,7 @@ Each stage is specified in a `references/` file. Read the ones the task needs:
 ## Generality boundary
 
 Per project policy: abstract rules live in this skill; scheme-specific instances live in the
-application's own project folder (e.g. `.../Grants/uts-ecr/`). The UTS ECR application is the
+application's own project folder (e.g. `.../Grants/<scheme>/`). An ECR scheme is the
 first worked instance and the `narrative-award` regression fixture — its full drafts and the
 applicant's real evidence never enter this skill (worked examples reference the case only
 illustratively, with a fictional applicant).
