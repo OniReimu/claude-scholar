@@ -1008,6 +1008,35 @@ rows:
     assert any(e[1] == "FAIL" for e in recon([conditional_partner], None, "submission")), \
         "conditional commitment rendered as status=committed must FAIL submission"
 
+    # 12. process-dispatch — call the check directly (mirrors #10/#11): a valid multi-tag
+    #     scheme with a routing field + rejoinder PASSes; an unknown tag FAILs (fail-closed);
+    #     a staged scheme with no gating (EOI) phase FAILs submission / only WARNs draft.
+    def dispatch(sch, m):
+        r = Report(); check_process_dispatch(r, sch, m); return r.entries
+
+    valid = _clean_scheme()
+    valid["process"] = ["single-stage-review", "panel-routed"]
+    valid["rejoinder"] = {"enabled": True}   # _clean_scheme carries a taxonomy/classification field
+    vd = dispatch(valid, "submission")
+    assert (any(e[1] == "PASS" and e[0].startswith("process-dispatch") for e in vd)
+            and not any(e[1] == "FAIL" for e in vd)), \
+        "valid multi-tag process (routing field + rejoinder) must PASS with no FAIL"
+
+    unknown_proc = _clean_scheme(); unknown_proc["process"] = ["peer-reviewww"]
+    assert any(e[1] == "FAIL" and e[0] == "process-dispatch"
+               for e in dispatch(unknown_proc, "draft")), \
+        "unknown process tag must FAIL (fail-closed) even in draft mode"
+
+    staged = _clean_scheme(); staged["process"] = ["staged"]
+    staged["submission"] = {"phases": ["full", "post-award"]}   # no EOI/pre-proposal/minimum-data
+    assert any(e[1] == "FAIL" and e[0].startswith("process-dispatch[staged]")
+               for e in dispatch(staged, "submission")), \
+        "staged with no gating phase must FAIL in submission mode"
+    staged_drf = dispatch(staged, "draft")
+    assert (any(e[1] == "WARN" and e[0].startswith("process-dispatch[staged]") for e in staged_drf)
+            and not any(e[1] == "FAIL" for e in staged_drf)), \
+        "same staged scheme only WARNs in draft mode"
+
     # full doctored orchestrate → non-zero exit
     doctored = _write(tmp, "bad_scheme.yaml", __import__("yaml").safe_dump(bs))
     assert orchestrate(doctored, values_ok, None, ent_p, budget, paste_bad) == 1, "doctored IR must exit 1"
