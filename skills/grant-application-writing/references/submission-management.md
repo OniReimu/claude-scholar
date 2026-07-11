@@ -19,7 +19,7 @@ guidelines / funding rules / portal help **before a single field is drafted**. I
 eligibility rule fails here, stop and say so — do not draft (see SKILL.md core discipline #2).
 
 ```yaml
-scheme: "UTS Early Career Researcher Award 2026"
+scheme: "Example ECR Award (2026 round)"
 scheme_version: "2026"
 source_docs: [funding-rules.pdf, portal-help.html, faculty-internal-process.md]
 mode: narrative-award                       # dispatches downstream passes (see SKILL.md)
@@ -119,7 +119,7 @@ The execution tracker built after drafting, before submit. Turns the compliance 
 owned, dated, dependency-ordered plan and tracks approval + attachment state to the moment of submit.
 
 ```yaml
-scheme: "UTS Early Career Researcher Award 2026"
+scheme: "Example ECR Award (2026 round)"
 funder_deadline: 2026-03-01T17:00+11:00
 internal_deadline: 2026-02-23T17:00+11:00
 portal: "Symplectic Elements"
