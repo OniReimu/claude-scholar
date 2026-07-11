@@ -1,0 +1,52 @@
+# ── build-manifest.yaml — audit trail of ONE application run ──────────────────
+# GENERATED, not hand-authored. Produced by `scripts/build_manifest.py`, which COMPOSES
+# `scripts/validate_ir.py` (subprocess) — it never re-implements the 16 checks. This file
+# documents the emitted schema; the real manifest is stamped per run. Regenerate it; do not edit.
+#
+#   uv run scripts/build_manifest.py --scheme scheme.yaml --plan project-plan.yaml \
+#       --entity entity-store.yaml --budget budget.yaml --paste-ready PASTE-READY.txt \
+#       --blockers blockers.yaml --artifacts filled.docx,arch.svg --mode submission -o build-manifest.yaml
+#
+# The one value to read first is `ready_to_submit` (bottom): DERIVED fail-closed — true ONLY when
+# validate_ir submission-mode has no hard FAIL AND zero open hard blockers AND every scored
+# criterion is `substantiated`/`submission-ready`. Anything unknown/missing → false + `ready_blockers`.
+
+run:
+  scheme: "Example Project Grant"
+  scheme_version: "2026-R1"
+  mode: prospective-project                 # axis 1
+  process: [single-stage-review, panel-routed]   # axis 2
+  generated_at: "2026-07-11T14:30:00+10:00" # ISO8601, stamped by the generating run
+  tool: "grant-application-writing build_manifest"
+
+inputs:                                     # every input + content hash → reproducibility; a supplied-but-missing file fails closed
+  - {role: scheme,   path: "scheme.yaml",         sha256: "<64-hex>", bytes: 4210}
+  - {role: evidence, path: "evidence-store.yaml",  sha256: "<64-hex>", bytes: 8817}
+  - {role: entity,   path: "entity-store.yaml",    sha256: "<64-hex>", bytes: 3902}
+  - {role: plan,     path: "project-plan.yaml",    sha256: "<64-hex>", bytes: 2564}
+  - {role: budget,   path: "budget.yaml",          sha256: "<64-hex>", bytes: 1730}
+
+artifacts:                                  # what the run BUILT; a planned-but-absent path records exists:false, not a hard fail
+  - {kind: paste-ready, path: "PASTE-READY.txt", sha256: "<64-hex>", exists: true}
+  - {kind: docx,        path: "filled.docx",     sha256: "<64-hex>", exists: true}
+  - {kind: figure,      path: "arch.svg",        sha256: "<64-hex>", exists: true}
+
+validation:                                 # the validate_ir verdict, parsed from its canonical report lines
+  mode: submission
+  checks_seen: 16
+  counts: {PASS: 14, FAIL: 0, WARN: 1, SKIP: 5}
+  hard_fail: false                          # true iff validate_ir exited non-zero (a hard FAIL)
+  findings:                                 # every non-PASS entry, verbatim
+    - {check: "risk-triggers", id: "risk-1", status: WARN, binding: soft, reason: "high-impact risk missing monitoring"}
+
+readiness:                                  # per scored criterion, from the criterion-readiness check (§4.4)
+  - {criterion: "Significance & impact", state: substantiated}
+  - {criterion: "Feasibility",           state: partial}
+
+blockers:                                   # from --blockers; open hard blockers veto ready_to_submit
+  - {id: blk-1, severity: hard, status: open, why: "partner letter not counter-signed", owner: "Research Office"}
+
+ready_to_submit: false                      # DERIVED, fail-closed
+ready_blockers:                             # why not ready (empty list iff ready_to_submit: true)
+  - "criterion 'Feasibility' is partial, not substantiated"
+  - "1 open hard blocker: blk-1"
