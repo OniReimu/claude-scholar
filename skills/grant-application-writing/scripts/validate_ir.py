@@ -812,6 +812,7 @@ def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=N
     check_attachments(rep, scheme)
     check_char_rollup(rep, paste_ready)
     check_criterion_readiness(rep, scheme, values, evidence, mode)
+    check_process_dispatch(rep, scheme, mode)
     rep.render()
     return 1 if rep.hard_failed() else 0
 
