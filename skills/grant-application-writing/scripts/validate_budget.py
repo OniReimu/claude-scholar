@@ -39,9 +39,11 @@ YAML schema:
     declared_totals: {requested: 100000}
     cash_flow_check: true
     cash_in: {2026: 100000, 2027: 400000}
+    balance_check: {enabled: true, tolerance: 0}   # 可省; enabled 时 income==expenditure，行需带 side
     rows:
       - {category: audit, funding_source: requested, kind: cash, org: leadco,
          counts_toward_total: true, phase: p1, years: {2026: 500, 2027: 500}}
+      # 双录时行带 side: income | expenditure（in-kind 双边各一行）
 
 退出码: 任一规则 FAIL 或硬错误 → 1，否则 0。
 """
