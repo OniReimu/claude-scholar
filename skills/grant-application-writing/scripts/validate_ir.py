@@ -1722,14 +1722,18 @@ rows:
     def outctx(sch, ev, m):
         r = Report(); check_outputs_context_completeness(r, sch, ev, m); return r.entries
 
-    good_oc = {"outputs_context": {
-        "clusters": [
-            {"thread": "shared-ledger throughput", "outputs": ["C1", "J1"],
-             "primacy": {"claim": "first sub-second finality in <tightly-scoped area>",
-                         "attributor": "J1"}},
-            {"thread": "privacy-preserving audit", "outputs": ["J2"],
-             "primacy": {"claim": None, "attributor": None}}],
-        "career_best": {"label_scheme": {"best": "[*]"}, "ids": ["C1", "J2"]}}}
+    good_oc = {
+        "publications": [{"id": "C1", "title": "A backed result", "year": 2024},
+                         {"id": "J1", "title": "A journal result", "year": 2023},
+                         {"id": "J2", "title": "A second journal result", "year": 2024}],
+        "outputs_context": {
+            "clusters": [
+                {"thread": "shared-ledger throughput", "outputs": ["C1", "J1"],
+                 "primacy": {"claim": "first sub-second finality in <tightly-scoped area>",
+                             "attributor": "J1"}},
+                {"thread": "privacy-preserving audit", "outputs": ["J2"],
+                 "primacy": {"claim": None, "attributor": None}}],
+            "career_best": {"label_scheme": {"best": "[*]"}, "ids": ["C1", "J2"]}}}
     goc = outctx(na_scheme, good_oc, "submission")
     assert any(e[1] == "PASS" for e in goc) and not any(e[1] == "FAIL" for e in goc), \
         "fully clustered + sourced-primacy outputs_context must PASS"
