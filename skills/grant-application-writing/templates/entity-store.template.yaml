@@ -45,13 +45,32 @@ partners:
     kind: <industry | government | ngo | academic-external>
     classification: "<scheme partner-type code, if required>"     # e.g. G3/G4-style classification field
     contact: {name: "<contact>", role: "<title>", email: "<...>"}
+    # ── legal_entity: which entity SIGNS vs OPERATES + their relationship (see references/evidence-store.md) ──
+    legal_entity:
+      signing_entity:   "<signing entity legal name>"     # who has authority to commit / signs the letter
+      operating_entity: "<operating entity legal name>"   # who actually does the work / hosts the access
+      relationship: <parent-subsidiary | jv | division | branch | same | consortium-member>
+      jurisdiction: "<ISO country of the COMMITTING entity — feeds the offshore-partner / national-interest eligibility gate>"
+      registration: {type: <ABN | EIN | company-no>, id: "<registration id>", source_authority: <official-record | self-reported>}
+      capacity_evidence:                         # does the signer have authority + resources to commit?
+        - {claim: "signing authority", provenance: "<signatory-title record path>", confidence: <high | medium | low>}
+      flow_note: "<e.g. offshore parent commits cash, disbursed via onshore operating_entity — or null>"
     approvals:
       - {kind: <partner-declaration | letter-of-support | co-funding-commitment>, status: <pending | obtained>, date: "<YYYY-MM-DD>"}
-    # ── contributions: partner × contribution-type × year (mirrors contribution-matrix widget) ──
+    # ── contributions: the APPLICATION's figures — partner × contribution-type × year (mirrors contribution-matrix widget) ──
     contributions:
       - {type: cash,    fy: "<YYYY-YY>", amount: {value: <NNNNN>, currency: "<CUR>"}}
       - {type: in-kind, fy: "<YYYY-YY>", amount: {value: <NNNNN>, currency: "<CUR>"}, description: "<staff time / equipment / access>"}
       - {type: cash-staff, fy: "<YYYY-YY>", amount: {value: <NNNNN>, currency: "<CUR>"}, description: "<seconded personnel>"}
+    # ── letter_commitment: what the SUPPORT LETTER literally states — kept SEPARATE from contributions so a mismatch is visible ──
+    # Reconciled against contributions + budget line by §2.13 / validate_ir partner-commitment-reconciliation.
+    letter_commitment:
+      cash:    {value: <NNNNN>, currency: "<CUR>", conditional: <true | false>}
+      in_kind: {value: <NNNNN>, currency: "<CUR>", conditional: <true | false>, description: "<staff time / access>"}
+      role_stated: "<role the letter asserts — reconciled vs the claimed role>"
+      personnel: ["<named contact the letter commits — must appear in the team table>"]
+      provenance: "<support letter / signed LOI path — an email promise does NOT qualify a figure as committed>"
+      as_of: "<YYYY-MM-DD>"
     depends_on:                                  # form locations this partner must stay consistent across (referential integrity)
       - "<scheme.yaml field id: partner pick-list>"
       - "<scheme.yaml field id: budget sub-table>"
