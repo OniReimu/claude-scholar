@@ -49,6 +49,20 @@ green-washed. `--mode submission` FAILs, `--mode draft` WARNs (mirrors criterion
  16. risk-triggers      every risk with impact==high carries a non-empty trigger + contingency +
                         owner; a triggerless high-impact risk FAILs submission (per risk).
 
+Checks 17–18 are the ROPE / track-record PRESENTATION-layer passes. Each is gated on its store
+block (institutional_support from `--entity`; outputs_context from `--evidence`, narrative-award
+mode) and fail-closed — a present-but-unreconciled total or an unsourced superlative is never
+green-washed. `--mode submission` FAILs, `--mode draft` WARNs (mirrors partner-commitment).
+
+ 17. institutional-support the host-institution statement's committed support reconciles:
+                        sum(items[].value) == total.value (±1%), every committed VALUED item has
+                        provenance, and (when --budget declares them) total.value matches the
+                        budget's non-ARC/institutional contribution lines; else FAILs submission (per org).
+ 18. outputs-context-completeness (narrative-award) every career_best.ids entry sits in ≥1 named
+                        cluster and every cluster primacy.claim carries an attributor; an
+                        uncontextualised output or an unsourced superlative FAILs submission
+                        (per output / per cluster).
+
 SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
 rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
 OPTIONAL sidecar was not supplied, or the scheme lacks that construct. Exit non-zero on any HARD

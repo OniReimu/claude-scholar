@@ -431,6 +431,16 @@ organizations:
     name: "Northbridge University"
     role: lead                          # lead | partner | subaward
     approvals: [{type: "DVCR authorization", status: pending}]
+    institutional_support:              # the HOST-INSTITUTION STATEMENT's committed co-investment (3rd-party attestation; analog to partner contributions)
+      items:                            # each committed line — hardened like partner contributions (status + provenance)
+        - {kind: establishment-grant, value: 150000, currency: AUD, status: committed, provenance: "corpus/host-statement.pdf"}
+        - {kind: stipend-topup,       value: 60000,  currency: AUD, status: committed, provenance: "corpus/host-statement.pdf"}
+        - {kind: salary-shortfall,    value: 90000,  currency: AUD, status: committed, provenance: "corpus/host-statement.pdf"}
+        - {kind: teaching-relief,     value: null, basis: "reduced teaching load funded from salary savings", status: committed, provenance: "corpus/host-statement.pdf"}
+      total: {value: 300000, currency: AUD}   # the statement's STATED total — kept SEPARATE from sum(items) so a mismatch is VISIBLE (mirror partner letter_commitment vs contributions)
+      strategic_fit: "recruited to accelerate the institution's data-systems priority; project finds a home at the host research centre"
+      continuing_offer: "continuing position on success"   # or null
+      statement_provenance: "corpus/host-statement.pdf"
 
 partners:
   - id: partner-acme
