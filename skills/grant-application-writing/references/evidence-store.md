@@ -165,6 +165,41 @@ impact:
     sensitivity: public
     use_permission: public
     provenance: "corpus/registry-stats.png (OCR)"
+
+# ── Multi-CI investigator model — one row per named investigator, person-indexed ──
+# Single-applicant schemes: the `owner` block above IS the lead-CI shorthand (owner == investigators[0]);
+# investigators[] may be omitted. Multi-CI schemes populate one row per CI/PI/partner. ROPE
+# window/role/attributor apply PER investigator, each relative to their OWN opportunity —
+# never pool a senior + an ECR into one tally. Read by the multi-CI ROPE pass (method-passes.md §2.7).
+investigators:
+  - id: inv-lead
+    name: "Jane Q. Researcher"             # owner == first investigator for single-applicant schemes
+    role: lead-CI                          # lead-CI | CI | PI | partner-investigator
+    rope_context:                          # this person's opportunity envelope — read ROPE relative to THIS, not the team
+      years_since_phd: 7
+      career_stage: mid-career             # e.g. ECR | mid-career | senior
+      interruptions: [{from: 2021-03, to: 2021-11, fte_fraction: 0.4, reason: "parental leave"}]
+    track_record_ref:                      # THIS person's own items; the referenced rows' window/role/attributor are read relative to THIS investigator
+      publications: [pub-2024-unlearn]
+      funding: [grant-arc-dp23]
+      awards: [awd-best-paper-24]
+    task_ownership: [aim-2, wp-3]          # aim / WP ids this investigator leads
+    distinctive_contribution: "certified-unlearning method design; leads WP3 evaluation"
+    fte: {value: 0.2, basis: "0.2 FTE across 3 yrs"}
+    current_commitments:                   # concurrent awards drawing on this person's time (availability check)
+      - {award: grant-arc-dp23, fte: 0.15}
+
+# ── SOTA / significance evidence classes — render significance FROM evidence, not assertion ──
+comparators:                               # external state-of-the-art / prior-art the project is positioned against
+  - ref: "Doe et al. 2025, 'Baseline Unlearning', NeurIPS"   # the comparator work / product / standard
+    kind: scholarly                        # scholarly | commercial | standard | own-work — own-work is NOT an external comparator
+    provenance: "corpus/related-work.pdf ; doi:10.1234/xxxxx"
+
+context_evidence:                          # source-backed problem-significance (a dated stat, not "an important problem")
+  - claim: "data-deletion requests are a growing compliance burden"
+    stat: "1.2M erasure requests/yr across surveyed operators"
+    source: "Regulator Annual Report 2025, table 4"
+    as_of: 2025-11
 ```
 
 Every leaf item carries the six hardening fields (`status`, `confidence`,
