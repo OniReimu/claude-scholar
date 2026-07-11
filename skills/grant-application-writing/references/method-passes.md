@@ -369,6 +369,74 @@ and third-party attestations, scored first-class.
 - **Machine-run.** This pass is executed mechanically by `scripts/validate_ir.py` (a `criterion-readiness` check, added to `--self-test`): for each rubric criterion it computes readiness from the IR/evidence and returns a **FAIL in submission mode** for a scored criterion with no backing evidence — **not a SKIP**. SKIP is reserved for genuinely optional sidecars; a SKIP that would hide a scored-criterion gap is reclassified as a FAIL. (Cross-ref markers-two-mode / `blockers.md` §1.8; the mechanized-gate paragraph below.)
 - **In:** `rubric[]` (`weight`, `binding`, `minimum_evidence`, `readiness_rule`), the drafted IR + evidence-store. **Out:** a per-criterion readiness table (`criterion → state`); in submission mode, hard blocks for `unsupported` hard-required criteria + `blockers.md` entries for every `partial`; in draft mode, the same states annotated, non-blocking.
 
+---
+
+## Group 5 — process-archetype overlays (all modes)
+
+> **The second dispatch axis.** Group 1/2/3 dispatch on `mode` (what you're judged *on*
+> → register + which passes run). Group 5 dispatches on `scheme.process[]` (how the judging
+> is *structured*) and runs **ON TOP of whatever `mode` already selected** — it does not
+> replace a mode's passes, it adds/removes/reweights stages around them. `process` is a **set**:
+> a scheme may be `staged` AND `panel-routed` AND rejoinder-enabled at once, so more than one
+> overlay can fire. The closed archetype vocabulary is
+> `{single-stage-review, staged, interview-gated, panel-routed, curated, rolling}`; a scheme
+> declares its members in the `scheme.process[]` IR field, and `scripts/validate_ir.py`'s
+> **`process-dispatch`** check (Agent C) fail-closes on an empty/unknown tag. `rejoinder` is a
+> **capability** (an IR block `rejoinder: {enabled, window?, char_limit?}`), consumed by §5.1 —
+> **not** a seventh archetype. Each overlay below states what it ADDS / REMOVES / REWEIGHTS
+> relative to the mode-selected baseline; submission-vs-draft semantics are the standard
+> fail-closed BLOCK-vs-WARN used throughout.
+
+### 5.1 single-stage-review — default weight (+ rejoinder capability)
+- **Does:** the baseline shape — one full submission, expert-panel rubric-scored. **No up/down-scale by itself**; the mode-selected passes run at their normal weight.
+- **Adds (only if `rejoinder.enabled`):** a **rejoinder-prep** note — a within-round *right-of-reply* artifact. Reserve the strongest rebuttal-ready evidence rather than spending it in the first draft, and pre-identify the **2–3 claims a panel will most probe** (the over-reach candidates §1.9 already surfaced) so a reply can be drafted fast inside the `rejoinder.window` / `rejoinder.char_limit`.
+- **Not §4.2.** §4.2 is *cross-round* resubmission (a new round, prior reviews threaded in); this is *within-round* reply to this round's panel. Keep them distinct — different artifact, different timeline.
+- **Removes / Reweights:** nothing.
+- **Out:** the mode-selected pipeline unchanged; plus, when `rejoinder.enabled`, a reserved-evidence list + a probe-anticipation note keyed to the 2–3 most-attackable claims. (Cross-ref `rejoinder{}` IR block; consistency-checked by `validate_ir.py` `process-dispatch` — `rejoinder.enabled` ⇒ `single-stage-review` ∈ `process`.)
+
+### 5.2 staged — EOI / pre-proposal gate before the full
+- **Does:** insert a **gating first phase** (EOI / pre-proposal / minimum-data) that must pass before the full is invited.
+- **Adds:** an **EOI sub-pipeline** drafted to **its OWN rubric + limits** — not a compressed copy of the full. The EOI is a **triage gate**, so it **leads with the single most fundable hook** and lets the reviewer say *yes to phase 2*, not an exhaustive rubric sweep. Wire it to `submission.phases` (which must contain one of `EOI | pre-proposal | minimum-data`).
+- **Reweights:** a **consistency lock** across phases — the full (phase 2) **must not contradict the EOI**: same core fields, same figures, no walked-back or upgraded claim a phase-1 reviewer would catch on re-read.
+- **Removes:** nothing structurally, but heavyweight full-application passes (full budget-math, full risk-register) are **deferred to phase 2** — do not build them for the EOI unless the EOI's own rubric scores them.
+- **Submission mode:** `staged` ∈ `process` with **no `EOI | pre-proposal | minimum-data` entry in `submission.phases`** is a **BLOCK** (submission) / **WARN** (draft) — the gate stage is undeclared. (Mechanized by `validate_ir.py` `process-dispatch`.)
+- **Out:** an EOI drafted to its own rubric+limits leading with the top hook; `submission.phases` populated; a phase-1↔phase-2 consistency verdict (no contradiction). (Cross-ref `submission.phases` IR field, `criterion-readiness` §4.4 run per phase.)
+
+### 5.3 interview-gated — written shortlist → live interview decides
+- **Does:** treat the written submission as a **shortlisting instrument**, not the closing argument — a live interview / pitch makes the final call.
+- **Adds:** a **defense-prep artifact** — anticipated questions generated **from the written case's weakest points** (the panel interviews to *probe*, so pre-empt the probe). A **Stage-F deliverable**, produced alongside the submission plan.
+- **Reweights:** the written submission's job **shifts to *setting up* the interview** — open the strongest doors, surface (not bury) the ambitious claims you can defend live — rather than exhaustively closing every point on paper.
+- **Removes:** nothing.
+- **Submission mode:** absence of a defense-prep deliverable on an `interview-gated` scheme is a **WARN** (soft — the interview is downstream of submit), surfaced to `blockers.md`.
+- **Out:** an anticipated-Q defense-prep artifact keyed to the written case's weak points + a note reframing the written submission as interview-setup. (Cross-ref §1.9 over-claim guard — its flagged claims are the likeliest interview probes; `validate_ir.py` `process-dispatch` soft check.)
+
+### 5.4 panel-routed — classification codes route to the scoring panel
+- **Does:** recognise that **routing is itself a gate** — a taxonomy/classification code sends the application to a specific assessing panel before any scoring happens.
+- **Reweights:** **ELEVATE the taxonomy/classification fields** (`taxonomy-code`, FoR / RtO / directorate) to **gate-critical**. A wrong code routes to the **wrong assessors → a silent loss** (no rejection reason, just a low score from a mismatched panel) — a §-level failure, not a cosmetic metadata slip.
+- **Adds:** the §4.1 `reviewer_model` must be built for the **ROUTED panel specifically**, not a generic reviewer — the whole point of routing is that a *particular* panel scores this.
+- **Removes:** nothing.
+- **Submission mode:** an **unset or low-confidence routing code** on a `panel-routed` scheme is a **BLOCK** (submission) — you cannot submit into an unknown panel. Draft mode → **WARN** + a `blockers.md` "confirm routing code" entry. (Structural-reminder check in `validate_ir.py` `process-dispatch`.)
+- **Out:** taxonomy/classification fields elevated to gate-critical with a confidence flag; a routed-panel-specific `reviewer_model`; an unset/low-confidence code blocked (submission) or lifted to `blockers.md` (draft). (Cross-ref §4.1 `reviewer_model`, `taxonomy-code` fields.)
+
+### 5.5 curated (light-touch) — program-officer discretion, no scored rubric
+- **Does:** recognise a **discretionary, light-touch** scheme (short form, program-officer judgement, no scored rejoinder) and **DOWN-scale the machinery to match**. The failure mode here is **OVER-engineering**, not under-evidencing.
+- **Removes (this is a genuine down-scale, not a warning — explicitly PERMITTED to skip):**
+  - **no heavy budget-math** where there is **no scored budget** — do not build a `budget.yaml` + run `validate_budget.py` for a scheme that does not score a budget line;
+  - **don't over-build the evidence store** — resolve only the evidence a short discretionary form actually rewards, not an exhaustive `minimum_evidence` sweep for criteria that don't exist;
+  - **skip heavyweight passes the scheme does not score** — full criterion-readiness (§4.4), risk-register completeness (§2.4), partner-reconciliation (§2.13) run only insofar as the light-touch form asks for them.
+- **Reweights:** what a curated form *does* reward is **one fundable hook + program/officer fit** over rubric coverage — the §1 discipline (never invent, honest tiering) still holds, but the *volume* of machinery drops.
+- **Ties to `simplicity-first`.** This is the honest anti-over-engineering overlay: matching effort to what is actually scored is the same discipline as *"no features beyond what was asked; no abstraction for single-use"* — building a heavyweight pipeline a curated scheme ignores is the grant-writing form of gold-plating.
+- **Out:** a deliberately reduced pass set — the mode's *evidentiary* discipline kept, the *heavyweight scored-artifact* passes skipped with a one-line "not scored by this scheme" note so the skip is auditable, not silent.
+
+### 5.6 rolling — no synchronized deadline
+- **Does:** recognise there is **no fixed round date** — submission timing is itself a strategic lever.
+- **Reweights:** **Stage F timing becomes strategic** — submit **when the evidence is freshest** (a milestone just landed, a metric just cleared a threshold), not against a calendar date. Apply **§3.4-style freshness even outside `retro-impact` mode**: a stale figure weakens a rolling application the same way it fails a retro round.
+- **Removes:** any **synchronized-round assumption** from the submission plan — no "round census date", no fixed-deadline gate logic; the plan is trigger-driven, not date-driven.
+- **Adds:** nothing structural beyond the timing lever.
+- **Out:** a trigger-driven (not date-driven) submission plan; freshness applied to every dated claim regardless of mode; no fixed-round assumptions. (Cross-ref §3.4 freshness, Stage F submission plan.)
+
+---
+
 Stage E is **not** "run tool X." It is a contract of checkable items; each must be
 green before submission. The **operational method** is an **adversarial, multi-round**
 review — read as a hostile reviewer looking for the one disqualifying flaw — reinforced
