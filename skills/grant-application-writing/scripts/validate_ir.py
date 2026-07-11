@@ -650,12 +650,20 @@ rows:
     paste_bad = _write(tmp, "bad.txt", "=== f1 | F1 | limit: 3 chars ===\ntoolong\n=== /f1 ===\n")
     scheme_p = _write(tmp, "scheme.yaml", __import__("yaml").safe_dump(_clean_scheme()))
     ent_p = _write(tmp, "entity.yaml", __import__("yaml").safe_dump(_entity()))
+    ev_p = _write(tmp, "evidence.yaml", __import__("yaml").safe_dump(_evidence()))
     values_ok = _write(tmp, "vok.yaml", __import__("yaml").safe_dump(
         {"for": [{"pct": 60}, {"pct": 40}], "cond": False}))
+    # values_full also fills the scored narrative n1 → criterion C1 substantiation-ready
+    values_full = _write(tmp, "vfull.yaml", __import__("yaml").safe_dump(
+        {"for": [{"pct": 60}, {"pct": 40}], "cond": False,
+         "n1": "Prior work establishes the baseline this project extends."}))
 
-    # 1. clean end-to-end → exit 0
-    code = orchestrate(scheme_p, values_ok, None, ent_p, budget, paste_ok)
+    # 1. clean end-to-end (draft) → exit 0, C1 substantiated from evidence + content
+    code = orchestrate(scheme_p, values_full, ev_p, ent_p, budget, paste_ok)
     assert code == 0, f"clean IR should pass, got exit {code}"
+    # 1b. clean in SUBMISSION mode → still exit 0 (every scored criterion substantiated)
+    code = orchestrate(scheme_p, values_full, ev_p, ent_p, budget, paste_ok, mode="submission")
+    assert code == 0, f"clean IR must pass in submission mode, got exit {code}"
 
     # per-check FAIL fixtures (call the check directly; assert a FAIL entry appears)
     def fails(fn, *a):
