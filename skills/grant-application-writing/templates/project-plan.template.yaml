@@ -103,3 +103,51 @@ risks:
     monitoring: "monthly steering-committee review, agreement status a standing item"
     contingency: "switch to the synthetic-trace fallback dataset already prepared in WP1"
     owner: "Lead CI, escalated to partner sponsor"
+
+# ─── Traceability spine — stable IDs; every activity traces UP (aim→objective→task→subtask→output→benefit) + ACROSS (person→year→budget→evidence) ───
+# EXTENDS the five registers above; does not replace them. Consumed ONLY in prospective-project mode,
+# validated by validate_ir.py traceability-spine (referential integrity + four-way crosswalk).
+# Cross-axis targets: objectives[].aim → aims[].id; tasks[].person → entity-store investigators[].id;
+# tasks[].budget_lines → budget rows; outputs[].benefit → benefits[].id. Every id must resolve; no duplicates.
+objectives:                          # aim → numbered objectives (the condition each aim is met by)
+  - {id: obj-1, aim: aim-1, statement: "<condition to be achieved>"}
+  - {id: obj-2, aim: aim-2, statement: "Deliver an ingestion path that sustains p99 write latency < 800 ms at 10x baseline throughput"}
+tasks:                               # objective → task (one-to-one where possible)
+  - id: task-1
+    objective: obj-1                 # the objective this task achieves (→ objectives[].id)
+    statement: "<what this task delivers>"
+    foundational: true               # foundation-first: supplies theory/data/tools/measures to later tasks
+    depends_on: []                   # upstream task ids (dependency architecture)
+    subtasks:                        # each written in the gap→consequence→move→mechanism grammar (method-passes §2.19)
+      - {id: st-1.1, statement: "<current method lacks X → causes failure Y → introduce Z → Z fixes Y>", output: out-1}
+    person: [inv-lead]               # owner(s) → entity-store investigators[].id (capability coverage)
+    years: [1]                       # when → timetable
+    budget_lines: [bl-1]             # funding rows → budget (four-way crosswalk: task↔person↔year↔budget)
+    validation: val-1                # this task's validation block id
+  - id: task-2
+    objective: obj-2
+    statement: "Build the load-replay harness + adaptive-batching ingestion path and evaluate p99 latency at 10x load"
+    foundational: false
+    depends_on: [task-1]             # consumes the shared theory/measures supplied by the foundational task-1
+    subtasks:
+      - {id: st-2.1, statement: "current batch ingest lacks backpressure control → tail latency spikes under burst load → introduce adaptive batching → bounds p99 under 10x replay", output: out-2}
+    person: [inv-lead, inv-ci-2]     # inv-ci-2 → a second entity-store investigators[] row (multi-CI variant)
+    years: [2, 3]
+    budget_lines: [bl-2]
+    validation: val-2
+outputs:                             # task → output → benefit  (kind: theory|method|tool|demonstrator|publication)
+  - {id: out-1, task: task-1, kind: theory,       benefit: ben-1}
+  - {id: out-2, task: task-2, kind: demonstrator, benefit: ben-2}   # → benefits[].id (the open-source ingestion toolkit)
+validations:                         # per-task validation block (colocated, not a late generic section)
+  - {id: val-1, task: task-1,
+     baseline: "<competitive baselines>",
+     stress: "<scenario designed to expose the targeted failure>",
+     mechanism_check: "<component-level diagnostic: does the mechanism behave as intended>",
+     metric: "<end metric aligned to the failure, not a generic success metric>",
+     comparator_class: scholarly}    # scholarly | commercial | standard | own-work (batch-1 comparators discipline)
+  - {id: val-2, task: task-2,
+     baseline: "single-node batch-ingest architecture; prior-year pipeline as comparator",
+     stress: "10x burst replay concentrated on peak-hour traces, sized to force tail-latency blowup",
+     mechanism_check: "does adaptive batching engage backpressure when queue depth crosses the threshold",
+     metric: "p99 write latency < 800 ms sustained at 10x baseline throughput",
+     comparator_class: standard}
