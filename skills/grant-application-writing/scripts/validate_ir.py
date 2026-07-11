@@ -990,6 +990,141 @@ def check_risk_triggers(rep, scheme, plan, mode):
                     f"high-impact risk missing {', '.join(missing)}")
 
 
+# ── ROPE / track-record presentation-layer passes (checks 17–18) ──────────────
+def _institutional_support_orgs(entity):
+    """Yield (org_id, institutional_support dict) for every org carrying the block."""
+    out = []
+    for o in (entity.get("organizations") or []):
+        if isinstance(o, dict) and isinstance(o.get("institutional_support"), dict):
+            out.append((o.get("id") or o.get("name") or "<org>", o["institutional_support"]))
+    return out
+
+
+def _budget_institutional_total(bdata):
+    """Sum of the budget's non-ARC / institutional (host co-investment) contribution rows, or
+    None when the budget declares no such line (so absence never fabricates a mismatch)."""
+    if not bdata:
+        return None
+    srcs = {"institutional", "institution", "host", "host-institution"}
+    rows = [r for r in (bdata.get("rows") or []) if str(r.get("funding_source")) in srcs]
+    if not rows:
+        return None
+    return sum(sum(float(v) for v in (r.get("years") or {}).values()) for r in rows)
+
+
+def check_institutional_support_reconciliation(rep, scheme, entity, bdata, mode):
+    """#17 host-institution statement (batch-2 partner-reconciliation analog): the stated
+    `total.value` reconciles with sum(items[].value) within 1%; every `status: committed`
+    item that carries a monetary value has non-empty `provenance` (a null-value in-kind line
+    such as teaching-relief is backed by its `basis`, not a dollar figure); and when a budget
+    is supplied AND declares institutional contribution rows, `total.value` reconciles with
+    that non-ARC/institutional line total (>1%). A total mismatch, a stated total absent while
+    items are present, or a committed valued item with no provenance is a hard FAIL in
+    `submission` mode; in `draft` mode each surfaces as WARN. Gate: run only when an
+    organizations[].institutional_support block is present, else a labelled SKIP.
+    """
+    blocks = _institutional_support_orgs(entity)
+    if not blocks:
+        rep.add("institutional-support-reconciliation", "SKIP", "hard",
+                "no organizations[].institutional_support block to reconcile")
+        return
+    fmt = lambda v: f"{v:.0f}" if v is not None else "—"
+    b_inst = _budget_institutional_total(bdata)
+    for oid, sup in blocks:
+        items = sup.get("items") or []
+        total = sup.get("total") if isinstance(sup.get("total"), dict) else {}
+        total_value = total.get("value")
+        item_sum = sum(float(it.get("value")) for it in items
+                       if isinstance(it, dict) and it.get("value") is not None)
+
+        problems = []
+        if total_value is None:
+            problems.append(f"items present (sum {item_sum:.0f}) but no stated total.value to "
+                            "reconcile — UNRECONCILED")
+        elif _pct_mismatch(item_sum, float(total_value)):
+            problems.append(f"sum(items) {item_sum:.0f} ≠ stated total {float(total_value):.0f} (>1%)")
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            if (str(it.get("status", "")).lower() == "committed"
+                    and it.get("value") is not None and not _nonempty(it.get("provenance"))):
+                problems.append(f"committed item {it.get('kind', '<item>')!r} "
+                                f"(value {float(it['value']):.0f}) has no provenance")
+        if b_inst is not None and total_value is not None and _pct_mismatch(float(total_value), b_inst):
+            problems.append(f"stated total {float(total_value):.0f} ≠ budget institutional "
+                            f"contribution {b_inst:.0f} (>1%)")
+
+        if not problems:
+            rep.add(f"institutional-support-reconciliation[{oid}]", "PASS", "hard",
+                    f"reconciled — sum(items) {fmt(item_sum)} = stated total {fmt(total_value)}"
+                    + (f", budget institutional {fmt(b_inst)}" if b_inst is not None else ""))
+        elif mode == "submission":
+            rep.add(f"institutional-support-reconciliation[{oid}]", "FAIL", "hard",
+                    "; ".join(problems) + " (fail-closed, submission mode)")
+        else:
+            rep.add(f"institutional-support-reconciliation[{oid}]", "WARN", "soft",
+                    "; ".join(problems))
+
+
+def check_outputs_context_completeness(rep, scheme, evidence, mode):
+    """#18 ROPE field-calibration completeness (narrative-award): every career-best output is
+    placed in a named cluster, and every cluster primacy claim is sourced. Gate on scheme
+    mode == narrative-award AND an evidence-store `outputs_context` block (else a labelled
+    SKIP). Each `career_best.ids` entry must appear in ≥1 `clusters[].outputs`; each cluster
+    carrying a non-empty `primacy.claim` must carry a non-empty `primacy.attributor` (else the
+    superlative is unsourced). A missing cluster placement (per output) or an unsourced primacy
+    (per cluster) is a hard FAIL in `submission`, a WARN in `draft`. Fail-closed.
+    """
+    if scheme.get("mode") != "narrative-award":
+        rep.add("outputs-context-completeness", "SKIP", "soft",
+                f"scheme mode {scheme.get('mode', '?')!r} ≠ narrative-award — no outputs-context to assess")
+        return
+    oc = evidence.get("outputs_context") if isinstance(evidence, dict) else None
+    if not isinstance(oc, dict) or not oc:
+        rep.add("outputs-context-completeness", "SKIP", "soft",
+                "narrative-award mode but no evidence-store outputs_context block supplied")
+        return
+    clusters = oc.get("clusters") or []
+    clustered = set()
+    for c in clusters:
+        if isinstance(c, dict):
+            for o in (c.get("outputs") or []):
+                clustered.add(str(o))
+    best_ids = [str(i) for i in ((oc.get("career_best") or {}).get("ids") or [])]
+
+    status, binding = ("FAIL", "hard") if mode == "submission" else ("WARN", "soft")
+    tail = " (fail-closed, submission mode)" if mode == "submission" else ""
+    any_entry = False
+    # coverage: every career-best id appears in ≥1 named cluster
+    for oid in best_ids:
+        any_entry = True
+        if oid in clustered:
+            rep.add(f"outputs-context-completeness[{oid}]", "PASS", "hard",
+                    "career-best output placed in ≥1 named cluster")
+        else:
+            rep.add(f"outputs-context-completeness[{oid}]", status, binding,
+                    f"career-best output {oid!r} appears in no clusters[].outputs — "
+                    "uncontextualised" + tail)
+    # sourced primacy: a cluster stating a primacy.claim needs a primacy.attributor
+    for c in clusters:
+        if not isinstance(c, dict):
+            continue
+        prim = c.get("primacy") or {}
+        thread = c.get("thread") or "<cluster>"
+        if isinstance(prim, dict) and _nonempty(prim.get("claim")):
+            any_entry = True
+            if _nonempty(prim.get("attributor")):
+                rep.add(f"outputs-context-completeness[{thread}]", "PASS", "hard",
+                        "primacy claim carries an attributor (sourced)")
+            else:
+                rep.add(f"outputs-context-completeness[{thread}]", status, binding,
+                        f"cluster {thread!r} states a primacy claim with no attributor — "
+                        "unsourced superlative" + tail)
+    if not any_entry:
+        rep.add("outputs-context-completeness", "SKIP", "soft",
+                "outputs_context present but declares no career_best ids and no cluster primacy claims")
+
+
 # ── orchestration ────────────────────────────────────────────────────────────
 def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=None,
                 budget_path=None, paste_ready=None, mode="draft", plan_path=None):
