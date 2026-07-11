@@ -23,6 +23,13 @@ The A0 `compliance_matrix.yaml` (see `submission-management.md`) is authored *al
 deadlines, submission owner); `scheme.yaml` captures the fillable structure. They cross-
 reference by `scheme` + `scheme_version`.
 
+**The scheme carries the FORM; the project-plan carries the PROJECT.** In
+`prospective-project` mode the project's *substance* — aims/design, benefits, additionality/VfM,
+and a trigger-driven risk register — is NOT the form structure; it lives in a separate
+`project-plan.yaml` sidecar (B3, see `evidence-store.md`), one per application, and is validated by
+`validate_ir.py --plan` against the §2.14–§2.17 substance passes. Keep it out of `scheme.yaml`:
+the IR describes boxes and limits, the plan describes the research.
+
 ## The `scheme.yaml` schema
 
 ```yaml
