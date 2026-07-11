@@ -102,6 +102,14 @@ Container/computed widgets carry sharper rules than the table row implies — lo
 - **`budget-matrix` cross-validation includes cumulative cash-flow, not just row caps.** A
   per-financial-year liquidity check (cumulative spend ≤ cumulative cash-in) can fail a budget
   whose spend is front-loaded and cash back-loaded, even when every row cap passes.
+- **Double-entry balance is a distinct budget shape (not ARC's requested+co-contribution).** Many
+  DFAT / bilateral / philanthropic schemes (ASEAN-Australia Centre, and similar) require the budget to
+  **balance**: TOTAL INCOME = TOTAL EXPENDITURE (GST-exclusive, in-kind counted on BOTH sides). Model
+  it with a `side: income | expenditure` axis on rows + a `balance_check: {enabled, tolerance}` rule;
+  `validate_budget` fails a budget where the two sides don't total-equal, and — fail-closed — fails a
+  counted row with no `side` when the check is on. (GST-exclusive is a data-entry attribute, not a
+  mechanical check.) This is orthogonal to the requested/co-contribution axis: a row is BOTH a
+  funding_source AND a side.
 - **Structural artefacts reference the traceability-spine ids, not free text.** A `milestone-table`
   deliverable, a `budget-matrix` line, and a project figure each name a spine `task`/`output` id
   (project-plan.yaml, `evidence-store.md` B3) — so referential integrity is checkable: a milestone,
