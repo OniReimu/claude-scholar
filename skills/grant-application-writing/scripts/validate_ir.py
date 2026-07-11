@@ -821,6 +821,7 @@ def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=N
 def _clean_scheme():
     return {
         "scheme": "Self-Test", "mode": "prospective-project",
+        "process": ["single-stage-review"],
         "submission": {"phases": ["full", "post-award"]},
         "eligibility_gates": [
             {"id": "grant-le-50", "binding": "hard",
