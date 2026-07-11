@@ -627,7 +627,7 @@ The final paper follows this structure. Strictly control to **6 top-level number
 - Compilation order: `pdflatex → bibtex → pdflatex → pdflatex`
 
 **Punctuation rules (anti-AI):**
-- **Em-dash (`---`)**: Do NOT use em-dashes for parenthetical insertions. Instead use: (1) a new sentence, (2) a relative clause (`, which...`), or (3) parenthetical commas. ≥ 2 em-dashes per paragraph is a strong AI signal. En-dash (`--`) for ranges/compounds is fine. <!-- policy:PROSE.EM_DASH_RESTRICTION -->
+- **Em-dash (`---`)**: Zero allowed — not even one. Do NOT use em-dashes for parenthetical insertions. Instead use: (1) a new sentence, (2) a relative clause (`, which...`), or (3) parenthetical commas. Any em-dash is a strong AI signal. En-dash (`--`) for ranges/compounds is fine. <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - **Colon (`:`)**: Do NOT use colons to introduce 3+ item inline enumerations (e.g., "X: A, B, and C"). Instead break into separate sentences or use "such as"/"including". Exception: numbered step lists ("(1)...(2)...") and formal definitions are standard.
 - See `writing-anti-ai` skill, Patterns #13 and #13b for detailed examples and fix strategies.
 
