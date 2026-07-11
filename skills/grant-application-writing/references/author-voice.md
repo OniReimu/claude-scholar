@@ -212,3 +212,117 @@ to defend (§5.4), stacks the benefit, and speaks the assessor's vernacular.
 Why: "I am leading" is bare self-praise; the rewrite launders eminence through an external
 attributor, scopes every count by window + role, and points to the evidence — loud but
 defensible (§8, and `number-defensibility` prong 2).
+
+## 10. ROPE / track-record presentation register (narrative-award)
+
+§8 sets how the fellowship *body* sounds; this section sets how the evidence-heavy fields *around*
+it are surfaced. In a `narrative-award` scheme the assessor is a mixed panel — a few specialists in
+the applicant's subfield, the rest generalists reading across the whole discipline. The
+presentation register's job is to let the generalist read the CV in the field's own esteem terms
+*without* the applicant sounding boastful, and to render every claim FROM a store block so it stays
+reconcilable. Four moves, each drawn from a named block; the register makes the claim, the passes
+keep it honest. All examples fictional.
+
+### 10.1 Outputs-context = field-calibration
+
+The outputs listing states *what* was published; the **Research Outputs Context** field teaches the
+assessor *how to read it* in the field's terms. It is a distinct `narrative` field with its own char
+limit — not a re-typed listing — rendered wholesale from the `outputs_context` store block
+(evidence-store §B, and `method-passes.md` §1.10 which performs the render). Four sub-moves, each
+one used sparingly (§6: at most one signature move per paragraph):
+
+- **Venue-tier glossing.** Every venue named carries a tier *and* a plain-language rank, so a
+  generalist need not know the subfield's pecking order: *"published at `<Flagship Conf>` (CORE A*,
+  a top-three venue in `<field>`) and in `<Journal>` (JCR Q1, the leading journal in `<subfield>`)."*
+  The tier is the insider signal; the plain rank does the generalist's translation. Render from
+  `field_norms.venue_tiers[]` — never gloss a venue that has no store entry.
+- **Authorship-convention decoding.** Where the subfield's convention differs from "first author =
+  most credit", *state what the position means here* rather than silently accepting a capped verb —
+  this pre-empts the "why isn't the applicant first author?" reflex a cross-field assessor brings:
+  *"On co-supervised student papers the applicant appears as last/senior author per this field's
+  convention, having contributed the central idea, design, and writing while the student ran the
+  experiments."* This is a **decode, not an upgrade** — it is bounded, evidence-backed credit drawn
+  from `field_norms.authorship_convention[]`, and it ties to the role/credit discipline
+  (`method-passes.md` §1.5, authorship-convention-decoding sub-move); `verb-tiering` still caps the
+  verb, so the decode explains the position, it does not promote it to "led".
+- **Ranking-service attributor.** A standing-claim is laundered through an external service, not
+  self-asserted: *"ranked Nth in `<field>` nationally by a ranking service (as of `<date>`)."*
+  Render from `field_norms.ranking_attributor` — the service, the metric, and the as-of date are all
+  the store's, so the line reads as a sourced fact (§8 sourced-eminence move), never a boast.
+- **Output-clustering into named threads.** Rather than a flat list, group the outputs into ~3–5
+  **named research threads**, each optionally tagged with a *tightly-scoped* primacy claim:
+  *"Thread — `<named direction>`: `<N>` outputs at `<Flagship Conf>`, establishing the first
+  `<tightly-scoped milestone>` in the area."* A cluster whose `primacy.attributor` is `null` is
+  *statable but never written as a superlative* — say "an early contribution to" not "the first",
+  exactly the defensible-primacy discipline of §8 and `method-passes.md` §1.9/§1.10. Every
+  career-best id (`career_best.ids`) must land in some cluster, and the credit stays bounded by
+  `contribution_summary` ("significant conceptual contribution on M of N papers") — never "all
+  mine". `validate_ir`'s **`outputs-context-completeness`** check enforces both: an unclustered
+  career-best id, or a cluster primacy with no attributor written as a superlative, FAILs under
+  `--mode submission` (WARNs in draft).
+
+*Worked rewrite (outputs-context, §9 style — fictional):*
+> ✗ *"I have published widely at the best venues and my papers are highly cited; I pioneered several
+> directions in my field and am one of the top researchers nationally."*
+> ✓ *"The applicant's outputs cluster into three threads. `<Thread A>` — `<N>` papers at
+> `<Flagship Conf>` (CORE A*, top-three in `<field>`), including an early contribution to
+> `<tightly-scoped area>`. `<Thread B>` — work in `<Journal>` (JCR Q1) where, per this field's
+> convention, the applicant is senior author on co-supervised student papers, having contributed the
+> core idea and design. Across the corpus the applicant made a significant conceptual contribution to
+> M of N papers, and a ranking service places them Nth in `<field>` nationally (as of `<date>`)."*
+> Why: the weak version stacks four unsourced superlatives ("best", "highly cited", "pioneered",
+> "top"); the rewrite glosses each venue for a generalist, decodes the authorship position instead of
+> leaving it to be misread, bounds the credit to M of N, laddered a scoped-not-superlative primacy,
+> and launders the ranking through a service — every clause traces to an `outputs_context` field.
+
+### 10.2 Collaborator / mentor eminence-borrowing — the environment as ROPE opportunity
+
+A narrative-award scores the applicant *relative to opportunity* (ROPE). A rich collaborator
+environment is a legitimate part of that opportunity — but it is **their** eminence, not the
+applicant's, and the register must keep that line honest. Name collaborators and mentors, each
+tagged with their *own* sourced eminence (Fellow of `<Academy>`, `<Award>` laureate, "a pioneer of
+`<method>`"), and ladder them by reach: **international → domestic → interdisciplinary → industry**.
+The move is *"the applicant's work is valued by, and is conducted alongside, `<a world-leading
+collaborator>` in `<area>`"* — the eminence is borrowed as *context* for what the applicant can
+achieve, framed as the opportunity the fellowship amplifies, not as the applicant's own output. Keep
+one eminence-tag per sentence (§6): a paragraph that stacks five laureates reads as name-dropping,
+not environment. The honest form asserts *"places the applicant in an environment of world-leading
+depth in `<area>`"* (opportunity, claimable) rather than *"the applicant is world-leading"* (their
+eminence silently annexed). Where these collaborators are also entity-store people/orgs, the
+eminence tag itself is evidence-backed the same way a partner commitment is — the register borrows
+it, the store sources it.
+
+### 10.3 Institutional-statement register — the host's third-party voice
+
+The **host-institution statement** is authored in the *institution's* voice, not the applicant's —
+a third-party attestation, register-distinct from the candidate's first-person ROPE. It is a
+`structured-upload` (proforma / heading-sequenced) that reads as the university speaking: an
+independent value gloss (*"the University regards the applicant as a strategic recruit in
+`<priority>`"*), a concrete co-investment total (establishment grant + stipend top-up + salary
+shortfall + teaching relief), a strategic-fit line (*"the project finds a home at `<Centre>`"*), and
+a continuing-offer (*"a continuing position on success"*). It renders from the entity-store
+`organizations[].institutional_support` block. Because it is third-party, keep the applicant's own
+first person *out* of it entirely. The block's `total` is stored separately from `sum(items)` so any
+mismatch is **visible** — hardened exactly like a partner's `letter_commitment` vs `contributions`
+(the batch-2 discipline). `method-passes.md` §4.5 (institutional-statement reconciliation) and
+`validate_ir`'s **`institutional-support-reconciliation`** check enforce it: the stated `total` must
+reconcile with `sum(items)` and (when a budget is present) with the budget's non-ARC / institutional
+contribution lines, and every committed item must carry provenance — a mismatch or a provenance-less
+committed item BLOCKs submission (WARNs in draft).
+
+### 10.4 Per-line budget-justification register
+
+The budget justification is prose, one beat per line, and every line does four things: ties the cost
+to a **specific Task**, itemizes the breakdown, defends the necessity against the obvious "why not
+cheaper?" objection, and names an expected **output**. The signature defense for a travel/visit line
+is the *"cannot be done by email"* rebuttal:
+> *"Travel to `<a world-leading collaborator>` at ACME University supports Task `<n>`: `<airfare>` +
+> `<registration>` + `<N>` days × `<per-diem>`. The exchange requires sustained in-person hours over
+> co-designed experiments that cannot be conducted by correspondence, and is expected to yield one
+> co-authored `<Flagship Conf>` submission per year."*
+Necessity is argued, not asserted; the itemization signals the number is real; the per-year output
+makes the spend accountable. The **voice** is this section's business — the **math** (row caps,
+matched-funding ratio, totals) is `validate_budget`'s (SKILL.md Stage E), and the institutional
+co-investment lines that appear here must reconcile with §10.3's `institutional_support.total` under
+`institutional-support-reconciliation`. Keep one such defense per line (§6); a justification that
+stacks the "cannot be done by email" rhetoric on every row reads as padding.
