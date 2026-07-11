@@ -92,7 +92,7 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
 - Unnecessary contrast: "X, not Y" / "X rather than Y" / "X instead of Y" — default to plain positive "X is A"; keep the contrast only when ruling out Y carries real information (don't reflexively swap "not Y" → "rather than Y") <!-- policy:PROSE.NEGATION_CONTRAST -->
 - Rule of three: "A, B, and C" (prefer two or four items)
-- Em-dash overuse: "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
+- Em-dash (zero allowed — not even one): "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including") <!-- policy:PROSE.COLON_LIST_OVERUSE -->
 - Mid-sentence colon: "key observation: the model fails" — rewrite as a full sentence or split; only heading colons (`\textbf{X:}`) are exempt <!-- policy:PROSE.MIDSENTENCE_COLON -->
 - Trailing afterthought: "..., as editable." comma + short tag tacked onto a sentence end (fold into the main clause) <!-- policy:PROSE.TRAILING_AFTERTHOUGHT -->
