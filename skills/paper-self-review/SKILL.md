@@ -25,6 +25,10 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式（已弃用，交 `scientific-figure-making`） |
 | `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色（已弃用，交 `scientific-figure-making`） |
 | `FIG.SELF_CONTAINED_CAPTION` | Caption 自包含（实验图表仅 what） |
+| `FIG.EXPERIMENT_SUBFIGURE_LAYOUT` | 实验图禁单行单个（1×2 或 2×2+ 网格） |
+| `FIG.HEATMAP_LABEL_ABBREVIATION` | 热量图长标签图内简写、caption 全称、单栏 |
+| `FIG.COLUMN_WIDTH_JUSTIFICATION` | 图单栏优先，全宽须密度自证 |
+| `FIG.RESEARCH_GAP_TEASER` | 可选 gap 图：单栏、overview 前、仅 gap 难言时 |
 | `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
 | `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
 | `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
