@@ -495,6 +495,66 @@ def check_char_rollup(rep, paste_ready):
                 f"charcount.py exit {code} (over-limit / BLOCK / NEEDS-RENDER)", out)
 
 
+def check_criterion_readiness(rep, scheme, values, evidence, mode):
+    """Per scored criterion: readiness ∈ unsupported|partial|substantiated|submission-ready.
+
+    In `submission` mode an `unsupported` criterion is a hard FAIL (a scored-criterion gap must
+    not hide behind a SKIP); `partial` → WARN. In `draft` mode both surface as WARN, never block.
+    """
+    crits = [c for c in (scheme.get("rubric") or [])
+             if isinstance(c, dict) and c.get("minimum_evidence")]
+    if not crits:
+        rep.add("criterion-readiness", "SKIP", "soft",
+                "scheme declares no rubric criterion with minimum_evidence")
+        return
+    present = _evidence_present(evidence)
+    fields_by_crit = {}
+    for f in iter_field_nodes(scheme.get("sections")):
+        cr = f.get("criterion_ref") or f.get("criterion")
+        if cr is not None:
+            fields_by_crit.setdefault(cr, []).append(fid(f))
+    for c in crits:
+        name = c.get("criterion")
+        req = [str(x) for x in c["minimum_evidence"]]
+        sat = [x for x in req if _canon_evidence_class(x) in present]
+        missing = [x for x in req if _canon_evidence_class(x) not in present]
+        fnames = fields_by_crit.get(name, [])
+        vals = [values.get(fn) for fn in fnames] if values else []
+        filled = [v for v in vals if v not in (None, "", [], {})]
+        has_content = bool(filled)
+        all_content = bool(fnames) and len(filled) == len(fnames)
+        markers = bool(READINESS_MARKER.search(str(vals)))
+        w = c.get("weight")
+        wtxt = (f"{round(w * 100)}%" if isinstance(w, (int, float)) and w <= 1
+                else f"{round(w)}%" if isinstance(w, (int, float)) else "n/a")
+        if not sat and not has_content:
+            state = "unsupported"
+        elif markers or len(sat) < len(req) or not has_content:
+            state = "partial"
+        elif all_content:
+            state = "submission-ready"
+        else:
+            state = "substantiated"
+        detail = f"{len(sat)}/{len(req)} evidence class(es) present"
+        if missing:
+            detail += f" (missing: {', '.join(missing)})"
+        if markers:
+            detail += "; residual [TO SET]/[VERIFY]/[…NEEDED] marker blocks substantiation"
+        if fnames and not has_content:
+            detail += "; no field content supplied"
+        if state in ("substantiated", "submission-ready"):
+            status, binding = "PASS", "hard"
+        elif state == "partial":
+            status, binding = "WARN", "soft"
+        elif mode == "submission":
+            status, binding = "FAIL", "hard"
+            detail += " — unevidenced scored criterion (fail-closed, submission mode)"
+        else:
+            status, binding = "WARN", "soft"
+        rep.add(f"criterion-readiness[{name}]", status, binding,
+                f"{state} (weight {wtxt}) — {detail}")
+
+
 # ── orchestration ────────────────────────────────────────────────────────────
 def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=None,
                 budget_path=None, paste_ready=None):
