@@ -58,7 +58,16 @@ OUTPUT  the SAME form, filled, in its native modality
  └─ flat/scanned .pdf → paste-ready + companion .docx, marked non-official (honest degrade)
 ```
 
-## Funding-mode dispatch (do this FIRST, after intake)
+## Dispatch is TWO axes
+
+Route every scheme on **two orthogonal axes** before drafting: `mode` (what you're judged ON)
+selects the register + method-pass group; `process` (how the judging is STRUCTURED) selects the
+process-archetype overlays. A DECRA and a Google research award can share a `mode` yet need
+completely different pipelines because their *process* differs — and an ARC DECRA (narrative-award)
+and an ARC Linkage (prospective-project) share ARC process conventions across different modes. Set
+`mode` first (below), then `process` (next section).
+
+## Funding-mode dispatch (axis 1 — do this FIRST, after intake)
 
 Determine `mode` — it selects which field-clusters dominate and which method passes run.
 The three modes barely overlap in required fields; a single flat approach cannot serve all.
