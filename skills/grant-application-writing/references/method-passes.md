@@ -56,6 +56,17 @@
 - **Does:** frame authorship / project role honestly — first / corresponding / co-first / CI / supervising — and **pre-empt the "not sole first" objection** by stating the shared credit before a reviewer infers it.
 - **In:** `evidence` items with role metadata. **Out:** each output annotated with its true role; co-first / shared-CI stated, not implied.
 - **Example (ECR):** a co-first-authored paper is written "co-first author (equal contribution)" rather than presented as sole-first; a supervised student's output is framed as supervision, not personal authorship.
+- **Authorship-convention-decoding sub-move (narrative-award).** Where the field's convention differs
+  from "first-author = most credit" — a subfield that orders authors alphabetically, or where
+  last/second author on a co-supervised paper signals the senior idea-and-design contributor — do
+  **not silently CAP** the claim to what a first-author-centric reader assumes. DECODE the convention
+  for the assessor from `outputs_context.authorship_convention` (bounded, evidence-backed: what the
+  position means in THIS subfield + who did what), pre-empting "why not first author". **A decode is
+  not an upgrade:** it states the field's actual credit assignment, still bounded by
+  `contribution_summary` (§1.4) and never role-upgraded past what the evidence supports — the honest
+  *floor* (the §1.9 specificity-floor mirror of the honest ceiling), not a promotion. Rendered in
+  §1.10 (outputs-context field-calibration) FROM the store block, never improvised. (Cross-ref §1.10
+  authorship-convention decoding, `outputs_context.authorship_convention` Agent B.)
 
 ### 1.6 char-fit
 - **Does:** pack each `narrative` field under its `limit` (respecting `nested_sublimits`), preserving the highest-weight content. **Report the character/word count in the output header** so the fit is auditable.
