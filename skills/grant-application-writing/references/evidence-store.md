@@ -639,6 +639,84 @@ risk with no trigger is a wish, an aim with no `success_criterion` cannot be sco
 `--mode submission` these fail closed (BLOCK); in `--mode draft` they WARN. The store never
 green-washes a present-but-empty field into a pass.
 
+### Traceability spine (`objectives[]` / `tasks[]` / `outputs[]` / `validations[]`)
+
+The five registers above answer *is each aim/benefit/risk sound in isolation*. They do **not**
+guarantee the project hangs together — that every activity has an owner, a year, a budget line,
+and a purpose it serves. The **traceability spine** adds that: four more registers that **EXTEND**
+(never replace) the five above, giving every activity a **stable id** and forcing it to trace
+**UP** to a purpose (`aim → objective → task → subtask → output → benefit`) and **ACROSS** to a
+resource (`person → year → budget → evidence`). Encoding the spine turns a family of "stylistic"
+consistency checks into a **deterministic, fail-closed validator** (`validate_ir.py`
+`traceability-spine`, gated on `mode == prospective-project`).
+
+- `objectives[]` — `{id, aim, statement}`: each numbered objective is the condition an aim is met
+  by. `aim` resolves to an `aims[].id` (no objective without an aim).
+- `tasks[]` — `{id, objective, statement, foundational, depends_on[], subtasks[], person[],
+  years[], budget_lines[], validation}`. **One-to-one objective↔task** where possible; `objective`
+  resolves to an `objectives[].id`. **Foundation-first**: exactly the task(s) that supply shared
+  theory / data / tools / measures carry `foundational: true`, and later tasks name them in
+  `depends_on` (the dependency architecture is explicit, not implied). Each `subtasks[]` entry is
+  written in the **gap→consequence→move→mechanism** grammar (*current method lacks X → causes
+  failure Y → introduce Z → Z fixes Y*; see method-passes.md §2.19) and names the `output` it
+  produces. **Cross-axis**: `person` resolves to entity-store `investigators[].id` (capability
+  coverage — no unstaffed task), `years` to the timetable, `budget_lines` to budget rows (the
+  **four-way crosswalk** task↔person↔year↔budget), `validation` to a `validations[].id`.
+- `outputs[]` — `{id, task, kind, benefit}`: each output is produced by a `task` and (where it
+  ladders to impact) traces to a `benefits[].id`. `kind ∈ theory | method | tool | demonstrator |
+  publication`.
+- `validations[]` — `{id, task, baseline, stress, mechanism_check, metric, comparator_class}`: a
+  **colocated** validation block per task (not a late generic "evaluation" section). It names
+  competitive `baseline`s, a `stress` scenario **designed to expose the targeted failure**, a
+  component-level `mechanism_check` (does the mechanism behave as intended), a `metric` aligned to
+  that failure (not a generic success metric), and a `comparator_class ∈ scholarly | commercial |
+  standard | own-work` (reusing the batch-1 comparators discipline; `own-work` is not external
+  SOTA).
+
+Worked example (**referentially consistent** — every id resolves: `objectives[].aim` → an `aims[]`
+row, `tasks[].objective` → an `objectives[]` row, `subtasks[].output` → an `outputs[]` row,
+`tasks[].person` → an entity-store `investigators[].id`, `outputs[].benefit` → a `benefits[]` row):
+
+```yaml
+# aims[] carries aim-1, aim-2; benefits[] carries ben-1, ben-2 (the five registers above)
+objectives:
+  - {id: obj-2, aim: aim-2, statement: "Deliver an ingestion path that sustains p99 < 800 ms at 10x throughput"}
+tasks:
+  - id: task-1                       # foundational — supplies the shared measures task-2 consumes
+    objective: obj-1
+    foundational: true
+    depends_on: []
+    subtasks: [{id: st-1.1, statement: "current method lacks a latency-attribution model → root causes are guessed → introduce a per-stage cost model → localises the bottleneck", output: out-1}]
+    person: [inv-lead]               # → evidence-store investigators[].id
+    years: [1]
+    budget_lines: [bl-1]
+    validation: val-1
+  - id: task-2
+    objective: obj-2                 # → objectives[].id
+    foundational: false
+    depends_on: [task-1]             # dependency architecture: consumes task-1's cost model
+    subtasks: [{id: st-2.1, statement: "batch ingest lacks backpressure → tail latency spikes under burst → introduce adaptive batching → bounds p99 at 10x", output: out-2}]
+    person: [inv-lead, inv-ci-2]
+    years: [2, 3]
+    budget_lines: [bl-2]
+    validation: val-2
+outputs:
+  - {id: out-1, task: task-1, kind: theory,       benefit: ben-1}
+  - {id: out-2, task: task-2, kind: demonstrator, benefit: ben-2}   # → benefits[].id (open-source ingestion toolkit)
+validations:
+  - {id: val-2, task: task-2, baseline: "single-node batch-ingest; prior-year pipeline",
+     stress: "10x burst replay on peak-hour traces, sized to force tail-latency blowup",
+     mechanism_check: "does adaptive batching engage backpressure at the queue-depth threshold",
+     metric: "p99 write latency < 800 ms sustained at 10x baseline throughput", comparator_class: standard}
+```
+
+`validate_ir.py` `traceability-spine` enforces the referential integrity + crosswalk: a dangling
+or duplicate id, a task with no `person` (unstaffed) or no `years`, a resource-dependent task with
+no `budget_lines` (or a non-institutional budget row referenced by no task — the reverse leg), or a
+`benefit`/`output`/`objective` link resolving to nothing → **FAIL in `--mode submission` / WARN in
+`--mode draft`**, naming the specific broken edge. The full template is
+`templates/project-plan.template.yaml`.
+
 ## Graduation note
 
 This module is deliberately grant-agnostic. It is scheduled to graduate into a standalone
