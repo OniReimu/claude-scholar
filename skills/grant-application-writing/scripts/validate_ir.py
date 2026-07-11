@@ -25,6 +25,11 @@ their exit codes + output fold into this report), never reimplemented here.
  11. partner-commitment  per partner, reconcile the letter_commitment figure against the
                         application contributions + budget line; --mode submission FAILs a
                         mismatch, a conditional-as-committed claim, or an unverified partner.
+ 12. process-dispatch   second dispatch axis — the scheme's assessment-PROCESS shape
+                        (single-stage-review/staged/interview-gated/panel-routed/curated/
+                        rolling) is a non-empty closed-vocab subset and consistent with the
+                        phases/routing fields/rejoinder it implies; an unknown process tag, or
+                        a missing process on a scheme that HAS a rubric, is a hard FAIL.
 
 SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
 rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
