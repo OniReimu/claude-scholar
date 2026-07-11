@@ -733,9 +733,17 @@ def _evidence():
 
 
 def _entity():
+    # letter_commitment + provenance so each partner reconciles under the submission gate;
+    # figures match the declared contributions (fictional entities only).
     return {"partners": [
-        {"id": "p1", "contributions": {"cash": {"fy1": 150000}, "in_kind": {"fy1": 0}}},
-        {"id": "p2", "contributions": {"cash": {"fy1": 0}, "in_kind": {"fy1": 200000}}}],
+        {"id": "p1", "status": "committed", "provenance": "corpus/loi-p1.pdf",
+         "contributions": {"cash": {"fy1": 150000}, "in_kind": {"fy1": 0}},
+         "letter_commitment": {"cash": {"value": 150000, "conditional": False},
+                               "in_kind": {"value": 0, "conditional": False}}},
+        {"id": "p2", "status": "committed", "provenance": "corpus/loi-p2.pdf",
+         "contributions": {"cash": {"fy1": 0}, "in_kind": {"fy1": 200000}},
+         "letter_commitment": {"cash": {"value": 0, "conditional": False},
+                               "in_kind": {"value": 200000, "conditional": False}}}],
         "integrity": {"total_co_contribution": 350000, "total_in_kind": 200000,
                       "grant_sought": 300000, "total_eligible_expenditure": 650000}}
 
