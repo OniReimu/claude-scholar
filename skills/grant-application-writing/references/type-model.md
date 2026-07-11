@@ -102,6 +102,11 @@ Container/computed widgets carry sharper rules than the table row implies — lo
 - **`budget-matrix` cross-validation includes cumulative cash-flow, not just row caps.** A
   per-financial-year liquidity check (cumulative spend ≤ cumulative cash-in) can fail a budget
   whose spend is front-loaded and cash back-loaded, even when every row cap passes.
+- **Structural artefacts reference the traceability-spine ids, not free text.** A `milestone-table`
+  deliverable, a `budget-matrix` line, and a project figure each name a spine `task`/`output` id
+  (project-plan.yaml, `evidence-store.md` B3) — so referential integrity is checkable: a milestone,
+  a funded line, or a figure box that names no existing task is a dangling reference the
+  `validate_ir.py` `traceability-spine` check FAILs, not free-text decoration.
 - **`budget-matrix` phasing is first-class, not a years-axis hack.** A scheme that forces
   phasing above a threshold (AEA / CRC-P: requested ≥ $200k → the budget must split into ≥2
   costed phases) carries a `phase` **axis** on the matrix and a **`phased_if_min: <amount>`**
