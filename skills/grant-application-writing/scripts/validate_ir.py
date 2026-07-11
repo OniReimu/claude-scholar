@@ -61,6 +61,21 @@ TOKEN = re.compile(r"[A-Za-z_][A-Za-z0-9_.]*")
 KW = {"and", "or", "not", "True", "False", "None", "in", "is"}
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+# residual placeholders a criterion's fields must NOT carry to reach `substantiated`
+READINESS_MARKER = re.compile(r"\[(?:TO SET|VERIFY|[^\]]*NEEDED)\]", re.I)
+# minimum_evidence class-name → canonical evidence-store bucket (both sides normalised)
+EVIDENCE_ALIAS = {
+    "publication": "publication", "paper": "publication",
+    "grant": "funding", "funding": "funding",
+    "patent": "patent", "award": "award",
+    "supervision": "supervision", "student": "supervision",
+    "service": "service", "invitedtalk": "service", "talk": "service",
+    "impact": "impact",
+    "comparator": "comparator", "externalcomparator": "comparator",
+    "context": "context", "contextevidence": "context",
+    "metric": "metric", "citation": "metric", "citationmetric": "metric",
+}
+
 
 class ResolveError(Exception):
     def __init__(self, missing):
