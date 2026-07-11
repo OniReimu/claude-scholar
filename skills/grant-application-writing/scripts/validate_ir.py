@@ -1422,6 +1422,56 @@ def _plan():
     }
 
 
+def _spine_plan():
+    # A fully-resolved traceability spine (fictional ids only) extending the batch-4 registers:
+    # every objective→aim, task→objective, depends_on→task, subtask→output, output→task/benefit,
+    # validation→task edge resolves; every task is staffed (person→investigators) + timed + funded
+    # (budget_lines→budget rows); no id is duplicated. Mirrors project-plan.template.yaml.
+    return {
+        "aims": [{"id": "aim-1", "statement": "Establish the shared-ledger throughput bound",
+                  "success_criterion": "sustained ≥10k tx/s on the reference cluster"}],
+        "benefits": [{"id": "ben-1", "benefit": "lower settlement latency", "owner": "ACME Cooperative",
+                      "metric": "median settlement time down 40%", "timing": "by Y3"}],
+        "objectives": [{"id": "obj-1", "aim": "aim-1", "statement": "prove the throughput bound"},
+                       {"id": "obj-2", "aim": "aim-1", "statement": "sustain it under 10x load"}],
+        "tasks": [
+            {"id": "task-1", "objective": "obj-1", "statement": "derive the bound",
+             "foundational": True, "depends_on": [],
+             "subtasks": [{"id": "st-1.1", "statement": "no closed-form bound → cannot size the "
+                           "cluster → derive one → sizing becomes deterministic", "output": "out-1"}],
+             "person": ["inv-lead"], "years": [1], "budget_lines": ["bl-1"], "validation": "val-1"},
+            {"id": "task-2", "objective": "obj-2", "statement": "build the load-replay harness",
+             "foundational": False, "depends_on": ["task-1"],
+             "subtasks": [{"id": "st-2.1", "statement": "batch ingest lacks backpressure → tail "
+                           "latency spikes → add adaptive batching → bounds p99", "output": "out-2"}],
+             "person": ["inv-lead"], "years": [2, 3], "budget_lines": ["bl-2"], "validation": "val-2"}],
+        "outputs": [{"id": "out-1", "task": "task-1", "kind": "theory", "benefit": "ben-1"},
+                    {"id": "out-2", "task": "task-2", "kind": "demonstrator"}],
+        "validations": [
+            {"id": "val-1", "task": "task-1", "baseline": "single-node baseline",
+             "stress": "cold-start burst", "mechanism_check": "does the bound hold",
+             "metric": "≥10k tx/s", "comparator_class": "scholarly"},
+            {"id": "val-2", "task": "task-2", "baseline": "batch-ingest architecture",
+             "stress": "10x burst replay", "mechanism_check": "does batching engage backpressure",
+             "metric": "p99 < 800 ms", "comparator_class": "standard"}],
+    }
+
+
+def _spine_entity():
+    # entity-store investigators[] the spine's task.person ids resolve into (fictional only).
+    return {"investigators": [{"id": "inv-lead", "name": "Lead CI"}]}
+
+
+def _spine_budget():
+    # budget rows carrying stable ids the spine's tasks[].budget_lines resolve into; each
+    # non-institutional row referenced by ≥1 task (closes the four-way crosswalk).
+    return {"rows": [
+        {"id": "bl-1", "category": "labour", "funding_source": "requested", "kind": "cash",
+         "years": {2026: 100000}},
+        {"id": "bl-2", "category": "equipment", "funding_source": "requested", "kind": "cash",
+         "years": {2027: 50000}}]}
+
+
 def _write(tmp, name, text):
     p = os.path.join(tmp, name)
     with open(p, "w", encoding="utf-8") as fh:
