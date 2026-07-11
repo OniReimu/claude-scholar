@@ -535,6 +535,75 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 
 ---
 
+### 2.18 traceability spine & cross-field reconciliation (capstone; ties §2.1 coherence + §2.7 capability + §2.8 budget; register-driven)
+> The capstone of the project-plan register. §2.1 project-coherence checks the aims↔methods↔milestones↔budget
+> chain informally; this pass makes it a **stable-id spine** `validate_ir.py` can verify deterministically —
+> every activity carries an id and traces **UP** (aim→objective→task→subtask→output→benefit) and **ACROSS**
+> (task→person→year→budget→evidence). Where §2.14–§2.17 each render one register block, this pass reconciles
+> them into one referentially-consistent whole. Runs only in `prospective-project` with a `--plan` spine
+> present (else SKIP, labelled). The register is the source of truth: the spine is *encoded, not asserted* —
+> a family of "does everything line up" stylistic checks turned into a deterministic fail-closed validator.
+- **Does:** render and reconcile the traceability spine from `project-plan.yaml` (`objectives[]`, `tasks[]`,
+  `subtasks[]`, `outputs[]`, `validations[]`), each check-gated:
+  - **(a) STABLE IDS.** every `objectives`/`tasks`/`subtasks`/`outputs`/`validations` entry carries a
+    **unique stable id**, and every cross-reference resolves — `tasks[].objective`→`objectives[].id`,
+    `subtasks[].output`→`outputs[].id`, `outputs[].task`→a task id, `validations[].task`→a task id. A
+    **dangling** reference or a **duplicate** id is a broken spine, not a cosmetic slip.
+  - **(b) ONE-TO-ONE objective↔task.** each `objectives[]` id is achieved by a `tasks[]` entry
+    (`task.objective` resolves), **one-to-one where the design allows** — an objective no task delivers, or
+    a task under no objective, is an orphan a reviewer reading the two lists side-by-side catches.
+  - **(c) FOUNDATION-FIRST dependency architecture.** `depends_on` wires the task DAG; **≥1
+    `foundational: true` task** supplies the shared theory / data / tools / measures later tasks consume,
+    and the order is **acyclic** — a task must not depend on work the plan schedules after it. State which
+    task is the foundation, not just that a dependency exists.
+  - **(d) SUBTASK GRAMMAR.** each `subtasks[]` statement is written in the **gap→consequence→move→mechanism**
+    form ("current method lacks X → causes failure Y → introduce Z → Z fixes Y") and names the `output` it
+    produces — an activity described as its causal mechanism, never as a bare to-do.
+  - **(e) COLOCATED VALIDATION.** each task ends with **its own** `validations[]` block — `baseline`
+    (competitive comparators), `stress` (a scenario designed to expose the *targeted* failure),
+    `mechanism_check` (a component-level diagnostic that the mechanism behaves as intended), `metric`
+    (aligned to the failure, **not** a generic success metric), and `comparator_class`
+    (`scholarly|commercial|standard|own-work`, the batch-1 comparators discipline, §2.11(iv)) — **not** a
+    single late generic "evaluation" section bolted on at the end.
+  - **(f) TRACES UP + ACROSS.** every task traces **UP** — task→objective→`aim` (batch-4 `aims[].id`),
+    output→`benefit` (batch-4 `benefits[].id`) — **and ACROSS** — task→`person` (entity `investigators[].id`,
+    the §2.7 capability owner), `years` (timetable), `budget_lines` (budget rows): the **four-way crosswalk
+    task↔person↔year↔budget** must close in **both** directions (each task funded/staffed; each
+    non-institutional budget row owned by a task).
+- **Submission mode:** a **dangling or duplicate id**, an **unstaffed** task (no `person`) or **unfunded**
+  task (no `years`), a **resource-dependent task with no budget line** (or a **budget line mapping to no
+  task**) → **BLOCK**. **Draft mode → WARN + a `blockers.md` entry** per broken edge, each naming the
+  specific ids, consistent with markers-two-mode §1.8.
+- **Mechanized by `validate_ir.py` `traceability-spine`** (Agent C): gated on `mode == prospective-project`
+  + a spine present in `--plan`; checks referential integrity (every cross-axis link resolves), no duplicate
+  ids across the spine, every task with ≥1 `person` AND ≥1 `years`, and — with `--entity`/`--budget`
+  supplied — each `person`→`investigators[].id` and the four-way crosswalk closing (each `budget_lines`
+  entry → a budget row AND, in reverse, every non-institutional budget row referenced by ≥1 task) — FAIL
+  (submission) / WARN (draft) per broken edge, with the offending ids named.
+- **In:** `project-plan.yaml` `objectives[]`/`tasks[]`/`subtasks[]`/`outputs[]`/`validations[]` + the
+  cross-axis links (`aim`→batch-4 `aims[].id`, `person`→entity `investigators[].id`, `budget_lines`→budget
+  rows, `benefit`→batch-4 `benefits[].id`); (if supplied) `--entity`, `--budget`. **Out:** a reconciled
+  spine — every activity id-stable, each objective delivered one-to-one by a task, a foundation-first
+  acyclic DAG, subtasks in gap→consequence→move→mechanism form, a colocated validation block per task, and
+  every task traced up (→aim/benefit) and across (→person/year/budget); every
+  dangling/duplicate/unstaffed/unfunded edge blocked (submission) or lifted to `blockers.md` (draft).
+  (Cross-ref §2.1 project-coherence, §2.7 team-capability — the capability owner this reuses,
+  §2.8 budget-math — the rows the crosswalk closes against, §2.14 `success_criterion`; the
+  `project-plan.yaml` spine block Agent B, `traceability-spine` Agent C.)
+- **Example (fictional):** a plan states *obj-1* but no `tasks[]` entry sets `objective: obj-1` → orphan
+  objective, **BLOCK**. *task-1* (`foundational: true`) supplies the shared measurement harness *task-2* and
+  *task-3* consume via `depends_on: [task-1]`; each subtask reads "current [method] lacks [property] →
+  causes [failure] → introduce [move] → [move] closes [failure]" and names an `output`. *task-2* carries
+  `person: [inv-lead]`, `years: [1,2]`, `budget_lines: [bl-3]`, and a `validations[]` block
+  (`baseline`, `stress`, `mechanism_check`, `metric`, `comparator_class: scholarly`). A fourth task lists no
+  `budget_lines` while requesting a compute-heavy method → **unfunded, BLOCK**; a budget row `bl-7`
+  referenced by no task → **orphan line, BLOCK**. In draft mode each becomes a `blockers.md` entry naming
+  the id; `validate_ir.py`'s `traceability-spine` catches the referential and crosswalk breaks mechanically
+  (exit 1), while this pass owns the grammar / foundation-first / colocation judgement the ids cannot
+  self-check.
+
+---
+
 ## Group 3 — retroactive-impact passes (ADDED for `retroactive-impact`)
 
 Run these *in addition* to Group 1's evidentiary discipline (verb-tiering, anti-double-counting,
