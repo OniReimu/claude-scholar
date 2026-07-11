@@ -1064,7 +1064,8 @@ Fig.~\ref{fig:convergence} shows ... [analysis] ...
 ```
 
 **Subfigure guidelines:**
-- Use `figure*` (double-column) when ≥ 3 subfigures, `figure` (single-column) for 1-2
+- **No lone subfigure on a row**: experiment figures use 2 side-by-side (1×2) or a 4+ grid (2×2, 2×3, …). A single subfigure stranded on its own row is a demerit — pair it with the same experiment's other metric, fold it into the grid, or inline it into prose <!-- policy:FIG.EXPERIMENT_SUBFIGURE_LAYOUT -->
+- **Single-column first**: default to `figure`; go `figure*` (full width) only when the panels are dense enough to need `\textwidth`. A sparse full-width figure that a single column would fit is a demerit <!-- policy:FIG.COLUMN_WIDTH_JUSTIFICATION -->
 - Each subfigure has its own `\label` for individual `\ref` in text
 - Shared legend as a separate image file at the top, with `\vspace{-15pt}` to reduce gap
 - `\shortstack` in subfigure captions for multi-line condition labels
