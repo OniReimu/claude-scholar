@@ -1162,6 +1162,149 @@ def check_outputs_context_completeness(rep, scheme, evidence, mode):
                 "outputs_context present but declares no career_best ids and no cluster primacy claims")
 
 
+def check_traceability_spine(rep, scheme, plan, entity, bdata, mode):
+    """#19 traceability spine & cross-field crosswalk (prospective-project mode). Gated on
+    prospective-project mode + a spine present in --plan (objectives/tasks/outputs/validations);
+    else a labelled SKIP. When the spine IS present it is fail-closed — every id must resolve.
+
+    Referential integrity: every objectives[].aim → aims[].id; tasks[].objective →
+    objectives[].id; tasks[].depends_on → a task id; subtasks[].output → outputs[].id;
+    outputs[].task → a task id; outputs[].benefit → benefits[].id (when the output declares one);
+    validations[].task → a task id. Crosswalk: every task carries ≥1 person AND ≥1 years; with
+    --entity, each person → investigators[].id; with --budget, each tasks[].budget_lines → a
+    budget row id AND (reverse) every non-institutional budget row is referenced by ≥1 task. No id
+    is duplicated across the spine. Each broken edge / dangling / duplicate / unstaffed / unfunded
+    is a hard FAIL (per edge, naming the ids) in `submission`, a WARN in `draft`.
+    """
+    if not _project_gate(rep, "traceability-spine", scheme, plan):
+        return
+    objectives = plan.get("objectives") or []
+    tasks = plan.get("tasks") or []
+    outputs = plan.get("outputs") or []
+    validations = plan.get("validations") or []
+    if not (objectives or tasks or outputs or validations):
+        rep.add("traceability-spine", "SKIP", "soft",
+                "prospective-project plan declares no traceability spine "
+                "(objectives/tasks/outputs/validations)")
+        return
+
+    def ids_of(rows):
+        return [str(r.get("id")) for r in rows if isinstance(r, dict) and r.get("id") is not None]
+
+    aim_ids = set(ids_of(plan.get("aims") or []))
+    ben_ids = set(ids_of(plan.get("benefits") or []))
+    obj_ids = set(ids_of(objectives))
+    task_ids = set(ids_of(tasks))
+    out_ids = set(ids_of(outputs))
+    inv_ids = set(ids_of(entity.get("investigators") or [])) if entity else set()
+
+    problems = []
+
+    # no duplicate ids across the spine (objectives/tasks/subtasks/outputs/validations)
+    seen = {}
+    for r in objectives + tasks + outputs + validations:
+        if isinstance(r, dict) and r.get("id") is not None:
+            seen[str(r["id"])] = seen.get(str(r["id"]), 0) + 1
+    for t in tasks:
+        for st in (t.get("subtasks") or []) if isinstance(t, dict) else []:
+            if isinstance(st, dict) and st.get("id") is not None:
+                seen[str(st["id"])] = seen.get(str(st["id"]), 0) + 1
+    for i in sorted(k for k, c in seen.items() if c > 1):
+        problems.append(f"duplicate id {i!r} appears {seen[i]}× across the spine")
+
+    # objectives[].aim → aims[].id
+    for o in objectives:
+        if not isinstance(o, dict):
+            continue
+        aim = o.get("aim")
+        if aim is not None and str(aim) not in aim_ids:
+            problems.append(f"objective {o.get('id')!r} → aim {aim!r} resolves to no aims[].id")
+
+    # tasks[].objective / depends_on / subtasks[].output; staffing + timing + person→investigators
+    for t in tasks:
+        if not isinstance(t, dict):
+            continue
+        tid = t.get("id")
+        obj = t.get("objective")
+        if obj is not None and str(obj) not in obj_ids:
+            problems.append(f"task {tid!r} → objective {obj!r} resolves to no objectives[].id")
+        for dep in (t.get("depends_on") or []):
+            if str(dep) not in task_ids:
+                problems.append(f"task {tid!r} depends_on {dep!r} resolves to no task id")
+        for st in (t.get("subtasks") or []):
+            if not isinstance(st, dict):
+                continue
+            out = st.get("output")
+            if out is not None and str(out) not in out_ids:
+                problems.append(f"subtask {st.get('id')!r} → output {out!r} resolves to no outputs[].id")
+        persons = t.get("person") or []
+        persons = persons if isinstance(persons, list) else [persons]
+        years = t.get("years") or []
+        years = years if isinstance(years, list) else [years]
+        if not persons:
+            problems.append(f"task {tid!r} has no person — unstaffed")
+        if not years:
+            problems.append(f"task {tid!r} has no years — untimed")
+        if entity:
+            for p in persons:
+                if str(p) not in inv_ids:
+                    problems.append(f"task {tid!r} person {p!r} resolves to no investigators[].id")
+
+    # outputs[].task → a task id; outputs[].benefit → benefits[].id (when declared)
+    for o in outputs:
+        if not isinstance(o, dict):
+            continue
+        oid = o.get("id")
+        tsk = o.get("task")
+        if tsk is not None and str(tsk) not in task_ids:
+            problems.append(f"output {oid!r} → task {tsk!r} resolves to no task id")
+        ben = o.get("benefit")
+        if ben is not None and str(ben) not in ben_ids:
+            problems.append(f"output {oid!r} → benefit {ben!r} resolves to no benefits[].id")
+
+    # validations[].task → a task id
+    for v in validations:
+        if not isinstance(v, dict):
+            continue
+        tsk = v.get("task")
+        if tsk is not None and str(tsk) not in task_ids:
+            problems.append(f"validation {v.get('id')!r} → task {tsk!r} resolves to no task id")
+
+    # four-way crosswalk to budget (when --budget supplied): forward + reverse
+    if bdata is not None:
+        rows = [r for r in (bdata.get("rows") or []) if isinstance(r, dict)]
+        inst = {"institutional", "institution", "host", "host-institution"}
+        row_ids = {str(r.get("id")) for r in rows if r.get("id") is not None}
+        referenced = set()
+        for t in tasks:
+            if not isinstance(t, dict):
+                continue
+            for bl in (t.get("budget_lines") or []):
+                referenced.add(str(bl))
+                if str(bl) not in row_ids:
+                    problems.append(f"task {t.get('id')!r} budget_line {bl!r} resolves to no budget row id")
+        for r in rows:
+            if str(r.get("funding_source")) in inst:
+                continue
+            rid = r.get("id")
+            if rid is None:
+                problems.append(f"non-institutional budget row {r.get('category', '<row>')!r} "
+                                "carries no id — cannot cross-reference to a task")
+            elif str(rid) not in referenced:
+                problems.append(f"budget row {str(rid)!r} is referenced by no task — unfunded/orphan line")
+
+    if not problems:
+        rep.add("traceability-spine", "PASS", "hard",
+                f"spine resolves — {len(objectives)} objective(s), {len(tasks)} task(s), "
+                f"{len(outputs)} output(s), {len(validations)} validation(s); "
+                "every edge + crosswalk intact")
+        return
+    status, binding = ("FAIL", "hard") if mode == "submission" else ("WARN", "soft")
+    tail = " (fail-closed, submission mode)" if mode == "submission" else ""
+    for p in problems:
+        rep.add("traceability-spine", status, binding, p + tail)
+
+
 # ── orchestration ────────────────────────────────────────────────────────────
 def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=None,
                 budget_path=None, paste_ready=None, mode="draft", plan_path=None):
