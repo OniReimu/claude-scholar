@@ -232,6 +232,44 @@ These fields feed **prong 2 (the fellowship prong) of the `number-defensibility`
 `author-voice.md` §8. They are inert in `prospective-project` mode, where the defensible move
 on a market number is *omit*, not *scope + source* (prong 1).
 
+## Multi-CI investigator model (`investigators[]`)
+
+The single `owner` block models one applicant. Multi-CI schemes (team, linkage, program
+grants) score **each named investigator** against the tasks they own, so the store carries a
+person-indexed `investigators[]`. The `owner` block stays the **lead-CI shorthand**: for a
+single-applicant scheme `owner == investigators[0]` and `investigators[]` may be omitted; a
+multi-CI scheme populates one row per `lead-CI | CI | PI | partner-investigator`.
+
+Each investigator carries their **own** `rope_context` (years since PhD, career stage,
+interruptions) and their **own** `track_record_ref` into the shared item lists. The
+load-bearing rule: **ROPE `window` / `role` / `attributor` apply per investigator, each
+relative to their OWN opportunity.** A senior CI's long record and an ECR's short one are
+never pooled into a single team tally — each is read against that person's `rope_context`.
+`task_ownership` maps each investigator to the aims / WPs they lead (so no aim is unstaffed
+and no two CIs redundantly duplicate one); `fte` + `current_commitments` feed the
+availability check (declared FTE vs concurrent awards). The drafting layer's **multi-CI ROPE
+pass (`method-passes.md` §2.7)** reads this block to assess the team as a *composition*, not
+a bag of CVs.
+
+## SOTA & significance evidence classes (`comparators[]`, `context_evidence[]`)
+
+Significance and state-of-the-art are **rendered from evidence, not asserted.** Two classes
+back them:
+
+- `comparators[]` — the external work the project is positioned against, each tagged
+  `kind: scholarly | commercial | standard | own-work`. **`own-work` is explicitly NOT an
+  external comparator**: the applicant's own prior work grounds a *primacy* claim but cannot
+  stand in for independent state-of-the-art. If every comparator is `own-work`, the SOTA pass
+  has only self-reference and flags it.
+- `context_evidence[]` — source-backed problem-significance: a `{claim, stat, source,
+  as_of}` quad giving a real dated figure for why the problem matters
+  (*"1.2M erasure requests/yr, Regulator Annual Report 2025"*), never "an important problem."
+
+These feed the **SOTA / significance pass (`method-passes.md` §2.11)**, the
+**defensible-primacy move (§1.9)**, and **author-voice §5.1 costed-stake** — so the drafting
+layer renders significance from a dated source, and writes a "first" / "only" only against a
+real external comparator.
+
 ## Governance blocks (store-level, alongside the item lists)
 
 ```yaml
