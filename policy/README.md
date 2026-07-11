@@ -175,6 +175,10 @@ SoK 规则集合（语义规则）：
 | FIG.SELF_CONTAINED_CAPTION | fig-self-contained-caption | core | warn | false | doc | guidance | none |
 | FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 | fig-system-overview-aspect-ratio-ge-2to1 | core | error | true | doc | guidance | none |
 | FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required | core | error | false | doc | guidance | none |
+| FIG.EXPERIMENT_SUBFIGURE_LAYOUT | fig-experiment-subfigure-layout | core | warn | false | doc | guardrail | none |
+| FIG.HEATMAP_LABEL_ABBREVIATION | fig-heatmap-label-abbreviation | core | warn | false | doc | guidance | none |
+| FIG.COLUMN_WIDTH_JUSTIFICATION | fig-column-width-justification | core | warn | false | doc | guardrail | none |
+| FIG.RESEARCH_GAP_TEASER | fig-research-gap-teaser | core | warn | false | doc | guidance | none |
 | TABLE.BOOKTABS_FORMAT | table-booktabs-format | core | warn | false | lint_script | guardrail | assisted |
 | TABLE.DIRECTION_INDICATORS | table-direction-indicators | core | warn | false | doc | guidance | none |
 | TABLE.RESIZEBOX_COLUMN_FIT | table-resizebox-column-fit | core | warn | false | doc | guidance | assisted |
