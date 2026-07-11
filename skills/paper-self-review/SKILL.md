@@ -161,6 +161,7 @@ Check whether math notation follows project rules:
 - Are inline equations written with `$...$` where appropriate?
 - Are variable-like tokens longer than 3 letters wrapped with `\text{}` in math mode? <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 - Are symbols consistent throughout the paper? <!-- policy:LATEX.NOTATION_CONSISTENCY -->
+- Does pseudocode reuse the established math notation (not verbose prose) and abstract away standard operations? <!-- policy:PROSE.PSEUDOCODE_ABSTRACTION -->
 
 ### 7. Experiment Structure
 
