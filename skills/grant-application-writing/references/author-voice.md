@@ -333,6 +333,19 @@ reconcile with `sum(items)` and (when a budget is present) with the budget's non
 contribution lines, and every committed item must carry provenance — a mismatch or a provenance-less
 committed item BLOCKs submission (WARNs in draft).
 
+**Capacity-conversion — money into protected time.** Do not leave teaching-relief, salary-cover, or a
+continuing position sitting as dollar line-items on the co-investment total; *convert* them into the
+currency the scheme actually scores — **protected research time and execution capacity**. Teaching
+relief becomes "`<N>` research days per year freed for `task-1`"; a salary shortfall becomes "the
+applicant's time bought onto the project"; a continuing offer becomes "capacity that outlasts the
+grant". Render the conversion from `institutional_support.protected_capacity`
+(`{teaching_relief_to_research_days, continuing_position, note}` — Agent B) so the days are the
+store's, not the register's invention. And close the **host-strategy ↔ candidate ↔ project triangle**
+in the open: the host names `<priority>` as strategic, the candidate is the recruit hired against it,
+and the project is the vehicle that delivers it — three corners that must meet, or "strategic recruit"
+is decoration. `method-passes.md` §4.5 checks the conversion and the triangle; the *dollar* total is
+still reconciled by `institutional-support-reconciliation`.
+
 ### 10.4 Per-line budget-justification register
 
 The budget justification is prose, one beat per line, and every line does four things: ties the cost

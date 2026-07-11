@@ -45,7 +45,13 @@ organizations:
         - {kind: salary-shortfall,    value: <NNNNN>, currency: "<CUR>", status: <committed | indicative>, provenance: "<host-statement path>"}
         - {kind: teaching-relief,     value: <NNNNN | null>, basis: "<e.g. reduced load funded from salary savings>", status: committed, provenance: "<host-statement path>"}
       total: {value: <NNNNN>, currency: "<CUR>"}   # the statement's STATED total — kept SEPARATE from sum(items) so a mismatch is VISIBLE (mirror partner letter_commitment)
-      strategic_fit: "<why the org recruited the candidate; where the project finds a home>"
+      # ── protected_capacity: capacity-conversion — relief/coverage → PROTECTED RESEARCH TIME + execution capacity (not just $). Read by method-passes §4.5 ──
+      protected_capacity:
+        teaching_relief_to_research_days: <int | null>   # teaching-relief converted to protected research days/yr; null if committed but not quantified
+        continuing_position: <true | false>              # a continuing (not fixed-term) position on success → sustained execution capacity
+        note: "<how the relief / salary-cover becomes protected time the project can actually execute against>"
+      # ── strategic_fit: the host-strategy ↔ candidate ↔ project TRIANGLE must be stated (not a one-sided 'good fit') ──
+      strategic_fit: "<why the org recruited the candidate, how the project advances the org's strategy, and where the project finds a home — all three legs>"
       continuing_offer: "<continuing position on success — or null>"
       statement_provenance: "<host-institution statement path>"
     provenance: "<source record>"

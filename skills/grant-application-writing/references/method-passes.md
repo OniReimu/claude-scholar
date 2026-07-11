@@ -672,7 +672,8 @@ and third-party attestations, scored first-class.
 > reconciles the *host institution's* statement. `author-voice.md` §10 WRITES the statement in the
 > institution's third-party voice; this pass CHECKS its stated total matches the parts and the budget.
 - **Does:** for the `organizations[].institutional_support` block, reconcile the statement's STATED
-  `total` against the parts and the budget, and prove every committed item. Three couplings:
+  `total` against the parts and the budget, prove every committed item, and convert the support into
+  research capacity. Four couplings:
   - **(a) TOTAL ↔ SUM(ITEMS).** `institutional_support.total.value` must equal `sum(items[].value)`
     within 1% — the stated total is held **separate** from the item sum precisely so a mismatch is
     VISIBLE (same discipline as partner `letter_commitment` vs `contributions`, §2.13).
