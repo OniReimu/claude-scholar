@@ -1060,6 +1060,36 @@ def _entity():
                       "grant_sought": 300000, "total_eligible_expenditure": 650000}}
 
 
+def _plan():
+    # A fully-complete project-plan (fictional entities only): every aim answered by a design
+    # with a success_criterion + answers_aim; every benefit owned + measured + timed; a
+    # counterfactual + leverage matching the _entity/budget fixture (grant 300k, co 350k);
+    # every high-impact risk carries a trigger + contingency + owner.
+    return {
+        "aims": [{"id": "aim-1", "statement": "Establish the shared-ledger throughput bound",
+                  "success_criterion": "sustained ≥10k tx/s on the reference cluster"}],
+        "design": [{"aim": "aim-1", "methods": ["controlled load test"],
+                    "controls": ["single-node baseline", "no-batching ablation"],
+                    "validity": {"sample_size": 30, "power": 0.8,
+                                 "threats": ["warm-cache bias mitigated by cold-start runs"]},
+                    "answers_aim": "the controlled comparison isolates throughput from cache effects, "
+                                   "producing the bound aim-1 claims"}],
+        "benefits": [{"id": "ben-1", "benefit": "lower settlement latency for regional members",
+                      "type": "outcome", "beneficiary": "ACME credit-union members",
+                      "owner": "ACME Cooperative", "timing": "by Y3",
+                      "metric": "median settlement time down 40%", "preconditions": ["member onboarding"]}],
+        "additionality": {"counterfactual": "without this grant ACME will not build the shared "
+                                            "ledger because no single member captures the return alone",
+                          "not_business_as_usual": True,
+                          "leverage": {"grant": 300000, "co_contribution": 350000, "currency": "AUD"}},
+        "risks": [{"id": "risk-1", "risk": "data-sharing MOU delayed", "likelihood": "medium",
+                   "impact": "high", "trigger": "if the MOU is unsigned by month 6",
+                   "monitoring": "quarterly steering review",
+                   "contingency": "switch to the synthetic cohort prepared in month 3",
+                   "owner": "CI Rivera"}],
+    }
+
+
 def _write(tmp, name, text):
     p = os.path.join(tmp, name)
     with open(p, "w", encoding="utf-8") as fh:
