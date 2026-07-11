@@ -558,6 +558,119 @@ def check_criterion_readiness(rep, scheme, values, evidence, mode):
                 f"{state} (weight {wtxt}) — {detail}")
 
 
+def _partner_declared(p):
+    """The APPLICATION's declared (cash, in_kind) for a partner from `contributions`.
+
+    Returns None for a type the partner does not declare at all (so a genuinely absent
+    figure is never green-washed to 0); a declared type that sums to 0 stays 0.0.
+    """
+    cash = in_kind = None
+    c = p.get("contributions")
+    if isinstance(c, dict):
+        for typ, cells in c.items():
+            key = str(typ).replace("_", "").replace("-", "").lower()
+            s = sum(float(v) for v in (cells or {}).values()) if isinstance(cells, dict) else float(cells or 0)
+            if key.startswith("in") and "kind" in key:
+                in_kind = (in_kind or 0.0) + s
+            elif key == "cash":
+                cash = (cash or 0.0) + s
+    elif isinstance(c, list):
+        for row in c:
+            amt = (row.get("amount") or {}).get("value", row.get("value", 0)) or 0
+            if str(row.get("type", "")).startswith("in"):
+                in_kind = (in_kind or 0.0) + float(amt)
+            else:
+                cash = (cash or 0.0) + float(amt)
+    return cash, in_kind
+
+
+def _partner_budget(bdata, pid):
+    """The (cash, in_kind) co-contribution BUDGET lines tagged to a partner id."""
+    if not bdata:
+        return None, None
+    cash = in_kind = None
+    for r in (bdata.get("rows") or []):
+        if r.get("funding_source") != "co-contribution" or str(r.get("partner")) != str(pid):
+            continue
+        s = sum(float(v) for v in (r.get("years") or {}).values())
+        if r.get("kind") == "in-kind":
+            in_kind = (in_kind or 0.0) + s
+        else:
+            cash = (cash or 0.0) + s
+    return cash, in_kind
+
+
+def _letter_figures(p):
+    """The LETTER's (cash, in_kind, conditional?) from a `letter_commitment` block."""
+    lc = p.get("letter_commitment")
+    if not isinstance(lc, dict):
+        return None, None, False
+
+    def one(blk):
+        b = lc.get(blk)
+        if isinstance(b, dict):
+            v = b.get("value")
+            return (float(v) if v is not None else None), bool(b.get("conditional"))
+        return None, False
+
+    cash, cash_cond = one("cash")
+    in_kind, ik_cond = one("in_kind")
+    return cash, in_kind, (cash_cond or ik_cond or bool(lc.get("conditional")))
+
+
+def check_partner_commitment_reconciliation(rep, scheme, entity, bdata, mode):
+    """Per partner, reconcile the three figures the IR can see: the application's declared
+    `contributions`, the matching `contribution/budget-matrix` line, and the LETTER's
+    `letter_commitment`. A numeric mismatch, a conditional commitment rendered as
+    `status: committed`, or a cash/in-kind line with no letter_commitment AND no provenance
+    (UNVERIFIED) is a hard FAIL in `submission` mode; in `draft` mode each surfaces as WARN.
+    """
+    partners = entity.get("partners") or []
+    if not partners:
+        rep.add("partner-commitment-reconciliation", "SKIP", "hard",
+                "no entity partners to reconcile letter↔application↔budget")
+        return
+    fmt = lambda v: f"{v:.0f}" if v is not None else "—"
+    for p in partners:
+        pid = p.get("id") or p.get("name") or "<partner>"
+        a_cash, a_ik = _partner_declared(p)
+        b_cash, b_ik = _partner_budget(bdata, pid)
+        l_cash, l_ik, conditional = _letter_figures(p)
+        lc = p.get("letter_commitment") if isinstance(p.get("letter_commitment"), dict) else None
+        status_claim = str(p.get("status") or (lc or {}).get("status") or "").lower()
+        has_line = any(v is not None for v in (a_cash, a_ik, b_cash, b_ik))
+        provenance = p.get("provenance") or (lc or {}).get("provenance")
+
+        problems = []
+        for label, vals in (("cash", (a_cash, b_cash, l_cash)), ("in_kind", (a_ik, b_ik, l_ik))):
+            present = [v for v in vals if v is not None]
+            if len(present) >= 2 and max(present) - min(present) > 0.01:
+                srcs = ", ".join(f"{nm} {v:.0f}" for nm, v in
+                                 zip(("application", "budget", "letter"), vals) if v is not None)
+                problems.append(f"{label} mismatch ({srcs})")
+        if conditional and status_claim == "committed":
+            problems.append("letter marks the commitment conditional but partner status=committed")
+        unverified = has_line and lc is None and not provenance
+
+        if not problems and not unverified:
+            if not has_line and l_cash is None and l_ik is None:
+                rep.add(f"partner-commitment-reconciliation[{pid}]", "PASS", "hard",
+                        "no cash/in-kind commitment declared — nothing to reconcile")
+            else:
+                rep.add(f"partner-commitment-reconciliation[{pid}]", "PASS", "hard",
+                        f"reconciled — cash a/{fmt(a_cash)} b/{fmt(b_cash)} l/{fmt(l_cash)}, "
+                        f"in_kind a/{fmt(a_ik)} b/{fmt(b_ik)} l/{fmt(l_ik)}")
+            continue
+        reason = ("; ".join(problems) if problems else
+                  f"cash/in-kind line present but no letter_commitment and no provenance "
+                  f"(cash a/{fmt(a_cash)} b/{fmt(b_cash)}, in_kind a/{fmt(a_ik)} b/{fmt(b_ik)}) — UNVERIFIED")
+        if mode == "submission":
+            rep.add(f"partner-commitment-reconciliation[{pid}]", "FAIL", "hard",
+                    reason + " (fail-closed, submission mode)")
+        else:
+            rep.add(f"partner-commitment-reconciliation[{pid}]", "WARN", "soft", reason)
+
+
 # ── orchestration ────────────────────────────────────────────────────────────
 def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=None,
                 budget_path=None, paste_ready=None, mode="draft"):
