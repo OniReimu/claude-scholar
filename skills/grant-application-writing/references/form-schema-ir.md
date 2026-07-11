@@ -75,6 +75,8 @@ rubric:                                         # role=criterion-scored fields l
     weight: 0.40
     evidence_types: [publication, citation-metric, grant, invited-talk]
     reviewer_panel: null                        # panel/college that scores it, if scheme routes by classification
+    minimum_evidence: [publication, external-comparator]   # evidence CLASSES required before this criterion can score; absent → readiness `unsupported`
+    readiness_rule: ">=1 backed claim per sub-indicator + no [TO SET]/[COMPARATOR NEEDED] in its fields"   # what must hold to reach `substantiated`
 
 attachments:                                    # every upload; kind is NEVER "just a blob" (type-model.md structured-upload)
   - name: "CV"
