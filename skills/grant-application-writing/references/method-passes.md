@@ -267,9 +267,14 @@ and third-party attestations, scored first-class.
 - **Does:** populate reviewer-management fields — NSF COA relational tables, **excluded reviewers**, **suggested reviewers** — consistently with the entity-store's collaboration graph.
 - **In:** entity-store relationships, COA rules. **Out:** filled conflict tables + exclusion/suggestion lists, cross-checked against co-authorship within the scheme's lookback window.
 
----
-
-## Stage E — review as a checklist-driven CONTRACT
+### 4.4 criterion-readiness (mechanise the blockers discipline)
+- **Does:** map **every scored `criterion`** to a readiness state from the evidence actually present, so a high-weight criterion cannot pass unevidenced while "all supplied artefacts are valid". Readiness enum (canonical): **`unsupported | partial | substantiated | submission-ready`**. For each criterion, read the `rubric[].minimum_evidence` (the evidence classes required to score it) + `readiness_rule` (what must hold to reach `substantiated`) that Stage A recorded in `form-schema-ir.md`, compute the state from the IR/evidence, and report it **per criterion**.
+  - **`unsupported`** — no backing evidence for a scored criterion. In **submission mode** this is a **BLOCK, not a silent skip** — a scored criterion with zero evidence fails the gate.
+  - **`partial`** — some but not all `minimum_evidence` present. Surfaces as a **warning + a `blockers.md` entry** ("resolve before submit"), consistent with markers-two-mode §1.8.
+  - **`substantiated` / `submission-ready`** — `minimum_evidence` met and the `readiness_rule` holds; `submission-ready` additionally carries no unresolved §1.8/§1.9 markers on that criterion's fields.
+- **Mode behaviour.** **Submission/final:** a hard-required scored criterion at `unsupported` is a hard block; `partial` → warning + `blockers.md`. **Draft/internal:** may proceed with the state annotated inline (the applicant sees which criteria are thin) — parallels the two-mode marker handling in §1.8.
+- **Machine-run.** This pass is executed mechanically by `scripts/validate_ir.py` (a `criterion-readiness` check, added to `--self-test`): for each rubric criterion it computes readiness from the IR/evidence and returns a **FAIL in submission mode** for a scored criterion with no backing evidence — **not a SKIP**. SKIP is reserved for genuinely optional sidecars; a SKIP that would hide a scored-criterion gap is reclassified as a FAIL. (Cross-ref markers-two-mode / `blockers.md` §1.8; the mechanized-gate paragraph below.)
+- **In:** `rubric[]` (`weight`, `binding`, `minimum_evidence`, `readiness_rule`), the drafted IR + evidence-store. **Out:** a per-criterion readiness table (`criterion → state`); in submission mode, hard blocks for `unsupported` hard-required criteria + `blockers.md` entries for every `partial`; in draft mode, the same states annotated, non-blocking.
 
 Stage E is **not** "run tool X." It is a contract of checkable items; each must be
 green before submission. The **operational method** is an **adversarial, multi-round**
