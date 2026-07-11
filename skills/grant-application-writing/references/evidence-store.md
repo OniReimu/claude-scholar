@@ -460,6 +460,57 @@ with a signed-LOI `provenance` (`corpus/loi-acme.pdf`); an email promise does no
 figure as `committed`, and a signature by an entity with no `capacity_evidence` for signing
 authority degrades the commitment rather than upgrading it.
 
+## Project-plan store (B3) — prospective-project mode
+
+The evidence store (Stage B) and the entity store (B2) are **reusable applicant assets** —
+built once, amortized across every application. The **project-plan store** is the opposite:
+it is **PROJECT-SPECIFIC**, one `project-plan.yaml` per application, living in that
+application's own folder. It does not hold track record or people/orgs — it holds **the
+project itself**, so that a demanding `prospective-project` panel scores substance *rendered
+from structure*, not asserted in prose. Template: `templates/project-plan.template.yaml`;
+validated by `validate_ir.py --plan`; consumed ONLY in `prospective-project` mode.
+
+Five top-level registers carry the four things such a panel actually stress-tests:
+
+- `aims[]` + `design[]` — each aim (`{id, statement, success_criterion}`) is answered by a
+  design row (`{aim, methods, controls, validity{sample_size, power, threats}, answers_aim}`)
+  that can **produce** the claimed knowledge — aim↔method coverage, controls/comparators,
+  empirical validity where the aim is empirical, and an explicit `answers_aim` justification.
+- `benefits[]` — each `{id, benefit, type, beneficiary, owner, timing, metric, preconditions}`
+  is realisable, measurable, and **owned**; `type` distinguishes output / outcome / impact.
+- `additionality{}` — `{counterfactual, not_business_as_usual, leverage{grant,
+  co_contribution, currency}, cost_per_outcome{value, basis}}`; leverage = co-contribution /
+  grant is the value-for-money ratio, and the partner co-investment from B2 IS this leverage
+  story (recomputed to cross-check the budget totals).
+- `risks[]` — each `{id, risk, likelihood, impact, trigger, monitoring, contingency, owner}`
+  is a live **trigger→contingency** register: "if X by month M → do Y", not "there is a risk;
+  it is mitigated."
+
+Consumers — the four `prospective-project`-mode Group-2 passes, each mechanized by a
+fail-closed `validate_ir.py` check:
+
+- **§2.14 research-design adequacy** (deepens §2.3 methods-feasibility) — reads `aims[]` +
+  `design[]`. Mechanized by the **`research-design-adequacy`** check: every aim id appears in
+  ≥1 `design[].aim`, every aim has a non-empty `success_criterion`, every covered design has a
+  non-empty `answers_aim`.
+- **§2.15 benefits-realisation** (deepens §2.5 impact-pathway) — reads `benefits[]`. Mechanized
+  by the **`benefits-realisation`** check: every benefit has a non-empty `owner` AND `metric`
+  AND `timing`.
+- **§2.16 additionality / value-for-money** (ties to partnership §2.12 + budget §2.8) — reads
+  `additionality{}`. Mechanized by the **`additionality-vfm`** check: non-empty `counterfactual`,
+  `leverage.grant` / `leverage.co_contribution` present (reports the ratio, cross-checks a
+  supplied `--budget`).
+- **§2.17 trigger-driven risk** (deepens §2.4 risk-mitigation) — reads `risks[]`. Mechanized by
+  the **`risk-triggers`** check: every high-impact risk has a non-empty `trigger` AND
+  `contingency` AND `owner`.
+
+Same hardening spirit as the rest of the store: **a design/benefit/risk row is only as strong
+as its `answers_aim` / `owner`+`metric` / `trigger`+`contingency`.** An empty register field is
+a **load-bearing gap, not a default** — a benefit with no owner is aspirational, a high-impact
+risk with no trigger is a wish, an aim with no `success_criterion` cannot be scored. In
+`--mode submission` these fail closed (BLOCK); in `--mode draft` they WARN. The store never
+green-washes a present-but-empty field into a pass.
+
 ## Graduation note
 
 This module is deliberately grant-agnostic. It is scheduled to graduate into a standalone
