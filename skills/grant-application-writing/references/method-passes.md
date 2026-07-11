@@ -595,6 +595,48 @@ and third-party attestations, scored first-class.
 - **Machine-run.** This pass is executed mechanically by `scripts/validate_ir.py` (a `criterion-readiness` check, added to `--self-test`): for each rubric criterion it computes readiness from the IR/evidence and returns a **FAIL in submission mode** for a scored criterion with no backing evidence — **not a SKIP**. SKIP is reserved for genuinely optional sidecars; a SKIP that would hide a scored-criterion gap is reclassified as a FAIL. (Cross-ref markers-two-mode / `blockers.md` §1.8; the mechanized-gate paragraph below.)
 - **In:** `rubric[]` (`weight`, `binding`, `minimum_evidence`, `readiness_rule`), the drafted IR + evidence-store. **Out:** a per-criterion readiness table (`criterion → state`); in submission mode, hard blocks for `unsupported` hard-required criteria + `blockers.md` entries for every `partial`; in draft mode, the same states annotated, non-blocking.
 
+### 4.5 institutional-statement reconciliation (semantic layer; mechanized by validate_ir.py)
+> Analog to §2.13 partner-commitment reconciliation, but for the **host-institution statement** — a
+> third-party attestation of committed support (establishment grant, stipend top-up, salary
+> shortfall, teaching relief). Runs whenever an `organizations[].institutional_support` block is
+> present (else SKIP, labelled). §2.13 reconciles a *partner's* letter against the body; this pass
+> reconciles the *host institution's* statement. `author-voice.md` §10 WRITES the statement in the
+> institution's third-party voice; this pass CHECKS its stated total matches the parts and the budget.
+- **Does:** for the `organizations[].institutional_support` block, reconcile the statement's STATED
+  `total` against the parts and the budget, and prove every committed item. Three couplings:
+  - **(a) TOTAL ↔ SUM(ITEMS).** `institutional_support.total.value` must equal `sum(items[].value)`
+    within 1% — the stated total is held **separate** from the item sum precisely so a mismatch is
+    VISIBLE (same discipline as partner `letter_commitment` vs `contributions`, §2.13).
+  - **(b) TOTAL ↔ BUDGET.** if a `--budget` is present, `.total` must reconcile with the budget's
+    **non-ARC / institutional-contribution** lines (the co-investment the budget declares) within 1% —
+    a host statement pledging one figure while the budget's contribution column shows another is a
+    contradiction a panel reading both catches.
+  - **(c) PROVENANCE.** every `status: committed` item carries a non-empty `provenance` pointing to
+    the host statement (or its source) — a committed figure with no attestation is **unproven**.
+- **Submission mode:** a **total mismatch** (a) or (b) > 1%, **or** a **`committed` item with no
+  `provenance`**, is a **BLOCK**. **Draft mode → WARN + a `blockers.md` entry** per finding,
+  consistent with markers-two-mode §1.8.
+- **Mechanized by `validate_ir.py` `institutional-support-reconciliation`** (Agent D): gated on an
+  `institutional_support` block present; recomputes `sum(items)` vs `.total` (>1% FAIL), cross-checks
+  `.total` against the budget non-ARC/institutional total when `--budget` is supplied, and asserts
+  every committed item has provenance — FAIL (submission) / WARN (draft), mirroring
+  `partner-commitment-reconciliation` §2.13.
+- **In:** entity-store `organizations[].institutional_support` (`items[]` value/status/provenance,
+  `total`, `statement_provenance`), and (if supplied) the `budget-matrix` non-ARC/institutional
+  contribution lines. **Out:** a reconciliation verdict (total ↔ sum(items) ↔ budget, every committed
+  item provenanced) with each mismatch named to its source; a mismatched total or an unproven
+  committed item blocked (submission) or lifted to `blockers.md` (draft). (Cross-ref §2.13
+  partner-commitment reconciliation — same discipline; the `institutional_support` store block
+  Agent B; `author-voice.md` §10 institutional-statement register.)
+- **Example (fictional):** *ACME University*'s host statement pledges a `total` of AUD 300,000, but
+  its `items[]` sum to 280,000 (establishment grant + stipend top-up + salary shortfall) — a 20,000
+  gap → **BLOCK in submission** (total ≠ sum). A `teaching-relief` item is marked `committed` but
+  carries no `provenance` → a second **BLOCK** (unproven). With `--budget` supplied, the statement's
+  300,000 must also match the budget's institutional-contribution column; a 300,000-vs-260,000 split
+  is a third mismatch. In draft mode all three become `blockers.md` entries, not shipped prose;
+  `validate_ir.py`'s `institutional-support-reconciliation` catches (a) and (b) mechanically (exit 1),
+  this pass owns the provenance judgement.
+
 ---
 
 ## Group 5 — process-archetype overlays (all modes)
