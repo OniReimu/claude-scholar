@@ -592,6 +592,8 @@ Figure 1 deserves special attention—many readers skip directly to it.
   - Add one when the method includes ordered multi-role interactions (verifier/prover/server/client, etc.) that require a stepwise protocol view.
   - Add one when Figure 1 becomes overloaded (too many crossing flows or mixed abstraction levels) and must be split into overview + mechanism/process detail.
   - Keep these added figures conceptual and generate them with `paper-figure-generator` by default.
+- **System-overview column width**: prefer single column; go full-width (`figure*`) only if the diagram is dense enough to need `\textwidth`. A sparse two-column overview that a single column would fit is a demerit — question the two-column choice actively <!-- policy:FIG.COLUMN_WIDTH_JUSTIFICATION -->
+- **Optional research-gap teaser (not every paper)**: only when the gap is hard to convey in words, add a single-column figure at the top-right of page 1, placed **before** the system overview, that illustrates the gap (what prior work covers vs. the unaddressed region). If the gap is one sentence, skip it <!-- policy:FIG.RESEARCH_GAP_TEASER -->
 
 ### Paper Section Structure
 
