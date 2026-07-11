@@ -27,7 +27,9 @@ reference by `scheme` + `scheme_version`.
 
 ```yaml
 scheme: "Example ECR Grant"    # human name (an ECR scheme)
-mode: narrative-award                          # narrative-award | prospective-project | retroactive-impact
+mode: narrative-award                          # AXIS 1 — narrative-award | prospective-project | retroactive-impact
+process: [single-stage-review, panel-routed]   # AXIS 2 — SET from the closed archetype vocab (see below); selects Group-5 overlays
+rejoinder: {enabled: true, window: "10 working days", char_limit: 2000}  # within-round right-of-reply CAPABILITY (single-stage-review may carry it); omit if none
 scheme_version: "2026-R1"                       # round/year tag; taxonomy + option sets are bound to this
 portal: "web-form"                              # RMS | Elements | Submittable | Sapphire | SmartSimple | web-form | docx | ...
 source_docs:                                    # every doc that fed this IR — provenance for every value below
