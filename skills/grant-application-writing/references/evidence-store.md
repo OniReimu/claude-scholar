@@ -597,6 +597,25 @@ budget is present — with the budget's non-ARC / institutional-contribution lin
 `committed` item with no `provenance`, FAILs in `--mode submission` / WARNs in draft — exactly
 the fail-closed behaviour of `partner-commitment-reconciliation`.
 
+## Collaborators & mentors (`collaborators[]`, `mentors[]`)
+
+Collaborators and mentors are **people**, so they live in the entity store (B2) alongside
+`people[]` / `partners[]` — but they are fielded to **defuse name-dropping**, not to list eminent
+names. Both feed the collaborator/mentor moves of `author-voice.md` (§10.2 / §10.3).
+
+- `collaborators[]` — **independence-plus-network**: a collaborator extends *specialist reach*
+  while the applicant keeps *intellectual ownership*. Each row carries `prior_relationship` (how
+  the applicant actually knows them), `task_expertise` (the specific capability they add, tied to a
+  spine `task`/`output` id), `engagement_mode` (`advisory | data-access | co-supervision |
+  method-consult | letter-only`), and — load-bearing — `applicant_independence` (what the applicant
+  leads independently *of* this collaborator). A collaborator with no `task_expertise` +
+  `applicant_independence` is decoration, and the pass flags it.
+- `mentors[]` — **mentor-by-competency-gap**: each mentor addresses a **distinct capability gap**
+  with a **differentiated `function`**, not an interchangeable eminent name. `competency` names the
+  specific gap (never "general guidance") and `function` names the differentiated role (e.g.
+  quarterly method review of `task-2`; industry-translation coaching). Two mentors with the same
+  `competency` and `function` are redundant name-dropping.
+
 ## Project-plan store (B3) — prospective-project mode
 
 The evidence store (Stage B) and the entity store (B2) are **reusable applicant assets** —
