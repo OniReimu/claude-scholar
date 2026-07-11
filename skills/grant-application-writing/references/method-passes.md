@@ -122,6 +122,59 @@ over-reach. Three checks, each with a downgrade-or-mark action:
   specific named (not generalised away); the "guarantees exceed methods" panel concern pre-empted.
   (Cross-ref `author-voice.md` §5.4/§8; audited in Stage E.)
 
+### 1.10 outputs-context / field-calibration (narrative-award; renders the `outputs_context` store block)
+> Runs only when `mode = narrative-award` AND an `outputs_context` block is present (else SKIP,
+> labelled). This is the ROPE **field-calibration** layer: it teaches a mixed generalist+specialist
+> panel to read the CV in the field's OWN esteem terms. It RENDERS from the store, never improvises —
+> `author-voice.md` §10 writes the register, this pass keeps it defensible.
+- **Does:** render the field-calibration moves from `outputs_context`, each check-gated:
+  - **(a) venue-tier glossing.** Every career-best venue carries a `field_norms.venue_tiers[]` entry
+    — tier (e.g. "CORE A*", "JCR Q1") **plus** a PLAIN-LANGUAGE rank ("top-3 in `<field>`") so a
+    generalist reads the eminence without knowing the field. A career-best output with no tier is
+    **untiered → flagged**.
+  - **(b) authorship-convention decoding.** Where author position does not mean "most credit" in this
+    subfield, DECODE the convention from `field_norms.authorship_convention[]` (what last/second
+    author means here + who did what), pre-empting "why not first author". Bounded, evidence-backed —
+    a decode is **NOT a role upgrade** (this is the §1.5 authorship-convention-decoding sub-move,
+    rendered here).
+  - **(c) ranking attributor.** An eminence claim ("ranked Nth in `<field>`") is sourced to
+    `field_norms.ranking_attributor` (an external ranking SERVICE + `as_of` date), never self-asserted.
+  - **(d) output-clustering.** Group outputs into ~3–5 NAMED research threads (`clusters[]`); **every
+    `career_best.ids` entry must appear in ≥1 cluster**. Each cluster's `primacy.claim` is statable,
+    but with `primacy.attributor: null` it is **NOT written as a superlative** — reuse the
+    defensible-primacy discipline (§1.2) / primacy over-reach guard (§1.9); the attributor is what
+    licenses "first / milestone".
+  - **(e) bounded credit.** Aggregate contribution is stated from `contribution_summary` ("M of N
+    papers", with `basis`) — **bounded, never "all of it mine"**, and never role-upgraded (§1.5,
+    §1.4 number-defensibility value+scope+attributor).
+- **Submission mode:** a career-best output **unclustered or untiered** is a **WARN + a `blockers.md`
+  entry** (structural — the calibration is incomplete, not fatal). A **cluster primacy claim with no
+  attributor written as a superlative** is a **BLOCK** (an unsourced "first / milestone" is an
+  over-claim, same discipline as §1.9). **Draft mode → WARN** throughout, consistent with
+  markers-two-mode §1.8.
+- **Mechanized by `validate_ir.py` `outputs-context-completeness`** (Agent D): gated on
+  `mode == narrative-award` + an `outputs_context` block; every `career_best.ids` entry appears in ≥1
+  `clusters[].outputs`, and every cluster carrying a `primacy.claim` has a non-empty
+  `primacy.attributor` — FAIL (submission) / WARN (draft), per output / per cluster.
+- **In:** `outputs_context` (`field_norms.venue_tiers|authorship_convention|ranking_attributor`,
+  `clusters[]`, `career_best`, `contribution_summary`). **Out:** a field-calibrated outputs narrative
+  — every career-best tiered + plain-ranked + clustered, author conventions decoded, eminence sourced
+  to a ranking service, primacy claims either attributor-backed superlatives or non-superlative thread
+  statements, aggregate credit bounded; incomplete calibration lifted to `blockers.md`, an unsourced
+  superlative blocked. (Cross-ref `author-voice.md` §10 presentation register, §1.5 role/credit,
+  §1.2/§1.9 primacy, §1.4 number-defensibility; the `outputs_context` store block Agent B.)
+- **Example (fictional):** a candidate lists a career-best paper `[*]` at `<Flagship Conf>`. This pass
+  renders its tier ("CORE A*, top-3 in `<field>`") from `venue_tiers`, decodes its last-author slot
+  ("candidate contributed the main idea, design and writing; the student first author ran the
+  experiments") from `authorship_convention`, and places it in the "`<named direction>`" cluster. The
+  cluster's `primacy.claim` "milestone in `<tightly-scoped area>`" has `attributor: null` → it ships
+  as a **thread statement, not** "the first ever" — writing it as a superlative with no attributor is
+  a **BLOCK**. A separate "ranked Nth in `<field>`" line is sourced to "a ranking service" (`as_of`
+  date); the aggregate reads "significant conceptual contribution on M of N papers" (per
+  `contribution_summary`), not "all mine". A second career-best id present in `career_best.ids` but in
+  no cluster → **WARN + `blockers.md`** (untiered/unclustered structural gap), caught mechanically by
+  `outputs-context-completeness`.
+
 ---
 
 ## Group 2 — prospective-project passes (ADDED for `prospective-project`)
