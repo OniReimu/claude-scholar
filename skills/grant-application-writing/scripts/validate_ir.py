@@ -238,7 +238,21 @@ def contribution_totals(entity):
     return total, in_kind
 
 
-# ── the 9 checks ─────────────────────────────────────────────────────────────
+def _canon_evidence_class(name):
+    t = re.sub(r"[^a-z0-9]", "", str(name).lower())
+    if t.endswith("ies"):
+        t = t[:-3] + "y"
+    elif t.endswith("s"):
+        t = t[:-1]
+    return EVIDENCE_ALIAS.get(t, t)
+
+
+def _evidence_present(evidence):
+    """Canonical class tokens for every non-empty bucket in the evidence store."""
+    return {_canon_evidence_class(k) for k, v in (evidence or {}).items() if v}
+
+
+# ── the 10 checks ────────────────────────────────────────────────────────────
 def check_schema(rep, scheme):
     crit = {c.get("criterion") for c in (scheme.get("rubric") or []) if isinstance(c, dict)}
     gate_ids = {g.get("id") for g in (scheme.get("eligibility_gates") or []) if isinstance(g, dict)}
