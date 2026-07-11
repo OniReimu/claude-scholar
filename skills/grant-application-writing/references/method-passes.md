@@ -152,9 +152,13 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 - **Does:** confirm required facilities, infrastructure, and data access are stated and credibly available.
 - **In:** facilities field, entity-store (B2). **Out:** availability check.
 
-### 2.7 team-capability
-- **Does:** confirm the team collectively covers the skills each aim needs; gaps named and staffed or justified.
-- **In:** entity-store, aims. **Out:** capability-coverage matrix + gap flags.
+### 2.7 team-capability (assess the team as a *composition*, not a skills bag)
+- **Does:** confirm the team is a defensible composition for *this* project — not merely that each needed skill exists *somewhere* in the roster. A per-CI-scored Investigator criterion demands a person-indexed read, so this pass runs four labelled sub-checks over the evidence-store `investigators[]` (each person-indexed: `role`, `rope_context`, `track_record_ref`, `task_ownership`, `fte`, `current_commitments`; single-applicant schemes use the lead-CI shorthand where `owner` == first investigator).
+  - **(a) individual capability.** For each CI, match their *own* `track_record_ref` against the `task_ownership` (aim/WP ids) they lead — the person who owns an aim must demonstrably be able to deliver it. A CI leading an aim their record does not support is a gap, even if another CI could.
+  - **(b) multi-CI ROPE.** Read each CI's record **relative to their OWN career stage** (`rope_context`: years-since-PhD, stage, interruptions). **Never pool a senior + an ECR into one tally** — a shared team total launders a thin ECR record under a senior's output. ROPE window/role/attributor apply *per investigator*, each relative to their own opportunity (mirrors `number-defensibility` §1.4 value+scope+attributor, per person).
+  - **(c) availability.** Check each CI's `fte` against their `current_commitments` (concurrent awards + committed FTE) — a fully-committed CI cannot also lead two aims at the declared FTE. Over-subscription is a feasibility flag, not a capability gap.
+  - **(d) complementarity / synergy.** Confirm the composition *covers every aim* (no aim unstaffed) with *no redundant duplication* (two senior CIs on one narrow aim while another is uncovered). The team's shape must map onto the aim set.
+- **In:** evidence-store `investigators[]` (person-indexed), aims/WP ids, entity-store. **Out:** a per-CI capability × ROPE × availability matrix + a team-composition verdict (every aim staffed by a CI whose own record and FTE support it; no unstaffed aim, no redundant pooling); gaps named and staffed or justified. (Cross-ref `number-defensibility` §1.4, `role/credit discipline` §1.5.)
 
 ### 2.8 budget-math validation
 - **Does:** mechanically validate the `budget-matrix` / `contribution-matrix` arithmetic and every scheme rule: **per-row caps with an explicit denominator** (`of: total | total-cash | requested` — e.g. audit/overseas ≤ 10% of total *cash*, excludes in-kind), **matched-funding ratio ≥ threshold**, **phased-budget gating** (per-phase totals), **credit-vs-cash separation** (credit-request lines respect `counts_toward_total`), and **opt-in cumulative cash-flow liquidity** (`cash_flow_check`: per-FY cumulative spend ≤ cumulative cash-in).
