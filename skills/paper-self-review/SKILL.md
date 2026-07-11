@@ -49,6 +49,7 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
 | `TABLE.RESIZEBOX_COLUMN_FIT` | 表格默认 resizebox 对齐栏宽 |
 | `TABLE.DIMENSION_BUDGET` | 对比表 3–4 维预算、单栏优先 |
+| `TABLE.FULLWIDTH_FONT_DENSITY` | 全宽表 resizebox 只缩不放，字号≤正文，否则降单栏/加 metrics |
 | `CITE.VERIFY_VIA_API` | 引文API验证 |
 | `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
 | `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
