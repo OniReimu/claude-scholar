@@ -1,0 +1,105 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# project-plan.yaml — project-substance registers (Stage B3)  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# PROJECT-SPECIFIC: one per application, lives in the application's own folder.
+# NOT the reusable evidence-store.yaml (applicant track record, amortized across
+# every application) and NOT the entity-store.yaml (people / orgs / partners).
+# This sidecar carries the PROJECT itself — rendered from structure, not asserted
+# in prose. Read by validate_ir.py --plan; consumed ONLY in prospective-project mode.
+#
+# Five top-level registers, each stress-tested by a Group-2 pass + a validate_ir check:
+#   aims[] + design[]  → §2.14 research-design-adequacy   → check research-design-adequacy
+#   benefits[]         → §2.15 benefits-realisation       → check benefits-realisation
+#   additionality{}    → §2.16 additionality-VfM          → check additionality-vfm
+#   risks[]            → §2.17 trigger-driven risk         → check risk-triggers
+#
+# Hardening spirit (same as the evidence store): a design/benefit/risk row is only
+# as strong as its answers_aim / owner+metric / trigger+contingency. An empty
+# register field is a LOAD-BEARING GAP, not a default — fail-closed in submission.
+# Ships ABSTRACTIONS ONLY — replace <PLACEHOLDER>s / exemplar values. Fictional only.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ─── Aims: what the project sets out to establish (each with a done-line) ───
+aims:
+  - id: aim-1
+    statement: "<what this aim establishes>"
+    success_criterion: "<measurable definition-of-done — the aim is MET when …>"
+  - id: aim-2
+    statement: "Establish whether streaming ingestion holds sub-second latency at 10x load"
+    success_criterion: "p99 write latency < 800 ms sustained at 10x baseline throughput on the ACME Analytics testbed"
+
+# ─── Design: does the design ANSWER the aims (beyond feasibility §2.3) ───
+# Each aim must be covered by ≥1 design row; validity null where non-empirical (add a note).
+design:
+  - aim: aim-1                            # → aims[].id — no aim without a design row
+    methods: ["<method id/name that answers THIS aim>"]
+    controls: ["<baseline / ablation / comparator that isolates the effect>"]
+    validity:
+      sample_size: null                   # <int|null> — null where non-empirical
+      power: null                         # <float|null>
+      threats: ["<threat-to-validity + how mitigated>"]   # empirical adequacy
+    answers_aim: "<justification that this design actually produces the aim's claimed knowledge>"
+  - aim: aim-2
+    methods: ["controlled load-replay harness", "ablation over batching strategy"]
+    controls: ["single-node baseline", "prior-year architecture as comparator"]
+    validity:
+      sample_size: 30                     # 30 replayed 24h traces
+      power: 0.8
+      threats: ["trace-selection bias mitigated by stratified sampling across peak/off-peak"]
+    answers_aim: "latency measured under the exact 10x load the aim names, against a comparator that isolates the ingestion change"
+
+# ─── Benefits: realisable, measurable, OWNED (beyond a pathway §2.5) ───
+# A benefit with no owner or no metric is aspirational — flagged, and BLOCKed on a
+# scheme that scores a realisation plan.
+benefits:
+  - id: ben-1
+    benefit: "<the benefit>"
+    type: output                          # output | outcome | impact — impact ladders from outputs
+    beneficiary: "<who gains>"
+    owner: "<who realises/captures it — a benefit with no owner is aspirational>"
+    timing: "<when — e.g. by Y3 / +2yr post-award>"
+    metric: "<indicator + target — how realisation is measured>"
+    preconditions: ["<what must be true for realisation>"]
+  - id: ben-2
+    benefit: "Open-source ingestion toolkit reduces onboarding time for downstream operators"
+    type: outcome
+    beneficiary: "Regional data-service operators"
+    owner: "ACME Analytics Pty Ltd product team"
+    timing: "by end of Y2, sustained +2yr post-award"
+    metric: "median operator onboarding time cut from 6 weeks to <2 weeks across 5 adopters"
+    preconditions: ["toolkit released under a permissive licence", "at least 3 pilot operators signed"]
+
+# ─── Additionality / value-for-money (#12; ties to partnership §2.12 + budget §2.8) ───
+# The partner co-investment IS the leverage story. VfM ratio = co_contribution / grant
+# (recomputed; cross-checks the budget totals).
+additionality:
+  counterfactual: "<without THIS grant, X would not happen because … — not BAU, not already funded, not what industry does alone>"
+  not_business_as_usual: true
+  leverage:
+    grant: 600000                         # <int> — requested public funds
+    co_contribution: 300000               # <int> — partner cash + in-kind
+    currency: AUD
+  cost_per_outcome:                       # optional
+    value: 4000                           # <int|null>
+    basis: "<denominator — e.g. cost per operator onboarded>"
+
+# ─── Risks: a live trigger→contingency register (beyond static coverage §2.4) ───
+# "If X by month M → do Y", not "there is a risk; it is mitigated". A high-impact
+# risk with no trigger or no contingency → BLOCK in submission.
+risks:
+  - id: risk-1
+    risk: "<the risk>"
+    likelihood: low                       # low | medium | high
+    impact: low                           # low | medium | high
+    trigger: "<the OBSERVABLE threshold — e.g. 'if milestone M slips past month 9'>"
+    monitoring: "<where/when it's checked — e.g. quarterly review>"
+    contingency: "<pre-committed action if the trigger fires>"
+    owner: "<who acts>"
+  - id: risk-2
+    risk: "Partner data-access agreement not executed in time to start evaluation"
+    likelihood: medium
+    impact: high
+    trigger: "if the data-sharing agreement is unsigned by month 6"
+    monitoring: "monthly steering-committee review, agreement status a standing item"
+    contingency: "switch to the synthetic-trace fallback dataset already prepared in WP1"
+    owner: "Lead CI, escalated to partner sponsor"
