@@ -144,7 +144,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 |---------|-------------|----------|
 | **AI vocabulary** | Additionally, crucial, delve, enhance, landscape | 此外，至关重要，深入探讨，增强，格局 |
 | **Copula avoidance** | "serves as", "stands for", "represents" | "作为"，"代表"，"充当" |
-| **Em dash overuse** | "X---Y---Z" parenthetical insertions | 过度使用破折号做插入语 | <!-- policy:PROSE.EM_DASH_RESTRICTION -->
+| **Em dash (zero allowed)** | "X---Y---Z" parenthetical insertions | 破折号一个都不允许（做插入语） | <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 | **Colon-list overuse** | "X: A, B, and C" inline enumeration | 冒号引出内联列表 |
 | **Rule of three** | Forcing ideas into groups of three | 强行三段式 |
 | **Elegant variation** | Excessive synonym substitution | 过度换词 |
