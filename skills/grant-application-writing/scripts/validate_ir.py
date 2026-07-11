@@ -1815,6 +1815,72 @@ rows:
     assert any(e[1] == "SKIP" for e in outctx(na_scheme, {}, "submission")), \
         "absent outputs_context block must SKIP"
 
+    # Tier 2 (one-to-one resolution) — every clusters[].outputs / career_best.ids entry resolves
+    #     to exactly one publications[].id: a resolving id PASSes; a career-best id backed by no
+    #     publication is a dangling reference (FAIL submission / WARN draft). Fictional ids only.
+    resolved_oc = {
+        "publications": [{"id": "C1", "title": "A backed result", "year": 2024}],
+        "outputs_context": {
+            "clusters": [{"thread": "shared-ledger throughput", "outputs": ["C1"],
+                          "primacy": {"claim": None, "attributor": None}}],
+            "career_best": {"ids": ["C1"]}}}
+    roc = outctx(na_scheme, resolved_oc, "submission")
+    assert any(e[1] == "PASS" for e in roc) and not any(e[1] == "FAIL" for e in roc), \
+        "a career-best id resolving to exactly one publication must PASS"
+
+    dangling_oc = {
+        "publications": [{"id": "C1", "title": "A backed result", "year": 2024}],
+        "outputs_context": {
+            "clusters": [{"thread": "shared-ledger throughput", "outputs": ["C1", "J7"],
+                          "primacy": {"claim": None, "attributor": None}}],
+            "career_best": {"ids": ["C1", "J7"]}}}   # J7 resolves to no publications[].id
+    assert any(e[1] == "FAIL" and e[0].startswith("outputs-context-completeness[")
+               for e in outctx(na_scheme, dangling_oc, "submission")), \
+        "a career-best id resolving to no publication must FAIL submission"
+    dr = outctx(na_scheme, dangling_oc, "draft")
+    assert any(e[1] == "WARN" for e in dr) and not any(e[1] == "FAIL" for e in dr), \
+        "same dangling id only WARNs in draft mode"
+
+    # 19. traceability-spine — call directly (mirrors #11): a fully-resolved spine PASSes; a
+    #     dangling task.objective, an unstaffed task (no person), and a budget row referenced by
+    #     no task each FAIL submission / WARN draft; a plan with no spine block SKIPs. Fictional
+    #     ids only (aim-1/obj-1/task-1/inv-lead/bl-1).
+    def spine(sch, pl, ent, bd, m):
+        r = Report(); check_traceability_spine(r, sch, pl, ent, bd, m); return r.entries
+
+    sp, sp_ent, sp_bud = _spine_plan(), _spine_entity(), _spine_budget()
+    ok_spine = spine(scheme_pp, sp, sp_ent, sp_bud, "submission")
+    assert any(e[1] == "PASS" for e in ok_spine) and not any(e[1] == "FAIL" for e in ok_spine), \
+        "fully-resolved spine must PASS submission"
+    assert any(e[1] == "SKIP" for e in spine(scheme_pp, _plan(), sp_ent, sp_bud, "submission")), \
+        "a plan with no spine block must SKIP traceability-spine"
+
+    dang = _spine_plan(); dang["tasks"][1]["objective"] = "obj-404"
+    assert any(e[1] == "FAIL" and e[0] == "traceability-spine"
+               for e in spine(scheme_pp, dang, sp_ent, sp_bud, "submission")), \
+        "a dangling task.objective must FAIL submission"
+    d19a = spine(scheme_pp, dang, sp_ent, sp_bud, "draft")
+    assert any(e[1] == "WARN" for e in d19a) and not any(e[1] == "FAIL" for e in d19a), \
+        "same dangling task.objective only WARNs in draft mode"
+
+    unstaffed = _spine_plan(); unstaffed["tasks"][1]["person"] = []
+    assert any(e[1] == "FAIL" and e[0] == "traceability-spine"
+               for e in spine(scheme_pp, unstaffed, sp_ent, sp_bud, "submission")), \
+        "an unstaffed task (no person) must FAIL submission"
+    d19b = spine(scheme_pp, unstaffed, sp_ent, sp_bud, "draft")
+    assert any(e[1] == "WARN" for e in d19b) and not any(e[1] == "FAIL" for e in d19b), \
+        "same unstaffed task only WARNs in draft mode"
+
+    orphan_bud = _spine_budget()
+    orphan_bud["rows"].append({"id": "bl-orphan", "category": "travel",
+                               "funding_source": "requested", "kind": "cash", "years": {2027: 20000}})
+    assert any(e[1] == "FAIL" and e[0] == "traceability-spine"
+               for e in spine(scheme_pp, sp, sp_ent, orphan_bud, "submission")), \
+        "a budget row referenced by no task must FAIL submission"
+    d19c = spine(scheme_pp, sp, sp_ent, orphan_bud, "draft")
+    assert any(e[1] == "WARN" for e in d19c) and not any(e[1] == "FAIL" for e in d19c), \
+        "same orphan budget row only WARNs in draft mode"
+
     # project-substance end-to-end: complete plan passes submission; a broken plan (triggerless
     # high-impact risk) fails submission-mode orchestrate but only WARNs (exit 0) in draft.
     plan_ok_p = _write(tmp, "plan.yaml", __import__("yaml").safe_dump(_plan()))
