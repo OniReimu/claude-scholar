@@ -72,6 +72,16 @@
 Two failure modes that "never invent evidence" must catch even when the prose *looks* fine — both surfaced by real DECRA runs.
 - **Mark invented specifics `[TO SET]`.** When drafting needs a concrete technical figure the input did not supply — a threshold (ε, accuracy, overhead %), a metric, a dataset, a budget unit-rate, a spec — the writer may propose a *plausible placeholder* to keep the prose concrete, but MUST tag it `[APPLICANT/DOMAIN-EXPERT TO SET]` (or `[VERIFY]`). Never present a skill-generated number as if it were real: a reviewer probing "why ε = 0.02?" must not be met with a figure the applicant never chose. This extends `number-defensibility`: an invented spec is a number you cannot defend until the applicant owns it.
 - **Never smooth an unverified context into a favourable framing.** Employment, load, role, and status facts (e.g. "research-focused position", "principal supervisor", "since 2021") must be verified as *current* against the evidence store, with a `source_authority`/`as_of`. If the corpus may be stale or a context fact is unconfirmed, state the honest or unknown version — **never the flattering one**. A teaching-heavy Lectureship is drafted as teaching-heavy (then reframed as productivity-relative-to-opportunity, `author-voice.md` §8), not laundered into "research-focused" — which is both weaker and, on stale input, factually wrong. Flag a possibly-stale corpus rather than trusting its most favourable reading.
+- **Markers are two-mode — never ship raw markers in the submission.** Every `[TO SET]` /
+  `[VERIFY]` / `[EXTERNAL COMPARATOR NEEDED]` / `[STAT — SOURCE]` (from §1.8 and §1.9) is a
+  **draft-mode annotation for the applicant**, not final prose. **An assessor scores the submitted
+  case, not the editorial workflow** — a visible `[TO SET]` reads as an *unfinished application*
+  and is penalised. So: in **draft/internal mode** surface the markers inline (correct for a
+  working draft + review); at **submission/final render** every marker is either **resolved** to a
+  committed, defensible value, or **lifted out** into a separate `blockers.md` "resolve before
+  submit" list while the field is explicitly held pending the applicant — the submission prose
+  **never carries a raw marker**. Fail closed: an unresolved marker at final render is a blocker,
+  not shipped (mirrors `charcount` fail-closed and `render_*` no-partial-official).
 
 ### 1.9 claim–evidence proportionality (over-claim guard)
 The claim's *strength* must not exceed what its backing actually delivers — distinct from
