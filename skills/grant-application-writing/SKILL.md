@@ -136,6 +136,11 @@ A0  scheme intake → compliance_matrix.yaml   rulebook BEFORE drafting: eligibi
 A   form + guidelines → scheme.yaml (IR)     parse ANY scheme into the normalized type model
 B   corpus → evidence-store.yaml             reusable across every application (see evidence-store.md)
 B2  people/orgs/partners → entity-store      project mode: CI/PI/partner/subaward/commitments/approvals
+B4  costing → budget.yaml                     project mode: `scripts/build_budget.py` COSTS + itemises the budget from
+                                             human inputs (personnel = person×FTE×rate×years + on-costs; other_costs per
+                                             year) → validate_budget's rows[] schema + an itemised Section-5 table. It
+                                             COMPUTES from supplied rates, never invents one (a missing rate = `[TO SET]`);
+                                             construction was the gap — validate_budget only ever CHECKED a budget, nothing built one.
 B3  project substance → project-plan.yaml    project mode: aims/design, benefits, additionality/VfM, risk-triggers +
                                              the traceability SPINE (stable ids: aim→objective→task→subtask→output→benefit,
                                              crossed by person→year→budget) — the §2.14–§2.18 substance passes render from it
