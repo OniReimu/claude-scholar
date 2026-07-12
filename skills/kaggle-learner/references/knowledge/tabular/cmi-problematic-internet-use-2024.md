@@ -1,7 +1,6 @@
-# Tabular Knowledge Base
+# CMI - Problematic Internet Use (2024)
 
 > Last updated: 2025-01-22
-> Source count: 1
 
 ## Original Summaries
 
