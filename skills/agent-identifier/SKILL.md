@@ -113,9 +113,9 @@ assistant: "[How Claude should respond]"
 - Explain reasoning in commentary
 - Be specific about when NOT to use the agent
 
-### model (required)
+### model (optional)
 
-Which model the agent should use.
+Which model the agent should use. Optional — only `name` and `description` are required in agent frontmatter; omitting `model` inherits the parent model.
 
 **Options:**
 - `inherit` - Use same model as parent (recommended)
@@ -125,9 +125,9 @@ Which model the agent should use.
 
 **Recommendation:** Use `inherit` unless agent needs specific model capabilities.
 
-### color (required)
+### color (optional)
 
-Visual identifier for agent in UI.
+Visual identifier for agent in UI. Optional.
 
 **Options:** `blue`, `cyan`, `green`, `yellow`, `magenta`, `red`
 
