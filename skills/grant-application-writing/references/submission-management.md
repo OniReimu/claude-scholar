@@ -214,6 +214,47 @@ becomes impossible to miss — a single boolean, computed from hashes and checks
 
 See `templates/build-manifest.template.yaml` for the full emitted schema.
 
+## Stage F++ — human handoff (MANDATORY) — `HUMAN-ACTIONS.md` + drafted proforma attachments
+
+`blockers.md` and the manifest are *technical* artifacts: gate ids, `[TO SET]` markers, check
+verdicts. A grant applicant is often not the person who reads those fluently, and the last mile of
+a real application is **human work the skill cannot do** — a partner confirming a commitment, a
+Research Office signing a letter, a person deciding a title or an amount. So **every run ends by
+writing two things into the application's OWN folder** (never into this skill):
+
+**1. `HUMAN-ACTIONS.md` — the plain-language handoff.** The readable twin of `blockers.md`. Rules:
+- **Jargon-free.** No gate ids, no `criterion-readiness`, no `[TO SET]` left raw — translate each into
+  a person's terms ("get HCMUT to confirm in writing that they will submit their side with the same
+  title, or the application is ineligible"). If a sentence needs the reader to know the skill's
+  vocabulary, rewrite it.
+- **In the applicant's language** (default the application's own language, usually English — an
+  RO/partner may read it; write a second copy in the applicant's working language if that helps them).
+- **Ranked by severity** (hard eligibility blockers first — the ones where *submitting is pointless*
+  until settled), each line carrying **who owns it** and **by when**, plus a short timeline to the
+  deadline and an explicit "if these are still open at the deadline, do not submit" line.
+- **Also lists what is already done**, so the human sees the boundary between machine-complete and
+  human-pending.
+
+**2. Drafted proforma letters / attachments (`letters/` or alongside).** For every `mandatory_docs`
+entry (compliance_matrix) of kind `proforma`/`composite` that is a **letter or statement the
+applicant must obtain** (lead-org letter of support, each partner letter of support, hosting /
+in-kind / commitment letters, referee/endorsement templates), the skill **DRAFTS it** rather than
+merely listing it as "needed":
+- Use the funder's official template where one exists; the draft is the CONTENT to drop in, and it
+  says so at the top ("transfer into `<official template>`, on letterhead, sign").
+- Every unconfirmed fact is a `[TO SET]` placeholder (ABN, address, signatory, VN lead name, in-kind
+  value). **No figure is invented** — a contribution value stated in a letter MUST reconcile with
+  `entity-store.yaml` + `budget.yaml` (partner-commitment-reconciliation §2.13); if the store has no
+  confirmed figure, the letter carries `[TO SET]`, not a number.
+- A letter whose underlying commitment is **unconfirmed** (a prospective partner) is drafted but
+  marked **CONDITIONAL**, stating plainly it must not be attached, and the partner not named as
+  committed, until they agree — the letter must not manufacture a commitment the entity-store denies.
+- Each letter is prose → it passes the **C+ anti-AI gate** (§4.7) like any narrative box.
+
+This stage is where the skill hands control back to the humans **honestly**: it does the drafting and
+the ranking, and it states, in words a non-specialist can act on, exactly what only a person can now
+finish. Omitting it leaves a technically-correct output that the applicant cannot actually operate.
+
 ## Multi-phase awareness
 
 For schemes with more than one submission round, every artifact and field carries a
