@@ -343,6 +343,16 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
   kind of venue — a *conference* destination must be a conference, not a journal (e.g. "TIFS" is a
   journal, not a meeting). Cross-check named venues/orgs against their type in the evidence-store;
   a type mismatch is a flag, not a cost line.
+- **Requested (this-call) budget vs the indicative multi-year trajectory.** Separate what THIS call
+  funds from a longer indicative trajectory: report the **requested total** (rows/tasks
+  `funding_status: requested`) DISTINCT from the **indicative total**, and **never present a
+  continuation-dependent milestone as funded** — a later-year or continuation-conditional line is
+  `funding_status: conditional`, stated as conditional, not as a committed cost. A call that funds
+  only year-1 with later years indicative must not read as a fully-funded multi-year plan. (Cross-ref
+  the `funding_status` row axis + `funding_window` top-level block in `validate_budget.py` — Agent C —
+  which reports `requested_total` distinct from `indicative_total` and fails a `requested` row whose
+  year falls outside `funding_window.funded`; absent `funding_status`/`funding_window`, behaviour is
+  unchanged.)
 
 ### 2.9 compliance completeness
 - **Does:** confirm every `compliance`-role field is present and mutually consistent — ethics, security, COI, DMP, foreign-interference — and that `conditional-group` triggers fired their required annexes.

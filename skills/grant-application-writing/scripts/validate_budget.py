@@ -52,6 +52,7 @@ import math
 import sys
 
 _OF_BASES = ("total", "total-cash", "requested")
+_FUNDING_STATUSES = ("requested", "indicative", "conditional")
 _EPS = 1e-9
 
 
