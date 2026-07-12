@@ -2040,7 +2040,7 @@ def replace_icons_in_svg(
             svg_content = svg_content.replace('</svg>', f'  {image_tag}\n</svg>')
             print(f"  {label}: 追加到 SVG at ({x1:.1f}, {y1:.1f}) (未找到匹配的占位符)")
 
-    # 强制非斜体 sans-serif（最终产物兜底，覆盖 optimize 步骤可能引入的字体）
+    # 统一字体为 Times New Roman（最终产物兜底，覆盖 optimize 步骤可能引入的字体）
     svg_content = normalize_svg_fonts(svg_content)
 
     output_path = Path(output_path)
