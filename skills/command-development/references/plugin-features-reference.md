@@ -450,10 +450,7 @@ argument-hint: [environment]
 
 Validate environment: !`echo "$1" | grep -E "^(dev|staging|prod)$" || echo "INVALID"`
 
-$IF($1 in [dev, staging, prod],
-  Deploy to $1 environment using validated configuration,
-  ERROR: Invalid environment '$1'. Must be one of: dev, staging, prod
-)
+If the validation above printed "INVALID", stop and reply: "ERROR: Invalid environment '$1'. Must be one of: dev, staging, prod". Otherwise deploy to the $1 environment using the validated configuration.
 ```
 
 **Validation approaches:**
