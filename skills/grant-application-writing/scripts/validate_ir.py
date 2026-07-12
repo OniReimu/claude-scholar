@@ -2101,7 +2101,7 @@ rows:
     # requirement-coverage end-to-end: a scheme with a mandatory requirement + a plan whose nodes
     # do NOT address it fails submission-mode orchestrate but only WARNs (exit 0) in draft.
     req_scheme_p = _write(tmp, "req_scheme.yaml", __import__("yaml").safe_dump({
-        "scheme": "Req-Test", "mode": "prospective-project",
+        "scheme": "Req-Test", "mode": "single-applicant",
         "requirements": [{"id": "req-a1", "text": "the mandatory obligation",
                           "strength": "mandatory"}]}))
     req_plan_unmet = _write(tmp, "req_plan_unmet.yaml", __import__("yaml").safe_dump(
