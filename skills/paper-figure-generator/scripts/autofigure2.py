@@ -1596,16 +1596,17 @@ Please output ONLY the SVG code, starting with <svg and ending with </svg>. Do n
 
 _FONT_NORMALIZE_STYLE = (
     '<style>/* af-font-normalize */'
-    'text,tspan{font-family:Helvetica,Arial,sans-serif !important;'
-    'font-style:normal !important;}</style>'
+    "text,tspan{font-family:'Times New Roman',Times,serif !important;}</style>"
 )
 
 
 def normalize_svg_fonts(svg_code: str) -> str:
-    """强制所有文本使用非斜体 sans-serif，避免 SVG 默认渲染为斜体 Times New Roman。
+    """强制所有文本使用 Times New Roman（衬线体），正体与斜体均可。
 
-    在 <svg> 开标签后注入一条 !important 的 <style> 规则，覆盖生成/占位文本上
-    可能缺失的 font-family 与残留的 font-style="italic"。幂等：已注入则跳过。
+    在 <svg> 开标签后注入一条 !important 的 <style> 规则，统一 font-family 到
+    Times New Roman，覆盖生成/占位文本上可能缺失或不一致的 font-family。不约束
+    font-style，因此元素上显式的 font-style="italic" 得以保留（允许斜体）。
+    幂等：已注入则跳过。
     """
     if not svg_code or 'af-font-normalize' in svg_code:
         return svg_code
