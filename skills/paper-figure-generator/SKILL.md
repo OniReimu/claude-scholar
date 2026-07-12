@@ -90,7 +90,7 @@ Create `figures/{topic-slug}/method.txt` with the method description from Step 1
 
 Hard constraint for `method.txt`: do not request an in-figure title (top heading text). Keep only component labels, arrows, and annotations. <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
 
-**Style transfer** (default enabled): `generate.sh` will automatically use built-in style references in `skills/paper-figure-generator/.autofigure-edit/img/reference/` (`sample3.png` primary, `sample2.png` secondary) when `--reference_image_path` is not provided. If the user wants a specific style, pass `--reference_image_path` explicitly. See `references/styles.md`.
+**Style transfer** (opt-in): there is no built-in default reference image. `generate.sh` does style transfer only when the user passes `--reference_image_path path/to/style.png`. Without it, figures are generated from the method spec + the mandated font policy (Times New Roman) + AutoFigure-Edit's default style. See `references/styles.md`.
 
 ### Step 3: Setup — Verify Dependencies
 
