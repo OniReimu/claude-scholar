@@ -99,6 +99,16 @@ attachments:                                    # every upload; kind is NEVER "j
     kind: system-generated                      # free | proforma | composite | heading-sequenced | system-generated
     source: "ORCID export"
     constraints: {pages: 2, headings: null, filename: "surname_cv.pdf"}
+
+requirements:                                   # the CFP's NORMATIVE obligations — the must/should/desirable logic, parsed from guidelines
+  - id: req-a1                                  #   a narrative field alone can't stop a proposal answering a `desirable` and skipping a `mandatory`
+    text: "protocol relies on weaker-than-previous security assumptions"
+    strength: mandatory                         # mandatory | expected | desirable | optional  (obligation strength — governs whether a gap BLOCKS)
+    applies_if: "classification.workstream == A" # predicate over a `classification` field; omit/null = always applies
+    quantifier: at_least_one                    # all | at_least_one — only for a group carrying `alternatives`
+    alternatives: [req-a1, req-a1b]             # ids that jointly satisfy the group under `quantifier` (and/or logic); omit for a lone req
+    criterion: "Scientific excellence and contribution beyond the SOTA"   # rubric criterion it rolls up to
+    # applicant's project-plan objectives/tasks/outputs carry `addresses: [req-ids]`; validate_ir `requirement-coverage` joins them
 ```
 
 ### Field notes
