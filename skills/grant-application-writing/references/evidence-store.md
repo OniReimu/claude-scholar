@@ -737,6 +737,7 @@ tasks:
     years: [1]
     budget_lines: [bl-1]
     validation: val-1
+    funding_status: requested        # year-1 work, inside the funded window
   - id: task-2
     objective: obj-2                 # → objectives[].id
     foundational: false
@@ -746,9 +747,11 @@ tasks:
     years: [2, 3]
     budget_lines: [bl-2]
     validation: val-2
+    funding_status: indicative       # years 2-3 beyond a year-1-only funded window → indicative, never presented as funded
+    addresses: [req-a1]              # meets the scheme's mandatory obligation req-a1 (validate_ir requirement-coverage joins it)
 outputs:
   - {id: out-1, task: task-1, kind: theory,       benefit: ben-1}
-  - {id: out-2, task: task-2, kind: demonstrator, benefit: ben-2}   # → benefits[].id (open-source ingestion toolkit)
+  - {id: out-2, task: task-2, kind: demonstrator, benefit: ben-2, addresses: [req-a1]}   # → benefits[].id (open-source ingestion toolkit); addresses → scheme.requirements[].id
 validations:
   - {id: val-2, task: task-2, baseline: "single-node batch-ingest; prior-year pipeline",
      stress: "10x burst replay on peak-hour traces, sized to force tail-latency blowup",
