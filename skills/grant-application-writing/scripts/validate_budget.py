@@ -308,6 +308,7 @@ def run(data):
     results += check_phase(rows, data.get("phased_if_min"), requested)
     results += check_balance(rows, data.get("balance_check"))
     results += check_declared(rows, data.get("declared_totals"), total, requested, total_cash)
+    results += check_funding_status(rows, data.get("funding_window"))
     if data.get("cash_flow_check"):
         results += check_cash_flow(rows, data.get("cash_in") or {})
     return results, (total, requested, cocon, total_cash), per_year_org(rows)

@@ -125,6 +125,8 @@ tasks:                               # objective → task (one-to-one where poss
     years: [1]                       # when → timetable
     budget_lines: [bl-1]             # funding rows → budget (four-way crosswalk: task↔person↔year↔budget)
     validation: val-1                # this task's validation block id
+    funding_status: requested        # OPTIONAL: requested | indicative | conditional — a task inside the funded window is requested (default); one beyond it is indicative/conditional, never presented as funded (→ funding_window/validate_budget)
+    addresses: [<req-ids from scheme.requirements[]>]   # OPTIONAL: obligations this task satisfies (→ scheme.requirements[].id); validate_ir requirement-coverage joins them
   - id: task-2
     objective: obj-2
     statement: "Build the load-replay harness + adaptive-batching ingestion path and evaluate p99 latency at 10x load"
