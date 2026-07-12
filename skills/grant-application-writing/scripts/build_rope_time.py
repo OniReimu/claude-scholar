@@ -170,7 +170,8 @@ def main():
         import yaml
         yaml.safe_dump(res, open(args.out, "w", encoding="utf-8"), sort_keys=False, allow_unicode=True)
         print(f"\nwrote {args.out}")
-    return 1 if (blocked or res["eligible"] is False) else 0
+    # exit 1 unless a clean, complete YES (blocked, over-window, OR borderline all drop into review)
+    return 1 if (blocked or res["eligible"] is not True) else 0
 
 
 def self_test():
