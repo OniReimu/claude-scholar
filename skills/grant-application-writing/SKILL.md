@@ -194,9 +194,7 @@ B4  costing → budget.yaml                     project mode: `scripts/build_bud
 B4s scheduling → milestones.yaml             `scripts/build_timeline.py` builds the schedule from the spine
                                              (tasks[].years[]+depends_on → Gantt + dependency-ordered milestones). Budget +
                                              timeline are two of a THIRD script class — BUILDERS (compute an artifact from
-                                             inputs), distinct from validators/renderers. Construction was the systemic gap:
-                                             the skill had models+validators but almost no builders. That audit is now CLOSED —
-                                             all six builders exist (build_budget/build_timeline/build_rope_time/
+                                             inputs), distinct from validators/renderers. Six builders exist (build_budget/build_timeline/build_rope_time/
                                              build_effort_allocation/build_track_record_metrics/build_cocontribution; see CLAUDE.md "BUILDERS").
 B3  project substance → project-plan.yaml    project mode: aims/design, benefits, additionality/VfM, risk-triggers +
                                              the traceability SPINE (stable ids: aim→objective→task→subtask→output→benefit,
