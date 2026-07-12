@@ -280,7 +280,7 @@ NEVER read, write, or commit:
 
 ### Paper Writing Rules (Policy Engine)
 
-Paper writing rules (37 rule cards) are defined in `policy/rules/`.
+Paper writing rules are defined in `policy/rules/` (see `policy/README.md` for the current rule count and registry).
 See `policy/README.md` for the full Rule ID Registry and rule card specification.
 Skills reference rules via HTML comment markers. In case of conflict, `policy/rules/` is the single source of truth.
 SoK requirements are activated by selecting SoK profiles (for example `policy/profiles/security-sok-sp.md`).

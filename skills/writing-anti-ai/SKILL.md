@@ -251,8 +251,6 @@ See **`examples/`** for before/after transformations:
 ### Reference Files
 - **`references/patterns-english.md`** - Complete English pattern reference
 - **`references/patterns-chinese.md`** - 完整中文模式参考
-- **`references/phrases-to-cut.md`** - Filler phrases to remove (需删除的填充短语)
-- **`references/wikipedia-source.md`** - Original Wikipedia source material
 
 ### Example Files
 - **`examples/english.md`** - English before/after examples
