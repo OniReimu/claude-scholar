@@ -142,7 +142,7 @@ tasks:                               # objective → task (one-to-one where poss
     addresses: [req-a1]              # this task meets scheme obligation req-a1 (the mandatory one) — validate_ir requirement-coverage resolves it
 outputs:                             # task → output → benefit  (kind: theory|method|tool|demonstrator|publication)
   - {id: out-1, task: task-1, kind: theory,       benefit: ben-1}
-  - {id: out-2, task: task-2, kind: demonstrator, benefit: ben-2}   # → benefits[].id (the open-source ingestion toolkit)
+  - {id: out-2, task: task-2, kind: demonstrator, benefit: ben-2, addresses: [req-a1]}   # → benefits[].id (open-source ingestion toolkit); addresses (OPTIONAL) → scheme.requirements[].id this output satisfies
 validations:                         # per-task validation block (colocated, not a late generic section)
   - {id: val-1, task: task-1,
      baseline: "<competitive baselines>",

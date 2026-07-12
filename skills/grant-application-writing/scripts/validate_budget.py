@@ -26,6 +26,7 @@ FAIL-CLOSED 规则 (rule FAIL → 非零退出):
   * requested ≥ phased_if_min 但 <2 个有成本 phase → FAIL
   * balance_check.enabled 而某计入行缺 side       → FAIL (无法核平衡，绝不默认 side)
   * balance_check.enabled 而 |income-expenditure| > tolerance → FAIL
+  * funding_window 存在而某 requested 行含 funded 之外的年份 → FAIL (越窗，绝不静默 pass)
 
 用法:
     uv run validate_budget.py budget.yaml
