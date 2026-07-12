@@ -1,0 +1,31 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# rate-table.yaml — institution salary scale (Stage 5 costing input)  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# INSTANCE DATA, NOT SKILL DATA. Base salaries + on-cost RISE EVERY YEAR, so this file
+# is REGENERATED each year — do not hardcode a year's numbers in the skill. Produce it
+# with `scripts/import_uts_rates.py <this-year's-calculator.xlsx> -o rate-table.yaml`,
+# or hand-author it in this shape. `build_budget.py --rates rate-table.yaml` reads it so
+# a personnel row can carry `rate_ref: {level, step, step_progression}` instead of a
+# hand-typed `annual_rate` (the engine looks the base up per year, with step progression).
+#
+# Numbers below are FICTIONAL placeholders — replace with the real calculator's values.
+# ─────────────────────────────────────────────────────────────────────────────
+
+institution: "<INSTITUTION>"          # e.g. UTS
+year: <YYYY>                          # the scale year (rates are bound to THIS year)
+source: "<salary-calculator.xlsx>"    # provenance
+on_cost_pct: 0.30                     # employer on-cost fraction (super + payroll tax + leave + workcover, lumped)
+casual_loading: 0.25                  # casual loading fraction (for hourly-rate roles)
+hdr_stipend: 39000                    # fixed full-time HDR/PhD stipend (no on-cost); null if the scheme sets its own
+
+# scales: classification LEVEL → STEP → {base}. build_budget applies (1 + on_cost) × FTE itself,
+# so store the BASE salary (NOT the with-on-cost figure). casual_hourly optional (for HEW roles).
+scales:
+  "Level A - Research Associate (Postdoc)":
+    "Step 1": {base: 98000}
+    "Step 2": {base: 103000}
+    "Step 3": {base: 111000, min_for_phd: true}    # min classification for a PhD holder
+    "Step 4": {base: 120000}
+  "Research Assistant - HEW Level 5":
+    "s1051": {base: 87000, casual_hourly: 60.00}
+    "s1052": {base: 89000, casual_hourly: 61.50}
