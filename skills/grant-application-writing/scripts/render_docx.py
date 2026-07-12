@@ -367,12 +367,19 @@ def main() -> None:
     if not values:
         sys.exit("error: values contained no fields")
 
+    scheme: dict = {}
     scheme_errors: list[str] = []
     if args.scheme:
         scheme = load_scheme(args.scheme)
         unknown, missing = resolve_against_scheme(values, scheme)
         scheme_errors += [f"unknown-field: {k!r} not in scheme.yaml" for k in unknown]
         scheme_errors += [f"required-missing: scheme field {fid!r} has no value" for fid in missing]
+
+    tables_spec: dict = {}
+    if args.tables:
+        if not args.tables.exists():
+            sys.exit(f"error: file not found: {args.tables}")
+        tables_spec = yaml.safe_load(args.tables.read_text(encoding="utf-8")) or {}
 
     doc = Document(str(args.template))
     filled: set[str] = set()
@@ -383,12 +390,15 @@ def main() -> None:
     n_cc = len(filled)
     fill_under_headings(doc, values, filled)
     n_head = len(filled) - n_cc
+    fill_under_labels(doc, values, scheme, filled)          # STRATEGY 3: tag-less label forms
+    n_label = len(filled) - n_cc - n_head
+    fill_tables(doc, tables_spec, filled)                    # official-template tables (e.g. budget)
 
     unresolved = [k for k in values if k not in filled and k not in {u[0] for u in unresolved_type}]
     doc.save(str(args.out))
 
     print(f"wrote {args.out}")
-    print(f"  filled: {len(filled)}/{len(values)}  (content-control: {n_cc}, under-heading: {n_head})")
+    print(f"  filled: {len(filled)}/{len(values)}  (content-control: {n_cc}, under-heading: {n_head}, under-label: {n_label}, tables: {len(tables_spec)})")
     fail = False
     if collisions:
         print(f"  AMBIGUOUS/COLLIDING ({len(collisions)}) — key already filled by another control:")
