@@ -174,6 +174,15 @@ def self_test():
     assert scales[lvl]["Step 1"]["base"] == 100000.0, scales[lvl]
     assert scales[lvl]["Step 1"]["casual_hourly"] == 60.0, scales[lvl]
     assert "Step 3" in scales[lvl], scales[lvl]
+
+    # plausibility floor: a column shift where col B holds a step index (1,2) → NOT parsed as base
+    ws2 = openpyxl.Workbook().active
+    ws2["A10"] = "Level A - Research Fellow"; ws2["B11"] = "Step no."
+    ws2["A12"] = "Step 1"; ws2["B12"] = 1; ws2["C12"] = 100000.0
+    ws2["A13"] = "Step 2"; ws2["B13"] = 2; ws2["C13"] = 105000.0
+    _, _, _, _, sc2 = parse_workbook(ws2)
+    assert not sc2, f"implausible base (step index) must NOT parse — got {sc2}"
+
     print("self-test OK")
     return 0
 
