@@ -258,6 +258,87 @@ def fill_under_headings(doc, values, filled):
         del remaining[norm(para.text)]
 
 
+def _clean_paras(body):
+    """Split a stored answer into clean paragraphs (blank-line = paragraph; unwrap hard line breaks)."""
+    return [re.sub(r"\s+", " ", blk.replace("\n", " ")).strip()
+            for blk in str(body).split("\n\n") if blk.strip()]
+
+
+def fill_under_labels(doc, values, scheme, filled):
+    """STRATEGY 3 — tag-less form fill (the AVSTICI/label-based case).
+
+    Many official templates carry NO content controls and NO Heading styles: each field is a plain
+    (Normal) LABEL paragraph followed by an empty answer slot. You MUST dissect the template's real
+    structure and fill IN PLACE — locate each field's label, then write the answer into the following
+    empty paragraph, preserving every label/instruction the template ships. The locator is the scheme
+    field's `render_match` (the distinctive label text as it appears in THIS template) or its `label`.
+    """
+    if not scheme:
+        return
+    from docx.oxml import OxmlElement
+    from docx.text.paragraph import Paragraph
+    used_labels: set[str] = set()
+    for key in [k for k in values if k not in filled]:
+        f = scheme.get(key) or {}
+        hint = f.get("render_match") or f.get("label")
+        if not hint:
+            continue
+        h = norm(hint)
+        paras = doc.paragraphs                     # re-fetch each field: inserts shift indices
+        li = None
+        for i, p in enumerate(paras):
+            t = norm(p.text)
+            if not t or t in used_labels:
+                continue
+            if t.startswith(h) or (len(h) >= 12 and h in t):
+                li = i
+                break
+        if li is None:
+            continue
+        ei = next((j for j in range(li + 1, min(li + 7, len(paras)))
+                   if paras[j].text.strip() == ""), None)
+        if ei is None:
+            continue
+        parts = _clean_paras(values[key])
+        if not parts:
+            continue
+        paras[ei].text = parts[0]
+        anchor = paras[ei]
+        for extra in parts[1:]:                    # extra paragraphs INSERTED (never overwrite template text)
+            newp = OxmlElement("w:p")
+            anchor._p.addnext(newp)
+            anchor = Paragraph(newp, anchor._parent)
+            anchor.text = extra
+        used_labels.add(norm(paras[li].text))
+        filled.add(key)
+
+
+def fill_tables(doc, tables_spec, filled):
+    """Fill an official-template TABLE in place (e.g. the budget line-item table). tables_spec:
+    {field-id: {header_match?: <substr in the table's header row>, rows: [[cell, ...], ...]}}.
+    Rows are added if the template ships fewer; the header row is preserved."""
+    for key, spec in (tables_spec or {}).items():
+        rows = spec.get("rows") or []
+        hm = norm(spec["header_match"]) if spec.get("header_match") else None
+        target = None
+        for tb in doc.tables:
+            if hm is None:
+                target = tb
+                break
+            if tb.rows and hm in norm(" ".join(c.text for c in tb.rows[0].cells)):
+                target = tb
+                break
+        if target is None:
+            continue
+        while len(target.rows) - 1 < len(rows):
+            target.add_row()
+        for k, row in enumerate(rows):
+            cells = target.rows[k + 1].cells
+            for ci, val in enumerate(row[:len(cells)]):
+                cells[ci].text = str(val)
+        filled.add(key)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("ir", type=Path, nargs="?", help="flat IR/values YAML (back-compat; or --values)")
