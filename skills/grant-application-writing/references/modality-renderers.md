@@ -115,10 +115,18 @@ official document — never a re-typed lookalike.
   for **mandated headings** (`heading-sequenced` uploads); map each to a field id.
 - **validate** — every required control filled; text under each heading within its page/word
   limit; template styles untouched.
-- **render** — `scripts/render_docx.py` (python-docx). Fill content-controls by tag; where the
-  template uses headings rather than controls, insert body text **under the mandated heading**
-  in the fixed order. **Preserve template formatting** (styles, fonts, section breaks, headers/
-  footers) — write into the existing structure, do not rebuild the document.
+- **render** — `scripts/render_docx.py` (python-docx), THREE strategies + tables. Fill
+  content-controls by tag; else insert **under the mandated Heading**; else — the **tag-less case,
+  which is the majority of official forms (incl. AVSTICI)** — use **`under-label`**: the field is a
+  plain (Normal) label paragraph followed by an empty answer slot, so you MUST **dissect the
+  template's actual paragraph/heading/table structure** and **fill the empty slot right after each
+  label**, INSERTING extra paragraphs (never overwriting a label/instruction). The **budget fills
+  the template's own line-item TABLE** (`--tables`, located by its header row), NEVER a separate
+  file. Locators are per-template instance data: `--label-map {field → the label text in THIS
+  template}` + `tables.yaml`, both authored by READING the real template. **Preserve template
+  formatting** (styles, fonts, section breaks, headers/footers) — write into the existing structure,
+  **never rebuild or re-type a lookalike document** (100% fidelity is mandatory; see SKILL.md
+  Output-convention #2).
 - **type-specific content controls (fail-closed).** A checkbox / dropdown / date SDT must be
   written **as that control type** — never plain text stuffed into a checkbox and called done. If
   a value cannot be written as the correct control type it is marked **UNRESOLVED** and the
