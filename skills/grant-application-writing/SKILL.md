@@ -135,6 +135,10 @@ B3  project substance → project-plan.yaml    project mode: aims/design, benefi
                                              crossed by person→year→budget) — the §2.14–§2.18 substance passes render from it
                                              (mechanized by validate_ir --plan; the spine turns cross-field consistency into a deterministic check)
 C   fill: per field → select evidence + mode-aware method passes
+C+  anti-AI line-edit (MANDATORY gate)        every narrative/criterion-scored box passes `writing-anti-ai`
+                                             (policy/style-guide.md + PROSE.* rules) BEFORE render — strips
+                                             em-dashes / negation-contrast / promotional / comma-overload;
+                                             must NOT weaken an evidentiary verb or launder a `[TO SET]`
 D   render to native modality                paste-ready / docx write-back / AcroForm / honest degrade
 E   review: checklist-driven contract        eligibility·compliance·evidence·consistency·budget-math·
                                              attachments·panel-fit·risk·portal dry-run — the mechanical
