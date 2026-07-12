@@ -140,6 +140,8 @@ INTERVIEW_MARKERS = ("interview", "defense", "defence")
 
 TOKEN = re.compile(r"[A-Za-z_][A-Za-z0-9_.]*")
 KW = {"and", "or", "not", "True", "False", "None", "in", "is"}
+# requirements[].applies_if — a SAFE minimal `<field> ==|!= <value>` predicate (never eval())
+APPLIES_IF = re.compile(r"^\s*([\w.]+)\s*(==|!=)\s*(.+?)\s*$")
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # residual placeholders a criterion's fields must NOT carry to reach `substantiated`
