@@ -429,14 +429,13 @@ See the guides in the `references/` directory for detailed methods and best prac
 
 ### Visualization
 
+Figure export format, font sizing, and palette are owned by `scientific-figure-making` (`FigureStyle` / `finalize_figure`) — do not hardcode format/palette rules here.
+
 ✅ **Recommended:**
-- Use vector format
-- Colorblind-friendly palettes
 - Include error bars
 - Clear labels
 
-❌ **Prohibited:**
-- Raster formats (PNG/JPG)
+❌ **Avoid:**
 - Misleading axis scales
 - Overly complex figures
 - Missing legends
