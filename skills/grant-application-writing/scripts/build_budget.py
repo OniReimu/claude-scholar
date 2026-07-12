@@ -153,9 +153,9 @@ def build(plan, rates=None):
         salary_years, oncost_years = {}, {}
         for y in years:
             b = base_by_year.get(y)
-            sal = None if (fte is None or b is None) else fte * b
-            salary_years[y] = sal
-            oncost_years[y] = None if (sal is None or oncost is None) else sal * oncost
+            sal = None if (fte is None or b is None) else round(fte * b, 2)   # round to cents: real
+            salary_years[y] = sal                                            # rate tables carry many dp
+            oncost_years[y] = None if (sal is None or oncost is None) else round(sal * oncost, 2)
 
         base = {"id": pid, "category": p.get("category", "personnel"),
                 "funding_source": p.get("funding_source", "requested"),
