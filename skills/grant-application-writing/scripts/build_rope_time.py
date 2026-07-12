@@ -36,6 +36,7 @@ import sys
 from datetime import date
 
 DAYS_PER_YEAR = 365.25
+BORDERLINE_MARGIN = 0.05     # ~18 days: within this of the window, the verdict is date-noise-sensitive
 
 
 class RopeError(ValueError):
