@@ -195,9 +195,9 @@ B4s scheduling → milestones.yaml             `scripts/build_timeline.py` build
                                              (tasks[].years[]+depends_on → Gantt + dependency-ordered milestones). Budget +
                                              timeline are two of a THIRD script class — BUILDERS (compute an artifact from
                                              inputs), distinct from validators/renderers. Construction was the systemic gap:
-                                             the skill had models+validators but almost no builders. See CLAUDE.md "BUILDERS"
-                                             for the full roadmap (build_rope_time / build_effort_allocation /
-                                             build_track_record_metrics / build_cocontribution — build each before its scheme).
+                                             the skill had models+validators but almost no builders. That audit is now CLOSED —
+                                             all six builders exist (build_budget/build_timeline/build_rope_time/
+                                             build_effort_allocation/build_track_record_metrics/build_cocontribution; see CLAUDE.md "BUILDERS").
 B3  project substance → project-plan.yaml    project mode: aims/design, benefits, additionality/VfM, risk-triggers +
                                              the traceability SPINE (stable ids: aim→objective→task→subtask→output→benefit,
                                              crossed by person→year→budget) — the §2.14–§2.18 substance passes render from it
