@@ -2,17 +2,15 @@
 
 AutoFigure-Edit 支持通过 `--reference_image_path` 进行风格迁移。提供一张参考图片，生成的图表会模仿其视觉风格。
 
-当前内置默认参考图（`generate.sh` 自动使用）：
-- `skills/paper-figure-generator/.autofigure-edit/img/reference/sample3.png`（primary）
-- `skills/paper-figure-generator/.autofigure-edit/img/reference/sample2.png`（fallback）
+**风格迁移为纯 opt-in**：没有内置默认参考图。不传 `--reference_image_path` 时不做风格迁移，直接用下述字体规范 + AutoFigure-Edit 默认风格生成。
 
 ---
 
 ## 字体规范（强制，适用于所有生成图）
 
-**所有文本一律用非斜体 sans-serif**（Helvetica / Arial）。**禁止斜体，禁止 serif / Times New Roman。**
+**所有文本默认用 Times New Roman（衬线体）**，正体与斜体均可——正体为默认，斜体用于强调或变量式记号。
 
-SVG 若不显式指定 `font-family`，渲染器会 fallback 到 serif（Times）并可能带斜体——不是论文图该有的样子。生成脚本 `autofigure2.py` 已用 `normalize_svg_fonts()` 在 `<svg>` 内注入一条 `!important` 的 `<style>`，强制 `font-family:Helvetica,Arial,sans-serif; font-style:normal`（`template.svg` 与 `final.svg` 两处兜底）。做风格迁移时，参考图也请选用 sans-serif 样例，避免把斜体/衬线体带进来。
+生成脚本 `autofigure2.py` 用 `normalize_svg_fonts()` 在 `<svg>` 内注入一条 `!important` 的 `<style>`，把 `font-family` 统一到 `'Times New Roman',Times,serif`（`template.svg` 与 `final.svg` 两处兜底）。该规则**不约束** `font-style`，所以元素上显式的 `font-style="italic"` 会保留（允许斜体）。做风格迁移时，参考图也请选用 Times New Roman / 衬线体样例，避免把 sans-serif 带进来。
 
 ---
 
