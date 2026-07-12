@@ -114,6 +114,19 @@ rubric:
     evidence_types: [<publication>, <grant>, <invited-talk>]   # accepted evidence classes for this criterion
     reviewer_panel: null                        # panel/college that scores it, if the scheme routes by classification
 
+# ─── Requirements — the CFP's normative obligations (must/should/desirable), parsed from the guidelines ───
+# Omit this block if the scheme states no graded obligations. A `mandatory` obligation must NOT be
+# collapsed into a generic gate — the project-plan's nodes carry `addresses: [req-ids]`; validate_ir
+# `requirement-coverage` joins them and BLOCKS an unaddressed `mandatory` in submission mode.
+requirements:
+  - id: <req-id>
+    text: "<the obligation, verbatim from the CFP>"
+    strength: <mandatory | expected | desirable | optional>   # governs whether an unmet obligation BLOCKS
+    applies_if: "<classification.<field> == <value>>"          # predicate over a classification field; omit = always applies
+    quantifier: <all | at_least_one>            # only for a group carrying `alternatives`
+    alternatives: [<req-id>, <req-id>]          # ids that jointly satisfy the group (and/or); omit for a lone req
+    criterion: "<rubric criterion it rolls up to>"
+
 # ─── Attachments — kind is NEVER "just a blob" (type-model.md structured-upload sub-kinds) ───
 attachments:
   - name: "<attachment name>"

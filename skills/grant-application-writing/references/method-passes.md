@@ -750,6 +750,53 @@ and third-party attestations, scored first-class.
   `validate_ir.py`'s `institutional-support-reconciliation` catches (a) and (b) mechanically (exit 1),
   this pass owns the provenance judgement.
 
+### 4.6 domain-adequacy hook (FLAG + ROUTE — never fake specialist judgement)
+> Cross-cutting, all modes. The generic passes cannot judge whether a claim's DOMAIN adequacy
+> actually holds — whether a security notion is sound, a threat model complete, a consensus-safety
+> or a statistical / clinical-validity argument correct. This pass does **not** pretend to: it is a
+> **routing discipline** (like invoking `citation-verification` for a citation, without itself
+> knowing the citation's field), so it FLAGS the claim, ROUTES it to the right specialist, and marks
+> it unvalidated — it ships **zero domain-specific answers**. It lists disciplines + generic probes;
+> it never adjudicates the domain question.
+- **Does:** for any `criterion-scored` claim whose adequacy needs specialist judgement the skill
+  cannot supply, three moves — none of which asserts a domain fact:
+  - **(a) TAG the discipline.** attach `needs_domain_review` naming the discipline the claim needs a
+    specialist in — e.g. `security-proofs` / `threat-model` / `consensus-safety` /
+    `cryptographic-assumptions` / `statistical-validity` / `clinical-trial-design`. The tag ROUTES;
+    it does not judge.
+  - **(b) EMIT a domain-checklist HOOK.** surface the **generic questions a specialist in that
+    discipline probes** — as PROMPTS for the applicant/expert to answer, never answered here:
+    adversary + threat model defined? security game / formal definition stated? assumption hierarchy
+    vs prior work (weaker or stronger, and against what)? safety / incentive argument given? leakage /
+    information-flow model stated? baselines + validity (power, controls, comparator class) for any
+    empirical claim? The hook is the *list of questions*, not any answer to them.
+  - **(c) MARK the claim `[DOMAIN-EXPERT TO VERIFY]`.** any unvalidated domain-critical claim carries
+    the marker (a two-mode annotation exactly like `[TO SET]` §1.8) and is **never presented as
+    validated**. The skill states what needs checking and by whom; it does not certify the claim.
+- **Submission mode:** an unresolved `[DOMAIN-EXPERT TO VERIFY]` on a **scored** criterion surfaces as
+  a **`blockers.md` entry + a `reviewer_model` risk note** (§4.1) — a **WARN, not a BLOCK**: the skill
+  cannot adjudicate the domain claim, so it may not hard-fail on it, but it must not **green-wash** it
+  either (a silent pass on an unverified security / safety / validity claim is exactly the failure this
+  pass exists to prevent). **Draft mode → WARN + inline marker**, consistent with markers-two-mode §1.8.
+- **Optional mechanical surfacing** (`validate_ir.py`, Agent B): a criterion/claim tagged
+  `needs_domain_review` with **no recorded sign-off** surfaces as a **WARN** in the
+  criterion-readiness / requirement report — never a silent pass.
+- **In:** each `criterion-scored` claim + its `needs_domain_review` tag / sign-off status. **Out:**
+  the discipline(s) needing specialist review named, a generic domain-checklist hook per discipline
+  (questions, not answers), every unvalidated domain-critical claim marked `[DOMAIN-EXPERT TO VERIFY]`
+  and — in submission mode — lifted to `blockers.md` + a `reviewer_model` risk note; **zero
+  domain-specific judgement asserted**. (Cross-ref `reviewer_model` §4.1 — the risk note lands there;
+  `[TO SET]` / markers-two-mode §1.8 — same lifecycle; `citation-verification` — the same
+  flag-and-route posture for a different specialism.)
+- **Example (fictional):** a proposal claims "the protocol is provably secure and its incentives are
+  attack-resistant." The generic passes cannot check whether the proof or the incentive argument
+  holds. This pass tags `needs_domain_review: [security-proofs, threat-model]`, emits the hook
+  ("adversary model stated? security game defined? assumptions vs prior? incentive / safety
+  argument?") as questions, and marks the claim `[DOMAIN-EXPERT TO VERIFY]` — it does **not** write
+  whether the proof is correct. In submission mode the unresolved marker becomes a `blockers.md` entry
+  ("route to a security-proofs specialist before submit") plus a `reviewer_model` risk note that this
+  scored claim is unadjudicated; in draft mode it stays an inline marker.
+
 ---
 
 ## Group 5 — process-archetype overlays (all modes)
