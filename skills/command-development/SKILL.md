@@ -390,10 +390,9 @@ Organize commands in subdirectories:
 argument-hint: [pr-number]
 ---
 
-$IF($1,
-  Review PR #$1,
-  Please provide a PR number. Usage: /review-pr [number]
-)
+Review PR #$1.
+
+If no PR number was provided (`$1` is empty), stop and reply: "Usage: /review-pr [number]".
 ```
 
 ### File References
