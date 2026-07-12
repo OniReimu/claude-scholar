@@ -367,6 +367,34 @@ def self_test():
     else:
         raise AssertionError("既无 personnel 也无 other_costs 必须 PlanError")
 
+    # rate_ref 查表 + 逐年 step 递进：Level A Step1→Step2→Step3 across 3 years, on_cost from table
+    rates = {"on_cost_pct": 0.30, "scales": {
+        "Level A - Research Associate": {
+            "Step 1": {"base": 100000.0}, "Step 2": {"base": 110000.0}, "Step 3": {"base": 120000.0}}}}
+    pr = {"personnel": [{"id": "ra", "fte": 1.0, "years": [2027, 2028, 2029],
+                         "rate_ref": {"level": "Level A", "step": "Step 1", "step_progression": True}}]}
+    _, rr, _, rb, _, rg, _, _ = run(pr, rates)
+    by = {r["id"]: r for r in rr}
+    assert by["ra"]["years"] == {2027: 100000.0, 2028: 110000.0, 2029: 120000.0}, by["ra"]  # step progression
+    assert by["ra-oncost"]["years"] == {2027: 30000.0, 2028: 33000.0, 2029: 36000.0}, by["ra-oncost"]  # 30% from table
+    assert abs(rg - (330000 + 99000)) < EPS, rg
+    assert not rb, rb
+    # no progression → flat Step 1 all years
+    _, rr2, _, _, _, _, _, _ = run({"personnel": [{"id": "ra", "fte": 1.0, "years": [2027, 2028],
+        "rate_ref": {"level": "Level A", "step": "Step 2", "step_progression": False}}]}, rates)
+    assert {r["id"]: r for r in rr2}["ra"]["years"] == {2027: 110000.0, 2028: 110000.0}
+    # unknown step → [TO SET] (base null), blocked, never invented
+    _, _, _, rb3, _, _, _, _ = run({"personnel": [{"id": "ra", "fte": 1.0, "years": [2027],
+        "rate_ref": {"level": "Level A", "step": "Step 9"}}]}, rates)
+    assert any("Step 9" in b for b in rb3), rb3
+    # rate_ref with no --rates table → PlanError
+    try:
+        run({"personnel": [{"id": "ra", "fte": 1.0, "years": [2027], "rate_ref": {"level": "X", "step": "Y"}}]})
+    except PlanError:
+        pass
+    else:
+        raise AssertionError("rate_ref 无 --rates 必须 PlanError")
+
     # 往返：emit 的 rows 能被 validate_budget 消费（结构对齐）
     doc = emit_yaml(*[currency] + [rows] + [target, requested])
     assert doc["rows"] and "declared_totals" in doc
