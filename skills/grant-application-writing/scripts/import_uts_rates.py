@@ -41,6 +41,10 @@ import re
 import sys
 
 STEP_RE = re.compile(r"^(step\s*\d+|s\d{3,4})$", re.I)
+# an annual academic/professional base salary floor — guards against a silent mis-parse if a future
+# year's calculator shifts columns (e.g. col B holds a step index or an hourly rate, not the base).
+# A "base" below this is NOT treated as a salary → the scale drops → build_table fails closed.
+MIN_PLAUSIBLE_BASE = 20000
 # a level header: has text in col A, no base in col B, and looks like a classification line
 LEVEL_HINT = re.compile(r"(level\s+[a-e]\b|hew\s*level|research assistant|lecturer|professor|associate)", re.I)
 
