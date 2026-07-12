@@ -154,10 +154,8 @@ To verify statistical significance, we performed paired-sample t-tests. Prior to
 - 误差条: 标准差
 
 **样式**:
-- 格式: PDF（矢量图）
-- 配色: Okabe-Ito palette
-- 字体: Times New Roman, 10pt
 - 图表尺寸: 3.5 inch × 2.5 inch（单栏）
+- 导出格式 / 配色 / 字号: 由 `scientific-figure-making`（`FigureStyle` / `finalize_figure`）负责
 
 **Caption**:
 "Performance comparison of three models. Error bars represent standard deviation across 5 runs. Our method significantly outperforms both baselines (p < 0.001)."
@@ -214,10 +212,8 @@ Agent 在分析过程中遵循 results-analysis skill 的方法论：
 
 ### 3. 可视化最佳实践（references/visualization-best-practices.md）
 
-- 矢量图格式（PDF/EPS）
-- 色盲友好配色（Okabe-Ito, Paul Tol）
 - 误差条和置信区间
-- 黑白打印可读性
+- 图表导出格式 / 配色 / 字号由 `scientific-figure-making` 负责
 
 ### 4. 常见错误避免（references/common-pitfalls.md）
 
