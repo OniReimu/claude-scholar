@@ -63,6 +63,12 @@ OUTPUT  the SAME form, filled, in its native modality
  ├─ .docx      → filled copy of the official template
  ├─ fillable .pdf → AcroForm field fill
  └─ flat/scanned .pdf → paste-ready + companion .docx, marked non-official (honest degrade)
+
+ + ALWAYS, alongside the filled form (Stage F++):
+ ├─ HUMAN-ACTIONS.md          plain-language, jargon-free handoff of every remaining human
+ │                            action/decision (the readable twin of the technical blockers.md)
+ └─ letters/ (as required)    a DRAFT of every required proforma letter/attachment the applicant
+                              can't auto-fill (partner + lead-org letters of support), [TO SET]-marked
 ```
 
 ## Dispatch is TWO axes
