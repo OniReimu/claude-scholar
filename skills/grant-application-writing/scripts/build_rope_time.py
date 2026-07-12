@@ -170,8 +170,9 @@ def main():
         import yaml
         yaml.safe_dump(res, open(args.out, "w", encoding="utf-8"), sort_keys=False, allow_unicode=True)
         print(f"\nwrote {args.out}")
-    # exit 1 unless a clean, complete YES (blocked, over-window, OR borderline all drop into review)
-    return 1 if (blocked or res["eligible"] is not True) else 0
+    # exit 1 on any review trigger: missing data, over-window, or borderline. A complete run with
+    # no window_years (no verdict requested) or a clean eligible=True → exit 0.
+    return 1 if (blocked or res["eligible"] is False or res["eligible"] == "borderline") else 0
 
 
 def self_test():
