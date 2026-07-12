@@ -235,12 +235,8 @@ Working examples in `examples/`:
 7. **Validate examples**: Examples are complete and correct
 8. **Test scripts**: Scripts are executable and work correctly
 
-**Use the skill-reviewer agent:**
-```
-Ask: "Review my skill and check if it follows best practices"
-```
-
-The skill-reviewer agent will check description quality, content organization, and progressive disclosure.
+**Use the `skill-quality-reviewer` skill:**
+Run it to check description quality, content organization, and progressive disclosure.
 
 ### Step 6: Iterate
 
