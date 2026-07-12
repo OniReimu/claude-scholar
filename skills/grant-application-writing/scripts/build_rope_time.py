@@ -129,8 +129,13 @@ def render(res, blocked):
     if res["effective_years_since_phd"] is not None:
         L.append(f"  EFFECTIVE years since PhD: {res['effective_years_since_phd']}"
                  + (f"   window: ≤{res['window_years']}y" if res['window_years'] is not None else ""))
-    if res["eligible"] is not None:
-        L.append(f"  ELIGIBLE: {'YES' if res['eligible'] else 'NO — over the window'}")
+    if res["eligible"] == "borderline":
+        L.append(f"  ELIGIBLE: BORDERLINE (within ~{BORDERLINE_MARGIN}y of the window) — "
+                 f"verify the exact day-count against the scheme's census-date rule before relying on it")
+    elif res["eligible"] is True:
+        L.append("  ELIGIBLE: YES")
+    elif res["eligible"] is False:
+        L.append("  ELIGIBLE: NO — over the window")
     elif res["window_years"] is None:
         L.append("  (no window_years supplied — computed effective years only, no eligibility verdict)")
     if blocked:
