@@ -489,6 +489,50 @@ def self_test():
                                     "rows": [{"category": "x", "kind": "cash", "years": {2026: 1}}]}), \
         "balance_check disabled → no side required, no rule"
 
+    # ── GAP-2: multi-year funding-status axis ──
+    # (a) requested rows all within funded window PASS + report requested vs indicative totals
+    fs_ok = {
+        "funding_window": {"funded": [2026]},
+        "rows": [{"category": "salary", "funding_source": "requested", "funding_status": "requested",
+                  "kind": "cash", "years": {2026: 50000}},
+                 {"category": "salary-y2", "funding_source": "requested", "funding_status": "indicative",
+                  "kind": "cash", "years": {2027: 50000}}],
+    }
+    res_ok, _, _ = run(fs_ok)
+    dfs = {n: (ok, det) for n, ok, det in res_ok}
+    assert dfs["funding-status"][0] is True, dfs.get("funding-status")
+    assert "requested_total 50000" in dfs["funding-status"][1], dfs["funding-status"][1]
+    assert "indicative_total 50000" in dfs["funding-status"][1], dfs["funding-status"][1]
+    assert not any(n.startswith("funding-window") for n in dfs), "requested rows within window → no window FAIL"
+
+    # (b) a requested row with a year outside funded window FAILs (fail-closed)
+    fs_bad = {
+        "funding_window": {"funded": [2026]},
+        "rows": [{"category": "salary", "funding_source": "requested", "funding_status": "requested",
+                  "kind": "cash", "years": {2026: 50000, 2027: 50000}}],
+    }
+    rbad = _fails(fs_bad)
+    assert rbad["funding-window[salary]"] is False, "requested row in unfunded FY must FAIL"
+    # default funding_status (absent) is treated as requested → same越窗 FAIL
+    fs_def = {"funding_window": {"funded": [2026]},
+              "rows": [{"category": "salary", "funding_source": "requested", "kind": "cash",
+                        "years": {2026: 10000, 2027: 10000}}]}
+    assert _fails(fs_def)["funding-window[salary]"] is False, "defaulted (absent) status → requested → 越窗 FAIL"
+
+    # (c) same row tagged indicative PASSes (indicative future work is allowed)
+    fs_ind = {
+        "funding_window": {"funded": [2026]},
+        "rows": [{"category": "salary", "funding_source": "requested", "funding_status": "indicative",
+                  "kind": "cash", "years": {2026: 50000, 2027: 50000}}],
+    }
+    rind = _fails(fs_ind)
+    assert not any(n.startswith("funding-window") for n in rind), "indicative row outside window must not FAIL"
+    assert rind["funding-status"] is True, "indicative future work passes"
+
+    # (d) no funding_status / funding_window → no funding rule (existing budgets unchanged)
+    assert "funding-status" not in _fails(data), \
+        "no funding axis → no funding rule (existing budgets unchanged)"
+
     print("self-test OK")
     return 0
 

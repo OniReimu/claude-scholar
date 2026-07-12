@@ -686,13 +686,31 @@ consistency checks into a **deterministic, fail-closed validator** (`validate_ir
   theory / data / tools / measures carry `foundational: true`, and later tasks name them in
   `depends_on` (the dependency architecture is explicit, not implied). Each `subtasks[]` entry is
   written in the **gap→consequence→move→mechanism** grammar (*current method lacks X → causes
-  failure Y → introduce Z → Z fixes Y*; see method-passes.md §2.19) and names the `output` it
+  failure Y → introduce Z → Z fixes Y*; see method-passes.md §2.18) and names the `output` it
   produces. **Cross-axis**: `person` resolves to entity-store `investigators[].id` (capability
   coverage — no unstaffed task), `years` to the timetable, `budget_lines` to budget rows (the
   **four-way crosswalk** task↔person↔year↔budget), `validation` to a `validations[].id`.
 - `outputs[]` — `{id, task, kind, benefit}`: each output is produced by a `task` and (where it
   ladders to impact) traces to a `benefits[].id`. `kind ∈ theory | method | tool | demonstrator |
   publication`.
+
+Two OPTIONAL axes extend the spine nodes — an **obligation link** and a **funding-status flag**:
+
+- `addresses: [<req-ids>]` (on `objectives[]` / `tasks[]` / `outputs[]`) — the link from a plan node
+  **up** to the `scheme.requirements[]` obligations it satisfies. The scheme **states** the obligation
+  (`must / should / desirable`, some conditional on a chosen classification); the plan **meets** it;
+  `validate_ir.py` `requirement-coverage` **joins** them (a req's `addressed_by` is not stored on the
+  scheme — it is resolved from the plan nodes whose `addresses` contains the req id). This is what makes
+  criterion-readiness honest about **graded** obligations: a `mandatory` requirement addressed by **no**
+  plan node is a **submission blocker** (FAIL in `--mode submission` / WARN in draft), whereas a generic
+  criterion-readiness pass could false-pass a proposal that answers a `desirable` and silently skips the
+  `mandatory`. `addresses` is optional and inert when the scheme carries no `requirements[]`.
+- `funding_status: requested | indicative | conditional` (on `tasks[]`, default `requested`) — separates
+  the **requested (this-call)** work from the **indicative multi-year trajectory**. A task whose `years`
+  fall beyond the call's funded window is `indicative` (or `conditional` on a continuation decision) and is
+  **never presented as funded**. It pairs with the budget axis (`funding_window.funded` + row-level
+  `funding_status`, checked by `validate_budget.py`): the plan's task-level status and the budget's
+  row-level status tell one consistent story about which years are actually requested.
 - `validations[]` — `{id, task, baseline, stress, mechanism_check, metric, comparator_class}`: a
   **colocated** validation block per task (not a late generic "evaluation" section). It names
   competitive `baseline`s, a `stress` scenario **designed to expose the targeted failure**, a
