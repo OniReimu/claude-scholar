@@ -196,7 +196,7 @@ def self_test():
             "career_best_n": 2}
     res, b = run(plan, tiers)
     assert res["effective_years"] == 7.0, res                       # (2026-2018)-1
-    assert res["n_publications"] == 3 and abs(res["pubs_per_year"] - 3/7.0) < 1e-6, res
+    assert res["n_publications"] == 3 and res["pubs_per_year"] == round(3/7.0, 2), res
     assert res["tier_distribution"] == {"A*": 2, "A": 1}, res
     assert res["m_of_n"] == {"M": 2, "N": 3, "tier": "A*"}, res
     # ranking: p3 (A*, 55 cites) > p1 (A*, 40) > p2 (A, 10); top-2 = p3, p1
