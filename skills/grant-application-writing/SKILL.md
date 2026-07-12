@@ -60,11 +60,23 @@ These sit alongside Core discipline and govern HOW the output is packaged and dr
    `*-plan`/`manifest`/`milestones`) is YAML and lives in an **`_ir/` subfolder**, NOT interleaved
    with the `.md` deliverables. The final artifact the applicant submits is a rendered **`.docx`
    (or `.pdf`)** — the filled official template (Stage D `render_docx.py`), not a loose text dump.
-2. **Template fidelity + human cross-validate.** Draft to the official form's ACTUAL structure:
-   mirror its section order, headings, field labels, and per-field limits verbatim (the proven
-   workflow: build an `.md` from the sample/template, hold the layout, then render into the real
-   `.docx`). The rendered output is handed back for **human cross-validation** against the live
-   form before submission — the skill states this explicitly, it does not imply the fill is final.
+2. **⚠️ TEMPLATE FIDELITY IS ABSOLUTE — the final .docx MUST be the official template, filled
+   in place (100% fidelity). This is non-negotiable.** You MUST **dissect the official template's
+   real structure first** — enumerate its paragraphs, headings, and tables (`Document(...).paragraphs`
+   / `.tables`; see `scripts/render_docx.py`) — and then fill answers INTO that structure:
+   - **NEVER build a self-styled document as a substitute.** A clean doc you author yourself, even
+     with the right headings, is WRONG. The funder's exact template, labels, instructions, and
+     tables must all survive verbatim.
+   - Most official forms are **tag-less** (plain Normal-styled label paragraphs, no content controls,
+     no Heading styles). For these you locate **each field's label paragraph and write the answer
+     into the empty answer slot immediately after it** — INSERTING extra paragraphs, never
+     overwriting any label or instruction. The **budget goes INTO the template's own line-item
+     table** (never in a separate file). `render_docx.py` does exactly this: strategy-3 `under-label`
+     (via a `--label-map` of {field → the label's text in THIS template}) + `--tables` for the budget.
+   - The locator map is per-template **instance data** (`_ir/render-map.yaml`, `_ir/tables.yaml`),
+     produced by reading the actual template — not guessed.
+   - The filled template is handed back for **human cross-validation** against the live form before
+     submission; the skill states this explicitly and never implies the fill is final.
 3. **Context-provenance: briefing ≠ assertable content (don't leak the brief).** Material given to
    BRIEF the agent (background, prior work, "for your understanding") must NOT be auto-promoted into
    the application text as confirmed claims. Distinguish, per claim: `corpus-confirmed` (a fact the
