@@ -490,10 +490,7 @@ argument-hint: [environment] [version]
 
 Validate inputs: !`test -n "$1" -a -n "$2" && echo "OK" || echo "MISSING"`
 
-$IF($1 AND $2,
-  Deploy version $2 to $1 environment,
-  ERROR: Both environment and version required. Usage: /deploy [env] [version]
-)
+If the validation above printed "MISSING", stop and reply: "ERROR: Both environment and version required. Usage: /deploy [env] [version]". Otherwise deploy version $2 to the $1 environment.
 ```
 
 ### Plugin Resource Validation
