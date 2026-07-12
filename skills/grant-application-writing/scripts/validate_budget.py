@@ -252,6 +252,39 @@ def check_declared(rows, declared, total, requested, total_cash):
     return out
 
 
+def funding_status(r):
+    """行的多年资助状态，缺省视为 requested（this-call 已申请/已资助）。"""
+    return r.get("funding_status", "requested")
+
+
+def check_funding_status(rows, funding_window):
+    """多年资助状态轴: requested (this-call) 与 indicative/conditional (后续/延续) 分列。
+    funding_window.funded 存在时，requested 行（含缺省）任一年落在 funded 之外 → FAIL
+    (后续年份成本不能以 requested/已资助 呈现)。
+    fail-closed —— funding_window 存在时越窗即 FAIL，非静默 pass。
+    门控: funding_status 与 funding_window 皆缺 → 不产生规则 (现有预算行为不变)。"""
+    has_status = any("funding_status" in r for r in rows)
+    if funding_window is None and not has_status:
+        return []
+    incl = [r for r in rows if counts(r)]
+    requested_total = sum(row_total(r) for r in incl if funding_status(r) == "requested")
+    indicative_total = sum(row_total(r) for r in incl if funding_status(r) in ("indicative", "conditional"))
+    out = [("funding-status", True,
+            f"requested_total {requested_total:.0f} vs indicative_total {indicative_total:.0f} "
+            f"(indicative = indicative+conditional)")]
+    if funding_window:
+        funded = {str(y) for y in (funding_window.get("funded") or [])}
+        for r in incl:
+            if funding_status(r) != "requested":
+                continue
+            outside = sorted(str(y) for y in (r.get("years") or {}) if str(y) not in funded)
+            if outside:
+                out.append((f"funding-window[{r.get('category')}]", False,
+                            f"requested 行在 FY {outside} 支出，落在 funded 窗口 {sorted(funded)} 之外"
+                            f"（后续年份不能以 requested 呈现；如为延续用 funding_status: indicative/conditional）"))
+    return out
+
+
 def per_year_org(rows):
     years, orgs = {}, {}
     for r in rows:

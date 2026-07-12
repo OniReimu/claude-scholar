@@ -686,7 +686,19 @@ and third-party attestations, scored first-class.
   - **`substantiated` / `submission-ready`** — `minimum_evidence` met and the `readiness_rule` holds; `submission-ready` additionally carries no unresolved §1.8/§1.9 markers on that criterion's fields.
 - **Mode behaviour.** **Submission/final:** a hard-required scored criterion at `unsupported` is a hard block; `partial` → warning + `blockers.md`. **Draft/internal:** may proceed with the state annotated inline (the applicant sees which criteria are thin) — parallels the two-mode marker handling in §1.8.
 - **Machine-run.** This pass is executed mechanically by `scripts/validate_ir.py` (a `criterion-readiness` check, added to `--self-test`): for each rubric criterion it computes readiness from the IR/evidence and returns a **FAIL in submission mode** for a scored criterion with no backing evidence — **not a SKIP**. SKIP is reserved for genuinely optional sidecars; a SKIP that would hide a scored-criterion gap is reclassified as a FAIL. (Cross-ref markers-two-mode / `blockers.md` §1.8; the mechanized-gate paragraph below.)
-- **In:** `rubric[]` (`weight`, `binding`, `minimum_evidence`, `readiness_rule`), the drafted IR + evidence-store. **Out:** a per-criterion readiness table (`criterion → state`); in submission mode, hard blocks for `unsupported` hard-required criteria + `blockers.md` entries for every `partial`; in draft mode, the same states annotated, non-blocking.
+- **Obligation-graded readiness (`mandatory` requirements gate `substantiated`).** Beyond the
+  `minimum_evidence` classes, a scored criterion is **not `substantiated` until every `mandatory`
+  requirement that rolls up to it is addressed** — the `requirements[]` obligations parsed from the
+  CFP (each `strength: mandatory | expected | desirable | optional`, joined to the plan via the plan
+  node's `addresses: [req-ids]`). An `applies_if`-active `mandatory`/`expected` requirement (or an
+  unmet `at_least_one` alternatives group) with **no addressing plan node** holds the criterion at
+  **`partial` at best** and, in submission mode, is a hard gate; a `desirable`/`optional` gap is
+  **annotated, not blocking** — an informational note on the criterion, never a downgrade. This makes
+  readiness honest about GRADED obligations: answering a `desirable` while skipping a `mandatory` can
+  no longer false-pass a criterion as substantiated. (Cross-ref the `requirement-coverage` check in
+  `validate_ir.py` — Agent B — and the `requirements[]` / `addresses` schema it joins; gated on
+  `requirements[]` present, else this refinement is inert.)
+- **In:** `rubric[]` (`weight`, `binding`, `minimum_evidence`, `readiness_rule`) + `requirements[]` (`strength`, `applies_if`, `criterion`) joined via plan-node `addresses`, the drafted IR + evidence-store. **Out:** a per-criterion readiness table (`criterion → state`), each `substantiated` state additionally gated on its `mandatory` requirements being addressed; in submission mode, hard blocks for `unsupported` hard-required criteria + `blockers.md` entries for every `partial` (including a criterion held `partial` by an unmet mandatory requirement); in draft mode, the same states annotated, non-blocking.
 
 ### 4.5 institutional-statement reconciliation (semantic layer; mechanized by validate_ir.py)
 > Analog to §2.13 partner-commitment reconciliation, but for the **host-institution statement** — a
