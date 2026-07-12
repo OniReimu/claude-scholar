@@ -207,16 +207,13 @@ plt.savefig('training_curve.pdf', bbox_inches='tight')
 ### 错误 4: 图表不清晰
 
 ❌ **错误**:
-- 位图格式（PNG）
-- 非色盲友好配色
 - 缺少误差条
 - 标签太小
 
 ✅ **正确**:
-- 矢量图格式（PDF/EPS）
-- Okabe-Ito 配色
 - 包含误差条
 - 清晰的标签
+- 导出格式 / 配色由 `scientific-figure-making` 负责
 
 ## 检查清单
 
