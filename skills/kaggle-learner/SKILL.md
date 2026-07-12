@@ -97,10 +97,9 @@ This skill automatically updates its knowledge base when the kaggle-miner agent 
 
 ### Knowledge Directories
 - **`references/knowledge/nlp/`** - NLP competition techniques
-- **`references/knowledge/cv/`** - Computer vision techniques
 - **`references/knowledge/time-series/`** - Time series methods
 - **`references/knowledge/tabular/`** - Tabular data approaches
-- **`references/knowledge/multimodal/`** - Multimodal solutions
+- CV and Multimodal domains: no entries yet (populated by the `kaggle-miner` agent as competitions are mined)
 
 ### Competition Examples
 - **BirdCLEF+ 2025** (`time-series/birdclef-plus-2025.md`) - 包含完整的 Top 14 前排方案详细技术分析
