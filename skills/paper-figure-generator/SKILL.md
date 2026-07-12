@@ -141,10 +141,8 @@ bash skills/paper-figure-generator/scripts/generate.sh \
 - `--optimize_iterations <n>` — SVG refinement iterations (0 to disable)
 - `--merge_threshold <n>` — Region merging threshold (0 to disable)
 
-**Default reference behavior:**
-- If `--reference_image_path` is omitted, wrapper auto-adds reference style from:
-  - `skills/paper-figure-generator/.autofigure-edit/img/reference/sample3.png` (primary)
-  - fallback: `skills/paper-figure-generator/.autofigure-edit/img/reference/sample2.png`
+**Reference behavior:**
+- Style transfer is opt-in. If `--reference_image_path` is omitted, no reference style is applied (no built-in default).
 
 **Output files:**
 - `figures/{topic-slug}/figure.png` — Raster preview
