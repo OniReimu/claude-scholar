@@ -38,10 +38,17 @@ number — a different genre with its own machinery.
    passes, templates, and renderers; worked examples use a fictional applicant. Each real
    application is an IR instance in its own project folder — never hardcode a scheme's
    boxes or a real person's evidence here.
-6. **Narrative fields obey the repo author-voice policy.** `narrative`/`criterion-scored`
-   prose is a writing task: it follows `policy/style-guide.md` + relevant `PROSE.*` rules,
-   applied at line-edit via `writing-anti-ai`. This is distinct from the grant-specific
-   evidentiary rules above.
+6. **Narrative fields obey the repo author-voice policy — and `writing-anti-ai` is a
+   MANDATORY pre-render gate, not an optional polish.** `narrative`/`criterion-scored`
+   prose is a writing task: it follows `policy/style-guide.md` + relevant `PROSE.*` rules.
+   Every drafted narrative/criterion-scored box MUST pass `writing-anti-ai` at line-edit
+   **before Stage D render** — a box that has not been through it is not render-ready.
+   Grant prose is a dense generator of AI tells (em-dashes, `X, not Y` negation-contrast,
+   rule-of-three, promotional adjectives, comma-overload); leaving them in reads as
+   machine-written to an assessor. Assessor-facing text under a rubric is exactly where the
+   tells cost score, so the gate is enforced, not advisory. This is distinct from — and runs
+   after — the grant-specific evidentiary rules above (never let a de-AI edit weaken a verb's
+   evidentiary commitment or launder an honest `[TO SET]`).
 
 ## IO contract
 
