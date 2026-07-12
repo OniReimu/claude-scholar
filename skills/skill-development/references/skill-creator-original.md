@@ -8,6 +8,8 @@ license: Complete terms in LICENSE.txt
 
 This skill provides guidance for creating effective skills.
 
+> **⚠️ Preserved upstream original (Anthropic generic skill-creator).** This repo's canonical guide is the parent `SKILL.md`, which this file's "About Skills"/"Anatomy"/"Progressive Disclosure" preamble duplicates. The **Step 3 (`init_skill.py`) and Step 5 (`package_skill.py` / zip-packaging)** steps below **do NOT apply to plugin skills here** — those scripts don't exist in this repo and plugin skills are created directly in `skills/` with no packaging. See `SKILL.md` §159 and §"No Packaging Needed".
+
 ## About Skills
 
 Skills are modular, self-contained packages that extend Claude's capabilities by providing
