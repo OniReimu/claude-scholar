@@ -109,6 +109,9 @@ risks:
 # validated by validate_ir.py traceability-spine (referential integrity + four-way crosswalk).
 # Cross-axis targets: objectives[].aim → aims[].id; tasks[].person → entity-store investigators[].id;
 # tasks[].budget_lines → budget rows; outputs[].benefit → benefits[].id. Every id must resolve; no duplicates.
+# Two OPTIONAL obligation/funding axes (objectives/tasks/outputs may carry `addresses`; tasks may carry `funding_status`):
+#   addresses: [<req-ids>]  → scheme.requirements[].id the node satisfies (validate_ir requirement-coverage joins scheme-stated ↔ plan-met)
+#   funding_status: requested | indicative | conditional  → a task beyond the funded window is indicative/conditional, never funded (→ funding_window, validate_budget)
 objectives:                          # aim → numbered objectives (the condition each aim is met by)
   - {id: obj-1, aim: aim-1, statement: "<condition to be achieved>", addresses: [<req-ids from scheme.requirements[]>]}
   - {id: obj-2, aim: aim-2, statement: "Deliver an ingestion path that sustains p99 write latency < 800 ms at 10x baseline throughput", addresses: [req-a1]}
