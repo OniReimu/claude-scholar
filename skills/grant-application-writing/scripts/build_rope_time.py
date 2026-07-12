@@ -189,10 +189,15 @@ def self_test():
     r2, _ = run({"as_of": "2027-01-01", "phd_conferral": "2020-01-01", "window_years": 5})
     assert r2["eligible"] is False, r2
 
-    # full interruption (fte 0) credits full duration: 6y raw − 1y full → 5 ≤ 5 eligible
+    # full interruption (fte 0) credits full duration: 6y raw − 1y full → effective ≈ 5.0 exactly on the
+    # window boundary → BORDERLINE (date-noise: don't hard-assert within ~18 days of the cutoff)
     r3, _ = run({"as_of": "2026-01-01", "phd_conferral": "2020-01-01", "window_years": 5,
                  "interruptions": [{"from": "2021-01-01", "to": "2022-01-01", "fte_fraction": 0.0}]})
-    assert r3["eligible"] is True, r3
+    assert r3["eligible"] == "borderline", r3
+    # clearly inside after a full interruption: 6y raw − 2y full → effective ≈ 4.0 ≤ 5 → eligible
+    r3b, _ = run({"as_of": "2026-01-01", "phd_conferral": "2020-01-01", "window_years": 5,
+                  "interruptions": [{"from": "2021-01-01", "to": "2023-01-01", "fte_fraction": 0.0}]})
+    assert r3b["eligible"] is True, r3b
 
     # missing phd → [TO SET] blocked, no eligibility verdict
     r4, b4 = run({"as_of": "2026-01-01", "window_years": 5})
