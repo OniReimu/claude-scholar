@@ -347,6 +347,7 @@ def main() -> None:
     ap.add_argument("--scheme", type=Path, help="scheme.yaml (structure + limits) for C6 + under-label render_match")
     ap.add_argument("--values", type=Path, help="values.yaml (field-id -> value) for C6")
     ap.add_argument("--tables", type=Path, help="tables.yaml {field: {header_match?, rows[][]}} to fill a template table (e.g. budget)")
+    ap.add_argument("--label-map", type=Path, help="render-map.yaml {field-id: label-text-in-THIS-template} for the tag-less under-label fill (instance data; overlays scheme render_match)")
     args = ap.parse_args()
 
     values_path = args.values or args.ir
