@@ -5,10 +5,21 @@
 """Stage-D docx renderer: write a filled IR back into the OFFICIAL .docx template.
 
 Fills values into the *same* template so the funder's formatting, headers, and mandated
-structure survive. Two write strategies, tried in order per field:
+structure survive — the output is 100% the official template, only the answer slots filled.
+THREE write strategies (tried in order per field) + table fill:
   1. content-control  — match a Word content control (SDT) by TAG then ALIAS; write into it
      with the CORRECT control type (text / checkbox / dropdown / date).
-  2. under-heading    — match a mandated heading, insert the value as a paragraph beneath it.
+  2. under-heading    — match a mandated Heading-styled paragraph; insert the value beneath it.
+  3. under-label      — the TAG-LESS case (many official forms, incl. AVSTICI): the field is a
+     plain (Normal) LABEL paragraph followed by an empty answer slot. You MUST dissect the
+     template's real paragraph structure and fill IN PLACE — locate each label (by the field's
+     `render_match` in scheme, or a `--label-map` sidecar of {field: template-label-text}) and
+     write the answer into the FOLLOWING empty paragraph. Multi-paragraph answers are INSERTED
+     (never overwrite the template's own labels/instructions).
+  + tables (--tables) — fill an official-template TABLE in place (e.g. the Section-5 budget
+     line-item table), located by its header row; rows added if the template ships fewer.
+NEVER build a self-styled document as a substitute — the deliverable must be the official
+template, dissected and filled in place, for 100% fidelity + human cross-validation.
 
 FAIL-CLOSED rules (C5):
   * Type-specific SDT: a checkbox/dropdown/date content-control gets a type-correct write.
