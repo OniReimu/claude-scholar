@@ -799,6 +799,37 @@ and third-party attestations, scored first-class.
 
 ---
 
+#### §4.7 anti-AI line-edit gate (MANDATORY, all modes; the last thing before Stage D render)
+
+> **Every `narrative`/`criterion-scored` box passes `writing-anti-ai` before it renders.** This
+> is a GATE, not an optional polish: assessor-facing prose scored against a rubric is exactly
+> where AI tells cost score, and grant prose is a dense generator of them. See SKILL.md Core
+> discipline #6 + pipeline stage C+.
+- **Does:** run each drafted narrative box through `writing-anti-ai` (`policy/style-guide.md` +
+  the `PROSE.*` guardrail set). The high-yield tells in grant prose: **em-dashes** (zero-tolerance
+  `PROSE.EM_DASH_RESTRICTION`), **`X, not Y` / `X rather than Y` negation-contrast**
+  (`PROSE.NEGATION_CONTRAST` — keep ONLY when ruling out Y carries real information, e.g. an
+  eligibility distinction "employee labour, not a stipend"; drop the empty flourish "intrinsic,
+  not incidental"), **rule-of-three**, **promotional adjectives** (`groundbreaking`,
+  `world-class`), **intensifiers without data**, **comma-overload** (>3/sentence), **copula
+  dodges** (`serves as`→`is`), **superficial trailing -ing**.
+- **Ordering + boundary (critical):** this runs AFTER the evidentiary passes (verb-tiering §1.2,
+  markers §1.8, honesty §1.7), never before, and it may **NOT** alter meaning. A de-AI edit must
+  not weaken a verb's evidentiary commitment, launder a `[TO SET]`/`[VERIFY]`/`[DOMAIN-EXPERT TO
+  VERIFY]` marker into smooth prose, or turn an honest hedge into a claim. If a clean rewrite
+  would change the evidentiary content, keep the content and accept a slightly less "natural"
+  sentence — evidentiary honesty outranks prose-naturalness.
+- **Verify mechanically:** `grep -c '—'` the rendered paste-ready should be ~0 (residual em-dashes
+  only in non-pasted header/comment lines); spot-check `, not `/`rather than ` occurrences each
+  carry information. `charcount.py` re-run confirms the de-AI edit did not push any box over limit
+  (removing em-dashes is roughly length-neutral; sentence-splitting can add a word or two).
+- **In:** every drafted `narrative`/`criterion-scored` body. **Out:** the same bodies, AI-tell-free,
+  meaning + markers + evidentiary verbs preserved, still within limits. A box that has not passed
+  this gate is **not render-ready** (Stage D). (Cross-ref `writing-anti-ai` skill; `author-voice.md`
+  register; §1.2 verb-tiering + §1.8 markers — this pass must not undo either.)
+
+---
+
 ## Group 5 — process-archetype overlays (all modes)
 
 > **The second dispatch axis.** Group 1/2/3 dispatch on `mode` (what you're judged *on*
