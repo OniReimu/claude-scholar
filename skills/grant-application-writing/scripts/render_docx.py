@@ -376,6 +376,12 @@ def main() -> None:
         scheme_errors += [f"unknown-field: {k!r} not in scheme.yaml" for k in unknown]
         scheme_errors += [f"required-missing: scheme field {fid!r} has no value" for fid in missing]
 
+    if args.label_map:                                       # overlay per-template locator hints
+        if not args.label_map.exists():
+            sys.exit(f"error: file not found: {args.label_map}")
+        for k, v in (yaml.safe_load(args.label_map.read_text(encoding="utf-8")) or {}).items():
+            scheme.setdefault(str(k), {})["render_match"] = v
+
     tables_spec: dict = {}
     if args.tables:
         if not args.tables.exists():
