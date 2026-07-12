@@ -1324,6 +1324,140 @@ def check_traceability_spine(rep, scheme, plan, entity, bdata, mode):
         rep.add("traceability-spine", status, binding, p + tail)
 
 
+# ── requirement-coverage + domain-review (check 20 + GAP-3 light adjunct) ─────
+def _classification_map(scheme, values, plan):
+    """Collect classification field → value from a `classification` block (plan or values)
+    and any scheme classification-role field carrying a value in --values. Keyed by name."""
+    cm = {}
+    for src in ((plan or {}).get("classification"), (values or {}).get("classification")):
+        if isinstance(src, dict):
+            for k, v in src.items():
+                cm.setdefault(str(k), v)
+    for f in iter_field_nodes((scheme or {}).get("sections")):
+        if "classification" in roles_of(f) and values and fid(f) in values:
+            cm.setdefault(str(fid(f)), values[fid(f)])
+    return cm
+
+
+def _eval_applies_if(pred, cmap):
+    """SAFE minimal evaluator for a `<field> ==|!= <value>` predicate — NEVER eval(). Returns
+    (applies: bool, note: str|None). Fail-closed: an omitted predicate always applies; an
+    unparseable predicate or an unknown classification field is treated as APPLICABLE (a note
+    records why), so a conditional obligation is never silently skipped."""
+    if pred is None or (isinstance(pred, str) and not pred.strip()):
+        return True, None
+    m = APPLIES_IF.match(str(pred))
+    if not m:
+        return True, f"applies_if {pred!r} unparseable — treated as applicable (fail-closed)"
+    field, op, rhs = m.group(1), m.group(2), m.group(3).strip().strip("\"'")
+    key = field.split(".")[-1]
+    if key in cmap:
+        actual = cmap[key]
+    elif field in cmap:
+        actual = cmap[field]
+    else:
+        return True, f"classification {field!r} unknown — treated as applicable (fail-closed)"
+    hit = str(actual).strip() == rhs
+    return (hit if op == "==" else not hit), None
+
+
+def check_requirement_coverage(rep, scheme, plan, values, mode):
+    """#20 requirement-coverage: join the scheme's graded obligation model (`requirements[]`,
+    parsed from the CFP) against the project-plan nodes (objectives/tasks/outputs) that carry
+    `addresses: [req-ids]` — a scheme STATES the obligation, the plan MEETS it. For each
+    requirement whose `applies_if` predicate holds (evaluated against supplied classification
+    values; an unknown/unparseable predicate is fail-closed → the requirement is treated as
+    applicable), the group is met when the addressing plan node(s) exist: a lone req needs ≥1
+    addressing node; an `alternatives` group under `quantifier: at_least_one` needs ANY member
+    addressed, under `all` needs EVERY member. A `mandatory`/`expected` requirement (or an unmet
+    at_least_one/all group) with NO addressing is a hard FAIL in `submission`, a WARN in `draft`,
+    naming the req id + text. A `desirable`/`optional` unmet requirement is an informational WARN
+    that never blocks. Gate: run only when the scheme declares requirements[] (else a labelled
+    SKIP). Absent a `strength`, a requirement defaults to mandatory (fail-closed).
+    """
+    reqs = scheme.get("requirements")
+    if not reqs:
+        rep.add("requirement-coverage", "SKIP", "soft",
+                "scheme declares no requirements[] obligation model")
+        return
+    addressed = set()
+    for coll in ("objectives", "tasks", "outputs"):
+        for node in ((plan or {}).get(coll) or []):
+            if isinstance(node, dict):
+                for rid in (node.get("addresses") or []):
+                    addressed.add(str(rid))
+    cmap = _classification_map(scheme, values, plan)
+
+    for r in reqs:
+        if not isinstance(r, dict):
+            continue
+        rid = str(r.get("id") or "<req>")
+        text = r.get("text") or ""
+        strength = str(r.get("strength") or "mandatory").lower()
+        applies, note = _eval_applies_if(r.get("applies_if"), cmap)
+        if not applies:
+            rep.add(f"requirement-coverage[{rid}]", "PASS", "hard",
+                    f"applies_if {r.get('applies_if')!r} does not hold — requirement not applicable")
+            continue
+        alts = r.get("alternatives")
+        if isinstance(alts, list) and alts:
+            quant = str(r.get("quantifier") or "all").lower()
+            members = [str(a) for a in alts]
+            hit = [m for m in members if m in addressed]
+            met = bool(hit) if quant == "at_least_one" else all(m in addressed for m in members)
+            qdesc = f"{quant} of {members}"
+            addr_desc = f"addressed: {hit}" if hit else "no alternative addressed"
+        else:
+            met = rid in addressed
+            qdesc = "lone requirement"
+            addr_desc = "addressed" if met else "no plan node addresses it"
+        notesfx = f"; {note}" if note else ""
+        if met:
+            rep.add(f"requirement-coverage[{rid}]", "PASS", "hard",
+                    f"{strength} requirement met ({qdesc}) — {addr_desc}{notesfx}")
+            continue
+        detail = f"{strength} requirement unaddressed ({qdesc}): {text!r} — {addr_desc}"
+        if strength in ("desirable", "optional"):
+            rep.add(f"requirement-coverage[{rid}]", "WARN", "soft",
+                    detail + " (informational, non-blocking)" + notesfx)
+        elif mode == "submission":
+            rep.add(f"requirement-coverage[{rid}]", "FAIL", "hard",
+                    detail + " (fail-closed, submission mode)" + notesfx)
+        else:
+            rep.add(f"requirement-coverage[{rid}]", "WARN", "soft", detail + notesfx)
+
+
+def check_domain_review(rep, scheme, plan):
+    """GAP-3 light (§4.6 domain-adequacy hook): a criterion (scheme rubric) or plan claim/node
+    tagged `needs_domain_review` (a discipline the skill cannot itself adjudicate — e.g.
+    security-proofs / threat-model / consensus-safety / statistical-validity / clinical-trial-
+    design) with NO recorded sign-off surfaces as a WARN (never a silent pass). It is a
+    FLAG-and-ROUTE discipline, not domain knowledge — the skill routes the claim to a specialist
+    and never presents it as validated. Minimal: one WARN naming the unsigned tags; SKIP when
+    nothing is tagged.
+    """
+    unsigned = []
+
+    def scan(items, kind):
+        for it in (items or []):
+            if not isinstance(it, dict) or not it.get("needs_domain_review"):
+                continue
+            signed = (it.get("domain_signoff") or it.get("domain_sign_off") or it.get("signoff"))
+            if not _nonempty(signed):
+                label = it.get("id") or it.get("criterion") or it.get("claim") or f"<{kind}>"
+                unsigned.append(f"{label} ({it['needs_domain_review']})")
+
+    scan(scheme.get("rubric"), "criterion")
+    for coll in ("aims", "objectives", "tasks", "outputs", "claims"):
+        scan((plan or {}).get(coll), coll)
+    if not unsigned:
+        rep.add("domain-review", "SKIP", "soft", "no criterion/claim tagged needs_domain_review")
+        return
+    rep.add("domain-review", "WARN", "soft",
+            "needs_domain_review with no recorded sign-off — route to a specialist, do NOT "
+            f"present as validated: {'; '.join(unsigned)}")
+
+
 # ── orchestration ────────────────────────────────────────────────────────────
 def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=None,
                 budget_path=None, paste_ready=None, mode="draft", plan_path=None):
