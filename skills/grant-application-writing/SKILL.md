@@ -173,7 +173,8 @@ Each stage is specified in a `references/` file. Read the ones the task needs:
 
 - **`citation-verification`** — verify every publication claim in the evidence store.
 - **`claim-architecture-review`** — structural audit of narrative fields before line polish.
-- **`writing-anti-ai`** — strip AI-pattern prose from drafted boxes.
+- **`writing-anti-ai`** — **MANDATORY Stage-C+ gate** (not optional): every drafted narrative/
+  criterion-scored box passes it before render (see Core discipline #6 + pipeline C+).
 - **`paper-self-review`** — the checklist idiom; Stage E adapts it for applications.
 - **`review-response`** — resubmissions: response-to-reviewers on a re-applied scheme.
 - **`knows-literature`** — pull publication metadata / citations for the evidence store.
