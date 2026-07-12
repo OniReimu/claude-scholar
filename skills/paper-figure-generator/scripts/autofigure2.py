@@ -1581,7 +1581,7 @@ Please output ONLY the SVG code, starting with <svg and ending with </svg>. Do n
         provider=provider,
     )
 
-    # 强制非斜体 sans-serif，避免 SVG 默认落到斜体 Times New Roman
+    # 统一字体为 Times New Roman（正体/斜体均可）
     svg_code = normalize_svg_fonts(svg_code)
 
     output_path = Path(output_path)
