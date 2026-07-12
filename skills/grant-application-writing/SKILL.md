@@ -149,6 +149,15 @@ F   submission_plan.yaml                      owners, due dates, internal cutoff
 F+  build-manifest.yaml                       run-audit: input hashes + artifacts + the validate_ir verdict +
                                              per-criterion readiness + open blockers → ONE fail-closed `ready_to_submit`
                                              boolean. `scripts/build_manifest.py` composes validate_ir; reproducible, not hand-authored.
+F++ human handoff (MANDATORY)                 the run ALWAYS ends by writing, into the application's own folder, (1) a
+                                             PLAIN-LANGUAGE handoff `HUMAN-ACTIONS.md` — every remaining human
+                                             action/decision, jargon-free, in the applicant's language (default the
+                                             application's language, usually English), ranked by severity, with owner +
+                                             by-when; the readable twin of `blockers.md` (which stays technical); AND (2) a
+                                             DRAFT of every required proforma letter/attachment the applicant cannot
+                                             auto-fill (partner + lead-org letters of support, hosting/commitment letters),
+                                             each with `[TO SET]` placeholders that reconcile with entity/budget (never an
+                                             invented figure) and each through the C+ anti-AI gate. See `submission-management.md`.
 ```
 
 Each stage is specified in a `references/` file. Read the ones the task needs:
