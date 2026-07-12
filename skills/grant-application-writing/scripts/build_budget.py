@@ -282,8 +282,8 @@ def emit_yaml(currency, out_rows, target, requested):
     return doc
 
 
-def run(plan):
-    currency, out_rows, items, blocked, target, grand, requested = build(plan)
+def run(plan, rates=None):
+    currency, out_rows, items, blocked, target, grand, requested = build(plan, rates)
     gap_bad = target is not None and abs(target - grand) > EPS
     return currency, out_rows, items, blocked, target, grand, requested, gap_bad
 
