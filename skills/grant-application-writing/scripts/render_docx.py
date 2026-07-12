@@ -344,8 +344,9 @@ def main() -> None:
     ap.add_argument("ir", type=Path, nargs="?", help="flat IR/values YAML (back-compat; or --values)")
     ap.add_argument("template", type=Path, help="official .docx template to write into")
     ap.add_argument("-o", "--out", type=Path, required=True, help="output .docx path")
-    ap.add_argument("--scheme", type=Path, help="scheme.yaml (structure + limits) for C6")
+    ap.add_argument("--scheme", type=Path, help="scheme.yaml (structure + limits) for C6 + under-label render_match")
     ap.add_argument("--values", type=Path, help="values.yaml (field-id -> value) for C6")
+    ap.add_argument("--tables", type=Path, help="tables.yaml {field: {header_match?, rows[][]}} to fill a template table (e.g. budget)")
     args = ap.parse_args()
 
     values_path = args.values or args.ir
