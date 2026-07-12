@@ -142,6 +142,18 @@ Container/computed widgets carry sharper rules than the table row implies — lo
   so effort ∝ sub-weight within the box, distinct from `narrative.nested_sublimits` (char budgets).
 - **`allocation_sums_to` is a general attribute,** not taxonomy-code-only — it also applies to a
   `repeating-group` whose rows carry percentages (e.g. per-site % of project value summing to 100).
+- **Obligation `strength` is a first-class attribute of a requirement, not prose.** A CFP's normative
+  verbs (`must` / `should` / `highly desirable` / `may optionally`) carry different force: a
+  `mandatory` obligation unmet BLOCKS, a `desirable` one does not. Capture them as `scheme.requirements[]`
+  (`{strength, applies_if, quantifier, alternatives}` — see `form-schema-ir.md`), each `applies_if` a
+  predicate over a `classification` field (the `conditional-group`/`decision-tree` branch a workstream
+  choice selects). Collapsing graded obligations into one narrative box lets `criterion-readiness`
+  false-pass a proposal that answers a `should` and skips a `must`.
+- **`budget-matrix` carries a `funding_status` axis for conditional multi-year calls.** When a call
+  funds year-1 with later years indicative/continuation-conditional, rows carry
+  `funding_status: requested | indicative | conditional` and the scheme a `funding_window: {funded:[years]}`;
+  `validate_budget` separates the requested (this-call) total from the indicative trajectory and FAILs
+  a `requested` row spending outside the funded window — so a multi-year plan never reads as fully funded.
 
 ## Falsifiability
 
