@@ -284,7 +284,7 @@ def emit_yaml(currency, out_rows, target, requested):
 
 def run(plan, rates=None):
     currency, out_rows, items, blocked, target, grand, requested = build(plan, rates)
-    gap_bad = target is not None and abs(target - grand) > EPS
+    gap_bad = target is not None and abs(target - grand) > 0.01   # cent tolerance (amounts are $)
     return currency, out_rows, items, blocked, target, grand, requested, gap_bad
 
 
