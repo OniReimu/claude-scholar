@@ -110,8 +110,9 @@ risks:
 # Cross-axis targets: objectives[].aim → aims[].id; tasks[].person → entity-store investigators[].id;
 # tasks[].budget_lines → budget rows; outputs[].benefit → benefits[].id. Every id must resolve; no duplicates.
 objectives:                          # aim → numbered objectives (the condition each aim is met by)
-  - {id: obj-1, aim: aim-1, statement: "<condition to be achieved>"}
-  - {id: obj-2, aim: aim-2, statement: "Deliver an ingestion path that sustains p99 write latency < 800 ms at 10x baseline throughput"}
+  - {id: obj-1, aim: aim-1, statement: "<condition to be achieved>", addresses: [<req-ids from scheme.requirements[]>]}
+  - {id: obj-2, aim: aim-2, statement: "Deliver an ingestion path that sustains p99 write latency < 800 ms at 10x baseline throughput", addresses: [req-a1]}
+    # addresses (OPTIONAL): scheme.requirements[].id obligations this node satisfies — validate_ir requirement-coverage joins scheme-stated → plan-met
 tasks:                               # objective → task (one-to-one where possible)
   - id: task-1
     objective: obj-1                 # the objective this task achieves (→ objectives[].id)
