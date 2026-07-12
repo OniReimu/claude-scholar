@@ -25,10 +25,10 @@ Use this skill when:
 | Category | Focus | Directory |
 |----------|-------|-----------|
 | **NLP** | Text classification, NER, translation, LLM applications | `references/knowledge/nlp/` |
-| **CV** | Image classification, detection, segmentation, generation | `references/knowledge/cv/` |
+| **CV** | Image classification, detection, segmentation, generation | `references/knowledge/cv/` (no entries yet) |
 | **Time Series** | Forecasting, anomaly detection, sequence modeling | `references/knowledge/time-series/` |
 | **Tabular** | Feature engineering, traditional ML, structured data | `references/knowledge/tabular/` |
-| **Multimodal** | Cross-modal tasks, vision-language models | `references/knowledge/multimodal/` |
+| **Multimodal** | Cross-modal tasks, vision-language models | `references/knowledge/multimodal/` (no entries yet) |
 
 **文件组织结构**：每个竞赛一个独立的 markdown 文件，按 domain 分类到对应目录。
 
