@@ -79,6 +79,23 @@ present it is fail-closed — every id must resolve. `--mode submission` FAILs, 
                         budget row is referenced by ≥1 task; no id is duplicated. A broken edge /
                         dangling / duplicate / unstaffed / unfunded task FAILs submission (per edge).
 
+Check 20 is the requirement-coverage join over the scheme's graded obligation model
+(`requirements[]`, the CFP's must/should/desirable logic) and the `--plan` objectives/tasks/
+outputs that carry `addresses: [req-ids]`; gated on requirements[] present (else a labelled SKIP).
+
+ 20. requirement-coverage  for each requirements[] entry whose `applies_if` predicate holds
+                        (evaluated against supplied classification values — an UNKNOWN or
+                        unparseable predicate is fail-closed → the requirement is treated as
+                        applicable), resolve the plan nodes whose `addresses` contains the req id.
+                        A lone req needs ≥1 addressing node; an `alternatives` group under
+                        `quantifier: at_least_one` is met by ANY member, under `all` by every
+                        member. A mandatory/expected requirement (or an unmet at_least_one/all
+                        group) with NO addressing FAILs submission / WARNs draft (per req, naming
+                        the id + text); a desirable/optional gap is an informational WARN that
+                        never blocks. An adjunct `domain-review` WARN surfaces any criterion/claim
+                        tagged `needs_domain_review` with no recorded sign-off — a
+                        route-to-specialist flag (§4.6), never a silent pass.
+
 SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
 rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
 OPTIONAL sidecar was not supplied, or the scheme lacks that construct. Exit non-zero on any HARD
