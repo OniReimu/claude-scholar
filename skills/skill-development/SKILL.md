@@ -604,13 +604,12 @@ Good for: Complex domains with validation utilities
 
 ### Study These Skills
 
-Plugin-dev's skills demonstrate best practices:
+Sibling plugin-dev skills demonstrate best practices:
 - `../hook-development/` - Progressive disclosure, utilities
-- `../agent-development/` - AI-assisted creation, references
 - `../mcp-integration/` - Comprehensive references
-- `../plugin-settings/` - Real-world examples
 - `../command-development/` - Clear critical concepts
-- `../plugin-structure/` - Good organization
+- `../command-name/` - Plugin structure and organization
+- `../agent-identifier/` - AI-assisted agent creation, references
 
 ### Reference Files
 
