@@ -125,7 +125,7 @@ B   corpus → evidence-store.yaml             reusable across every application
 B2  people/orgs/partners → entity-store      project mode: CI/PI/partner/subaward/commitments/approvals
 B3  project substance → project-plan.yaml    project mode: aims/design, benefits, additionality/VfM, risk-triggers +
                                              the traceability SPINE (stable ids: aim→objective→task→subtask→output→benefit,
-                                             crossed by person→year→budget) — the §2.14–§2.19 substance passes render from it
+                                             crossed by person→year→budget) — the §2.14–§2.18 substance passes render from it
                                              (mechanized by validate_ir --plan; the spine turns cross-field consistency into a deterministic check)
 C   fill: per field → select evidence + mode-aware method passes
 D   render to native modality                paste-ready / docx write-back / AcroForm / honest degrade

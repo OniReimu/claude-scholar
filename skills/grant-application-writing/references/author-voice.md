@@ -368,7 +368,7 @@ stacks the "cannot be done by email" rhetoric on every row reads as padding.
 §5 sets the commercialisation strategic moves; this section sets how a project-mode application keeps
 *the same project* legible across every field once it carries a **traceability spine** — stable ids
 (`aim-1` → `obj-1` → `task-1` → `out-1` → `ben-1`) with each activity tracing up to a purpose and
-across to person / year / budget (`method-passes.md` §2.19). The spine makes the crosswalk
+across to person / year / budget (`method-passes.md` §2.18). The spine makes the crosswalk
 *checkable*; these three register moves make it *readable*. Each is used sparingly (§6). All examples
 fictional.
 
@@ -392,7 +392,7 @@ A panel reads the design across several pages and loses its shape. At a section 
 how they recombine*. *"Recall the three tasks: `task-1` supplies the shared `<theory / data / measure>`
 that `task-2` and `task-3` each consume, recombining at `<out-3>`."* This is a **structural reminder,
 not a re-count** (§6): it names the dependency architecture the spine already encodes
-(`foundational: true`, `depends_on` — §2.19), and it banks no task or output as a fresh achievement.
+(`foundational: true`, `depends_on` — §2.18), and it banks no task or output as a fresh achievement.
 One recap per boundary; a recap in every paragraph is padding.
 
 ### 11.3 Progressive specification — one thesis, five resolutions
@@ -400,7 +400,7 @@ One recap per boundary; a recap in every paragraph is padding.
 Repeat the *central thesis* at rising resolution rather than restating it verbatim: the **public
 summary** states it in lay terms → the **formal aim** in one scored sentence → the **numbered
 objectives** decompose it → the **task implementations** realise it in the
-gap→consequence→move→mechanism grammar (§2.19) → the **beneficiary consequence** lands its so-what.
+gap→consequence→move→mechanism grammar (§2.18) → the **beneficiary consequence** lands its so-what.
 Each pass *adds* resolution — new specificity, a tighter scope, a named mechanism — so the reader zooms
 from headline to method to benefit along a single spine. This is **controlled resolution change, not
 repetition, and not double-counting** (§6): a double-count claims one output as two distinct
