@@ -136,36 +136,17 @@ fi
 
 mkdir -p "$OUTPUT_DIR"
 
-# 默认参考图策略（用户未显式提供 reference_image_path 时启用）
+# 风格迁移为纯 opt-in：无内置默认参考图。仅当用户显式传 --reference_image_path 时启用。
 FINAL_ARGS=("${args[@]}")
-DEFAULT_REFERENCE_DIR="$SKILL_DIR/.autofigure-edit/img/reference"
-DEFAULT_REFERENCE_PATH=""
-for candidate in \
-  "$DEFAULT_REFERENCE_DIR/sample3.png" \
-  "$DEFAULT_REFERENCE_DIR/sample2.png"; do
-  if [ -f "$candidate" ]; then
-    DEFAULT_REFERENCE_PATH="$candidate"
-    break
-  fi
-done
 
-if [ "$REFERENCE_IMAGE_PATH_ARG_PRESENT" -eq 0 ]; then
-  if [ -n "$DEFAULT_REFERENCE_PATH" ]; then
-    if [ "$USE_REFERENCE_IMAGE_ARG_PRESENT" -eq 0 ]; then
-      FINAL_ARGS+=(--use_reference_image)
-    fi
-    FINAL_ARGS+=(--reference_image_path "$DEFAULT_REFERENCE_PATH")
-    echo "Reference style: default ($DEFAULT_REFERENCE_PATH)"
-  elif [ "$USE_REFERENCE_IMAGE_ARG_PRESENT" -eq 1 ]; then
-    echo "Error: --use_reference_image provided but no --reference_image_path."
-    echo "Also no default reference image found in:"
-    echo "  $DEFAULT_REFERENCE_DIR"
-    exit 1
-  else
-    echo "Reference style: none (no default reference found)"
-  fi
-else
+if [ "$REFERENCE_IMAGE_PATH_ARG_PRESENT" -eq 1 ]; then
   echo "Reference style: user-provided ($REFERENCE_IMAGE_PATH_ARG)"
+elif [ "$USE_REFERENCE_IMAGE_ARG_PRESENT" -eq 1 ]; then
+  echo "Error: --use_reference_image provided but no --reference_image_path." >&2
+  echo "Style transfer is opt-in; pass --reference_image_path path/to/style.png to enable." >&2
+  exit 1
+else
+  echo "Reference style: none (opt-in; pass --reference_image_path to enable style transfer)"
 fi
 
 # 记录本次运行参数（不写入任何 secret value）
