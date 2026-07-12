@@ -139,8 +139,14 @@ B2  people/orgs/partners → entity-store      project mode: CI/PI/partner/subaw
 B4  costing → budget.yaml                     project mode: `scripts/build_budget.py` COSTS + itemises the budget from
                                              human inputs (personnel = person×FTE×rate×years + on-costs; other_costs per
                                              year) → validate_budget's rows[] schema + an itemised Section-5 table. It
-                                             COMPUTES from supplied rates, never invents one (a missing rate = `[TO SET]`);
-                                             construction was the gap — validate_budget only ever CHECKED a budget, nothing built one.
+                                             COMPUTES from supplied rates, never invents one (a missing rate = `[TO SET]`).
+B4s scheduling → milestones.yaml             `scripts/build_timeline.py` builds the schedule from the spine
+                                             (tasks[].years[]+depends_on → Gantt + dependency-ordered milestones). Budget +
+                                             timeline are two of a THIRD script class — BUILDERS (compute an artifact from
+                                             inputs), distinct from validators/renderers. Construction was the systemic gap:
+                                             the skill had models+validators but almost no builders. See CLAUDE.md "BUILDERS"
+                                             for the full roadmap (build_rope_time / build_effort_allocation /
+                                             build_track_record_metrics / build_cocontribution — build each before its scheme).
 B3  project substance → project-plan.yaml    project mode: aims/design, benefits, additionality/VfM, risk-triggers +
                                              the traceability SPINE (stable ids: aim→objective→task→subtask→output→benefit,
                                              crossed by person→year→budget) — the §2.14–§2.18 substance passes render from it
