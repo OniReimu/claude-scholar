@@ -164,13 +164,22 @@ def build(plan, rates=None):
         _passthrough(p, base, ("org", "phase", "funding_status"))
         out_rows.append(base)
 
-        rate_txt = f"{rate:,.0f}" if rate is not None else "[TO SET]"
         fte_txt = f"{fte:g}" if fte is not None else "[TO SET]"
-        items.append({"section": "PERSONNEL", "id": pid,
-                      "label": f"{p.get('role', pid)} — {fte_txt} FTE × {rate_txt}/yr × {years}",
-                      "years": salary_years})
+        if ref:
+            bmin = min((v for v in base_by_year.values() if v is not None), default=None)
+            bmax = max((v for v in base_by_year.values() if v is not None), default=None)
+            src = f"{ref.get('level')}/{ref.get('step')}"
+            src += "+prog" if ref.get("step_progression", True) else ""
+            rate_txt = (f"{bmin:,.0f}→{bmax:,.0f}" if bmin != bmax else f"{bmin:,.0f}") if bmin is not None else "[TO SET]"
+            label = f"{p.get('role', pid)} — {fte_txt} FTE × {rate_txt}/yr ({src})"
+        else:
+            rate_txt = f"{rate:,.0f}" if rate is not None else "[TO SET]"
+            label = f"{p.get('role', pid)} — {fte_txt} FTE × {rate_txt}/yr × {years}"
+        items.append({"section": "PERSONNEL", "id": pid, "label": label, "years": salary_years})
+        if ref_note:
+            blocked.append(f"{pid}: {ref_note}")
         if any(v is None for v in salary_years.values()):
-            blocked.append(f"{pid}: salary [TO SET] (fte or annual_rate is null)")
+            blocked.append(f"{pid}: salary [TO SET] (fte, rate, or rate_ref lookup unresolved)")
 
         # on-cost 行（率 0 或全 0 则跳过）
         if oncost is None or oncost > 0:
