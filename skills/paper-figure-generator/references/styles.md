@@ -36,7 +36,7 @@ bash scripts/generate.sh \
 - 渐变色模块背景（浅色到中等饱和度）
 - 圆角矩形
 - 柔和阴影
-- 清晰的 sans-serif 字体
+- 清晰的 Times New Roman 字体（正体/斜体）
 
 **参考图片来源**: 从目标会议的 best paper 中截取 Figure 1 作为参考图片。
 
