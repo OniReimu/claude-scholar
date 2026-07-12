@@ -140,9 +140,20 @@ def build(plan, rates=None):
         if not isinstance(years, list) or not years:
             raise PlanError(f"{pid}.years 须为非空年份列表")
 
+        # per-year base: from a rate_ref lookup (with step progression), else the flat annual_rate
+        ref = p.get("rate_ref")
+        ref_note = None
+        if ref:
+            base_by_year, oc_default, ref_note = resolve_rate_ref(ref, rates, years, pid)
+            if oncost is None:
+                oncost = _num_or_none(oc_default, f"{pid}.on_cost(table)")
+        else:
+            base_by_year = {y: rate for y in years}
+
         salary_years, oncost_years = {}, {}
         for y in years:
-            sal = None if (fte is None or rate is None) else fte * rate
+            b = base_by_year.get(y)
+            sal = None if (fte is None or b is None) else fte * b
             salary_years[y] = sal
             oncost_years[y] = None if (sal is None or oncost is None) else sal * oncost
 
