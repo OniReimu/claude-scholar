@@ -4,12 +4,15 @@ This knowledge base contains actionable writing patterns, techniques, and strate
 
 ## Organization
 
-The knowledge is organized into 4 categories:
+The knowledge base contains:
 
 1. **structure.md** - Paper organization and IMRaD patterns
 2. **writing-techniques.md** - Sentence patterns and transition phrases
 3. **submission-guides.md** - Venue-specific requirements
 4. **review-response.md** - Rebuttal and reviewer response strategies
+5. **rethinking-papers-kaiming-he.md** - Case study: "rethinking" framing patterns (Kaiming He papers)
+6. **theory-driven-papers-kaiming-he.md** - Case study: theory-driven framing (Kaiming He papers)
+7. **design-simplification-papers-kaiming-he.md** - Case study: design-simplification framing (Kaiming He papers)
 
 ## Knowledge Sources
 
