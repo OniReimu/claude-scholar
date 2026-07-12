@@ -270,7 +270,7 @@ def render_table(currency, items, out_rows, blocked, target, grand, requested):
     if target is not None:
         gap = target - grand
         lines.append(f"  target: {target:,.0f}   GAP: {gap:+,.0f}"
-                     + ("  (reconciled)" if abs(gap) <= EPS else "  — NOT reconciled (fix inputs, never fudge)"))
+                     + ("  (reconciled)" if abs(gap) <= 0.01 else "  — NOT reconciled (fix inputs, never fudge)"))
     if blocked:
         lines.append("== [TO SET] (fail-closed — supply before validate_budget) ==")
         lines.extend(f"  ! {b}" for b in blocked)
