@@ -2036,6 +2036,85 @@ rows:
     assert any(e[1] == "WARN" for e in d19c) and not any(e[1] == "FAIL" for e in d19c), \
         "same orphan budget row only WARNs in draft mode"
 
+    # 20. requirement-coverage — call directly (mirrors #19): join scheme.requirements[] against
+    #     plan objectives/tasks/outputs carrying `addresses: [req-ids]`. A met mandatory PASSes;
+    #     an unmet mandatory FAILs submission / only WARNs draft; an applies_if that does not hold
+    #     is not applicable; an unknown classification is fail-closed (applies); an unmet desirable
+    #     never FAILs; an at_least_one group met by ONE alternative PASSes; no requirements[] →
+    #     SKIP. Fictional ids only (req-a1/req-a1b, workstream A/B, obj-1/task-1).
+    def reqcov(sch, pl, vals, m):
+        r = Report(); check_requirement_coverage(r, sch, pl, vals, m); return r.entries
+
+    req_scheme = {"requirements": [
+        {"id": "req-a1", "text": "the mandatory obligation", "strength": "mandatory",
+         "applies_if": "classification.workstream == A"}]}
+    met_plan = {"tasks": [{"id": "task-1", "addresses": ["req-a1"]}]}
+    empty_plan = {"tasks": [{"id": "task-1"}]}
+    clsA = {"classification": {"workstream": "A"}}
+    clsB = {"classification": {"workstream": "B"}}
+
+    ok = reqcov(req_scheme, met_plan, clsA, "submission")
+    assert any(e[1] == "PASS" and e[0].startswith("requirement-coverage[") for e in ok) \
+        and not any(e[1] == "FAIL" for e in ok), "addressed mandatory requirement must PASS"
+
+    um = reqcov(req_scheme, empty_plan, clsA, "submission")
+    assert any(e[1] == "FAIL" and e[0].startswith("requirement-coverage[") for e in um), \
+        "unaddressed mandatory requirement must FAIL submission"
+    umd = reqcov(req_scheme, empty_plan, clsA, "draft")
+    assert any(e[1] == "WARN" for e in umd) and not any(e[1] == "FAIL" for e in umd), \
+        "same unaddressed mandatory only WARNs in draft mode"
+
+    assert not any(e[1] == "FAIL" for e in reqcov(req_scheme, empty_plan, clsB, "submission")), \
+        "a requirement whose applies_if does not hold must not FAIL (not applicable)"
+    assert any(e[1] == "FAIL" for e in reqcov(req_scheme, empty_plan, {}, "submission")), \
+        "unknown classification is fail-closed (applies) → unmet mandatory FAILs submission"
+
+    des_scheme = {"requirements": [{"id": "req-d1", "text": "a nice-to-have", "strength": "desirable"}]}
+    assert not any(e[1] == "FAIL" for e in reqcov(des_scheme, {"tasks": []}, {}, "submission")), \
+        "an unmet desirable requirement must not FAIL (informational only)"
+
+    grp_scheme = {"requirements": [
+        {"id": "req-a1", "text": "the group obligation", "strength": "mandatory",
+         "quantifier": "at_least_one", "alternatives": ["req-a1", "req-a1b"]}]}
+    grp_plan = {"objectives": [{"id": "obj-1", "addresses": ["req-a1b"]}]}
+    gm = reqcov(grp_scheme, grp_plan, {}, "submission")
+    assert any(e[1] == "PASS" for e in gm) and not any(e[1] == "FAIL" for e in gm), \
+        "an at_least_one group met by one alternative must PASS"
+
+    assert any(e[1] == "SKIP" for e in reqcov({}, met_plan, clsA, "submission")), \
+        "a scheme with no requirements[] must SKIP requirement-coverage"
+
+    # GAP-3 light — an unsigned needs_domain_review tag WARNs; a signed-off one does not; none → SKIP
+    def domrev(sch, pl):
+        r = Report(); check_domain_review(r, sch, pl); return r.entries
+
+    dr_scheme = {"rubric": [{"criterion": "C1", "needs_domain_review": "security-proofs"}]}
+    assert any(e[1] == "WARN" and e[0] == "domain-review" for e in domrev(dr_scheme, {})), \
+        "an unsigned needs_domain_review tag must surface a WARN"
+    signed = {"rubric": [{"criterion": "C1", "needs_domain_review": "security-proofs",
+                          "domain_signoff": "Specialist reviewer, 2026"}]}
+    assert not any(e[1] == "WARN" and e[0] == "domain-review" for e in domrev(signed, {})), \
+        "a signed-off needs_domain_review tag must not WARN"
+    assert any(e[1] == "SKIP" and e[0] == "domain-review" for e in domrev({}, {})), \
+        "no needs_domain_review tags → SKIP domain-review"
+
+    # requirement-coverage end-to-end: a scheme with a mandatory requirement + a plan whose nodes
+    # do NOT address it fails submission-mode orchestrate but only WARNs (exit 0) in draft.
+    req_scheme_p = _write(tmp, "req_scheme.yaml", __import__("yaml").safe_dump({
+        "scheme": "Req-Test", "mode": "prospective-project",
+        "requirements": [{"id": "req-a1", "text": "the mandatory obligation",
+                          "strength": "mandatory"}]}))
+    req_plan_unmet = _write(tmp, "req_plan_unmet.yaml", __import__("yaml").safe_dump(
+        {"tasks": [{"id": "task-1"}]}))
+    req_plan_met = _write(tmp, "req_plan_met.yaml", __import__("yaml").safe_dump(
+        {"tasks": [{"id": "task-1", "addresses": ["req-a1"]}]}))
+    assert orchestrate(req_scheme_p, mode="submission", plan_path=req_plan_unmet) == 1, \
+        "unaddressed mandatory requirement must fail submission-mode orchestrate"
+    assert orchestrate(req_scheme_p, mode="draft", plan_path=req_plan_unmet) == 0, \
+        "same unaddressed requirement passes (WARN only) in draft-mode orchestrate"
+    assert orchestrate(req_scheme_p, mode="submission", plan_path=req_plan_met) == 0, \
+        "an addressed mandatory requirement passes submission-mode orchestrate"
+
     # project-substance end-to-end: complete plan passes submission; a broken plan (triggerless
     # high-impact risk) fails submission-mode orchestrate but only WARNs (exit 0) in draft.
     plan_ok_p = _write(tmp, "plan.yaml", __import__("yaml").safe_dump(_plan()))
