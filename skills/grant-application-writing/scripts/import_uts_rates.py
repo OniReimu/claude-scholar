@@ -85,8 +85,9 @@ def parse_workbook(ws):
                 if m:
                     hdr = float(m.group(1).replace(",", ""))
         base = _f(cells.get("B"))
-        # STEP row: A matches a step token AND B is numeric
-        if STEP_RE.match(a) and base is not None and cur is not None:
+        # STEP row: A matches a step token AND B is a PLAUSIBLE annual base (not a step index / hourly
+        # rate — fail-closed against a column shift in a future year's calculator)
+        if STEP_RE.match(a) and base is not None and base >= MIN_PLAUSIBLE_BASE and cur is not None:
             c_val = _f(cells.get("C"))
             casual = _f(cells.get("F"))
             if c_val and base:
