@@ -397,7 +397,6 @@ Working examples in `examples/`:
 Development tools in `scripts/`:
 
 - **`validate-agent.sh`** - Validate agent file structure
-- **`test-agent-trigger.sh`** - Test if agent triggers correctly
 
 ## Implementation Workflow
 

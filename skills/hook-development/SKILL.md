@@ -32,7 +32,7 @@ Use LLM-driven decision making for context-aware validation:
 }
 ```
 
-**Supported events:** Stop, SubagentStop, UserPromptSubmit, PreToolUse
+**Supported events:** all hook events (PreToolUse, PostToolUse, Stop, SubagentStop, SessionStart, SessionEnd, UserPromptSubmit, PreCompact, Notification)
 
 **Benefits:**
 - Context-aware decisions based on natural language reasoning
