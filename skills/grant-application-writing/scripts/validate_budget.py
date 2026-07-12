@@ -12,6 +12,8 @@
   5. 累计现金流动性 (cash_flow_check) —— 缺 cash_in 即 FAIL，非静默 no-op
   6. 分期预算 (phased_if_min)    —— requested ≥ 阈值 时要求 ≥2 个有成本的 phase
   7. 双录平衡 (balance_check)    —— enabled 时 income==expenditure（含 in-kind 双边），|delta| ≤ tolerance
+  8. 多年资助状态 (funding_status) —— requested (this-call) 与 indicative/conditional 分列；
+                                      funding_window.funded 存在时 requested 行越窗 → FAIL
 
 FAIL-CLOSED 硬错误 (BudgetError → 非零退出，非 rule-FAIL):
   * row-cap 缺 `of` 或 `of` 非法          → error

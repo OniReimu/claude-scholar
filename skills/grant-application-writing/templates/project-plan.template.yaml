@@ -138,6 +138,8 @@ tasks:                               # objective → task (one-to-one where poss
     years: [2, 3]
     budget_lines: [bl-2]
     validation: val-2
+    funding_status: indicative       # years 2-3 fall beyond a year-1-only funded window → indicative, NOT presented as funded (→ funding_window.funded, validate_budget)
+    addresses: [req-a1]              # this task meets scheme obligation req-a1 (the mandatory one) — validate_ir requirement-coverage resolves it
 outputs:                             # task → output → benefit  (kind: theory|method|tool|demonstrator|publication)
   - {id: out-1, task: task-1, kind: theory,       benefit: ben-1}
   - {id: out-2, task: task-2, kind: demonstrator, benefit: ben-2}   # → benefits[].id (the open-source ingestion toolkit)
