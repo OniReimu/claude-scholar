@@ -92,9 +92,16 @@ def compute(plan):
 
     raw = None if phd is None else _years(phd, as_of)
     effective = None if raw is None else raw - total_credit
+    # eligible ∈ True | False | "borderline" | None. Within BORDERLINE_MARGIN of the window the
+    # verdict is date-noise-sensitive (365.25 approx, census-day convention) — do NOT hard-assert;
+    # flag borderline and route to an exact day-count against the scheme's census-date rule.
     eligible = None
     if effective is not None and window is not None:
-        eligible = effective <= float(window) + 1e-9
+        gap = float(window) - effective          # >0 = inside window, <0 = over
+        if abs(gap) <= BORDERLINE_MARGIN:
+            eligible = "borderline"
+        else:
+            eligible = gap > 0
 
     return {"as_of": str(as_of),
             "phd_conferral": None if phd is None else str(phd),
