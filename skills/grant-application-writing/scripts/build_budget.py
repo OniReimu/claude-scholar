@@ -74,6 +74,41 @@ def _passthrough(src, row, keys):
             row[k] = src[k]
 
 
+def _match_level(level, scales):
+    """精确或子串匹配费率表的 level 名（'Level A' 命中 'Level A - Research Associate…'）。"""
+    if level in scales:
+        return level
+    lo = str(level).lower().strip()
+    cands = [k for k in scales if lo and (lo in k.lower() or k.lower().startswith(lo))]
+    return cands[0] if len(cands) == 1 else (cands[0] if cands else None)
+
+
+def resolve_rate_ref(ref, rates, years, pid):
+    """rate_ref{level,step,step_progression} × 费率表 → (base_by_year, on_cost_default, note).
+
+    逐年 step 递进（默认 true；§UTS 规则要求项目内每年进一档），越出最高档则封顶。
+    表/level/step 缺失 → base 为 None（=[TO SET]，绝不臆造），并回一条 note。
+    """
+    if not rates:
+        raise PlanError(f"{pid}: rate_ref 需要 --rates 费率表（rule 每年变，是 instance data）")
+    scales = rates.get("scales") or {}
+    lvl = _match_level(ref.get("level"), scales)
+    if lvl is None:
+        return {y: None for y in years}, None, f"level {ref.get('level')!r} 不在费率表"
+    steps = scales[lvl]
+    step_keys = list(steps)
+    start = ref.get("step")
+    if start not in steps:
+        return {y: None for y in years}, None, f"step {start!r} 不在 {lvl}"
+    idx0 = step_keys.index(start)
+    prog = ref.get("step_progression", True)
+    base_by_year = {}
+    for i, y in enumerate(years):
+        j = min(idx0 + i, len(step_keys) - 1) if prog else idx0
+        base_by_year[y] = steps[step_keys[j]].get("base")
+    return base_by_year, rates.get("on_cost_pct"), None
+
+
 def build(plan):
     """→ (currency, out_rows[], items[], blocked[], target, grand). out_rows = validate_budget schema."""
     if not isinstance(plan, dict):
