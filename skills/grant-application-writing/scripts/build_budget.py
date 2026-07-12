@@ -109,8 +109,14 @@ def resolve_rate_ref(ref, rates, years, pid):
     return base_by_year, rates.get("on_cost_pct"), None
 
 
-def build(plan):
-    """→ (currency, out_rows[], items[], blocked[], target, grand). out_rows = validate_budget schema."""
+def build(plan, rates=None):
+    """→ (currency, out_rows[], items[], blocked[], target, grand). out_rows = validate_budget schema.
+
+    `rates` (optional): a rate-table dict (see import_uts_rates.py) letting a personnel row use
+    `rate_ref:{level,step,step_progression}` instead of a hand-typed `annual_rate` — the base is
+    looked up per year (with annual step progression). Rates change yearly = instance data; the
+    table is supplied via --rates, never hardcoded here.
+    """
     if not isinstance(plan, dict):
         raise PlanError("budget-plan 根节点须为映射")
     personnel = plan.get("personnel") or []
