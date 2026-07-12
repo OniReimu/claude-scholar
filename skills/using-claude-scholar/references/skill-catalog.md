@@ -63,7 +63,7 @@
 | Skill | Trigger Condition |
 |-------|-------------------|
 | **frontend-design** | Creating distinctive, production-grade frontend interfaces |
-| **ui-ux-pro-max** | UI/UX design (50+ styles, 97 color palettes, 57 font pairs, 9 tech stacks) |
+| **ui-ux-pro-max** | UI/UX design intelligence (styles, palettes, font pairings, chart types across 9 tech stacks) |
 | **web-design-reviewer** | Visual inspection and design issue fixing |
 
 ## System (2 skills)
