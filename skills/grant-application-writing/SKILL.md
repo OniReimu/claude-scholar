@@ -50,6 +50,45 @@ number — a different genre with its own machinery.
    after — the grant-specific evidentiary rules above (never let a de-AI edit weaken a verb's
    evidentiary commitment or launder an honest `[TO SET]`).
 
+## Output & drafting conventions (non-negotiable)
+
+These sit alongside Core discipline and govern HOW the output is packaged and drafted.
+
+1. **Deliverables are Markdown; IR is YAML and kept separate; the final export is .docx/.pdf.**
+   The human-facing outputs (paste-ready, budget table, blockers→`HUMAN-ACTIONS.md`, letters) are
+   **`.md`, never `.txt`**. The machine IR (`scheme`/`entity`/`project-plan`/`budget`/`evidence`/
+   `*-plan`/`manifest`/`milestones`) is YAML and lives in an **`_ir/` subfolder**, NOT interleaved
+   with the `.md` deliverables. The final artifact the applicant submits is a rendered **`.docx`
+   (or `.pdf`)** — the filled official template (Stage D `render_docx.py`), not a loose text dump.
+2. **Template fidelity + human cross-validate.** Draft to the official form's ACTUAL structure:
+   mirror its section order, headings, field labels, and per-field limits verbatim (the proven
+   workflow: build an `.md` from the sample/template, hold the layout, then render into the real
+   `.docx`). The rendered output is handed back for **human cross-validation** against the live
+   form before submission — the skill states this explicitly, it does not imply the fill is final.
+3. **Context-provenance: briefing ≠ assertable content (don't leak the brief).** Material given to
+   BRIEF the agent (background, prior work, "for your understanding") must NOT be auto-promoted into
+   the application text as confirmed claims. Distinguish, per claim: `corpus-confirmed` (a fact the
+   applicant stated) · `briefing-background` (context for the agent) · `web-verified` (with a
+   source) · `inferred`. Public-facing fields (plain-language summaries) stay generic and do not
+   lean on internal project scaffolding; technical fields may cite real prior work but every
+   background-derived claim is **labelled so the human can strike it** (a companion provenance note,
+   or an inline tag). When unsure whether background is assertable, ASK — do not assert it.
+4. **Fill to 90–95% of every limit.** Under-use forfeits score. `charcount.py` flags OVER; the
+   drafting target is **≥90% of each field's char/word limit** (not merely "under"). A field left at
+   ~60% is a flagged gap to expand, exactly as an over-limit field is a gap to cut.
+
+## Intake enrichment (Stage A0/B — automatic intelligence)
+
+At intake, don't rely solely on the supplied corpus. Actively enrich the entity/evidence stores from
+public sources (WebSearch/WebFetch): the partner org + its lab/centre, each named investigator's
+public profile + real expertise, and the pre-existing relationship between the applicant's and the
+partner's institutions (MoUs, joint centres, prior grants). This routinely (a) STRENGTHENS the case
+(e.g. a decade-old joint research centre corrects an understated "new relationship" framing) and
+(b) SURFACES honesty risks (e.g. a named lead whose public expertise does not match the role the
+draft assigns them). Every enriched fact carries a `provenance` URL + `as_of`; a formal form field
+(legal name, lead of record) still needs the partner's own confirmation, so enrichment INFORMS but
+does not replace `[VERIFY]`.
+
 ## IO contract
 
 ```
