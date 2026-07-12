@@ -292,6 +292,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("plan", nargs="?", help="budget-plan.yaml 路径")
     ap.add_argument("-o", "--out", help="写出的 budget.yaml 路径（省则只打印表）")
+    ap.add_argument("--rates", help="费率表 yaml（import_uts_rates.py 产出）：让 personnel rate_ref 查表")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
     if args.self_test:
@@ -300,8 +301,9 @@ def main():
         ap.error("需要 budget-plan.yaml 路径 (或 --self-test)")
     import yaml
     plan = yaml.safe_load(open(args.plan, encoding="utf-8")) or {}
+    rates = yaml.safe_load(open(args.rates, encoding="utf-8")) if args.rates else None
     try:
-        currency, out_rows, items, blocked, target, grand, requested, gap_bad = run(plan)
+        currency, out_rows, items, blocked, target, grand, requested, gap_bad = run(plan, rates)
     except PlanError as exc:
         print(f"PLAN ERROR (fail-closed): {exc}", file=sys.stderr)
         return 2
