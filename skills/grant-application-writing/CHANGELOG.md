@@ -1,5 +1,30 @@
 # Changelog — grant-application-writing
 
+## 0.6.0
+
+The "scheme-KB + register-driven literature review" release. Closes meeting-audit items A3 and A4.
+Both are reference/discipline additions (no fragile new validators): the value is the accumulating
+knowledge base + the register-calibrated drafting rule.
+
+### Added — A3: per-scheme accumulating knowledge base
+- `templates/scheme-kb.template.yaml` — a standing, year-over-year KB for ONE scheme: the marketing /
+  selection criteria (with interpretation) + past reviewer/panel comments ("pings") + failure modes +
+  exemplar pointers. INSTANCE DATA that accumulates round over round (like `rate-table.yaml`), not
+  hardcoded. Placeholders only. (Meeting #16/35/82.)
+- method-passes §4.1 (reviewer/panel tailoring): the `reviewer_model`'s scoring-emphasis + red-flags are
+  now built FROM the `scheme-kb` when present (what the panel actually praised/punished last round),
+  each scored field aligned to the matching criterion's interpretation. Honesty guards: a reviewer quote
+  is verbatim (never invented); "does the draft address a past concern" is a review-pass judgement, not
+  a mechanical check.
+
+### Added — A4: register-driven literature-review shape
+- method-passes §2.11(i): how deep/formal the literature treatment goes is driven by
+  `classification.register` — **academic** → a genuine literature review (position against prior art,
+  cite, name the gap); **industrial** → story completeness (problem→solution→benefit), where a thin
+  lit-review is EXPECTED, not a defect. The "literature-thin narrative" flag is now raised only for
+  `register: academic`; an industrial application is not flagged for lacking a scholarly review it was
+  never meant to carry. Dispatch note added to SKILL.md's register bullet. (Meeting #2.)
+
 ## 0.5.0
 
 The "profiles + CV + meeting-nuance" release. Closes the largest concrete gaps from the working-meeting
