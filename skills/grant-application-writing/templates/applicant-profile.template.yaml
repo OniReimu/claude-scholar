@@ -1,0 +1,71 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# applicant-profile.yaml — reusable APPLICANT bio / admin / eligibility scaffold  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# The standing personal profile, amortised across every application (meeting #63/64/65:
+# "自建 profile 文件夹，让 AI 根据要求生成 CV / award；CV 有的 2 页有的 6 页"). This holds ONLY
+# the biographical / administrative / eligibility scaffold that the research-record
+# `evidence-store.yaml` does NOT — it POINTS to the evidence store for publications/funding/
+# supervision/awards/service rather than duplicating them (single source of truth).
+#
+# Ships PLACEHOLDERS ONLY (zero real applicant data in the skill). The real instance lives in
+# a per-user profile folder / the application's own project folder.
+#
+# Drives two things:
+#   1. Admin-metadata auto-fill — name / position / appointment / eligibility fill FROM here,
+#      not `[TO SET]` (reserve `[TO SET]`/`[VERIFY]` for what is genuinely unknown this round).
+#   2. Length-adaptive CV — `scripts/build_cv.py` reads `cv_config` + the evidence store and
+#      assembles a CV to the scheme's page budget (2pp / 6pp …), reporting what it trims.
+# ─────────────────────────────────────────────────────────────────────────────
+
+applicant:
+  name: "<Full Name incl. title, e.g. Dr Jane Q. Researcher>"   # a CV / lead-CI field wants this exact string
+  title: "<current position title, e.g. Lecturer / Senior Lecturer>"
+  orcid: "<0000-0000-0000-0000>"                          # or a pointer to evidence-store owner.orcid (keep ONE canonical)
+  contact:
+    email: "<name@example.edu>"
+    institutional_page: "<https://example.edu/staff/...>"
+
+  # ── Appointments (CV section — NOT in evidence-store; kept here) ──
+  appointments:
+    - {title: "<Lecturer>", org: "<University>", period: {from: "<YYYY-MM>", to: null}}   # to: null = current
+    - {title: "<Postdoctoral Fellow>", org: "<Prior Org>", period: {from: "<YYYY-MM>", to: "<YYYY-MM>"}}
+
+  # ── Education (CV section) ──
+  education:
+    - {degree: "<PhD in Field>", institution: "<University>", year: <YYYY>}
+    - {degree: "<MSc / BEng in Field>", institution: "<University>", year: <YYYY>}
+
+  # ── Eligibility facts (run BEFORE drafting — core discipline #2) ──
+  eligibility:
+    citizenship: "<AU citizen | AU PR | other>"           # a scheme's lead may REQUIRE PR/citizen (#69) — a hard gate input
+    residency_status: "<[VERIFY against the scheme's eligibility clause]>"
+    appointment_basis: "<continuing | fixed-term>"        # some schemes require a continuing/fixed-term appointment at close
+    appointment_fraction: <0.0-1.0>
+    phd_conferral: "<YYYY-MM-DD>"                          # canonical in evidence-store.dates; mirror here for the ROPE gate input
+    career_interruptions:                                 # ROPE — feeds build_rope_time; personal, usually assessor-confidential
+      - {from: "<YYYY-MM>", to: "<YYYY-MM>", fte_fraction: <0.0-1.0>, reason: "<e.g. parental leave>"}
+
+# ─── Pointer to the research record (do NOT duplicate it here) ───
+# publications / funding / supervision / awards / service / metrics all live in the evidence store;
+# build_cv reads them from there via --evidence. This keeps ONE source of truth.
+evidence_store_ref: "<_ir/evidence-store.yaml>"
+
+# ─── CV generation config (drives build_cv.py — length is INSTANCE data, per scheme) ───
+# section_order: the order sections appear. length_profiles: per-section item CAPS for each
+# named page budget. build_cv selects the top-N (publications ranked by tier then year via
+# --tiers, funding by amount, rest by recency) and REPORTS what it trimmed — never silently.
+cv_config:
+  section_order: [appointments, education, publications, funding, supervision, awards, service]
+  length_profiles:
+    2pp:                                                  # a short 2-page CV
+      publications: 8
+      funding: 5
+      supervision: 4
+      awards: 4
+      service: 3
+    6pp:                                                  # a full 6-page CV
+      publications: 40
+      funding: 25
+      supervision: 30
+      awards: 20
+      service: 20
