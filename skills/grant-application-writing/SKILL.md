@@ -85,9 +85,17 @@ These sit alongside Core discipline and govern HOW the output is packaged and dr
    lean on internal project scaffolding; technical fields may cite real prior work but every
    background-derived claim is **labelled so the human can strike it** (a companion provenance note,
    or an inline tag). When unsure whether background is assertable, ASK — do not assert it.
-4. **Fill to 90–95% of every limit.** Under-use forfeits score. `charcount.py` flags OVER; the
-   drafting target is **≥90% of each field's char/word limit** (not merely "under"). A field left at
-   ~60% is a flagged gap to expand, exactly as an over-limit field is a gap to cut.
+4. **Fill to 90–95% of every limit — with PROJECT SUBSTANCE, not background padding.** Under-use
+   forfeits score; `charcount.py` flags OVER and the target is **≥90%** of each limit (a field at ~60%
+   is a gap to expand). BUT fill it with *what this project does*, not with history. **Minimise
+   background / prior-work**, hard, **especially in short scored fields (≤200 words)**: an assessor of
+   a "roles and contributions" or a "methodology" box wants the role / the method, NOT a paragraph on
+   what the team did before — that belongs in the CV / track-record. A **one-clause capability anchor**
+   for additionality or feasibility is fine ("builds on prior Smart Bin work, which the project
+   extends"); a full background paragraph in a project field is wasted words and reads as padding. When
+   a short field is over-limit, the first thing to cut is background; when it is under-limit, add
+   project substance, never more history. (This is exactly the meeting feedback: "背景放太多、太琐碎；
+   给一无所知的人看的，不必了解你之前做过什么，主要是这个项目做什么".)
 5. **Single source of truth — paired machine/human artifacts MUST NOT drift.** Several outputs exist
    as a machine copy + a human copy of the SAME facts: `blockers.yaml` ↔ `blockers.md` ↔
    `HUMAN-ACTIONS.md`; `entity-store` contributions ↔ the budget contributions table; `budget.yaml`
