@@ -353,6 +353,13 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
   form's in-kind contribution fields, and mirror the confirmed totals into `entity-store integrity`
   (run `build_cocontribution.py` if the scheme scores matched funding). A cash-only budget on a
   scheme with in-kind fields is an incomplete budget, flagged like an over-limit field.
+- **HDR stipend = base scholarship + top-up (itemise the two).** Where a scheme funds a PhD student by
+  stipend (CRC-P and similar), the cost is usually the **institutional base scholarship PLUS a top-up**,
+  not the bare base — e.g. "$X base + $Y top-up ≈ $Z/yr" — so cost it as the two components at the
+  school's standard rate, not the raw base (which under-budgets). Conversely, where the scheme requires
+  **employee labour and a stipend is ineligible** (AVSTICI-style), do NOT use a stipend at all — cost an
+  RA/engineer/postdoc **salary** via the rate table (`build_budget --rates`). Pick stipend-vs-salary
+  from the scheme's eligible-cost rules first, then itemise its components.
 - **Named-entity type consistency.** A travel/attendance line's named venue must actually be that
   kind of venue — a *conference* destination must be a conference, not a journal (e.g. "TIFS" is a
   journal, not a meeting). Cross-check named venues/orgs against their type in the evidence-store;
