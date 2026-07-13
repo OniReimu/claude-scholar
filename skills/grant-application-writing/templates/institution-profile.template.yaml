@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# institution-profile.yaml — reusable ADMINISTERING-ORGANISATION facts  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# The standing knowledge base of the lead/administering organisation, amortised
+# across EVERY application (meeting point #21/63/66: "自建 folder 管 UTS ABN/地址/
+# profile；lead=UTS 时这块应能自己填进去"). Admin fields whose answer is a KNOWN
+# institutional fact fill FROM here, NOT from `[TO SET]` — reserve `[TO SET]`/`[VERIFY]`
+# for what is genuinely unknown this round.
+#
+# Ships PLACEHOLDERS ONLY (zero real applicant/institution data in the skill). The real
+# instance lives in the application's own project folder / a per-user profile folder.
+# A legal form field (legal name, ABN, authorised signatory of record) still needs the
+# org's own confirmation before submission → keep `verified_as_of`; enrichment INFORMS,
+# never replaces, `[VERIFY]`.
+#
+# This is the institutional half of the pair; the applicant half is `applicant-profile.yaml`.
+# The host-institution SUPPORT statement (establishment grant / stipend top-up / teaching
+# relief) is authored from the entity-store `organizations[].institutional_support` block —
+# `support_language` here is the reusable BOILERPLATE, the dollar figures live in entity-store.
+# ─────────────────────────────────────────────────────────────────────────────
+
+organisation:
+  legal_name: "<Full Legal Name of University>"          # the exact legal name a form's "lead organisation" field wants
+  trading_name: "<Common/Trading Name>"
+  abn: "<00 000 000 000>"                                # Australian Business Number — a stable fact, fill from here
+  org_type: "<Table A provider under the Higher Education Support Act 2003>"   # eligibility-relevant classification
+  hesa_eligible: <true | false>                          # eligible HESA-2003 institution? (ARC/NHMRC eligibility gate)
+  country: "<AU>"
+  addresses:
+    registered: "<Street, Suburb STATE POSTCODE, Country>"
+    postal: "<PO Box / same as registered>"
+  identifiers:
+    ror: "<https://ror.org/xxxxxxxxx>"                   # Research Organization Registry id
+    grid: "<grid.xxxxx.x>"
+  verified_as_of: "<YYYY-MM-DD>"                          # last time these legal facts were confirmed against the source of record
+
+# ─── Authorised people of record (a form's certification / submission-authority fields) ───
+signatories:
+  authorised_officer:                                    # who certifies/submits on the org's behalf
+    role: "<Deputy Vice-Chancellor (Research) | delegate>"
+    name: "<[VERIFY — confirm current holder]>"          # a named role holder changes — NEVER assume; VERIFY each round
+    contact: "<research.office@example.edu>"
+  research_office:
+    name: "<Research Office / Grants Team>"
+    contact: "<grants@example.edu>"
+    submission_authority: true                           # ARC/NHMRC: the ORG submits, not the applicant (drives submission_plan F)
+
+# ─── Reusable institutional-support BOILERPLATE (prose, NOT dollar figures) ───
+# The reusable language a host-support statement is built from; the COMMITTED $ figures live
+# in the application's entity-store `organizations[].institutional_support.items`, reconciled
+# by validate_ir `institutional-support-reconciliation`. Keep these generic + third-person.
+support_language:
+  research_environment: "<one-paragraph description of facilities / centres / infrastructure the org offers a project>"
+  standard_commitments:                                  # the KINDS of support typically offered (instantiate $ per application)
+    - "<establishment grant on commencement>"
+    - "<HDR stipend top-up to school standard>"
+    - "<teaching relief for the fellowship period>"
+    - "<salary-shortfall cover where the scheme underfunds the level>"
+
+# ─── Costing policy pointers (the METHOD is year-invariant; the RATES are instance data) ───
+# The salary/on-cost METHOD lives in import_uts_rates.py; the year's actual RATES regenerate
+# into a rate-table.yaml (rate-table.template.yaml). Point to the current one here, don't inline numbers.
+costing:
+  rate_table_ref: "<_ir/rate-tables/<inst>-<year>-<scheme>.yaml>"   # produced by import_uts_rates.py from the current salary calculator
+  hdr_stipend_policy: "<base scholarship + STARS + top-up to school standard; regenerate the $ figures yearly>"
+  fte_conventions: "<e.g. lead ≥0.1 FTE, others ≥0.01; contract-research written low — CONFIRM against current org policy>"
+
+# ─── Standing partnerships (enrichment target — corrects an understated 'new relationship') ───
+# Pre-existing MoUs / joint centres / prior grants with recurring partners; surfacing one can
+# STRENGTHEN a case (a decade-old joint centre ≠ "a new relationship"). Each carries provenance.
+standing_relationships:
+  - partner: "<Partner Org>"
+    kind: "<MoU | joint research centre | prior ARC LP | ...>"
+    since: "<YYYY>"
+    provenance: "<agreement / press / grant record>"
+    as_of: "<YYYY-MM-DD>"
