@@ -1,5 +1,36 @@
 # Changelog — grant-application-writing
 
+## 0.5.0
+
+The "profiles + CV + meeting-nuance" release. Closes the largest concrete gaps from the working-meeting
+audit: the reusable profiles were a written rule with no artifact, and length-adaptive CV / two stressed
+nuances weren't baked.
+
+### Added — reusable profile artifacts (were prose-only; now real templates)
+- `templates/institution-profile.template.yaml` — the administering-org KB (legal name, ABN, address,
+  org type, HESA eligibility, authorised signatory, standard institutional-support boilerplate, rate-table
+  pointer, standing partnerships). Admin fields that are KNOWN institutional facts fill FROM here, not
+  `[TO SET]`. Placeholders only (zero real data in the skill).
+- `templates/applicant-profile.template.yaml` — the applicant bio/admin/eligibility scaffold + a
+  `cv_config`. POINTS to the evidence store for the research record (no duplication); carries the
+  eligibility facts (citizenship/PR, appointment basis, PhD date, interruptions) the eligibility gate needs.
+
+### Added — length-adaptive CV builder
+- `scripts/build_cv.py` — reads the applicant profile's `cv_config` (per-page section CAPS = instance data)
+  + the evidence store, SELECTS the top-N per section (publications ranked by tier→year via `--tiers`,
+  funding by amount, rest by recency), and assembles a Markdown CV to a `2pp`/`6pp` page budget. Pure
+  select/order/format of REAL data (never authors prose); missing name/title = `[TO SET]`; every trim is
+  REPORTED (no silent cap). `--self-test` covered. (Meeting #64/65.)
+
+### Added — disciplines baked from meeting nuances
+- **Never fabricate to hit a word count** (Output-convention #4): the ≥90% fill target is for real
+  substance; under limit-pressure a model invents ("撑到 200 字→硬编"). Under-limit with no genuine
+  substance → leave it short + flag, never pad. (Meeting #26.)
+- **Concrete ARC density** (plainness dial): an ARC technical description uses ~1–4 formulas, describes
+  the model briefly, and includes NO experiment figures (no results exist yet — a schematic is fine, a
+  benchmark plot is off-genre); align content to the scheme's marketing/selection criteria + past
+  reviewer comments where available. (Meeting #33/34/35.)
+
 ## 0.4.0
 
 The "Stage-A0 classification" release. Adds an up-front instrument/register/deliverable
