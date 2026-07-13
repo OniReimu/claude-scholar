@@ -96,6 +96,19 @@ outputs that carry `addresses: [req-ids]`; gated on requirements[] present (else
                         tagged `needs_domain_review` with no recorded sign-off — a
                         route-to-specialist flag (§4.6), never a silent pass.
 
+Check 21 is the Stage-A0 dispatch classification (runs early, right after schema); gated on the
+scheme declaring a `classification` block (else a labelled SKIP → the pipeline falls back to `mode`).
+
+ 21. classification    the up-front instrument/register/deliverable dispatch. `instrument`
+                        (award|grant) ∈ closed vocab; `register` (industrial|academic) when
+                        present ∈ closed vocab; `requires` ⊆ {budget, work_plan, in_kind, stipend,
+                        co_contribution}. Fail-closed: an unknown instrument/register, an unknown
+                        `requires` deliverable, or an AWARD that requires a budget/plan (an award
+                        funds no project) is a hard FAIL; a GRANT that requires nothing is a WARN.
+                        `requires` DECOUPLES the budget/plan machinery from `mode` (checks 13–16,
+                        19) — an ARC DECRA is mode=narrative-award yet instrument=grant, so it
+                        still runs the project-substance passes.
+
 SKIP vs FAIL (fail-closed): FAIL when the needed input WAS supplied but the data violates the
 rule or a hard gate cannot be evaluated; SKIP (non-blocking, with a stated reason) only when an
 OPTIONAL sidecar was not supplied, or the scheme lacks that construct. Exit non-zero on any HARD
