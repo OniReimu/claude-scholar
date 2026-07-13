@@ -262,7 +262,11 @@ discipline). Distinct from `mode`, funder-family (ARC/NHMRC/NSF/ERC/industry) on
 
 ```
 A0  scheme intake → compliance_matrix.yaml   rulebook BEFORE drafting: eligibility, mandatory docs,
-                                             limits, fonts, certs, internal deadlines, submission owner
+                                             limits, fonts, certs, internal deadlines, submission owner.
+                                             ALSO sets the `classification` block (instrument award|grant →
+                                             `requires`; register industrial|academic; funder_family) that
+                                             routes which builders/passes run — award ⇒ skip budget/plan/
+                                             in-kind/stipend (validate_ir check 21; see "Stage-A0 classification")
 A   form + guidelines → scheme.yaml (IR)     parse ANY scheme into the normalized type model
 B   corpus → evidence-store.yaml             reusable across every application (see evidence-store.md)
 B2  people/orgs/partners → entity-store      project mode: CI/PI/partner/subaward/commitments/approvals
