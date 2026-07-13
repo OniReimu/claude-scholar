@@ -325,12 +325,7 @@ claude-scholar/
 
 ## 功能亮点
 
-### 技能（33 个）
-
-**网页设计：**
-- `frontend-design` - 创建独特、生产级的前端界面
-- `ui-ux-pro-max` - UI/UX 设计智能（50+ 风格、97 色板、9 技术栈）
-- `web-design-reviewer` - 视觉检查和设计问题修复
+### 技能（29 个）
 
 **写作与学术：**
 - `ml-paper-writing` - 顶级会议/期刊的完整论文写作指导
@@ -368,7 +363,6 @@ claude-scholar/
 **工具：**
 - `uv-package-manager` - 现代 Python 包管理
 - `planning-with-files` - 基于 Markdown 的规划
-- `webapp-testing` - 本地 Web 应用测试
 - `kaggle-learner` - 从 Kaggle 解决方案中学习
 
 ### 命令（50+）
