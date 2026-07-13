@@ -49,7 +49,7 @@
 | **hook-development** | Hook event handling (Claude Code specific) |
 | **mcp-integration** | MCP server integration (Claude Code specific) |
 
-## Tools & Utilities (4 skills)
+## Tools & Utilities (3 skills)
 
 | Skill | Trigger Condition |
 |-------|-------------------|
