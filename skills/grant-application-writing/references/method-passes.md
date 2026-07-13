@@ -339,6 +339,20 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
   budget figure into prose unvalidated** — that is exactly how sub-line arithmetic slips through
   (two $2,500 items summed as "$4,000/yr"; two $7,000 trips budgeted at $7,000 total). If a number
   is in the narrative, it came from a `validate_budget.py`-passing `budget.yaml`.
+- **In-kind must be STRUCTURALLY represented, never omitted or zeroed.** A budget is not just the
+  cash request. Every scheme that collects contributions (ARC/CRC-P/Linkage/AVSTICI contribution
+  fields, matched-funding schemes) needs in-kind **itemised as its own lines** (host-institution
+  infrastructure/labs/staff-time; partner facilities/data/staff/site access), even when the dollar
+  values are unknown. Two hard rules: **(a)** an unquantified in-kind value is **`[TO SET]`, NEVER
+  `0`** — setting `total_in_kind: 0` green-washes "exists but not yet costed" into "none", the exact
+  default-to-zero error the skill forbids; leave it `null`/`[TO SET]` and itemise the items. **(b)**
+  On schemes where **equipment / capital / ICT hardware is grant-INELIGIBLE** (CRC-P, AVSTICI, many
+  ARC), in-kind is **the only eligible home for that equipment** (a robotic arm, prototype hardware,
+  existing platforms) — so omitting in-kind doesn't just under-count resourcing, it leaves the
+  ineligible-but-essential equipment with nowhere to sit. Itemise it in-kind `[TO SET]`, fill the
+  form's in-kind contribution fields, and mirror the confirmed totals into `entity-store integrity`
+  (run `build_cocontribution.py` if the scheme scores matched funding). A cash-only budget on a
+  scheme with in-kind fields is an incomplete budget, flagged like an over-limit field.
 - **Named-entity type consistency.** A travel/attendance line's named venue must actually be that
   kind of venue — a *conference* destination must be a conference, not a journal (e.g. "TIFS" is a
   journal, not a meeting). Cross-check named venues/orgs against their type in the evidence-store;
