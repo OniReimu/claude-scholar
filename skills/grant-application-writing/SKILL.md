@@ -123,14 +123,19 @@ draft assigns them). Every enriched fact carries a `provenance` URL + `as_of`; a
 (legal name, lead of record) still needs the partner's own confirmation, so enrichment INFORMS but
 does not replace `[VERIFY]`.
 
-**Reusable institutional + applicant profiles cut `[TO SET]` noise.** Keep a standing profile for the
-lead organisation (legal name, ABN, address, org type, standard institutional-support language) and for
-each applicant (CV base, publications, funding, supervision), amortised across every application. Admin
-fields whose answer is a KNOWN institutional fact (UTS's ABN/address, "eligible HESA-2003 institution")
-should fill FROM that profile, not be dumped to `[TO SET]` — reserve `[TO SET]`/`[VERIFY]` for what is
-genuinely unknown or must be confirmed this round. The applicant profile is the `research-profile-evidence-base`
-graduation of Stage B; it also drives a length-adaptive CV (the same profile → a 2-page or 6-page CV per
-the scheme's requirement).
+**Reusable institutional + applicant profiles cut `[TO SET]` noise (real artifacts, not just a rule).**
+Two shipped templates instantiate into a standing per-user/per-project profile folder:
+`templates/institution-profile.template.yaml` (lead org: legal name, ABN, address, org type, HESA
+eligibility, authorised signatory, standard institutional-support boilerplate, rate-table pointer) and
+`templates/applicant-profile.template.yaml` (the applicant's bio/admin/eligibility scaffold + a
+`cv_config` — it POINTS to the evidence store for the research record, never duplicates it). Admin fields
+whose answer is a KNOWN institutional fact (the org's ABN/address, "eligible HESA-2003 institution")
+fill FROM the institution profile, not `[TO SET]` — reserve `[TO SET]`/`[VERIFY]` for what is genuinely
+unknown or must be confirmed this round. The applicant profile drives a **length-adaptive CV**:
+`scripts/build_cv.py --profile-name 2pp|6pp` reads `cv_config` + the evidence store and assembles a CV
+to the scheme's page budget, ranking (publications by tier→year, funding by amount, rest by recency) and
+**reporting every trim** (never a silent cap). The applicant profile is the `research-profile-evidence-base`
+graduation of Stage B.
 
 ## IO contract
 
