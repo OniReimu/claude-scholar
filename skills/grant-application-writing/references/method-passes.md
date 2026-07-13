@@ -537,6 +537,19 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 > This pass upgrades a static register to a **live trigger→contingency register**: not "there is a
 > risk; it is mitigated" but "**if X by month M → do Y, checked at Z, owned by W**". A panel scores a
 > risk plan it can see FIRE, not a reassurance.
+- **⚠️ SCOPE — the risk register is PROJECT-DELIVERY risks, NOT submission/eligibility risks.** The
+  application's risk field (and the `risks[]` register) is about what can go wrong **during the
+  funded project**: technical (a method fails to generalise, hardware unreliable), data (access /
+  quality / cross-border transfer), operational/collaboration (cross-border coordination, personnel
+  turnover, travel), security (cyber, foreign interference, unwanted tech/knowledge transfer, export
+  control), IP/benefit-sharing, schedule/dependency. Risks to **getting the application submitted or
+  ruled eligible** — a partner not submitting a matched proposal, an unagreed title, a budget-
+  eligibility ruling, a letter-of-support arriving late — are **NOT project risks**; they are
+  pre-award logistics and live in `submission_plan.yaml` + `blockers.yaml`, never in the scored risk
+  field. Triggers use **project months (M1..M36)**, not pre-submission calendar dates. A risk
+  register full of "will the proposal be accepted" logistics both misreads the question and buries
+  the delivery risks the assessor actually scores — treat a submission-risk in the risk field as a
+  mis-file, and move it to blockers.
 - **Does:** for each `risks[]` entry, confirm it is a monitored, actionable contingency, reading
   `{risk, likelihood, impact, trigger, monitoring, contingency, owner}`:
   - **(a) GRADED.** `likelihood` and `impact` each low / medium / high — the grade sets how hard the
