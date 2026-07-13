@@ -880,18 +880,41 @@ def _nonempty(v):
     return bool(v)
 
 
-def _project_gate(rep, check, scheme, plan):
-    """Gate a project-substance check on prospective-project mode + a supplied --plan.
+def _scheme_requires(scheme, deliverable):
+    """True when the scheme's A0 classification requires a deliverable (budget/work_plan/…).
 
-    Returns True when the check should run; otherwise emits a labelled SKIP and returns False.
+    Prefers the explicit `classification.requires` list (Stage-A0 dispatch, the INSTRUMENT axis);
+    falls back to the legacy `mode == prospective-project` heuristic for schemes that predate the
+    classification block, so existing IRs keep working unchanged. This is what decouples the
+    budget/plan machinery from `mode`: an ARC DECRA is `mode: narrative-award` yet
+    `instrument: grant` with a budget + work_plan, and must run the project-substance passes —
+    the old `mode == prospective-project` gate wrongly SKIPped them.
     """
-    if scheme.get("mode") != "prospective-project":
-        rep.add(check, "SKIP", "soft",
-                f"scheme mode {scheme.get('mode', '?')!r} ≠ prospective-project — no project plan to assess")
+    cls = scheme.get("classification") or {}
+    req = cls.get("requires")
+    if isinstance(req, list):
+        return deliverable in req
+    return scheme.get("mode") == "prospective-project"
+
+
+def _project_gate(rep, check, scheme, plan):
+    """Gate a project-substance check on the scheme requiring a work_plan + a supplied --plan.
+
+    Now gated on the A0 classification's `requires: [work_plan]` (with a legacy `mode` fallback),
+    NOT on `mode == prospective-project` — so a narrative-award-MODE scheme that nonetheless funds
+    a project (e.g. ARC DECRA) still has its plan assessed. Returns True when the check should run;
+    otherwise emits a labelled SKIP and returns False.
+    """
+    if not _scheme_requires(scheme, "work_plan"):
+        cls = scheme.get("classification") or {}
+        why = (f"classification.instrument {cls.get('instrument', '?')!r} does not require a work_plan"
+               if cls.get("requires") is not None
+               else f"scheme mode {scheme.get('mode', '?')!r} ≠ prospective-project")
+        rep.add(check, "SKIP", "soft", f"{why} — no project plan to assess")
         return False
     if not plan:
         rep.add(check, "SKIP", "soft",
-                "prospective-project mode but no --plan project-plan.yaml supplied")
+                "scheme requires a work_plan but no --plan project-plan.yaml supplied")
         return False
     return True
 
