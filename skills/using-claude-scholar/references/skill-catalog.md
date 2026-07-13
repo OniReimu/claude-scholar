@@ -55,16 +55,7 @@
 |-------|-------------------|
 | **planning-with-files** | Creating implementation plans, tracking progress with Markdown files |
 | **uv-package-manager** | Python package management with uv |
-| **webapp-testing** | Testing local web applications |
 | **kaggle-learner** | Learning from Kaggle competition solutions |
-
-## Web Design (3 skills)
-
-| Skill | Trigger Condition |
-|-------|-------------------|
-| **frontend-design** | Creating distinctive, production-grade frontend interfaces |
-| **ui-ux-pro-max** | UI/UX design intelligence (styles, palettes, font pairings, chart types across 9 tech stacks) |
-| **web-design-reviewer** | Visual inspection and design issue fixing |
 
 ## System (2 skills)
 
