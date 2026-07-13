@@ -9,7 +9,7 @@
       "name": "claude-scholar",
       "source": "./",
       "description": "Complete research lifecycle from ideation to publication — 47 skills, 50+ commands, 17 agents, 5 hooks",
-      "version": "1.8.0"
+      "version": "1.9.0"
     }
   ]
 }
