@@ -1284,9 +1284,10 @@ def check_outputs_context_completeness(rep, scheme, evidence, mode):
 
 
 def check_traceability_spine(rep, scheme, plan, entity, bdata, mode):
-    """#19 traceability spine & cross-field crosswalk (prospective-project mode). Gated on
-    prospective-project mode + a spine present in --plan (objectives/tasks/outputs/validations);
-    else a labelled SKIP. When the spine IS present it is fail-closed — every id must resolve.
+    """#19 traceability spine & cross-field crosswalk. Gated on the scheme requiring a work_plan
+    (classification.requires; legacy fallback mode == prospective-project) + a spine present in
+    --plan (objectives/tasks/outputs/validations); else a labelled SKIP. When the spine IS present
+    it is fail-closed — every id must resolve.
 
     Referential integrity: every objectives[].aim → aims[].id; tasks[].objective →
     objectives[].id; tasks[].depends_on → a task id; subtasks[].output → outputs[].id;
