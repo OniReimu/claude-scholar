@@ -427,6 +427,20 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 > question *does the design ANSWER the aim* — i.e. will the methodology actually PRODUCE the claimed
 > knowledge. Feasible ≠ adequate: a design can be perfectly deliverable and still not establish what
 > the aim claims.
+- **⚠️ NO HAND-WAVING — a scored technical field must state the concrete HOW, not just name the
+  activity.** "We will develop robust robotics for automated sorting", "an AI model for
+  classification", "a system for X" are **placeholder verbs, not a design** — an assessor scores the
+  mechanism, not the noun. Every `design[].methods` entry (and the methodology/approach prose) must
+  specify the **actual approach**: the pipeline, the mechanism, the algorithm family, the
+  architecture — concretely enough that a specialist can picture it (e.g. NOT "automated sorting" but
+  "singulate on a conveyor → overhead-camera localisation → confidence-aware control → belt-synced
+  robotic arm with suction gripper, low-confidence items to a reject lane"). **When the input corpus
+  does not supply the design, PROPOSE a concrete, standard one and mark it `[DOMAIN-EXPERT TO VERIFY]`
+  (§4.6)** — a plausible proposed mechanism the applicant's team confirms or replaces beats vague
+  activity-naming, and the marker keeps it honest (never presented as the applicant's established
+  method). Write the full design in a supporting note (e.g. `sorting-design.md`) and a compact
+  concrete version in the scored field. A field that names an activity without its mechanism is a
+  flagged gap, exactly like an unmeasured aim.
 - **Does:** for every `aims[]` entry, confirm the `design[]` register answers it — pre-empting the
   panel's "the methodology won't produce the claimed knowledge." Reads each aim's
   `success_criterion` (the measurable definition-of-done) against its design rows on four couplings:
