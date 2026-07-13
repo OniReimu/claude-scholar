@@ -1,5 +1,34 @@
 # Changelog — grant-application-writing
 
+## 0.4.0
+
+The "Stage-A0 classification" release. Adds an up-front instrument/register/deliverable
+classification (the funding-application analog of a paper skill deciding paper-type first) and
+fixes a real gating bug it exposed.
+
+### Added — AXIS 0 (Stage-A0 dispatch classification)
+- A `classification` block in `scheme.yaml` set at intake, BEFORE mode/process: three ORTHOGONAL
+  facets — `instrument` (award|grant), `register` (industrial|academic), `funder_family` — plus a
+  `requires` list of the deliverables to build. Documented in SKILL.md ("Stage-A0 classification")
+  + `form-schema-ir.md` (schema line + field note).
+- **Classify by the FORM's structure, not its name**: a DECRA is *named* a fellowship/award but has
+  a budget → `instrument: grant`. `instrument: award` ⇒ `requires: []` ⇒ the pipeline skips
+  B3/B4/B4s + build_budget/build_timeline/in-kind/stipend (the meeting's "don't over-engineer a
+  prize"). A grant lists the deliverables it demands.
+- **`register` is orthogonal to `funder_family`**: an ARC Linkage (LP) is ARC yet *industrial*
+  (industry partner + co-contribution → plain language); ARC DP/DECRA/FT are *academic*. ARC spans
+  both — the register comes from "is there an industry partner", not "is it ARC".
+- `validate_ir.py` check 21 `classification`: fail-closed validation of the block (unknown
+  instrument/register, unknown `requires` deliverable, or an award that requires a budget → FAIL;
+  a grant that builds nothing → WARN; no block → SKIP, legacy fallback to `mode`).
+
+### Fixed — the DECRA gating bug the classification exposed
+- The project-substance passes (validate_ir checks 13–16, 19) and budget/plan machinery were gated
+  on `mode == prospective-project`. A DECRA is `mode: narrative-award` yet HAS a budget + work-plan,
+  so its budget/plan was WRONGLY skipped. Now gated on `classification.requires` (via
+  `_scheme_requires`, with a legacy `mode` fallback) — `instrument`/`requires` decouples "what you
+  BUILD" from "what you're JUDGED ON". Regression tests cover the DECRA case + the award-skips case.
+
 ## 0.3.0
 
 The "builders + fidelity + disciplines" release. Driven by a real AVSTICI (Australia-Vietnam) worked
