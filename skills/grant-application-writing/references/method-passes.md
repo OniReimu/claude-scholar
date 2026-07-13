@@ -417,7 +417,7 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 
 ---
 
-### Project-substance passes §2.14–§2.17 (RUN ONLY in `prospective-project` mode)
+### Project-substance passes §2.14–§2.17 (RUN when the scheme REQUIRES a work_plan)
 
 > Numbered 2.14–2.17 to avoid renumbering, but read as one cluster appended after §2.13.
 > Where §2.1–§2.11 mostly read the `scheme.yaml` IR and the reusable evidence-store, these four
