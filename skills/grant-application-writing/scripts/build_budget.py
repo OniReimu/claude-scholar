@@ -140,6 +140,27 @@ def build(plan, rates=None):
         if not isinstance(years, list) or not years:
             raise PlanError(f"{pid}.years 须为非空年份列表")
 
+        # ── HDR stipend: base scholarship + top-up, itemised as TWO rows, NO on-cost (§2.8) ──
+        stip = p.get("stipend")
+        if stip is not None:
+            base = _num_or_none(stip.get("base"), f"{pid}.stipend.base")
+            topup = _num_or_none(stip.get("top_up"), f"{pid}.stipend.top_up")
+            for suffix, amt, cat, lbl in ((("", base, "hdr-stipend", "base scholarship"),
+                                           ("-topup", topup, "hdr-stipend-topup", "top-up"))):
+                row = {"id": pid + suffix, "category": cat,
+                       "funding_source": p.get("funding_source", "requested"),
+                       "kind": p.get("kind", "cash"), "years": {y: amt for y in years},
+                       "counts_toward_total": True}
+                _passthrough(p, row, ("org", "phase", "funding_status"))
+                out_rows.append(row)
+                items.append({"section": "PERSONNEL", "id": pid + suffix,
+                              "label": f"{p.get('role', pid)} — HDR {lbl}"
+                                       f" ({'[TO SET]' if amt is None else format(amt, ',.0f')}/yr, no on-cost)",
+                              "years": {y: amt for y in years}})
+                if amt is None:
+                    blocked.append(f"{pid}{suffix}: HDR {lbl} [TO SET]")
+            continue
+
         # per-year base: from a rate_ref lookup (with step progression), else the flat annual_rate
         ref = p.get("rate_ref")
         ref_note = None
