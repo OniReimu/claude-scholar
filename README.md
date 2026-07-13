@@ -354,12 +354,7 @@ claude-scholar/
 
 ## Feature Highlights
 
-### Skills (33 total)
-
-**Web Design:**
-- `frontend-design` - Create distinctive, production-grade frontend interfaces
-- `ui-ux-pro-max` - UI/UX design intelligence (50+ styles, 97 palettes, 9 stacks)
-- `web-design-reviewer` - Visual inspection and design issue fixing
+### Skills (29 total)
 
 **Writing & Academic:**
 - `ml-paper-writing` - Full paper writing guidance for top conferences/journals
@@ -397,7 +392,6 @@ claude-scholar/
 **Utilities:**
 - `uv-package-manager` - Modern Python package management
 - `planning-with-files` - Markdown-based planning
-- `webapp-testing` - Local web application testing
 - `kaggle-learner` - Learn from Kaggle solutions
 
 ### Commands (50+)
