@@ -166,6 +166,15 @@ commercialisation → §1–7 (humble team, unquantified market, partner-as-anch
 Using the wrong register — a market TAM in a fellowship, or bare self-eminence in a project grant —
 reads as off-genre to an assessor. Pick the register from `mode` before drafting.
 
+**The funder-family ALSO sets a plainness dial (calibrate it explicitly).** Independently of `mode`,
+match how technical/plain the prose is to the scheme: **industry / CRC-P / commercialisation →
+PLAIN LANGUAGE (大白话), minimal jargon** (the readers are program officers and industry, not
+specialists — "越大白话越好，不要堆术语"); **ARC family → between plain and academic-paper** (a research
+panel, but a broad one — not full journal density); **pure fellowship / narrative-award / discipline
+panel → academic** register. A CRC-P written like a NeurIPS paper, or an ARC written like ad copy,
+both mis-pitch the reader. Set the dial from the funder-family before drafting, and keep the
+**plain-language public-summary field plain in every scheme**.
+
 ## Assessment-process dispatch (axis 2 — do this SECOND, after mode)
 
 `mode` fixes what you're judged on; `process` fixes **how the competition is structured** — and
