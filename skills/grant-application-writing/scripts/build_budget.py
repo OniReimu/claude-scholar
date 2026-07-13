@@ -416,6 +416,21 @@ def self_test():
     else:
         raise AssertionError("rate_ref 无 --rates 必须 PlanError")
 
+    # HDR stipend: base + top-up, two rows, no on-cost
+    stp = run({"personnel": [{"id": "phd", "role": "PhD", "years": [2027, 2028, 2029],
+                              "stipend": {"base": 39000, "top_up": 5000}, "org": "uts"}]})
+    srows = {r["id"]: r for r in stp[1]}
+    assert srows["phd"]["years"] == {2027: 39000, 2028: 39000, 2029: 39000}, srows["phd"]
+    assert srows["phd-topup"]["years"] == {2027: 5000, 2028: 5000, 2029: 5000}, srows["phd-topup"]
+    assert "phd-oncost" not in srows and "phd-topup-oncost" not in srows, "stipends carry NO on-cost"
+    assert abs(stp[5] - (39000 + 5000) * 3) < EPS, stp[5]        # grand = (base+topup)×3
+    assert not stp[3], stp[3]                                    # complete → no [TO SET]
+    # missing top_up → [TO SET], never invented
+    _, sr2, _, sb2, _, _, _, _ = run({"personnel": [{"id": "phd", "years": [2027],
+                                                     "stipend": {"base": 39000}}]})
+    assert {r["id"]: r for r in sr2}["phd-topup"]["years"] == {2027: None}, sr2
+    assert any("phd-topup" in b for b in sb2), sb2
+
     # 往返：emit 的 rows 能被 validate_budget 消费（结构对齐）
     doc = emit_yaml(*[currency] + [rows] + [target, requested])
     assert doc["rows"] and "declared_totals" in doc
