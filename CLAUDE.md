@@ -161,14 +161,7 @@ Key files:
 
 - **planning-with-files**: Planning and progress tracking with Markdown files
 - **uv-package-manager**: uv package manager usage
-- **webapp-testing**: Local web application testing
 - **kaggle-learner**: Kaggle competition learning
-
-### 🎨 Web Design (3 skills)
-
-- **frontend-design**: Create distinctive, production-grade frontend interfaces, avoiding generic AI aesthetics
-- **ui-ux-pro-max**: UI/UX design intelligence (50+ styles, 97 palettes, 57 font pairings, 9 tech stacks)
-- **web-design-reviewer**: Website design visual inspection, identifying and fixing responsive, accessibility, and layout issues
 
 ### 🔧 System (2 skills)
 
