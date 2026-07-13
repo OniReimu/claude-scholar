@@ -138,6 +138,18 @@ PROCESS_VOCAB = {
 STAGED_GATING_PHASES = {"EOI", "pre-proposal", "minimum-data"}
 INTERVIEW_MARKERS = ("interview", "defense", "defence")
 
+# ── first dispatch axis (Stage A0): instrument / register / deliverable classification ──
+# Three ORTHOGONAL facets set at intake, BEFORE mode/process, that route the pipeline:
+#   instrument (award|grant) → which deliverables to build (an award funds no project → none);
+#   register  (industrial|academic) → the plainness dial (industry-partnered vs pure-academic —
+#             orthogonal to funder-family: ARC LP is ARC yet industrial, ARC DP/DECRA academic);
+#   requires  → the closed set of deliverables the scheme actually demands. This DECOUPLES the
+#             budget/plan machinery from `mode`: an ARC DECRA is mode=narrative-award yet
+#             instrument=grant with a budget + work_plan, so it must run the project passes.
+INSTRUMENT_VOCAB = {"award", "grant"}
+REGISTER_VOCAB = {"industrial", "academic"}
+DELIVERABLE_VOCAB = {"budget", "work_plan", "in_kind", "stipend", "co_contribution"}
+
 TOKEN = re.compile(r"[A-Za-z_][A-Za-z0-9_.]*")
 KW = {"and", "or", "not", "True", "False", "None", "in", "is"}
 # requirements[].applies_if — a SAFE minimal `<field> ==|!= <value>` predicate (never eval())
