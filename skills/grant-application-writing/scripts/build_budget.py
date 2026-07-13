@@ -270,7 +270,7 @@ def render_table(currency, items, out_rows, blocked, target, grand, requested):
     if target is not None:
         gap = target - grand
         lines.append(f"  target: {target:,.0f}   GAP: {gap:+,.0f}"
-                     + ("  (reconciled)" if abs(gap) <= 0.01 else "  — NOT reconciled (fix inputs, never fudge)"))
+                     + ("  (reconciled)" if abs(gap) <= 1.0 else "  — NOT reconciled (fix inputs, never fudge)"))
     if blocked:
         lines.append("== [TO SET] (fail-closed — supply before validate_budget) ==")
         lines.extend(f"  ! {b}" for b in blocked)
@@ -284,7 +284,7 @@ def emit_yaml(currency, out_rows, target, requested):
 
 def run(plan, rates=None):
     currency, out_rows, items, blocked, target, grand, requested = build(plan, rates)
-    gap_bad = target is not None and abs(target - grand) > 0.01   # cent tolerance (amounts are $)
+    gap_bad = target is not None and abs(target - grand) > 1.0    # dollar tolerance (grant budgets are whole $; sub-$ = rounding noise)
     return currency, out_rows, items, blocked, target, grand, requested, gap_bad
 
 

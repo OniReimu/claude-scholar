@@ -1560,211 +1560,24 @@ When resubmitting after rejection:
 
 ## Citation Workflow (Hallucination Prevention)
 
-**⚠️ CRITICAL**: AI-generated citations have ~40% error rate. **Never write BibTeX from memory.** <!-- policy:CITE.VERIFY_VIA_API -->
+**⚠️ CRITICAL**: AI-generated citations have a high error rate. **Never write BibTeX from memory** — always fetch it programmatically via DOI / Semantic Scholar API, then verify. Google Scholar / WebSearch are for *locating* a paper, not for authoring BibTeX by hand. <!-- policy:CITE.VERIFY_VIA_API -->
 
 ### The Golden Rule
 
 ```
-IF you cannot verify a citation through web search:
-    → Mark it as [CITATION NEEDED] or [PLACEHOLDER - VERIFY]
+IF you cannot verify a citation programmatically (DOI / Semantic Scholar API):
+    → Mark it [CITATION NEEDED] / [PLACEHOLDER - VERIFY]
     → Tell the scientist explicitly
     → NEVER invent a plausible-sounding reference
 ```
 
-**MANDATORY**: Use WebSearch tool to verify EVERY citation before adding to bibliography.
+Per-citation checklist (every citation, no exceptions):
+1. Locate the paper (WebSearch / Google Scholar) and confirm title, authors, year, venue.
+2. Fetch BibTeX **programmatically** via DOI or the Semantic Scholar API — never hand-write it. <!-- policy:CITE.VERIFY_VIA_API -->
+3. Verify the claim you are citing actually appears in the paper (quote → exact text + locator). <!-- policy:CITE.CLAIM_SUPPORT_REQUIRED -->
+4. If any step fails → mark placeholder and inform the scientist; never guess.
 
-### Workflow 2: Adding Citations
-
-```
-Citation Verification (MANDATORY for every citation):
-- [ ] Step 1: Use WebSearch to find the paper
-- [ ] Step 2: Verify paper exists on Google Scholar
-- [ ] Step 3: Confirm paper details (title, authors, year, venue)
-- [ ] Step 4: Retrieve BibTeX from Google Scholar or DOI
-- [ ] Step 5: Verify the claim you're citing actually appears in the paper
-- [ ] Step 6: Add verified BibTeX to bibliography
-- [ ] Step 7: If ANY step fails → mark as placeholder, inform scientist
-```
-
-**Step 1: Use WebSearch to Find the Paper**
-
-When you need to cite a paper, ALWAYS start with web search:
-
-```
-WebSearch query examples:
-- "Attention is All You Need Vaswani 2017"
-- "RLHF language model alignment 2023"
-- "sparse autoencoders interpretability Anthropic"
-- "transformer architecture NeurIPS"
-```
-
-**What to look for in search results:**
-- Paper title matches your intended citation
-- Authors are correct
-- Publication year is correct
-- Venue (conference/journal) is identified
-
-**Step 2: Verify on Google Scholar**
-
-After finding the paper, verify it exists on Google Scholar:
-
-```
-WebSearch query: "site:scholar.google.com [paper title] [first author]"
-
-Example: "site:scholar.google.com Attention is All You Need Vaswani"
-```
-
-**Verification checklist:**
-- ✅ Paper appears in Google Scholar results
-- ✅ Title matches exactly (or very close)
-- ✅ Authors match
-- ✅ Year matches
-- ✅ Venue is listed (conference/journal)
-- ✅ Citation count is reasonable (not 0 for old papers)
-
-**If paper NOT found on Google Scholar:**
-- ❌ STOP - Do not cite
-- Mark as `[CITATION NEEDED - not found on Google Scholar]`
-- Inform scientist explicitly
-
-**Step 3: Confirm Paper Details**
-
-Before retrieving BibTeX, double-check all details:
-
-```
-Verification checklist:
-- Title: [exact title from Google Scholar]
-- Authors: [all authors, in order]
-- Year: [publication year]
-- Venue: [conference/journal name]
-- DOI: [if available]
-```
-
-**Step 4: Retrieve BibTeX**
-
-**Option 1: From Google Scholar (Recommended)**
-
-1. Find the paper on Google Scholar
-2. Click "Cite" button below the paper
-3. Select "BibTeX" format
-4. Copy the BibTeX entry
-
-**Option 2: From DOI (if available)**
-
-1. Use WebSearch to find: `"doi.org/[DOI]"`
-2. Look for BibTeX export option on the publisher's page
-3. Copy the BibTeX entry
-
-**Option 3: From arXiv (for preprints)**
-
-1. Find paper on arXiv
-2. Click "Export BibTeX Citation" on the right sidebar
-3. Copy the BibTeX entry
-
-**CRITICAL**: Never write BibTeX from memory. Always copy from verified source.
-
-**Step 5: Verify the Claim**
-
-Before citing for a specific claim, verify the claim actually appears in the paper:
-
-```
-Verification process:
-1. Use WebSearch to access the paper (PDF or HTML)
-2. Search for keywords related to your claim
-3. Confirm the claim is explicitly stated or clearly implied
-4. Note the section/page where claim appears
-```
-
-**If you cannot access the paper:**
-- ❌ Do not cite for specific claims
-- Only cite for general contributions (if verified on Google Scholar)
-- Mark as `[CLAIM NOT VERIFIED - no access to paper]`
-
-**Step 6: Add Verified BibTeX to Bibliography**
-
-Only after completing all verification steps:
-
-```latex
-% Add to your .bib file
-@inproceedings{vaswani2017attention,
-  title={Attention is All You Need},
-  author={Vaswani, Ashish and Shazeer, Noam and ...},
-  booktitle={Advances in Neural Information Processing Systems},
-  year={2017}
-}
-
-% Use in your paper
-\cite{vaswani2017attention}
-```
-
-**Step 7: Handle Failures Explicitly**
-
-If you cannot verify a citation at ANY step:
-
-```latex
-% Option 1: Explicit placeholder
-\cite{PLACEHOLDER_smith2023_verify}  % TODO: Could not verify - scientist must confirm
-
-% Option 2: Note in text
-... as shown in prior work [CITATION NEEDED - could not verify Smith et al. 2023].
-```
-
-**Always inform the scientist:**
-> "I could not verify the following citations and have marked them as placeholders:
-> - Smith et al. 2023 on reward hacking - not found on Google Scholar
-> - Jones 2022 on scaling laws - found similar paper but different authors
-> Please verify these before submission."
-
-### Summary: Citation Rules
-
-| Situation | Action |
-|-----------|--------|
-| Found on Google Scholar, verified details, got BibTeX | ✅ Use the citation |
-| Found paper, verified on Google Scholar, no BibTeX | ✅ Create BibTeX from Google Scholar info |
-| Paper exists but details don't match | ⚠️ Mark placeholder, inform scientist |
-| Not found on Google Scholar | ❌ Mark `[CITATION NEEDED]`, inform scientist |
-| "I think there's a paper about X" | ❌ **NEVER cite** - search first or mark placeholder |
-
-**🚨 NEVER generate BibTeX from memory—always verify through WebSearch and Google Scholar. 🚨**
-
-### Complete Citation Workflow Example
-
-**Scenario**: You need to cite the Transformer paper.
-
-```
-Step 1: WebSearch
-Query: "Attention is All You Need Vaswani 2017"
-Result: Found paper on multiple sources
-
-Step 2: Google Scholar Verification
-Query: "site:scholar.google.com Attention is All You Need Vaswani"
-Result: ✅ Paper found, 50,000+ citations, NeurIPS 2017
-
-Step 3: Confirm Details
-- Title: "Attention is All You Need"
-- Authors: Vaswani, Ashish; Shazeer, Noam; Parmar, Niki; ...
-- Year: 2017
-- Venue: NeurIPS (NIPS)
-- DOI: Available
-
-Step 4: Retrieve BibTeX
-- Click "Cite" on Google Scholar
-- Select BibTeX format
-- Copy entry
-
-Step 5: Verify Claim
-- Access paper via WebSearch
-- Confirm claim appears in paper
-- Note section/page
-
-Step 6: Add to Bibliography
-- Paste BibTeX to .bib file
-- Use \cite{vaswani2017attention} in paper
-
-Step 7: Success
-- Citation verified and added
-- No placeholder needed
-```
+**Full step-by-step workflow, query templates, and worked examples: see `references/citation-workflow.md` and the `citation-verification` skill.**
 
 ---
 
