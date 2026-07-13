@@ -660,7 +660,8 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
   task (no `years`), a **resource-dependent task with no budget line** (or a **budget line mapping to no
   task**) → **BLOCK**. **Draft mode → WARN + a `blockers.md` entry** per broken edge, each naming the
   specific ids, consistent with markers-two-mode §1.8.
-- **Mechanized by `validate_ir.py` `traceability-spine`** (Agent C): gated on `mode == prospective-project`
+- **Mechanized by `validate_ir.py` `traceability-spine`** (Agent C): gated on the scheme requiring a
+  work_plan (`classification.requires`; legacy fallback `mode == prospective-project`)
   + a spine present in `--plan`; checks referential integrity (every cross-axis link resolves), no duplicate
   ids across the spine, every task with ≥1 `person` AND ≥1 `years`, and — with `--entity`/`--budget`
   supplied — each `person`→`investigators[].id` and the four-way crosswalk closing (each `budget_lines`
