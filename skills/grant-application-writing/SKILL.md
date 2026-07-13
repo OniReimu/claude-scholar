@@ -88,6 +88,16 @@ These sit alongside Core discipline and govern HOW the output is packaged and dr
 4. **Fill to 90–95% of every limit.** Under-use forfeits score. `charcount.py` flags OVER; the
    drafting target is **≥90% of each field's char/word limit** (not merely "under"). A field left at
    ~60% is a flagged gap to expand, exactly as an over-limit field is a gap to cut.
+5. **Single source of truth — paired machine/human artifacts MUST NOT drift.** Several outputs exist
+   as a machine copy + a human copy of the SAME facts: `blockers.yaml` ↔ `blockers.md` ↔
+   `HUMAN-ACTIONS.md`; `entity-store` contributions ↔ the budget contributions table; `budget.yaml`
+   ↔ the Section-5 table. The **YAML/IR is canonical**; the human-readable is either (a) **rendered
+   from it** (preferred — `budget-section5` renders from `entity-store`, the docx/md from
+   `values.yaml`), or (b) if hand-maintained, **updated in the SAME edit** as its machine twin. Never
+   change one copy and leave the other stale — editing `blockers.yaml` without `blockers.md`, or
+   fixing an `entity-store` figure without the table that shows it, silently ships a contradiction to
+   the assessor. A structured fact belongs in the DATA first (§2.8 "budget authored as data"), never
+   as free prose that duplicates — and then contradicts — the store.
 
 ## Intake enrichment (Stage A0/B — automatic intelligence)
 
