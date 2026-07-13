@@ -67,7 +67,8 @@ green-washed. `--mode submission` FAILs, `--mode draft` WARNs (mirrors partner-c
                         uncontextualised output or an unsourced superlative FAILs submission
                         (per output / per cluster).
 
-Check 19 is a `prospective-project`-mode pass gated on a traceability spine in the `--plan`
+Check 19 is a work_plan-requiring pass (`classification.requires`; legacy fallback:
+`mode == prospective-project`) gated on a traceability spine in the `--plan`
 sidecar (objectives/tasks/outputs/validations); otherwise a labelled SKIP. When the spine IS
 present it is fail-closed — every id must resolve. `--mode submission` FAILs, `--mode draft` WARNs.
 
