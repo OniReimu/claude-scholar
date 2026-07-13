@@ -678,7 +678,8 @@ and a purpose it serves. The **traceability spine** adds that: four more registe
 **UP** to a purpose (`aim → objective → task → subtask → output → benefit`) and **ACROSS** to a
 resource (`person → year → budget → evidence`). Encoding the spine turns a family of "stylistic"
 consistency checks into a **deterministic, fail-closed validator** (`validate_ir.py`
-`traceability-spine`, gated on `mode == prospective-project`).
+`traceability-spine`, gated on the scheme requiring a work_plan — `classification.requires`,
+legacy fallback `mode == prospective-project`).
 
 - `objectives[]` — `{id, aim, statement}`: each numbered objective is the condition an aim is met
   by. `aim` resolves to an `aims[].id` (no objective without an aim).
