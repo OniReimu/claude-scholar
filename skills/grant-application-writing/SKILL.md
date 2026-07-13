@@ -137,6 +137,17 @@ to the scheme's page budget, ranking (publications by tier→year, funding by am
 **reporting every trim** (never a silent cap). The applicant profile is the `research-profile-evidence-base`
 graduation of Stage B.
 
+**A per-scheme knowledge base accumulates over years (marketing criteria + past reviewer comments).** For
+a scheme you apply to repeatedly, keep a standing `scheme-kb.yaml` (`templates/scheme-kb.template.yaml`):
+the **marketing / selection criteria** (the ARC term for its scored criteria) with your interpretation, and
+the empirical gold — **past reviewer / panel comments** ("pings"), known failure modes, exemplar pointers.
+This is INSTANCE DATA that accumulates round over round (like `rate-table.yaml` and a tier-table), NOT
+hardcoded in the skill. When present it FEEDS the `reviewer_model` (method-passes §4.1): the panel's real
+scoring emphasis + red-flags come from what it actually praised/punished last round, and each scored field
+aligns to the matching criterion's interpretation. Honesty: a reviewer quote is the assessor's own words
+(never invented), and whether a draft addresses a past concern is a review-pass JUDGEMENT, not a
+mechanical check (meeting #16/35/82).
+
 ## IO contract
 
 ```
