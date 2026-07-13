@@ -870,7 +870,58 @@ def check_process_dispatch(rep, scheme, mode):
                     "field) — a defense-prep artifact is expected (soft)")
 
 
-# ── project-substance passes (checks 13–16, prospective-project mode + --plan) ──
+def check_classification(rep, scheme):
+    """#21 Stage-A0 dispatch classification — validate the `classification` block that routes the
+    pipeline BEFORE drafting. Three ORTHOGONAL facets: `instrument` (award|grant — the deliverable
+    axis), `register` (industrial|academic — the plainness dial, orthogonal to funder-family:
+    ARC LP is ARC yet industrial), `funder_family`; plus a `requires` list naming the deliverables
+    to build. Gate: run only when the scheme declares a `classification` block (legacy IRs SKIP —
+    the pipeline falls back to `mode`). Fail-closed: an unknown instrument/register, a `requires`
+    entry outside the closed deliverable vocabulary, or an AWARD that nonetheless requires a
+    budget/plan (a contradiction — an award funds no project) is a hard FAIL. A GRANT that requires
+    nothing to build is a soft WARN (unusual — confirm it truly has no budget/work_plan).
+    """
+    cls = scheme.get("classification")
+    if not isinstance(cls, dict) or not cls:
+        rep.add("classification", "SKIP", "soft",
+                "scheme declares no A0 classification block — pipeline falls back to `mode`")
+        return
+    problems = []
+    instrument = cls.get("instrument")
+    if instrument not in INSTRUMENT_VOCAB:
+        problems.append(f"instrument {instrument!r} not in {sorted(INSTRUMENT_VOCAB)}")
+    register = cls.get("register")
+    if register is not None and register not in REGISTER_VOCAB:
+        problems.append(f"register {register!r} not in {sorted(REGISTER_VOCAB)}")
+    req = cls.get("requires")
+    if req is not None and not isinstance(req, list):
+        problems.append(f"requires {req!r} is not a list")
+        req = None
+    unknown = [d for d in (req or []) if d not in DELIVERABLE_VOCAB]
+    if unknown:
+        problems.append(f"requires has unknown deliverable(s) {unknown} "
+                        f"not in {sorted(DELIVERABLE_VOCAB)}")
+    if problems:
+        rep.add("classification", "FAIL", "hard", "; ".join(problems) + " (fail-closed)")
+        return
+    # consistency: an award funds no project → must require none; a grant normally builds ≥1
+    if instrument == "award" and req:
+        rep.add("classification", "FAIL", "hard",
+                f"instrument=award but requires {req} — an award funds no project, so it needs no "
+                "budget/work_plan/in_kind/stipend (fail-closed)")
+        return
+    if instrument == "grant" and not req:
+        rep.add("classification", "WARN", "soft",
+                "instrument=grant but requires is empty — a grant normally builds at least a "
+                "budget or work_plan; confirm this scheme genuinely demands neither")
+        return
+    reg = f", register {register}" if register else ""
+    fam = f", funder_family {cls.get('funder_family')}" if cls.get("funder_family") else ""
+    rep.add("classification", "PASS", "hard",
+            f"instrument {instrument}{reg}{fam} — requires {req or []}")
+
+
+# ── project-substance passes (checks 13–16, gated on classification.requires[work_plan]) ──
 def _nonempty(v):
     """Fail-closed truthiness: a present-but-empty field (None, "", "  ") is NOT satisfied."""
     if v is None:
