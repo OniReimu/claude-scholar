@@ -625,7 +625,8 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 > chain informally; this pass makes it a **stable-id spine** `validate_ir.py` can verify deterministically —
 > every activity carries an id and traces **UP** (aim→objective→task→subtask→output→benefit) and **ACROSS**
 > (task→person→year→budget→evidence). Where §2.14–§2.17 each render one register block, this pass reconciles
-> them into one referentially-consistent whole. Runs only in `prospective-project` with a `--plan` spine
+> them into one referentially-consistent whole. Runs when the scheme REQUIRES a work_plan
+> (`classification.requires`; legacy fallback `prospective-project` mode) with a `--plan` spine
 > present (else SKIP, labelled). The register is the source of truth: the spine is *encoded, not asserted* —
 > a family of "does everything line up" stylistic checks turned into a deterministic fail-closed validator.
 - **Does:** render and reconcile the traceability spine from `project-plan.yaml` (`objectives[]`, `tasks[]`,
