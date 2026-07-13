@@ -119,6 +119,15 @@ draft assigns them). Every enriched fact carries a `provenance` URL + `as_of`; a
 (legal name, lead of record) still needs the partner's own confirmation, so enrichment INFORMS but
 does not replace `[VERIFY]`.
 
+**Reusable institutional + applicant profiles cut `[TO SET]` noise.** Keep a standing profile for the
+lead organisation (legal name, ABN, address, org type, standard institutional-support language) and for
+each applicant (CV base, publications, funding, supervision), amortised across every application. Admin
+fields whose answer is a KNOWN institutional fact (UTS's ABN/address, "eligible HESA-2003 institution")
+should fill FROM that profile, not be dumped to `[TO SET]` — reserve `[TO SET]`/`[VERIFY]` for what is
+genuinely unknown or must be confirmed this round. The applicant profile is the `research-profile-evidence-base`
+graduation of Stage B; it also drives a length-adaptive CV (the same profile → a 2-page or 6-page CV per
+the scheme's requirement).
+
 ## IO contract
 
 ```
