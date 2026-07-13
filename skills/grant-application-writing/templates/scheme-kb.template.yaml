@@ -1,0 +1,62 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# scheme-kb.yaml — per-SCHEME accumulating knowledge base  [TEMPLATE]
+# ─────────────────────────────────────────────────────────────────────────────
+# A standing, year-over-year knowledge base for ONE scheme (e.g. "ARC DECRA", "CRC-P"),
+# amortised across every round you apply to it (meeting #16/35/82: "marketing/selection
+# criteria 和往届 reviewer 意见都可以作为知识库逐渐累积；drafted 内容要跟 marketing criteria
+# 对应"). This is INSTANCE DATA that ACCUMULATES over time — like `rate-table.yaml` (year-
+# varying rates) and a tier-table — NOT hardcoded in the skill; each round you append what you
+# learned. It is scheme-scoped (persists across applications), distinct from a single
+# application's `scheme.yaml` (this round's parsed form) and `evidence-store.yaml` (your record).
+#
+# Consumed by method-passes.md §4.1 (reviewer/panel tailoring): the `reviewer_model`'s scoring
+# emphasis + red-flags are built FROM this empirical record, not guessed. Ships PLACEHOLDERS ONLY.
+#
+# HONESTY: `reviewer_comments` are the assessor's OWN words (or a faithful paraphrase with a
+# source) — never invent a reviewer quote. An unsourced "lesson" is your inference, tag it so.
+# Whether a draft ADDRESSES a past concern is a JUDGEMENT (a review pass), not a mechanical check —
+# this KB informs the adversarial review, it does not auto-pass anything.
+# ─────────────────────────────────────────────────────────────────────────────
+
+scheme: "<e.g. ARC DECRA | CRC-P | DFAT bilateral>"       # the scheme this KB is for (matches scheme.yaml `scheme`)
+funder_family: "<ARC | NHMRC | CRC-P | DFAT | ...>"
+last_updated: "<YYYY-MM-DD>"
+
+# ─── Marketing / selection criteria (the ARC term for the scored criteria) ───
+# The scheme's PUBLISHED scored criteria, verbatim + your interpretation + what an assessor
+# actually looks for. These should RECONCILE with this round's parsed `scheme.yaml` rubric —
+# the KB carries the durable interpretation; scheme.yaml carries this round's exact weights/limits.
+selection_criteria:
+  - id: "<crit-1>"
+    text: "<the criterion verbatim from the guidelines>"
+    weight: "<e.g. 40% (from this round's guidelines; may drift year to year)>"
+    interpretation: "<what this criterion REALLY tests, in plain terms>"
+    what_assessors_look_for:                             # concrete signals that score well / poorly here
+      - "<a concrete positive signal>"
+      - "<a concrete thing that loses marks>"
+    source: "<guidelines PDF / URL + as_of>"
+
+# ─── Past reviewer / panel comments (the empirical calibration — accumulate every round) ───
+# ARC and some schemes release assessor comments ("pings"). Record them faithfully; each teaches
+# what the panel rewards or punishes. `sentiment`: praise | concern | neutral. `verbatim` is the
+# assessor's own words (NEVER fabricated); `lesson` is your takeaway (tag inference vs quote).
+reviewer_comments:
+  - round: "<YYYY>"
+    criterion: "<crit-1 | general>"
+    sentiment: "<praise | concern | neutral>"
+    verbatim: "<the assessor's own words — do NOT invent>"
+    lesson: "<what to do differently / keep doing next round>"
+    source: "<rejoinder pack / feedback letter / where this came from>"
+
+# ─── Known failure modes (what commonly sinks an application to THIS scheme) ───
+failure_modes:
+  - mode: "<e.g. treats a desirable criterion as the main case and under-answers a must>"
+    signal: "<how to detect it in a draft>"
+    fix: "<how to avoid it>"
+
+# ─── Exemplars (pointers to strong past applications — anonymised / access-controlled) ───
+# NEVER paste a third party's application text here; a pointer + a note on WHY it worked only.
+exemplars:
+  - ref: "<path / citation to a strong past application you may reference>"
+    why_it_worked: "<the structural / framing lesson to reuse>"
+    use_permission: "<internal | with-consent>"          # respect the owner's permission — a pointer, not a copy
