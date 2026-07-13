@@ -157,7 +157,7 @@ Key files:
 - **hook-development**: Hook development and event handling
 - **mcp-integration**: MCP server integration
 
-### 🧪 Tools & Utilities (4 skills)
+### 🧪 Tools & Utilities (3 skills)
 
 - **planning-with-files**: Planning and progress tracking with Markdown files
 - **uv-package-manager**: uv package manager usage
