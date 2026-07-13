@@ -173,9 +173,13 @@ budget. It is **three orthogonal facets, not a tree** (see the ARC-LP correction
 - **Classify by the FORM's real structure, NOT the colloquial name.** "Award" is ambiguous: a UTS
   ECR *award* is a pure prize (no budget) → `instrument: award`; an **ARC DECRA** is *named* a
   fellowship/award but **funds a project with a budget + work-plan** → `instrument: grant` (even
-  though its `mode` is `narrative-award`). The trigger for "skip the budget/plan machinery" is
-  **"the form has no budget/plan/in-kind/stipend fields"**, never "the title says award". When the
-  form has budget/plan fields, it is a grant regardless of what it's called.
+  though its `mode` is `narrative-award`). In fact **EVERY ARC scheme — DP, LP, DECRA, FT — carries a
+  budget + work-plan, so all are `instrument: grant`**; DECRA and Future Fellowship are simply the two
+  whose "fellowship/award" naming most tempts a wrong `award` call. The `mode` axis only changes what
+  the panel WEIGHTS (track record vs project), never whether a budget exists — which is exactly why
+  budget/plan is gated on `instrument`/`requires`, not on `mode`. The trigger for "skip the budget/plan
+  machinery" is **"the form has no budget/plan/in-kind/stipend fields"**, never "the title says award".
+  When the form has budget/plan fields, it is a grant regardless of what it's called.
 - **`register` is ORTHOGONAL to `funder_family` — `industrial` ≠ non-ARC.** An **ARC Linkage (LP)**
   is ARC yet **industrial** (industry partner, co-contribution, commercialisation → PLAIN language);
   **ARC DP/DECRA/FT** are **academic** (pure research panel). CRC-P, AEA, DFAT/AVSTICI are industrial
