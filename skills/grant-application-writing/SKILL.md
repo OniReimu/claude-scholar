@@ -235,6 +235,15 @@ panel → academic** register. A CRC-P written like a NeurIPS paper, or an ARC w
 both mis-pitch the reader. Set the dial from the funder-family before drafting, and keep the
 **plain-language public-summary field plain in every scheme**.
 
+**Concrete ARC density (the "between" is specific, not vague).** An ARC technical description is NOT a
+paper: use **at most ~1–4 formulas** where they genuinely aid precision, **describe the model/approach
+briefly** rather than deriving it, and **include NO experiment figures/results** (there are no results
+yet — an ARC funds future work; a systems/architecture schematic is fine, a benchmark plot is off-genre).
+This is the meeting's "不至于到 paper 那种专业程度，可能有 1-2 个或 3-4 个式子……肯定不会放实验图，稍微说
+一下 model". Align the content to the scheme's **marketing / selection criteria** (the ARC term for its
+scored criteria) — the drafted substance should map onto them, and where available, past reviewer
+comments for the scheme calibrate what the panel weights (accumulate these as instance data over time).
+
 ## Assessment-process dispatch (axis 2 — do this SECOND, after mode)
 
 `mode` fixes what you're judged on; `process` fixes **how the competition is structured** — and
