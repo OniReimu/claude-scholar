@@ -194,7 +194,12 @@ budget. It is **three orthogonal facets, not a tree** (see the ARC-LP correction
   **ARC DP/DECRA/FT** are **academic** (pure research panel). CRC-P, AEA, DFAT/AVSTICI are industrial
   (non-ARC); NHMRC Ideas/Investigator are academic (non-ARC). So ARC spans BOTH — do not infer the
   register from whether it's an ARC scheme; infer it from **whether there is an industry partner /
-  commercialisation / co-contribution**. `register` sets the plainness dial (industrial → 大白话).
+  commercialisation / co-contribution**. `register` sets the plainness dial (industrial → 大白话) AND
+  the **literature-review shape** (method-passes §2.11(i)): **academic → a genuine literature review**
+  (position against prior art, cite it, name the gap); **industrial → story completeness**
+  (problem→solution→benefit), where a thin lit-review is EXPECTED, not a defect — don't flag an
+  industrial application for lacking a scholarly review it was never meant to carry (meeting: "research
+  类要 literature review；industry 类主要是故事完整性").
 
 **`instrument` is a THIRD axis, orthogonal to `mode` and `process`, and it is what fixes the earlier
 conflation**: `mode` is what you're *judged on* (track-record vs project vs past-impact); `instrument`
