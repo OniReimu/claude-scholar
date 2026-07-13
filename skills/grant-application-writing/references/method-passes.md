@@ -424,9 +424,11 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
 > render project SUBSTANCE from a **structured project-plan register** — the `project-plan.yaml`
 > sidecar (B3, `evidence-store.md`), one per application, read by `validate_ir.py --plan`. Each
 > DEEPENS an earlier pass (its coverage counterpart) and is mechanized by a named `validate_ir.py`
-> check, fail-closed on the same BLOCK-vs-WARN discipline as §2.12/§2.13/§4.4. They run **only when
-> `mode = prospective-project`**; outside project mode (or with no `--plan` supplied) they SKIP,
-> labelled. The register is the source of truth: substance is *rendered from structure, not asserted
+> check, fail-closed on the same BLOCK-vs-WARN discipline as §2.12/§2.13/§4.4. They run **when the
+> scheme's Stage-A0 `classification.requires` includes `work_plan`** (legacy fallback: `mode =
+> prospective-project`) — so a DECRA (mode=narrative-award, instrument=grant) still runs them;
+> a pure award (`requires: []`) or a scheme with no `--plan` SKIPs, labelled. The register is the
+> source of truth: substance is *rendered from structure, not asserted
 > in prose*, and a present-but-empty register field is a load-bearing gap, never a silent default.
 
 ### 2.14 research-design adequacy (deepens §2.3 methods-feasibility; register-driven)
