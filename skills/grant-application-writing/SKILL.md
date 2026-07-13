@@ -149,7 +149,50 @@ OUTPUT  the SAME form, filled, in its native modality
                               can't auto-fill (partner + lead-org letters of support), [TO SET]-marked
 ```
 
-## Dispatch is TWO axes
+## Stage-A0 classification (do this FIRST — before mode/process dispatch)
+
+Before the two dispatch axes, run ONE up-front classification (the funding-application analog of a
+paper skill deciding "security / benchmark / SoK" first): from the guidelines + the blank form's
+actual structure, decide **what KIND of instrument this is** and record it as a `classification`
+block in `scheme.yaml`. It routes which builders and validation passes run at all — get it wrong and
+you either over-engineer a prize with a budget it doesn't have, or skip a fellowship's mandatory
+budget. It is **three orthogonal facets, not a tree** (see the ARC-LP correction below):
+
+| facet | values | decides | judged BY |
+|-------|--------|---------|-----------|
+| **`instrument`** | `award` · `grant` | **which deliverables to build** (`requires`) | **the form's STRUCTURE, not its name** |
+| **`register`** | `industrial` · `academic` | the plainness dial (§ funder-family) | is there an **industry partner / commercialisation / co-contribution**? |
+| **`funder_family`** | ARC · NHMRC · CRC-P · DFAT · NSF · ERC · internal · industry | scheme-specific conventions (ROPE/FoR for ARC…) | who runs the scheme |
+
+- **`instrument` → `requires: []`.** A pure **award** (prize, medal, gift award — UTS ECR, most
+  internal/industry awards) funds no project: it has **no budget, no work-plan, no in-kind, no
+  stipend** → `requires: []`, and the pipeline **skips B3/B4/B4s, `build_budget`, `build_timeline`,
+  in-kind, stipend, and validate_ir checks 13–16 & 19**. A **grant** funds a future project →
+  `requires` lists the deliverables it demands (`[budget, work_plan, in_kind, co_contribution, …]`)
+  and those builders/passes run. This is the meeting's "别过度工程化 an award".
+- **Classify by the FORM's real structure, NOT the colloquial name.** "Award" is ambiguous: a UTS
+  ECR *award* is a pure prize (no budget) → `instrument: award`; an **ARC DECRA** is *named* a
+  fellowship/award but **funds a project with a budget + work-plan** → `instrument: grant` (even
+  though its `mode` is `narrative-award`). The trigger for "skip the budget/plan machinery" is
+  **"the form has no budget/plan/in-kind/stipend fields"**, never "the title says award". When the
+  form has budget/plan fields, it is a grant regardless of what it's called.
+- **`register` is ORTHOGONAL to `funder_family` — `industrial` ≠ non-ARC.** An **ARC Linkage (LP)**
+  is ARC yet **industrial** (industry partner, co-contribution, commercialisation → PLAIN language);
+  **ARC DP/DECRA/FT** are **academic** (pure research panel). CRC-P, AEA, DFAT/AVSTICI are industrial
+  (non-ARC); NHMRC Ideas/Investigator are academic (non-ARC). So ARC spans BOTH — do not infer the
+  register from whether it's an ARC scheme; infer it from **whether there is an industry partner /
+  commercialisation / co-contribution**. `register` sets the plainness dial (industrial → 大白话).
+
+**`instrument` is a THIRD axis, orthogonal to `mode` and `process`, and it is what fixes the earlier
+conflation**: `mode` is what you're *judged on* (track-record vs project vs past-impact); `instrument`
+is what you must *build* (does a budget/plan exist to construct at all). A DECRA is `mode:
+narrative-award` (judged on track record) **and** `instrument: grant` (has a budget). The old gate ran
+the budget/plan passes on `mode == prospective-project`, which wrongly SKIPped a DECRA's budget —
+`validate_ir` now gates them on `classification.requires` (check 21 validates the block; a legacy
+scheme with no block falls back to the `mode` heuristic). Set `instrument`/`register` at A0, THEN mode,
+THEN process.
+
+## Dispatch is TWO axes (mode × process — after A0 classification)
 
 Route every scheme on **two orthogonal axes** before drafting: `mode` (what you're judged ON)
 selects the register + method-pass group; `process` (how the judging is STRUCTURED) selects the
