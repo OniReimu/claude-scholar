@@ -41,6 +41,11 @@ check rather than a manual read.
 
 ```yaml
 scheme: "Example ECR Grant"    # human name (an ECR scheme)
+classification:                                # AXIS 0 (Stage-A0 dispatch) — set FIRST, from the FORM's structure not its name
+  instrument: award                            #   award | grant — an award funds no project; a grant does
+  register: academic                           #   industrial | academic — industry-partnered (ARC LP, CRC-P, DFAT) vs pure-academic (ARC DP/DECRA/FT); ORTHOGONAL to funder_family
+  funder_family: ARC                           #   ARC | NHMRC | CRC-P | DFAT | NSF | ERC | internal | industry — scheme-specific conventions
+  requires: []                                 #   deliverables to build ⊆ {budget, work_plan, in_kind, stipend, co_contribution}; award ⇒ [] (skip B3/B4/B4s + validate_ir 13–16,19); a grant lists what it demands
 mode: narrative-award                          # AXIS 1 — narrative-award | prospective-project | retroactive-impact
 process: [single-stage-review, panel-routed]   # AXIS 2 — SET from the closed archetype vocab (see below); selects Group-5 overlays
 rejoinder: {enabled: true, window: "10 working days", char_limit: 2000}  # within-round right-of-reply CAPABILITY (single-stage-review may carry it); omit if none
