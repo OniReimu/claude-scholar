@@ -95,7 +95,11 @@ These sit alongside Core discipline and govern HOW the output is packaged and dr
    extends"); a full background paragraph in a project field is wasted words and reads as padding. When
    a short field is over-limit, the first thing to cut is background; when it is under-limit, add
    project substance, never more history. (This is exactly the meeting feedback: "背景放太多、太琐碎；
-   给一无所知的人看的，不必了解你之前做过什么，主要是这个项目做什么".)
+   给一无所知的人看的，不必了解你之前做过什么，主要是这个项目做什么".) **Never fabricate to hit the
+   count.** The ≥90% target is for REAL substance, not a licence to pad — under limit-pressure a model
+   tends to invent (the meeting's "撑到 200 字→硬编/运编"). If a field is under-limit and there is no more
+   genuine project substance, LEAVE it short and flag the gap (`[TO SET]` / a HUMAN-ACTIONS note) — an
+   honestly-short field beats an invented sentence the assessor (or the applicant) then has to catch.
 5. **Single source of truth — paired machine/human artifacts MUST NOT drift.** Several outputs exist
    as a machine copy + a human copy of the SAME facts: `blockers.yaml` ↔ `blockers.md` ↔
    `HUMAN-ACTIONS.md`; `entity-store` contributions ↔ the budget contributions table; `budget.yaml`
