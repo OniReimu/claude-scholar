@@ -1943,6 +1943,21 @@ rows:
     assert any(e[1] == "SKIP" for e in risks(scheme_pp, {}, "submission")), \
         "absent --plan must SKIP the risk-triggers pass"
 
+    # DECRA gap (the classification fix): a narrative-award-MODE scheme whose A0 classification
+    #     requires a work_plan must STILL run the project-substance passes — the old
+    #     `mode == prospective-project` gate wrongly SKIPped a DECRA's budget/plan. Conversely an
+    #     award (requires: []) must SKIP them even if a plan leaks in.
+    decra = _clean_scheme(); decra["mode"] = "narrative-award"
+    decra["classification"] = {"instrument": "grant", "register": "academic",
+                               "requires": ["budget", "work_plan"]}
+    decra_adq = design_adq(decra, plan, "submission")
+    assert (any(e[1] == "PASS" for e in decra_adq) and not any(e[1] == "SKIP" for e in decra_adq)), \
+        "a narrative-award scheme requiring a work_plan must RUN design-adequacy (DECRA gap fixed)"
+    award = _clean_scheme(); award["mode"] = "narrative-award"
+    award["classification"] = {"instrument": "award", "register": "academic", "requires": []}
+    assert any(e[1] == "SKIP" for e in design_adq(award, plan, "submission")), \
+        "an award (requires: []) must SKIP the project-substance passes even with a plan present"
+
     # 13. research-design-adequacy — uncovered aim (design row removed) FAILs submission / WARNs draft
     p13 = _plan(); p13["design"] = []
     assert any(e[1] == "FAIL" and e[0].startswith("research-design-adequacy[")
