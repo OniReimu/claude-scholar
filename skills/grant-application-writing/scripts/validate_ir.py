@@ -1557,6 +1557,7 @@ def orchestrate(scheme_path, values_path=None, evidence_path=None, entity_path=N
     print(f"IR integrity dry-run — scheme: {scheme.get('scheme', scheme_path)} "
           f"[{scheme.get('mode', '?')}] — readiness mode: {mode}\n" + "-" * 72)
     check_schema(rep, scheme)
+    check_classification(rep, scheme)
     check_allocation(rep, scheme, values)
     check_contribution(rep, scheme, entity, bdata)
     check_partner_commitment_reconciliation(rep, scheme, entity, bdata, mode)
