@@ -441,6 +441,18 @@ Run these *in addition* to Group 1 when `mode = prospective-project`.
   method). Write the full design in a supporting note (e.g. `sorting-design.md`) and a compact
   concrete version in the scored field. A field that names an activity without its mechanism is a
   flagged gap, exactly like an unmeasured aim.
+- **⚠️ CORPUS-FIRST — two branches, and MINE the corpus before concluding a design is absent.**
+  (1) **If the corpus already supplies the design — USE IT DIRECTLY.** A mechanism, a prior/related
+  system, spec sheets, a diagram, or a **prior application in the same domain** (a related
+  CRC-P/Linkage/ARC the applicant already wrote) is the applicant's REAL design — render it faithfully
+  with **corpus provenance** and do NOT overwrite, dilute, or re-flag it as merely "proposed". Before
+  authoring anything, search every corpus file (especially prior applications) for existing design
+  language — a generic invention that ignores the applicant's own words is a provenance failure, not
+  a helpful fill. (2) **Only where the corpus genuinely lacks the design does the agent AUTHOR** a
+  concrete standard one, marked `[DOMAIN-EXPERT TO VERIFY]`. In a mixed case, SEPARATE the two:
+  corpus-sourced elements carry provenance and stand as the applicant's design; only the specifics
+  the agent added to fill a real gap carry the marker. Never blanket-flag a whole design as
+  "proposed" when half of it came from the corpus.
 - **Does:** for every `aims[]` entry, confirm the `design[]` register answers it — pre-empting the
   panel's "the methodology won't produce the claimed knowledge." Reads each aim's
   `success_criterion` (the measurable definition-of-done) against its design rows on four couplings:
