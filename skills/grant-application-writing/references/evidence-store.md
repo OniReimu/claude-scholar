@@ -624,7 +624,9 @@ it is **PROJECT-SPECIFIC**, one `project-plan.yaml` per application, living in t
 application's own folder. It does not hold track record or people/orgs — it holds **the
 project itself**, so that a demanding `prospective-project` panel scores substance *rendered
 from structure*, not asserted in prose. Template: `templates/project-plan.template.yaml`;
-validated by `validate_ir.py --plan`; consumed ONLY in `prospective-project` mode.
+validated by `validate_ir.py --plan`; consumed when the scheme REQUIRES a work_plan
+(`classification.requires`; legacy fallback: `prospective-project` mode) — so a DECRA
+(narrative-award mode, grant instrument) consumes it too.
 
 Five top-level registers carry the four things such a panel actually stress-tests:
 
