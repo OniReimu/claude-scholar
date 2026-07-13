@@ -222,7 +222,11 @@ a real application is **human work the skill cannot do** — a partner confirmin
 Research Office signing a letter, a person deciding a title or an amount. So **every run ends by
 writing two things into the application's OWN folder** (never into this skill):
 
-**1. `HUMAN-ACTIONS.md` — the plain-language handoff.** The readable twin of `blockers.md`. Rules:
+**1. `HUMAN-ACTIONS.md` — the plain-language handoff.** The readable twin of `blockers.md` (itself the
+readable twin of `blockers.yaml`). These THREE carry the same open items at three registers — machine,
+technical-human, plain-human — and MUST be kept in sync: change one, change all (SKILL.md
+Output-convention #5). Editing `blockers.yaml` and leaving `blockers.md`/`HUMAN-ACTIONS.md` stale ships
+a contradiction. Rules:
 - **Jargon-free.** No gate ids, no `criterion-readiness`, no `[TO SET]` left raw — translate each into
   a person's terms ("get HCMUT to confirm in writing that they will submit their side with the same
   title, or the application is ineligible"). If a sentence needs the reader to know the skill's
