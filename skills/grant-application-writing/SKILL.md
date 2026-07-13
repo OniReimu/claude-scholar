@@ -1,7 +1,7 @@
 ---
 name: grant-application-writing
 description: This skill turns a blank funding form (Word / PDF / web-portal) plus a directory of an academic's materials into a filled, submission-ready application. Covers competitive research funding — grants, fellowships, awards, nominations (写本子) — across three modes (narrative track-record award, prospective project grant, retroactive impact) and many schemes (ARC, NHMRC, ERC, NSF, CRC-P, AEA, EF, industry, internal). Use for eligibility analysis, parsing a scheme into a form-schema, building a reusable evidence store, drafting each field to its rubric criterion + weight, claim/verb defensibility, anti-double-counting, budget-math and compliance checks, adversarial review, and rendering to the form's native modality (paste-ready, .docx, AcroForm PDF). Do not use for journal/conference papers (ml-paper-writing), citation-only checks (citation-verification), rebuttal drafting (review-response), general docs/proposals not tied to a funding form (doc-coauthoring), or figure rendering (paper-figure-generator).
-version: 0.3.0
+version: 0.4.0
 author: Orchestra Research
 license: MIT
 tags: [Grant Writing, Fellowship, Award, ARC, NHMRC, ERC, NSF, CRC-P, AEA, Research Funding, Applications, 本子]
