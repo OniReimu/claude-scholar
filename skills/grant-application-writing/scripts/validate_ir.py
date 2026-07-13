@@ -1882,8 +1882,31 @@ rows:
             and not any(e[1] == "FAIL" for e in staged_drf)), \
         "same staged scheme only WARNs in draft mode"
 
-    # 13–16. project-substance passes (prospective-project mode + --plan). Call each check
-    #     directly (mirrors #10/#11/#12): a complete plan PASSes; a broken register (uncovered
+    # 21. classification — call directly: a valid grant classification PASSes; an award that
+    #     requires a budget is a contradiction (FAIL); an unknown instrument/register FAILs; a
+    #     grant that builds nothing WARNs; no block → SKIP. Fictional schemes only.
+    def classify(cls):
+        r = Report(); check_classification(r, {"classification": cls}); return r.entries
+
+    assert any(e[1] == "PASS" for e in classify(
+        {"instrument": "grant", "register": "industrial", "funder_family": "DFAT",
+         "requires": ["budget", "work_plan", "in_kind"]})), \
+        "a valid grant classification must PASS"
+    assert any(e[1] == "FAIL" for e in classify({"instrument": "award", "requires": ["budget"]})), \
+        "an award that requires a budget is a contradiction — must FAIL (fail-closed)"
+    assert any(e[1] == "FAIL" for e in classify({"instrument": "prize"})), \
+        "an unknown instrument must FAIL (fail-closed)"
+    assert any(e[1] == "FAIL" for e in classify(
+        {"instrument": "grant", "register": "commercial", "requires": ["budget"]})), \
+        "an unknown register must FAIL (fail-closed)"
+    assert any(e[1] == "WARN" for e in classify({"instrument": "grant", "requires": []})), \
+        "a grant that builds nothing must WARN"
+    r_noc = Report(); check_classification(r_noc, {})
+    assert any(e[1] == "SKIP" for e in r_noc.entries), \
+        "a scheme with no classification block must SKIP (legacy → fall back to mode)"
+
+    # 13–16. project-substance passes (gated on classification.requires[work_plan] + --plan). Call
+    #     each check directly (mirrors #10/#11/#12): a complete plan PASSes; a broken register (uncovered
     #     aim / ownerless benefit / missing counterfactual / triggerless high-impact risk) FAILs
     #     submission and only WARNs draft; a present-but-empty field is never green-washed; a
     #     non-project scheme (or absent plan) SKIPs the whole pass.
