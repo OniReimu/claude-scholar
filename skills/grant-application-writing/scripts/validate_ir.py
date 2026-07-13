@@ -31,9 +31,11 @@ their exit codes + output fold into this report), never reimplemented here.
                         phases/routing fields/rejoinder it implies; an unknown process tag, or
                         a missing process on a scheme that HAS a rubric, is a hard FAIL.
 
-Checks 13–16 are `prospective-project`-mode project-substance passes reading the `--plan`
-project-plan.yaml sidecar (aims/design, benefits, additionality, risks registers). Each is
-gated on `mode == prospective-project` AND a supplied `--plan`; otherwise a labelled SKIP.
+Checks 13–16 are project-substance passes reading the `--plan` project-plan.yaml sidecar
+(aims/design, benefits, additionality, risks registers). Each is gated on the scheme REQUIRING a
+work_plan (`classification.requires`; legacy fallback: `mode == prospective-project`) AND a
+supplied `--plan`; otherwise a labelled SKIP. So a DECRA (mode=narrative-award, instrument=grant)
+still runs them — see check 21.
 When the register IS present they are fail-closed — a present-but-empty field is never
 green-washed. `--mode submission` FAILs, `--mode draft` WARNs (mirrors criterion-readiness).
 
