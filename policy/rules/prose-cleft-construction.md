@@ -12,7 +12,7 @@ check_kind: regex
 enforcement: lint_script
 params: {}
 conflicts_with: []
-constraint_type: guardrait
+constraint_type: guardrail
 autofix: none
 lint_patterns:
   - pattern: "\\b(which|that) is what\\b"
