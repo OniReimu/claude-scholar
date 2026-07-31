@@ -64,4 +64,6 @@ That is what sets the effective vote count.
 That sensitivity is what Adaptive-K needs.
 The estimator has been validated for decades, which is what makes a measured $c$ trustworthy.
 What the intervention establishes is that $\hat{c}$ is not fixed by the question set.
+What Table 3 decides is narrower.
+What Adaptive-K does is select the operating point.
 ```
