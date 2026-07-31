@@ -53,6 +53,7 @@ lint_targets: "**/*.tex"
 ```latex
 The measured correlation sets the effective vote count.
 Adaptive-K depends on that sensitivity.
+Table 3 settles a narrower point.
 The estimator has been validated for decades, which is why a measured $c$ can be trusted.
 ```
 
