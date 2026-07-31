@@ -42,7 +42,8 @@ lint_targets: "**/*.tex"
 
 - **regex 搜索**：`which/that is what`、`What X is/does/makes` 前置、`It is X that VERB`
 - **检查范围**：`.tex` 正文；rebuttal / response 的 markdown 由 `writing-anti-ai` 工作流人工过一遍，linter 的 `lint_targets` 只吃单一扩展名
-- **已知误报**：`It is now run to that specification` 这类"介词 + that"不是分裂句，pattern 3 通过要求 `that` 后接动词来规避，仍需人工确认
+- **pattern 3 的主语字符集**（2026-08-01 修）：原写作 `What [a-z][a-z ]{2,28}`，只吃小写字母和空格，凡是主语以大写、数字、连字符或数学符号开头/含有的分裂句全部漏检（`What Table 3 decides is`、`What Adaptive-K does is`、`What $\hat{c}$ measures is`）。现为 `What [A-Za-z$][A-Za-z0-9$\\{}^_@ -]{2,28}`，覆盖专有名词、表号图号、带连字符的方法名、行内数学。**字符集刻意不含 `.`**，否则会跨句边界误匹配（`We ran it. What follows is` 之类）
+- **已知误报**：`It is now run to that specification` 这类"介词 + that"不是分裂句，pattern 4 通过要求 `that` 后接动词来规避，仍需人工确认；`What follows is X` 是常规 fused relative，会被 pattern 3 命中，按行文判断保留或改写
 - **不适用**：直接引语内部（引审稿人或他人原文时保持原样），以及附录里引用的 prompt 模板字符串（如 ``What would a teacher say is the correct answer?''），那是被测材料而非论文行文
 
 ## Examples
