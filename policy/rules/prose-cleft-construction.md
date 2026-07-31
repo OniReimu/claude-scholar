@@ -15,9 +15,11 @@ conflicts_with: []
 constraint_type: guardrail
 autofix: none
 lint_patterns:
-  - pattern: "\\b(which|that) is what\\b"
+  - pattern: "\\b(Which|which|That|that) is what\\b"
     mode: match
-  - pattern: "\\bWhat [a-z][a-z ]{2,28} (is|does|makes|made|sets|gives)\\b"
+  - pattern: "\\b(is|was) what [^.]{2,30}(needs|does|makes|sets|gives|requires|determines)\\b"
+    mode: match
+  - pattern: "\\bWhat [A-Za-z$][A-Za-z0-9$\\\\{}^_@ -]{2,28} (is|does|makes|made|sets|gives)\\b"
     mode: match
   - pattern: "\\bIt is [a-z][^.]{2,35} that (is|was|are|were|has|have|had|makes|made|sets|gives|governs|drives|determines)\\b"
     mode: match
@@ -41,7 +43,7 @@ lint_targets: "**/*.tex"
 - **regex 搜索**：`which/that is what`、`What X is/does/makes` 前置、`It is X that VERB`
 - **检查范围**：`.tex` 正文；rebuttal / response 的 markdown 由 `writing-anti-ai` 工作流人工过一遍，linter 的 `lint_targets` 只吃单一扩展名
 - **已知误报**：`It is now run to that specification` 这类"介词 + that"不是分裂句，pattern 3 通过要求 `that` 后接动词来规避，仍需人工确认
-- **不适用**：直接引语内部（引审稿人或他人原文时保持原样）
+- **不适用**：直接引语内部（引审稿人或他人原文时保持原样），以及附录里引用的 prompt 模板字符串（如 ``What would a teacher say is the correct answer?''），那是被测材料而非论文行文
 
 ## Examples
 
