@@ -123,7 +123,10 @@ For every user message, scan the available skills list.
 
 If the runtime already provided a skills list, do NOT treat the hardcoded list below as exhaustive.
 
-**Full skill catalog**: See `references/skill-catalog.md` for the complete skill list with trigger conditions, organized by category (Research & Analysis, Paper Writing & Publication, Development, Plugin Development, Tools & Utilities, Web Design, System).
+**Full skill catalog**: See `references/skill-catalog.md` for the complete skill list with trigger conditions, organized by category (Research & Analysis, Paper Writing & Publication, Development, Security Audit, Plugin Development, Tools & Utilities, Web Design, System).
+
+**Domain routing shortcuts** (high-recall triggers that are easy to miss in a generic scan):
+- Any `.circom` file, Circom template, or ZK-circuit soundness/under-constrained question → `circom-auditor` (not `code-review-excellence`, not `bug-detective`).
 
 ### Step 2: Decide
 
