@@ -652,6 +652,7 @@ This project is inspired by and builds upon excellent work from the community:
 
 - **[everything-claude-code](https://github.com/anthropics/everything-claude-code)** - Comprehensive resource for Claude Code CLI
 - **[AI-research-SKILLs](https://github.com/zechenzhangAGI/AI-research-SKILLs)** - Research-focused skills and configurations
+- **[zk-skills](https://github.com/zksecurity/zk-skills)** (MIT, zkSecurity) - ZK circuit security skills; `circom-auditor` is vendored via the `vendor/zk-skills` submodule
 
 These projects provided valuable insights and foundations for the research-oriented features in Claude Scholar.
 
