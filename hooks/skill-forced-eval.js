@@ -42,6 +42,22 @@ if (userPrompt.startsWith('/')) {
 
 const homeDir = os.homedir();
 
+// List skill directories, including symlinked ones (vendored skills such as
+// circom-auditor / fireworks-tech-graph are symlinks into vendor/).
+function listSkillDirs(dirPath) {
+  return fs.readdirSync(dirPath, { withFileTypes: true })
+    .filter(d => {
+      if (d.isDirectory()) return true;
+      if (!d.isSymbolicLink()) return false;
+      try {
+        return fs.statSync(path.join(dirPath, d.name)).isDirectory();
+      } catch {
+        return false; // broken symlink
+      }
+    })
+    .map(d => d.name);
+}
+
 // Dynamically collect skill list
 function collectSkills() {
   const skills = [];
@@ -50,10 +66,7 @@ function collectSkills() {
 
   function collectLocalSkills(skillsDirPath) {
     if (!fs.existsSync(skillsDirPath)) return;
-    const skillDirs = fs.readdirSync(skillsDirPath, { withFileTypes: true })
-      .filter(d => d.isDirectory())
-      .map(d => d.name);
-    for (const skillName of skillDirs) {
+    for (const skillName of listSkillDirs(skillsDirPath)) {
       skills.push(skillName);
     }
   }
