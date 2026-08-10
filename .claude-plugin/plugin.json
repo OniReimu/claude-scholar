@@ -19,6 +19,9 @@
     "skills",
     "workflow",
     "hooks",
-    "agents"
+    "agents",
+    "circom",
+    "zero-knowledge",
+    "security-audit"
   ]
 }
