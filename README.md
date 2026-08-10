@@ -486,8 +486,12 @@ claude plugin install claude-scholar@claude-scholar
 Complete setup by cloning directly to `~/.claude`:
 
 ```bash
-# Clone the repository
-git clone https://github.com/OniReimu/claude-scholar.git ~/.claude
+# Clone the repository (--recursive pulls vendored skills:
+# scientific-figure-making, fireworks-tech-graph, circom-auditor)
+git clone --recursive https://github.com/OniReimu/claude-scholar.git ~/.claude
+
+# Already cloned without submodules?
+git -C ~/.claude submodule update --init --recursive
 
 # Restart Claude Code CLI
 ```
