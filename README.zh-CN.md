@@ -457,8 +457,12 @@ claude plugin install claude-scholar@claude-scholar
 通过克隆到 `~/.claude` 进行完整设置：
 
 ```bash
-# 克隆仓库
-git clone https://github.com/OniReimu/claude-scholar.git ~/.claude
+# 克隆仓库（--recursive 拉取 vendored skills：
+# scientific-figure-making、fireworks-tech-graph、circom-auditor）
+git clone --recursive https://github.com/OniReimu/claude-scholar.git ~/.claude
+
+# 已经克隆但没拉 submodule？
+git -C ~/.claude submodule update --init --recursive
 
 # 重启 Claude Code CLI
 ```
