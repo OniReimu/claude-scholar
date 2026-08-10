@@ -146,6 +146,10 @@ Key files:
 - **architecture-design**: ML project code architecture and design patterns
 - **verification-loop**: Verification loops and testing
 
+### 🔐 Security Audit (1 skill)
+
+- **circom-auditor**: Circom / ZK circuit security audit — soundness, completeness, privacy, constraint bugs (under-constrained `<--`, missing range checks, non-boolean selectors, field wraparound, nullifier binding). Defaults to a 17-agent delegated audit (≤6 concurrent); `local mode` forces a single-agent pass; `--file-output` writes the report under `assets/findings/`. **路由规则**: 任何 `.circom` 文件或 ZK 电路安全问题一律走本 skill，不要用 `code-review-excellence` / `bug-detective` 代替。Upstream: [zk-skills](https://github.com/zksecurity/zk-skills) by zkSecurity, via `vendor/zk-skills` submodule (read-only — 改动提交上游，不要改 symlink 目标)
+
 ### 🔌 Plugin Development (8 skills)
 
 - **skill-development**: Skill development guide
