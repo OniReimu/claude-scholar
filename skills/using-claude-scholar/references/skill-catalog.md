@@ -34,6 +34,12 @@
 | **architecture-design** | Creating new ML project components with Factory/Registry patterns |
 | **verification-loop** | Testing, validation, verification cycles |
 
+## Security Audit (1 skill)
+
+| Skill | Trigger Condition |
+|-------|-------------------|
+| **circom-auditor** | **Circom / zero-knowledge circuit security review.** Any `.circom` file in scope, or the user says: audit/review/check ZK circuit, find vulnerabilities in circuits, soundness / completeness / privacy bug, under-constrained signal, `<--` without a paired `===`, missing `Num2Bits_strict` or range check, comparator input bounds, booleanity of selectors/muxes, field wraparound / aliasing near `p`, nullifier or replay binding, R1CS / witness manipulation, `zkbugs`. Also on explicit `$circom-auditor` invocation. Defaults to the 17-agent delegated audit workflow; ask for "local mode" to force a single-agent pass. Vendored read-only from `vendor/zk-skills` — patch upstream, not the symlink. |
+
 ## Plugin Development (8 skills)
 
 > Claude Code specific — use as reference documentation on Codex.

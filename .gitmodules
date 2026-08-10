@@ -7,3 +7,6 @@
 [submodule "vendor/fireworks-tech-graph"]
 	path = vendor/fireworks-tech-graph
 	url = https://github.com/yizhiyanhua-ai/fireworks-tech-graph.git
+[submodule "vendor/zk-skills"]
+	path = vendor/zk-skills
+	url = https://github.com/zksecurity/zk-skills.git
