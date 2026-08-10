@@ -104,9 +104,7 @@ function collectSkills() {
           const skillsDirPath = path.join(pluginPath, latestVersion, 'skills');
 
           if (fs.existsSync(skillsDirPath)) {
-            const skillDirs = fs.readdirSync(skillsDirPath, { withFileTypes: true })
-              .filter(d => d.isDirectory())
-              .map(d => d.name);
+            const skillDirs = listSkillDirs(skillsDirPath);
 
             for (const skillName of skillDirs) {
               skills.push(`${plugin}:${skillName}`);
