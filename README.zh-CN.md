@@ -623,6 +623,7 @@ MIT 许可证
 
 - **[everything-claude-code](https://github.com/anthropics/everything-claude-code)** - Claude Code CLI 的综合资源
 - **[AI-research-SKILLs](https://github.com/zechenzhangAGI/AI-research-SKILLs)** - 研究导向的技能和配置
+- **[zk-skills](https://github.com/zksecurity/zk-skills)**（MIT，zkSecurity）- ZK 电路安全技能；`circom-auditor` 通过 `vendor/zk-skills` submodule 引入
 
 这些项目为 Claude Scholar 的研究导向功能提供了宝贵的见解和基础。
 
