@@ -380,6 +380,9 @@ claude-scholar/
 - `architecture-design` - ML project design patterns
 - `verification-loop` - Testing and validation
 
+**Security Audit:**
+- `circom-auditor` - Circom / ZK circuit audit: soundness, completeness, privacy, constraint bugs (17-agent delegated workflow, vendored from [zk-skills](https://github.com/zksecurity/zk-skills))
+
 **Plugin Development:**
 - `skill-development` - Skill creation guide
 - `skill-improver` - Skill improvement tools
