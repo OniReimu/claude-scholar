@@ -44,6 +44,9 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.DESPITE_DISMISSAL` | 禁止"Despite challenges"公式化dismissal |
 | `PROSE.VAGUE_ATTRIBUTIONS` | 禁止"experts argue"模糊归因 |
 | `PROSE.RHETORICAL_SELF_ANSWER` | 禁止"The result? X."自问自答 |
+| `PROSE.CLEFT_CONSTRUCTION` | 禁止分裂句前置强调 |
+| `PROSE.HYPOTHETICAL_FOIL` | 禁止虚构对照物/第二人称设问 |
+| `PROSE.ABSTRACT_AGENCY` | 抽象名词不做行动者、不配比喻动词 |
 | `PROSE.ANAPHORA_ABUSE` | 禁止同一句首重复3+次 |
 | `PROSE.GERUND_FRAGMENT_LITANY` | 禁止分词片段堆叠 |
 | `PROSE.SHORT_PUNCHY_FRAGMENTS` | 禁止极短句独立成段 |
@@ -96,6 +99,9 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including") <!-- policy:PROSE.COLON_LIST_OVERUSE -->
 - Mid-sentence colon: "key observation: the model fails" — rewrite as a full sentence or split; only heading colons (`\textbf{X:}`) are exempt <!-- policy:PROSE.MIDSENTENCE_COLON -->
 - Trailing afterthought: "..., as editable." comma + short tag tacked onto a sentence end (fold into the main clause) <!-- policy:PROSE.TRAILING_AFTERTHOUGHT -->
+- Cleft construction: "That is what sets X" / "which is what makes X" / "What X is is Y" — front the real subject instead: "X sets Y" <!-- policy:PROSE.CLEFT_CONSTRUCTION -->
+- Hypothetical foil: "A method that only described the data would stop there. Ours predicts." — the invented opponent adds nothing the evidence does not; also "Once you view it as X" second-person staging <!-- policy:PROSE.HYPOTHETICAL_FOIL -->
+- Abstract agency: "the analogy's job", "the estimator carries decades of validation", "built to catch" — abstractions do not act; use literal verbs, and never reuse the same figurative verb twice in one document <!-- policy:PROSE.ABSTRACT_AGENCY -->
 
 ### 3. Vary Rhythm
 Mix sentence lengths. End paragraphs differently.

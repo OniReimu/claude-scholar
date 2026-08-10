@@ -15,6 +15,9 @@
 - **NO vague attributions**: "Experts argue" / "Studies show" → cite specific source
 - **NO vague quantifiers**: "some"/"many"/"several" → cite or quantify
 - **NO Unicode arrows**: → ← ↔ ⇒ → use `$\rightarrow$` etc.
+- **NO cleft constructions**: "That is what sets X" / "which is what makes X" / "What X is is Y" → plain subject-verb-object "X sets Y"
+- **NO hypothetical foil**: "A method that only did X would stop there. Ours does Y." / "Once you view it as X" → state the result directly
+- **NO abstract agency**: "the analogy's job", "the estimator carries decades of validation", "built to catch" → literal verbs ("has been validated", "detects")
 - **NO rhetorical self-answers**: "The result? A new framework." → state directly
 - **NO negative parallelism**: "It's not X — it's Y" / "not just X, but Y"
 - **NO unnecessary contrast**: "X, not Y" / "X rather than Y" / "X instead of Y" → default to plain positive "X is A"; keep the contrast ONLY when ruling out Y carries information (don't just swap "not Y"→"rather than Y")

@@ -240,6 +240,9 @@ SoK 规则集合（语义规则）：
 | PROSE.DESPITE_DISMISSAL | prose-despite-dismissal | domain | warn | false | lint_script | guardrail | none |
 | PROSE.VAGUE_ATTRIBUTIONS | prose-vague-attributions | domain | warn | false | lint_script | guardrail | safe |
 | PROSE.RHETORICAL_SELF_ANSWER | prose-rhetorical-self-answer | domain | warn | false | lint_script | guardrail | none |
+| PROSE.CLEFT_CONSTRUCTION | prose-cleft-construction | domain | warn | false | lint_script | guardrail | none |
+| PROSE.HYPOTHETICAL_FOIL | prose-hypothetical-foil | domain | warn | false | lint_script | guardrail | none |
+| PROSE.ABSTRACT_AGENCY | prose-abstract-agency | domain | warn | false | lint_script | guardrail | none |
 | PROSE.ANAPHORA_ABUSE | prose-anaphora-abuse | domain | warn | false | doc | guidance | none |
 | PROSE.GERUND_FRAGMENT_LITANY | prose-gerund-fragment-litany | domain | warn | false | doc | guidance | none |
 | PROSE.SHORT_PUNCHY_FRAGMENTS | prose-short-punchy-fragments | domain | warn | false | doc | guidance | none |

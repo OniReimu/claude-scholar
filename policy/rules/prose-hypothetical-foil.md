@@ -17,7 +17,7 @@ autofix: none
 lint_patterns:
   - pattern: "(?:^|\\. )(An?) [a-z][a-z\\- ]{3,45}would\\b"
     mode: match
-  - pattern: "\\b(Once you|If you|Suppose you|Imagine that|Consider what happens)\\b"
+  - pattern: "\\b(Once you|If you (think|view|read|consider|imagine|take)|Suppose you|Imagine that|Consider what happens)\\b"
     mode: match
 lint_targets: "**/*.tex"
 ---
@@ -44,6 +44,7 @@ lint_targets: "**/*.tex"
   - 真实的反事实分析（消融、失败模式讨论）中带具体对象的 `would`，如 `Removing the pilot would cost 32 paths per query`
   - 算法/协议描述中面向实现者的第二人称步骤（应放 `algorithm` 环境或附录）
   - 直接引语内部
+  - 会议提供的样板文件（`checklist.tex` 等）：其中的 `If you obtained` / `If you answer` 是指令性用法，pattern 已收紧为只抓 `If you think/view/read/consider/imagine/take` 这类搭台动词
 - **判断线**：`would` 的主语是不是一个**被造出来只为对照**的抽象物。是则违规，是真实存在的基线/变体则合规。
 
 ## Examples
