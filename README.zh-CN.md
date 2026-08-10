@@ -351,6 +351,9 @@ claude-scholar/
 - `architecture-design` - ML 项目设计模式
 - `verification-loop` - 测试和验证
 
+**安全审计：**
+- `circom-auditor` - Circom / ZK 电路审计：soundness、completeness、隐私、约束缺陷（17 agent 委派工作流，vendored 自 [zk-skills](https://github.com/zksecurity/zk-skills)）
+
 **插件开发：**
 - `skill-development` - 技能创建指南
 - `skill-improver` - 技能改进工具
