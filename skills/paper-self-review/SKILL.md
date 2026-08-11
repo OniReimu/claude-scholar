@@ -84,6 +84,9 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `PROSE.ANAPHORA_ABUSE` | 禁止同一句首重复3+次 |
 | `PROSE.GERUND_FRAGMENT_LITANY` | 禁止分词片段堆叠 |
 | `PROSE.SHORT_PUNCHY_FRAGMENTS` | 禁止极短句独立成段 |
+| `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词） |
+| `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
+| `PROSE.THEATRICAL_SPLIT` | 禁止两拍式戏剧反驳 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 | `SUBMIT.SECTION_NUMBERING_CONSISTENCY` | Section编号一致 |
 | `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
