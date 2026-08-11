@@ -109,10 +109,17 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 ### 3. Vary Rhythm
 Mix sentence lengths. End paragraphs differently.
 
+**⚠️ 均质化本身就是 AI 痕迹。** 逐句读全部合格、但句长压在同一区间的散文，读者一眼认出是机器写的。执行 `PROSE.SENTENCE_LENGTH`（≤35 词）时不要把所有句子拉到同一长度——那是上限不是目标值。目标是句长标准差 ≥10 词，15–30 词区间占比 ≤55%。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
+
 **Check**:
 - Three consecutive sentences same length? Break one.
 - Paragraph ends with punchy one-liner? Vary it.
+- 整节找不到 <12 词的句子？或找不到 >32 词的句子？→ 分布已被压平，双向修复（合并被拆碎的从句 + 把关键论断压短）
 - Sentence with ≥4 commas? Split it or use semicolons—comma-chained clauses read as AI meandering. <!-- policy:PROSE.COMMA_OVERUSE -->
+
+**短句的两道门槛**（短句本身没问题，这两种短句有问题）：
+- **预告而非主张**："The difficulty is structural." / "This can be made precise." → 删除测试：删掉后信息是否零损失？是则改写成承载内容的句子 <!-- policy:PROSE.ANNOUNCEMENT_SENTENCE -->
+- **两拍式戏剧反驳**："One might expect X. It does not." → 合并测试：用 `but` 连成一句，若信息零损失则原拆分只是 mic drop，合并并让证据承担反驳 <!-- policy:PROSE.THEATRICAL_SPLIT -->
 
 ### 4. Trust Readers
 State facts directly. Skip softening, justification, hand-holding.
