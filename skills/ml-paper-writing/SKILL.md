@@ -69,7 +69,10 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `PROSE.TENSE_CONSISTENCY` | 各章节时态一致 |
 | `PROSE.ABBREVIATION_FIRST_USE` | 缩写首次展开 |
 | `PROSE.VAGUE_QUANTIFIERS` | 禁止模糊量词 |
-| `PROSE.SENTENCE_LENGTH` | 单句≤35词 |
+| `PROSE.SENTENCE_LENGTH` | 单句≤35词（上限，非目标值；须配合 `PROSE.RHYTHM_VARIANCE`） |
+| `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词） |
+| `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
+| `PROSE.THEATRICAL_SPLIT` | 禁止两拍式戏剧反驳 |
 | `PROSE.PARAGRAPH_TOPIC_SENTENCE` | 首句为topic sentence |
 | `PROSE.SUBSECTION_COMPLETENESS` | subsection≥2段 |
 | `PROSE.EQUATION_EXPLANATION` | 公式三步解释 |
