@@ -246,6 +246,9 @@ SoK 规则集合（语义规则）：
 | PROSE.ANAPHORA_ABUSE | prose-anaphora-abuse | domain | warn | false | doc | guidance | none |
 | PROSE.GERUND_FRAGMENT_LITANY | prose-gerund-fragment-litany | domain | warn | false | doc | guidance | none |
 | PROSE.SHORT_PUNCHY_FRAGMENTS | prose-short-punchy-fragments | domain | warn | false | doc | guidance | none |
+| PROSE.RHYTHM_VARIANCE | prose-rhythm-variance | domain | warn | false | doc | guidance | none |
+| PROSE.ANNOUNCEMENT_SENTENCE | prose-announcement-sentence | domain | warn | false | doc | guidance | none |
+| PROSE.THEATRICAL_SPLIT | prose-theatrical-split | domain | warn | false | doc | guidance | none |
 | PROSE.UNICODE_ARROWS | prose-unicode-arrows | domain | warn | false | lint_script | guardrail | safe |
 | PROSE.TRAILING_AFTERTHOUGHT | prose-trailing-afterthought | domain | warn | false | lint_script | guardrail | none |
 | PROSE.COMMA_OVERUSE | prose-comma-overuse | domain | warn | false | lint_script | guardrail | none |
