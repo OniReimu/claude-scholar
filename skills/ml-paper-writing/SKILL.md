@@ -1266,6 +1266,12 @@ These small changes accumulate into significantly clearer prose:
 
 **Full micro-tips with examples:** See [references/writing-guide.md](references/writing-guide.md#micro-level-writing-tips)
 
+#### Sentence Rhythm (anti-uniformity)
+
+`PROSE.SENTENCE_LENGTH` 的 35 词是**上限**，不是配额。把每句都写到 20–25 词会得到一份逐句合格、整体像机器的稿子，因为句长均质本身就是 AI 痕迹。写作时按论点复杂度决定句长：简单断言 8–12 词，多条件的技术陈述 35–45 词，目标是整节标准差 ≥10 词。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
+
+写短句时守两条：句子要给出可检验的主张而不是预告后文（❌ "The difficulty is structural." ✅ "One shared vector field serves every trajectory."）<!-- policy:PROSE.ANNOUNCEMENT_SENTENCE -->；反驳要与铺垫合并成一句并由证据承担，不要拆成"设预期—短促击碎"两拍（❌ "One might expect X. It does not." ✅ "One might expect X, but 35× wider never lifts ρ⊥ past 0.2."）<!-- policy:PROSE.THEATRICAL_SPLIT -->
+
 #### Word Choice (Zachary Lipton)
 
 - **Be specific**: ❌ "performance" → ✅ "accuracy" or "latency" (say what you mean)
