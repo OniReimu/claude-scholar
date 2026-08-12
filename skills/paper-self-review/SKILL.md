@@ -368,3 +368,6 @@ Use the quality checklist for final verification.
 ## Summary
 
 The Paper Self-Review skill provides a systematic paper quality checking process, helping researchers identify and resolve issues before submission, improving paper quality and acceptance rates.
+
+<!-- policy:PROSE.OVER_DEFENSIVE -->
+在完整性检查之后，按节隔离扫一遍过度防御：同一 caveat 是否有多个落点，是否有段落以免责声明收尾。完整性检查是加法，这一条是减法，顺序不能反。
