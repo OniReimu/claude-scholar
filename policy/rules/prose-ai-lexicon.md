@@ -47,6 +47,10 @@ lint_targets: "**/*.tex"
 
 **Tier 2（单个合法，聚集即违规）**——comprehensive · essential · vital · dynamic · innovative · powerful · notable/notably · facilitate · elucidate · enhance · ensure · explore · highlight · reveal · engage · embrace · insights · perspective · impactful · genuinely · truly · arguably · thought-provoking · interplay · paradigm。单文件累计命中 > `tier2_max_per_file`（默认 5）触发；同一句出现两个即为 cluster，无论总数。
 
+**Formulaic openers（零容忍）**——`In recent years,` / `has attracted increasing attention` / `With the rapid development of`。这些开场白是 AI 起草 Introduction 的默认模板，替换方式是直接从具体的 gap 或结构性事实开篇（"Tabular deep learning has a structural limitation: most models discard feature-type metadata."）。
+
+**Sentence-initial 连接词（密度阈值）**——句首 `Moreover,` / `Furthermore,` / `Additionally,` / `In addition,` 全文合计 ≤ `connectives_max_per_file`（默认 4）。超出说明逻辑靠连接词粘贴而非靠论证顺序承载；修复是重排句序让逻辑自显，不是把 Moreover 换成 Furthermore。
+
 替换原则：优先用你会读出声的那个词（`use` 而非 `leverage`），更优先用本文自身语域里的具体名词（`the retrieval index` 而非 `the ecosystem`）。
 
 ## Rationale
