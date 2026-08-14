@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {min_stdev_words: 10, max_band_share: 0.55}
-conflicts_with: []
+conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE, PROSE.THEATRICAL_SPLIT, PROSE.SHORT_PUNCHY_FRAGMENTS]
 constraint_type: guidance
 autofix: none
 ---
@@ -84,3 +84,7 @@ has been absorbed, a post-hoc edit acts on the retained dynamics as well.
 ```
 
 句长 11 / 12 / 11 / 15 / 15 词，全部落在同一带，节拍器感。
+
+## Conflicts
+
+与 `PROSE.ANNOUNCEMENT_SENTENCE` / `PROSE.THEATRICAL_SPLIT` / `PROSE.SHORT_PUNCHY_FRAGMENTS` 的张力裁决线：**本卡要求短句存在，那三条约束短句的内容。** 合规短句 = 承载可核对主张的短句（"Training deepens the coupling."）。修本卡时新增的短句必须直接过那三条的门槛——如果为了拉开句长落差而写出预告句或两拍式反驳，等于把一个违规换成另一个。

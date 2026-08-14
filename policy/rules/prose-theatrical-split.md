@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.RHYTHM_VARIANCE]
 constraint_type: guidance
 autofix: none
 ---
@@ -65,3 +65,7 @@ past the $0.2$ usable-slack threshold.
 ```
 
 `It does not.` 合并后信息零损失，属于纯戏剧停顿。
+
+## Conflicts
+
+与 `PROSE.RHYTHM_VARIANCE` 的张力裁决线：那条要求节内存在 <12 词的短句，本卡不与之矛盾——**短句应该存在，且必须承载主张**。修复本卡违规时用「改写成承载内容的短句」优先于「删除短句」，否则会把句长分布重新压平、触发 RHYTHM_VARIANCE。
