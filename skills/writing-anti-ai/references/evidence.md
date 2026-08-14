@@ -70,6 +70,30 @@
 - `verdict`: `untested-here`
 - **我们的用法**：不立卡。学术语域的对应物（"值得注意的是"、"这正是问题所在"）已由 `PROSE.FILLER_PHRASES` 与 `PROSE.ANNOUNCEMENT_SENTENCE` 覆盖。备案是因为它是整份外部证据里方法上最干净的一条（单变量、其余不变），值得作为将来做实验的模板
 
+### E5 — academic-humanizer 导入（学术语域对口，推理导出）
+
+- `claim`: 学术文本的 AI 修复需要双向校准（over-claim 与 over-hedge 同轴）+ 反向矫正护栏（保留合法学术构造）
+- `source`: 外部 skill `academic-humanizer` v0.3.3（github.com/AIScientists-Dev/academic-humanizer，MIT，用户于 2026-08 提供）
+- `date`: 2026-08-15（导入日）
+- `instrument`: 无实验数据——该包为 SOP 型 skill，主张来自审稿惯例与写作经验，非受控测试
+- `register`: 学术论文 / proposal（与本 skill 完全对口）
+- `n`: 0（无实测）
+- `verdict`: `untested-here`（采纳为 doctrine，理由在于与审稿实践一致，非实验证据）
+- **导入内容**：HEDGING_DISCIPLINE 双向化（over-claiming verbs + 比较主张锚点 + 幅度区间）；PROMOTIONAL novelty padding（novel 超频/to the best of our knowledge/for the first time）；VAGUE_QUANTIFIERS extensive-experiments 模式；AI_LEXICON formulaic openers + 连接词密度；SKILL.md「Do NOT Over-Correct」护栏（校准 hedge/被动语态/we/术语逐字保留）；语域分流（学术 vs 随意的"人味"定义相反）；self-review 新增 contribution 套话与 citation dumping 检查
+- **明确不导入**：Layer 6 proposal mode——`grant-application-writing` skill 已覆盖且更深，只加了路由指针；Layer 5 voice matching——`policy/style-guide.md` 已是更强形态
+- `expiry`: 无实验数据支撑的 doctrine，若与实际审稿反馈冲突则逐条推翻
+
+### E6 — Policy 冲突/冗余审计（2026-08-15，一手）
+
+- `claim`: 词表类规则存在互相触发的修复循环与 FP 洪水源
+- `source`: 一手审计（全量 34 条 PROSE 卡交叉比对）
+- `date`: 2026-08-15
+- `instrument`: 人工交叉比对 + regex 探针
+- `n`: 34 条规则
+- `verdict`: `supported`，已修复
+- **发现并修复**：(1) INFORMAL 的 `\bsmaller\b` 禁用与自己替代表矛盾（smaller 本是规范用词）→ 移除；(2) INFORMAL autofix "a lot of"→"many" 的产物被 VAGUE_QUANTIFIERS 禁用 → 撤销该 autofix，替代表删去 numerous 建议；(3) VAGUE 的裸词 `\bsome\b` 命中数学存在量词（"for some ε>0"）→ 收窄为量词+名词组合；(4) SENTENCE_LENGTH 的 lint pattern 语义错误（统计的是文件句数>35 而非句长>35 词）→ 换为 ≥36-token 行内长句匹配，标注硬换行召回局限；(5) 短句集群四卡（RHYTHM vs ANNOUNCEMENT/THEATRICAL/SHORT_PUNCHY）conflicts_with 全空 → 补互指 + 裁决线；(6) writing-anti-ai「Personality and Soul」教注入 I/幽默与学术语域冲突 → 语域分流
+- **机器化**：validate.sh 新增 Section 5c（fix-emission safety），修复循环从此由 CI 兜底
+
 ## 本 skill 新增规则的验证状态
 
 2026-08-14 从外部包 diff 出的 4 条规则，全部为**推理导出**（reader-facing，理由写在各自 Rule Card 的 Rationale），尚无实测：
