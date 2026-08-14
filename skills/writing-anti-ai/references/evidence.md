@@ -94,16 +94,31 @@
 - **发现并修复**：(1) INFORMAL 的 `\bsmaller\b` 禁用与自己替代表矛盾（smaller 本是规范用词）→ 移除；(2) INFORMAL autofix "a lot of"→"many" 的产物被 VAGUE_QUANTIFIERS 禁用 → 撤销该 autofix，替代表删去 numerous 建议；(3) VAGUE 的裸词 `\bsome\b` 命中数学存在量词（"for some ε>0"）→ 收窄为量词+名词组合；(4) SENTENCE_LENGTH 的 lint pattern 语义错误（统计的是文件句数>35 而非句长>35 词）→ 换为 ≥36-token 行内长句匹配，标注硬换行召回局限；(5) 短句集群四卡（RHYTHM vs ANNOUNCEMENT/THEATRICAL/SHORT_PUNCHY）conflicts_with 全空 → 补互指 + 裁决线；(6) writing-anti-ai「Personality and Soul」教注入 I/幽默与学术语域冲突 → 语域分流
 - **机器化**：validate.sh 新增 Section 5c（fix-emission safety），修复循环从此由 CI 兜底
 
-## 本 skill 新增规则的验证状态
+### E7 — 首轮 eval 运行（2026-08-15，一手）
 
-2026-08-14 从外部包 diff 出的 4 条规则，全部为**推理导出**（reader-facing，理由写在各自 Rule Card 的 Rationale），尚无实测：
+- `claim`: 优化后的 skill 在 7 个学术语域用例上行为正确，且新增能力（检测器预期管理、过度矫正护栏）是 delta 的全部来源
+- `source`: 一手实验——skill-creator eval harness，7 case × 2 版本（当前 vs 2026-08-13 快照）并行盲跑
+- `date`: 2026-08-15
+- `instrument`: 14 个独立 subagent（claude-fable-5），39 条断言（机械 regex + 人工复核），结果在 `writing-anti-ai-workspace/iteration-1/benchmark.json`
+- `register`: 学术论文（Related Work / System Model / 实验分析 / Discussion / 中文摘要 / 咨询问答）
+- `n`: 每格 1 次（n=1，方向性证据，非统计证据）
+- `verdict`: `supported`
+- **结果**: 新版 39/39（100%），旧版 37/39（94.9%）。旧版仅有的两个失分：(1) eval-4 未给 interleave 路径，且 agent 自由发挥了检测器民科（"perplexity/burstiness、深度改写通常能降分"——与 E1 直接矛盾）；(2) eval-6 把 "The results suggest that" 当双重 hedge 删掉——恰是 Do NOT Over-Correct 护栏防的那个动作，新版引用校准红线显式保留
+- **AI_LEXICON 误伤检验通过**: eval-0 双版本都在改写中原样保留 loss landscape / robust / optimize / training trajectories，术语豁免有效
+- **已知混杂**: 旧版快照只冻结了 SKILL.md+references，policy/ 目录共享且是当前版——旧版 run 读到了新 rule cards 和新 guardrail-checklist（eval-2 旧版读了 08-14 才存在的 prose-invented-concept-label.md）。**真实 delta 被低估**；eval 0/1/2/3/5 打平证明的是 policy 层的承载力，不是 skill diff 无效
+- **观察（待跟踪）**: 两个版本的 eval-0 都往改写里加了原文没有的机制细节（implicit regularization / flat minima）——Related Work 压缩语境下可接受，但这是 fabrication-adjacent 倾向，下轮 eval 应加断言盯住
+- `expiry`: 换模型或改 skill 后需重跑
+
+## 本 skill 新增规则的验证状态
 
 | Rule ID | 来源 | 验证状态 | 下一步 |
 |---|---|---|---|
-| `PROSE.AI_LEXICON` | 外部 wordbank + 学术语域裁剪 | 未验证 | 跑 `evals/evals.json` case 0–1，看误伤率（尤其 `robust`/`framework` 类术语是否被错杀） |
-| `PROSE.FRACTAL_SUMMARY` | 外部 tells.md「fractal summaries」 | 未验证 | 在真实投稿 draft 上跑 regex，统计命中数与误报数 |
-| `PROSE.INVENTED_CONCEPT_LABEL` | 外部 tells.md「invented concept labels」 | 未验证 | 需要一次审稿人反馈作为证据（review 里出现"检索不到这个概念"即为 supported） |
-| `PROSE.RESTATEMENT_DILUTION` | 外部 tells.md「one-point dilution」 | 未验证 | 用删除测试在已接收论文上做对照：作者自己的 pre-GPT 论文复述率应显著低于 AI draft |
+| `PROSE.AI_LEXICON` | 外部 wordbank + 学术语域裁剪 | **eval-passed (n=1, E7)**——误伤检验通过，术语全部存活 | 真实投稿 draft 上跑 lint 统计误报率 |
+| `PROSE.FRACTAL_SUMMARY` | 外部 tells.md「fractal summaries」 | **eval-passed (n=1, E7)** | 在真实投稿 draft 上跑 regex，统计命中数与误报数 |
+| `PROSE.INVENTED_CONCEPT_LABEL` | 外部 tells.md「invented concept labels」 | **eval-passed (n=1, E7)**——正反例都判对（删 supervision paradox、留 CPCL） | 需要一次审稿人反馈作为证据（review 里出现"检索不到这个概念"即为 supported） |
+| `PROSE.RESTATEMENT_DILUTION` | 外部 tells.md「one-point dilution」 | **eval-passed (n=1, E7)** | 用删除测试在已接收论文上做对照：作者自己的 pre-GPT 论文复述率应显著低于 AI draft |
+| `HEDGING_DISCIPLINE` 双向化 + Over-Correct 护栏 | academic-humanizer (E5) | **eval-passed (n=1, E7)**——护栏是 39:37 delta 的一半来源 | 真实 rebuttal/Discussion 上验证 |
+| Interleave protocol 比例阈值 | 外部 anti-ai 包 (E2) | **仍未实测**（学术长文语域） | 用户真实底稿 + 目标检测器复测 |
 
 ## 加新条目的规矩
 
