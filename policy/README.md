@@ -266,6 +266,26 @@ SoK 规则集合（语义规则）：
 
 ---
 
+## 词汇类规则归属表（Lexicon Ownership）
+
+六条规则都在管"哪些词不能用"，词表**互斥分工**如下。新增禁用词时先查此表，归属唯一；一个 surface form 只允许出现在一条规则的 lint_patterns 里。
+
+| 规则 | 管辖范围 | 例词 |
+|------|---------|------|
+| `PROSE.AI_LEXICON` | AI 高频词汇指纹（tier-1/tier-2）、formulaic openers、句首连接词密度 | delve, pivotal, tapestry; "In recent years,"; Moreover 密度 |
+| `PROSE.PROMOTIONAL_LANGUAGE` | 推销性/情绪化用词 + novelty padding | groundbreaking, revolutionary; novel 超频, "for the first time" |
+| `PROSE.INTENSIFIERS_ELIMINATION` | 空洞强调**副词** | very, extremely, significantly |
+| `PROSE.FILLER_PHRASES` | 可删除的铺垫**短语** | "in order to", "it is worth noting that" |
+| `PROSE.INFORMAL_VOCABULARY` | 口语化下限 | a lot of, lots of, stuff, bigger |
+| `PROSE.VAGUE_QUANTIFIERS` | 模糊量词（仅「量词+文献名词」组合与恒模糊短语，不抓裸词） | "many studies", "a wide range of", "extensive experiments" |
+
+**两条硬性不变量**（由 `validate.sh` Section 5c 机器检查第 2 条）：
+
+1. **词表互斥**：同一 token 不得出现在两条规则的 lint_patterns 中（重叠 = 同一违规双报，噪声）
+2. **修复无循环**：任何规则的 `fix_patterns` replace 产物（以及 Requirement 替代表建议的词）不得命中其他规则的 lint pattern——否则应用 A 的修复会制造 B 的违规
+
+---
+
 ## 与 `rules/` 目录的边界
 
 - `rules/` = 开发运维规则（代码风格、安全、agent 编排、实验可复现性）
