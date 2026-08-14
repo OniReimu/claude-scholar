@@ -326,6 +326,10 @@ See **`examples/`** for before/after transformations:
 ### Reference Files
 - **`references/patterns-english.md`** - Complete English pattern reference
 - **`references/patterns-chinese.md`** - 完整中文模式参考
+- **`references/evidence.md`** - 证据日志：每条主张的来源/日期/仪器/样本量/失效条件。改规则或被问"凭什么"时读这个
+
+### Evals
+- **`evals/evals.json`** - 6 个学术语域回归用例（词表误伤、fractal summary、自造术语、复述稀释、检测器预期管理、中文摘要）。改完 skill 用 `skill-creator` 跑一遍再交付
 
 ### Example Files
 - **`examples/english.md`** - English before/after examples
