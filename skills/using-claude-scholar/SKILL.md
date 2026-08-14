@@ -58,6 +58,10 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
 | `REPRO.COMPUTE_RESOURCES_DOCUMENTED` | 计算资源文档 |
 | `PROSE.CRYPTO_CONSTRUCTION_TEMPLATE` | 密码化构造写法（security-crypto） |
+| `PROSE.AI_LEXICON` | AI 高频词表（tier-1 零容忍 + tier-2 密度阈值） |
+| `PROSE.FRACTAL_SUMMARY` | 禁止逐层预告/回顾元叙述 |
+| `PROSE.INVENTED_CONCEPT_LABEL` | 禁止自造术语冒充既有概念 |
+| `PROSE.RESTATEMENT_DILUTION` | 同一命题一节内只说一次 |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
 | `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
 | `PROSE.FILLER_PHRASES` | 删除冗余填充短语 |
