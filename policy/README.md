@@ -255,6 +255,10 @@ SoK 规则集合（语义规则）：
 | PROSE.COMMA_OVERUSE | prose-comma-overuse | domain | warn | false | lint_script | guardrail | none |
 | PROSE.MIDSENTENCE_COLON | prose-midsentence-colon | domain | warn | false | lint_script | guardrail | none |
 | PROSE.NEGATION_CONTRAST | prose-negation-contrast | domain | warn | false | lint_script | guardrail | none |
+| PROSE.AI_LEXICON | prose-ai-lexicon | domain | warn | false | lint_script | guardrail | assisted |
+| PROSE.FRACTAL_SUMMARY | prose-fractal-summary | domain | warn | false | lint_script | guardrail | assisted |
+| PROSE.INVENTED_CONCEPT_LABEL | prose-invented-concept-label | domain | warn | false | doc | guardrail | none |
+| PROSE.RESTATEMENT_DILUTION | prose-restatement-dilution | domain | warn | false | doc | guardrail | none |
 | ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc | guidance | none |
 | ANON.DOUBLE_BLIND_ANONYMIZATION | anon-double-blind-anonymization | venue | error | true | doc | guidance | none |
 | SUBMIT.PAGE_LIMIT_STRICT | submit-page-limit-strict | venue | error | false | doc | guidance | none |
