@@ -10,7 +10,7 @@ domains: [core]
 venues: [all]
 check_kind: regex
 enforcement: lint_script
-params: {tier2_max_per_file: 5}
+params: {tier2_max_per_file: 5, connectives_max_per_file: 4}
 conflicts_with: [PROSE.PROMOTIONAL_LANGUAGE, PROSE.INTENSIFIERS_ELIMINATION, PROSE.FILLER_PHRASES]
 constraint_type: guardrail
 autofix: assisted
