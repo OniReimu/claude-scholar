@@ -120,7 +120,9 @@ assert_file_contains "replaced with is" "$TEST_DIR/test.tex" " is the "
 
 echo "2.3 --fix replaces informal vocabulary"
 assert_file_not_contains "sort of removed" "$TEST_DIR/test.tex" "sort of"
-assert_file_not_contains "a lot of removed" "$TEST_DIR/test.tex" "a lot of"
+# "a lot of" 是 flag-only（autofix 已撤销：产物 "many" 会在量词+名词组合中触发
+# PROSE.VAGUE_QUANTIFIERS，修复循环）——只报不改
+assert_file_contains "a lot of flagged but not auto-fixed" "$TEST_DIR/test.tex" "a lot of"
 
 echo "2.4 --fix replaces unicode arrows"
 assert_file_not_contains "unicode arrow removed" "$TEST_DIR/test.tex" "→"
