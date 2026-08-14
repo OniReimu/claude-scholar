@@ -57,7 +57,10 @@ jobs:
           # (b) No-new-failures guard. validate.sh is now clean (exit 0); keep BASELINE at 0
           # so ANY new FAIL fails CI. (Raise only with a deliberate, documented reason.)
           BASELINE=0
-          fails=$(echo "$out" | grep -c "FAIL:")
+          # `grep -c` exits 1 when the count is 0, and GitHub runs this step under
+          # `bash -eo pipefail` — so a CLEAN validate.sh would kill the step here.
+          # `|| true` keeps a zero count a normal result instead of a failure.
+          fails=$(echo "$out" | grep -c "FAIL:" || true)
           echo "validate.sh FAIL count: $fails (baseline $BASELINE)"
           if [ "$fails" -gt "$BASELINE" ]; then
             echo "::error::policy validation regressed: $fails FAILs > baseline $BASELINE"
