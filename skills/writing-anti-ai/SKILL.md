@@ -152,6 +152,19 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 每条 scope 限定只能有**一个** canonical home（设计描述 或 Limitations 块）。禁止：让步放在段落主题句、贡献/结果段以「做不到什么」收尾、为正文未提出的质疑预先辩解、正面句已蕴含还用否定重说。
 这是**结构**问题，逐句读全部合格也可能整篇在道歉——须按节隔离扫描，且裁决前确认该句不是某条 reviewer comment 的唯一落点。
 
+### 8. 词汇指纹与内容稀释
+
+**词表分两层执行** <!-- policy:PROSE.AI_LEXICON -->
+- **Tier 1 零容忍**（delve · leverage · underscore · harness · foster · streamline · showcase · seamless · intricate · meticulous · nuanced · multifaceted · pivotal · tapestry · realm · myriad · plethora · intricacies · "paving the way for" · "valuable insights" · "at its core" …）：一次都不出现。替换原则是用你会读出声的那个词，更优先用本文语域里的具体名词。
+- **Tier 2 看密度**（comprehensive · essential · vital · innovative · powerful · facilitate · enhance · ensure · explore · highlight · insights · perspective · interplay · paradigm …）：单个合法，聚集违规。同句两个即 cluster，单文件累计 >5 触发。别逐个替换——找最密的那一段改。
+- 词表已按学术语域裁剪：`robust` / `optimize` / `trajectory` / `loss landscape` / `framework` / `approach` 是术语，**不在表内**，不要误伤。
+
+**不要给现象起名** <!-- policy:PROSE.INVENTED_CONCEPT_LABEL -->
+"the supervision paradox" / "workload creep" 这类标签只在两种情况下允许：有文献出处并引用，或是本文明确的命名贡献（显式声明 + 定义 + 全文一致）。两者都不满足就用普通语言描述现象。审稿人会去检索你造的"既有概念"。
+
+**同一命题一节内只说一次** <!-- policy:PROSE.RESTATEMENT_DILUTION -->
+AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。删除测试：删掉后出现的那句，本段信息零损失即确认是复述，删掉定稿（不要合并改写）。跨节的重复主张不归这里，交 `claim-architecture-review`。
+
 ## Common AI Patterns (常见 AI 模式)
 
 ### Content Patterns (内容模式)
