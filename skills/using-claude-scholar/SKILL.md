@@ -6,7 +6,7 @@ description: |
   policy rule compliance for the claude-scholar framework. Also
   provides tool mapping, session behavior, security rules, and user
   preferences for multi-runtime environments (Claude Code + Codex).
-version: 2.0.0
+version: 2.0.1
 tags: [Meta, System, Skills, Academic]
 ---
 
