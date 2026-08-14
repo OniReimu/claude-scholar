@@ -110,6 +110,7 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - Cleft construction: "That is what sets X" / "which is what makes X" / "What X is is Y" — front the real subject instead: "X sets Y" <!-- policy:PROSE.CLEFT_CONSTRUCTION -->
 - Hypothetical foil: "A method that only described the data would stop there. Ours predicts." — the invented opponent adds nothing the evidence does not; also "Once you view it as X" second-person staging <!-- policy:PROSE.HYPOTHETICAL_FOIL -->
 - Abstract agency: "the analogy's job", "the estimator carries decades of validation", "built to catch" — abstractions do not act; use literal verbs, and never reuse the same figurative verb twice in one document <!-- policy:PROSE.ABSTRACT_AGENCY -->
+- Fractal summary: "In this section, we present…" / "As we have seen…" / "Having discussed X, we now…" — 同一信息在标题、预告句、回顾句里讲三遍。节的首句直接进内容，末句停在最后一个具体结论上；前向引用交给 `\Cref{}`，不要用叙述句预告 <!-- policy:PROSE.FRACTAL_SUMMARY -->
 
 ### 3. Vary Rhythm
 Mix sentence lengths. End paragraphs differently.
