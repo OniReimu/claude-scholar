@@ -1,0 +1,80 @@
+{
+  "skill_name": "writing-anti-ai",
+  "evals": [
+    {
+      "id": 0,
+      "name": "ai-lexicon-with-term-of-art-traps",
+      "prompt": "帮我清一下这段 Related Work 的 AI 痕迹，保持技术密度，这是要投 NeurIPS 的：\n\n\\paragraph{Robust training.} Recent advancements delve into the intricate interplay between data augmentation and generalization, showcasing a comprehensive paradigm that underscores the pivotal role of regularization in today's machine learning landscape. Prior work leverages sharpness-aware minimization to navigate the complexities of the loss landscape, fostering models that are robust to label noise. These seamless approaches paving the way for further advancements provide valuable insights into how practitioners optimize training trajectories under distribution shift.",
+      "expected_output": "重写后的段落：tier-1 词（delve, intricate, interplay, showcasing, underscores, pivotal, leverages, navigate the complexities, fostering, seamless, paving the way for, valuable insights, advancements, in today's ... landscape）全部消失；tier-2 词（comprehensive, paradigm）降到阈值内；但术语用法必须原样保留——loss landscape、robust to label noise、optimize、training trajectories 不得被当成 AI 词替换掉。技术含义不变，引用位置不变。",
+      "files": [],
+      "expectations": [
+        "输出中不含 delve/leverage/underscore/pivotal/seamless/intricate/interplay/showcase/foster/paving the way/valuable insights/advancements",
+        "loss landscape、robust、optimize、trajectories 这几个术语原样保留（未被替换为同义词）",
+        "段落仍是学术语域，没有被改成口语或社交媒体腔",
+        "引用了 policy:PROSE.AI_LEXICON"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "fractal-summary-scaffolding",
+      "prompt": "这是我 System Model 一节，读起来很啰嗦，帮我改：\n\n\\subsection{System Model}\nIn this subsection, we present our system model. This subsection describes the entities involved and the assumptions we make throughout the paper. We first introduce the participants, then the communication model, and finally the trust assumptions.\n\nThe protocol involves $n$ aggregators and a single coordinator. Messages are delivered within $\\Delta$ rounds. The adversary corrupts at most $f < n/3$ aggregators statically.\n\nHaving described the system model, we now turn to the threat model. As we have seen, the system model constrains what the adversary can do.",
+      "expected_output": "删除所有预告句与回顾句（In this subsection we present…/This subsection describes…/We first introduce… then… and finally…/Having described…/As we have seen…），保留三句实质内容（n 个 aggregator、Δ 轮送达、f < n/3 静态腐化）。节以内容句开头，以最后一个具体结论结尾。前向引用若需要，用 \\Cref{} 而不是叙述句。",
+      "files": [],
+      "expectations": [
+        "输出不含 'In this subsection'、'This subsection describes'、'As we have seen'、'Having described'",
+        "三条技术假设（n, Δ, f < n/3）全部保留且数值未变",
+        "引用了 policy:PROSE.FRACTAL_SUMMARY"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "invented-concept-label-vs-real-naming",
+      "prompt": "帮我看看这段 Introduction 有没有 AI 味：\n\nWe observe that tighter operator oversight reduces the agent's ability to recover from its own errors. This is the supervision paradox: the more closely you watch, the less the system learns. Such capability erosion is a well-known constraint on autonomous deployment. We refer to the underlying mechanism as \\emph{cross-principal capability laundering} (CPCL): an agent acquires a capability under one principal's authorisation and exercises it under another's. CPCL is measurable whenever two principals share a tool namespace.",
+      "expected_output": "识别出两个标签的性质不同：'the supervision paradox' 和 'capability erosion' 是无出处的自造术语且被写成既有共识（'a well-known constraint'），必须改写成对现象的直接描述或补引用；'cross-principal capability laundering (CPCL)' 是合法的命名贡献（有显式命名声明 + 定义 + 可测判据），必须原样保留。不得把两者一并删掉，也不得一并保留。",
+      "files": [],
+      "expectations": [
+        "'the supervision paradox' 被改写或补上引用",
+        "'a well-known constraint' 这类冒充共识的措辞被删除或改为有出处的表述",
+        "CPCL 的命名、定义和缩写完整保留",
+        "引用了 policy:PROSE.INVENTED_CONCEPT_LABEL"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "restatement-dilution",
+      "prompt": "这段实验分析是不是太水了，帮我压一压：\n\nFolding provides a substantial efficiency benefit by removing redundant per-step work. Specifically, it removes the per-step R1CS extraction, which accounts for 92.9\\% of single-step cost, yielding a 14.6$\\times$ speedup at $n=64$. The speedup grows linearly with the number of steps. Overall, these results demonstrate that folding substantially improves efficiency by eliminating redundant per-step work, confirming the benefit of the folded design.",
+      "expected_output": "识别首句与末句是同一命题的两种说法，删掉信息量较低的那一处（首句的抽象陈述与末句的回归总结），保留紧挨证据的表述与全部数字（92.9%、14.6×、n=64、线性增长）。做删除而不是合并改写。",
+      "files": [],
+      "expectations": [
+        "首句抽象陈述与末句总结句至少删掉一处，段落从三条信息压到两三句",
+        "92.9%、14.6×、n=64 三个数字全部保留且未被改动",
+        "引用了 policy:PROSE.RESTATEMENT_DILUTION"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "detector-expectation-management",
+      "prompt": "我这篇 draft 是 AI 帮我写的，期刊投稿系统会跑 AI 检测。你把 AI 痕迹都去掉之后，能过检测吗？",
+      "expected_output": "明确区分两个目标：本 skill 的规则针对读者层 tell，与统计检测器（Pangram/GPTZero/Turnitin AI 模块）判定的生成动态不是一回事，改完读者层不保证过检测器；说明学术语域下唯一可用且有实测支撑的手段是 interleave protocol（需要用户自己的底稿），并说明其五条执行规则；说明现有比例数据来自社交语域小样本、学术长文未验证，任何数字都要在目标检测器上复测。不得承诺'改完就能过'，不得建议零宽字符/同形字符这类字符级规避。",
+      "files": [],
+      "expectations": [
+        "明确说明 reader tells 与 statistical detectors 是两个目标",
+        "没有做出'能过检测'的承诺",
+        "提到 interleave protocol 需要用户自己的底稿",
+        "没有建议字符级规避手段（零宽字符、homoglyph）"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "chinese-abstract-cleanup",
+      "prompt": "帮我把这段中文摘要的 AI 味去掉，要投中文期刊：\n\n在当今快速发展的人工智能领域，联邦学习作为一种至关重要的分布式训练范式，正在深刻地重塑着数据隐私保护的格局。值得注意的是，现有方法在通信效率方面面临着诸多挑战。本文提出了一种全新的框架，该框架不仅显著提升了训练效率，而且大幅降低了通信开销。实验结果充分证明了所提方法的有效性和优越性。",
+      "expected_output": "中文 AI 腔全部清除（在当今快速发展的……领域、作为一种至关重要的、深刻地重塑着、格局、值得注意的是、诸多挑战、全新的、不仅……而且、充分证明了、有效性和优越性），改成具体、可核对的中文学术表述，缺数据处用占位符并标注。保持中文，不得改成英文。",
+      "files": [],
+      "expectations": [
+        "不含'在当今'、'至关重要'、'格局'、'值得注意的是'、'充分证明'、'不仅…而且'",
+        "输出为中文",
+        "空洞的效果断言被替换为具体数字或被标注为占位符"
+      ]
+    }
+  ]
+}
