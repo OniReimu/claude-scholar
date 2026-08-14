@@ -11,11 +11,15 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.INFORMAL_VOCABULARY, PROSE.AI_LEXICON]
 constraint_type: guardrail
 autofix: assisted
 lint_patterns:
-  - pattern: "\\b(some|many|several|a number of|a large amount of|a great deal of|lots of|a lot of|numerous|plenty of|a wide range of)\\b"
+  - pattern: "\\b([Ss]ome|[Mm]any|[Ss]everal|[Nn]umerous|[Vv]arious) (studies|works|papers|methods|approaches|techniques|baselines|researchers|authors|applications|domains|scenarios|settings|datasets)\\b"
+    mode: match
+  - pattern: "\\b(a number of|a large amount of|a great deal of|plenty of|a wide range of|a variety of)\\b"
+    mode: match
+  - pattern: "\\b([Ee]xtensive|[Cc]omprehensive|[Tt]horough) (experiments|evaluations?|ablations?|analys[ei]s)\\b"
     mode: match
 lint_targets: "**/*.tex"
 ---
@@ -32,15 +36,20 @@ lint_targets: "**/*.tex"
 | a number of | 具体数字 |
 | a large amount of | 具体数字 + 单位 |
 | a wide range of | 具体范围 |
+| extensive experiments | 直接列出数据集/设置（"three datasets (ImageNet, CIFAR-100, iNaturalist)"） |
+
+**Pattern 只抓「量词 + 文献/方法类名词」组合与恒模糊短语**，不抓裸词。`some`/`many`/`several` 的裸词用法大量出现在合法语境——数学存在量词（"for some $\epsilon > 0$"）、固定搭配（"in many cases"）——裸词匹配的误报会淹没真命中。`a lot of` / `lots of` 归 `PROSE.INFORMAL_VOCABULARY` 管辖，本卡不重复收录。
 
 ## Rationale
 
 模糊量词在学术写作中削弱精确度。审稿人会质疑 "many" 到底是多少。用数据说话是技术论文的核心原则。
 
+"extensive/comprehensive experiments" 是同一问题的实验章节变体：AI 用形容词顶替实验清单。列出数据集名称与数量后，形容词自动多余。
+
 ## Check
 
-- **regex 搜索**: 匹配禁用量词列表
-- **排除合法用法**: 引用了具体数据源的量词（如 "several studies~\cite{a,b,c}"）可接受
+- **regex 搜索**: 三组 pattern（量词+名词组合 / 恒模糊短语 / 实验形容词）
+- **排除合法用法**: 引用了具体数据源的量词（如 "several studies~\cite{a,b,c}" 后随 3+ 个 citation key）可接受
 - **检查范围**: `.tex` 文件正文区域
 
 ## Examples
