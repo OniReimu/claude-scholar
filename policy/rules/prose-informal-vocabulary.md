@@ -11,11 +11,11 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.VAGUE_QUANTIFIERS]
 constraint_type: guardrail
 autofix: safe
 lint_patterns:
-  - pattern: "\\ba lot of\\b"
+  - pattern: "\\b(a lot of|lots of)\\b"
     mode: match
   - pattern: "\\b(things|stuff)\\b"
     mode: match
@@ -25,11 +25,7 @@ lint_patterns:
     mode: match
   - pattern: "\\bbigger\\b"
     mode: match
-  - pattern: "\\bsmaller\\b"
-    mode: match
 fix_patterns:
-  - find: "\\ba lot of\\b"
-    replace: "many"
   - find: "\\bbigger\\b"
     replace: "larger"
   - find: "\\bkind of\\b"
@@ -45,13 +41,15 @@ lint_targets: "**/*.tex"
 
 | 禁用 | 替代 |
 |------|------|
-| a lot of | many / numerous / a large number of（需附数据） |
+| a lot of / lots of | 具体数字，或 many（注意 "many studies" 类组合会触发 `PROSE.VAGUE_QUANTIFIERS`，最好直接量化） |
 | things | factors / components / elements |
 | stuff | data / material / content |
 | get | obtain / achieve / acquire |
 | big | large / substantial |
 | kind of / sort of | 删除，或用 approximately / somewhat |
-| bigger / smaller | larger / smaller（smaller 在比较级语境中可接受） |
+| bigger | larger |
+
+`smaller` 不在禁用列表：它本身就是规范的比较级学术用词。
 
 ## Rationale
 
