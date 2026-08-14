@@ -30,6 +30,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.INVENTED_CONCEPT_LABEL` | 禁止自造术语冒充既有概念 |
 | `PROSE.RESTATEMENT_DILUTION` | 同一命题一节内只说一次 |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
+| `PROSE.HEDGING_DISCIPLINE` | 动词强度匹配证据强度（双向：不 over-hedge 也不 over-claim） |
 | `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
 | `PROSE.FILLER_PHRASES` | 删除冗余填充短语 |
 | `PROSE.COLON_LIST_OVERUSE` | 禁止正文内联编号列表 |
