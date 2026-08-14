@@ -27,6 +27,12 @@ lint_patterns:
     mode: count
     threshold: 5
     threshold_param: tier2_max_per_file
+  - pattern: "(?i)\\bIn recent (years|decades),|has (attracted|received|gained|garnered) (increasing|considerable|significant|growing|substantial|widespread) (attention|interest)|With the (rapid|recent|increasing|growing) (development|advancement|growth|progress|proliferation|adoption|rise) of"
+    mode: match
+  - pattern: "\\b(Moreover|Furthermore|Additionally|In addition),\\s"
+    mode: count
+    threshold: 4
+    threshold_param: connectives_max_per_file
 lint_targets: "**/*.tex"
 ---
 
