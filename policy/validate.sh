@@ -196,6 +196,43 @@ for f in "${RULE_CARDS[@]}"; do
 done
 pass "lint_patterns format checked"
 
+# ─── 5c. Fix-Emission Safety ────────────────────────────────────────────────
+# autofix 的 replace 产物不得命中任何其他规则的 lint pattern——否则应用 A 的
+# 自动修复会制造 B 的违规（修复循环，返工率来源）。新增/修改 fix_patterns 时
+# 由本检查机器兜底。
+section "5c. Fix-Emission Safety"
+
+emit_patfile=$(mktemp)
+emit_repfile=$(mktemp)
+for g in "${RULE_CARDS[@]}"; do
+  gfm=$(get_fm "$g")
+  gbase=$(basename "$g")
+  echo "$gfm" | awk -v F="$gbase" '/^lint_patterns:/{p=1;next} /^[a-z_]+:/{p=0} p && / pattern: /{sub(/^ *- *pattern: */,""); gsub(/^"|"$/,""); print F "\t" $0}' >> "$emit_patfile"
+  echo "$gfm" | awk -v F="$gbase" '/^fix_patterns:/{p=1;next} /^[a-z_]+:/{p=0} p && / replace: /{sub(/^ *replace: */,""); gsub(/^"|"$/,""); print F "\t" $0}' >> "$emit_repfile"
+done
+
+emission_hits=$(perl -e '
+  open(P, "<", $ARGV[0]) or exit 0; my @pats = map { chomp; [split /\t/, $_, 2] } <P>;
+  open(R, "<", $ARGV[1]) or exit 0; my @reps = map { chomp; [split /\t/, $_, 2] } <R>;
+  for my $r (@reps) {
+    my ($rf, $rs) = @$r; next unless defined $rs && length $rs;
+    for my $p (@pats) {
+      my ($pf, $ps) = @$p; next if !defined $ps || $pf eq $rf;
+      my $re = $ps; $re =~ s/\\\\/\\/g;
+      if (eval { $rs =~ /$re/ }) { print "$rf autofix output \"$rs\" matches lint pattern of $pf\n"; }
+    }
+  }
+' "$emit_patfile" "$emit_repfile" 2>/dev/null || true)
+
+if [[ -n "$emission_hits" ]]; then
+  while IFS= read -r hitline; do
+    [[ -n "$hitline" ]] && err "fix-emission loop: $hitline"
+  done <<< "$emission_hits"
+else
+  pass "No autofix output triggers another rule's lint pattern"
+fi
+rm -f "$emit_patfile" "$emit_repfile"
+
 # ─── 6. Body Sections ───────────────────────────────────────────────────────
 section "6. Required Body Sections"
 
