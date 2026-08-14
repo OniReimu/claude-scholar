@@ -166,6 +166,15 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 **同一命题一节内只说一次** <!-- policy:PROSE.RESTATEMENT_DILUTION -->
 AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。删除测试：删掉后出现的那句，本段信息零损失即确认是复述，删掉定稿（不要合并改写）。跨节的重复主张不归这里，交 `claim-architecture-review`。
 
+### 9. Claim–Evidence Calibration（动词对证据） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
+
+逐个实证主张查两件事：**(a) 有没有锚点**（数字/图表/引用在同句或紧邻句），**(b) 动词是否匹配证据强度**。
+
+- 无锚点的比较主张 → 补锚点或收窄："Our method is more robust." → "Our method's accuracy drops by 2 points under distribution shift, versus 11 for the baseline (Fig. 3)."
+- 动词强于证据 → 降级：prove/demonstrate/establish/guarantee 只留给数学证明或穷尽验证；实验支撑用 show / provide evidence / improve by N
+- 模糊幅度 → 区间 + comparator："a large improvement" → "a 2--6\% improvement over the strongest baseline"（对比对象取最强者，不是 trivial baseline）
+- **反向同样违规**：把校准过的 suggest/may indicate 改成确定性动词是制造 over-claim（见 Do NOT Over-Correct §1）
+
 ## Common AI Patterns (常见 AI 模式)
 
 ### Content Patterns (内容模式)
