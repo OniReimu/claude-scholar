@@ -25,6 +25,10 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 |---------|------|
 | `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
 | `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
+| `PROSE.AI_LEXICON` | AI 高频词表（tier-1 零容忍 + tier-2 密度阈值） |
+| `PROSE.FRACTAL_SUMMARY` | 禁止逐层预告/回顾（"In this section we…"） |
+| `PROSE.INVENTED_CONCEPT_LABEL` | 禁止自造术语冒充既有概念 |
+| `PROSE.RESTATEMENT_DILUTION` | 同一命题一节内只说一次 |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
 | `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
 | `PROSE.FILLER_PHRASES` | 删除冗余填充短语 |
