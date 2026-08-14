@@ -10,6 +10,7 @@
 
 ## News
 
+- **2026-08-15 (v1.10.0)**: 反 AI 写作大修 + policy 冲突审计 + 首轮实测。新增 4 条规则：`PROSE.AI_LEXICON`（tier-1 零容忍词表 + tier-2 密度阈值 + 套话开场 + 句首连接词预算，术语豁免保证 `loss landscape`/`robust`/`optimize` 不被误伤）、`PROSE.FRACTAL_SUMMARY`（禁止逐层预告/回顾）、`PROSE.INVENTED_CONCEPT_LABEL`（自造术语须有出处或显式命名声明）、`PROSE.RESTATEMENT_DILUTION`（同一命题一节内只说一次）；`PROSE.HEDGING_DISCIPLINE` 双向化（over-claim 与 over-hedge 同轴判定，并设校准红线防反向矫正）。冲突审计修掉自相矛盾的禁用词、autofix 修复循环、命中数学存在量词的裸词误报、`SENTENCE_LENGTH` 语义错误的 lint pattern，以及短句四卡互相振荡；`validate.sh` 新增 5c 检查把"修复不得触发其他规则"变成机器不变量。`writing-anti-ai` 升至 v1.1.0：读者层与统计检测器分离（不承诺过检测）、interleave protocol、语域分流、过度矫正护栏、证据日志与回归用例；首轮实测 39/39，改造前快照 37/39。同时以 submodule 引入 [zksecurity/zk-skills](https://github.com/zksecurity/zk-skills) 的 `circom-auditor`，并修复 `skill-forced-eval.js` 漏检所有符号链接 skill 的 bug。
 - **2026-02-21**: 新增首版 SoK 策略包：4 条语义规则 `SOK.*`、`security-sok-sp` profile，以及 3 个入口 skill 的 marker 集成。v1 中 SoK 仍通过 profile 激活（暂不做 schema 迁移）。
 - **2026-02-19 (v1.3.0)**: 引入论文策略引擎（`policy/`）：在 `policy/rules/` 采用规则卡设计并作为唯一真相源，支持分层作用域（`core/domain/venue`）、`policy/profiles/` 配置覆盖，以及 `policy/validate.sh` + `policy/lint.sh` 的可执行校验流程。同步强化图表工作流策略（Figure 1 必须存在；非实验图默认走 AutoFigure-Edit）。
 - **2026-02-16 (v1.2.1)**: 新增全局出图规则：任何生成图（AutoFigure-Edit 概念图、旧版生图链路、Python 实验图）都不添加图内标题；标题信息统一放在论文 caption/正文中。
