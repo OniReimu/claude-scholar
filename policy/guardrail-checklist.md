@@ -25,6 +25,10 @@
 - **NO mid-sentence colons**: "key observation: the model fails" → full sentence or split (heading colons `\textbf{X:}` exempt)
 - **NO trailing afterthoughts**: "..., as editable." comma + short tag → fold into main clause
 - **Comma overuse**: max 3 commas per sentence (≥4 → split or use semicolons)
+- **NO AI lexicon (tier-1)**: delve, leverage, underscore, harness, foster, showcase, streamline, seamless, intricate, meticulous, nuanced, multifaceted, pivotal, tapestry, realm, myriad, plethora, "paving the way for", "valuable insights", "at its core" → plain word or a concrete noun. Tier-2 (comprehensive, essential, vital, ensure, explore, enhance, insights, paradigm, interplay) ≤1 per sentence. Term-of-art uses (loss landscape, robust, optimize, trajectory) are exempt
+- **NO section previews/recaps**: "In this section, we present…" / "This subsection describes…" / "As we have seen…" / "Having described X, we now…" → start on content, end on the last concrete result; forward references via `\Cref{}`
+- **NO coined concept labels**: "the supervision paradox" / "workload creep" → cite a source, or declare it as your named contribution with a definition, or just describe the phenomenon
+- **NO restating a proposition twice in one section**: abstract lead-in + evidence + synonym recap → keep only the placement next to the evidence
 - **NO despite-dismissal**: "Despite challenges, X continues to thrive" → analyze the challenge
 - **NO superficial -ing suffixes**: trailing ", enabling/ensuring/providing..." → be specific
 - **NO dangling cross-references**: "Fig.~\ref{} illustrates X." → weave ref into analytical sentence; delete `\ref{}` and check if claim remains
