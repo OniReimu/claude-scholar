@@ -192,37 +192,39 @@ For comprehensive pattern lists, see:
 - **`references/patterns-english.md`** - Complete English pattern reference
 - **`references/patterns-chinese.md`** - Complete Chinese pattern reference
 
-## Personality and Soul (注入灵魂)
+## Voice, by Register（语域决定"人味"是什么）
 
-Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as obvious.
+去掉 AI 模式只是一半；另一半取决于语域——**两种语域的"人味"定义相反，用错方向就是制造新的返工**。
 
-### Signs of soulless writing:
-- Every sentence is the same length and structure
-- No opinions, just neutral reporting
-- No acknowledgment of uncertainty or mixed feelings
-- No first-person perspective when appropriate
-- No humor, no edge, no personality
+### 学术语域（论文、rebuttal、技术报告）——默认
 
-### How to add voice:
+**中性、精确、证据绑定本身就是人类学者的声音。** 不要注入观点、幽默、情绪或第一人称"个性"：
 
-**Have opinions.** Don't just report facts—react to them.
+- ❌ 不加 "I think" / "honestly" / 俏皮话 / 情绪反应（这会触发 `PROSE.INFORMAL_VOCABULARY`，且违背 `policy/style-guide.md`）
+- ✅ 人味来自：具体的数字和命名的对象、承载主张的短句与展开论证的长句交错（`PROSE.RHYTHM_VARIANCE`）、作者立场通过**主张的选择和证据的排布**表达
+- ✅ "we" 是学术标准用法，保留；校准过的 hedge 是学者声音的一部分，保留
 
-> "I genuinely don't know how to feel about this" is more human than neutrally listing pros and cons.
+### 随意语域（博客、社交帖、newsletter、个人邮件）
 
-**Vary your rhythm.** Short punchy sentences. Then longer ones that take their time.
+此时才适用"注入灵魂"：
 
-**Acknowledge complexity.** Real humans have mixed feelings.
+- **Have opinions.** "I genuinely don't know how to feel about this" 比中立列利弊更有人味
+- **Acknowledge complexity.** "This is impressive but also kind of unsettling" 胜过 "This is impressive."
+- **Use "I".** "I keep coming back to..." 是真人在思考的信号
+- 中文同理："我真的不知道该怎么看待这件事"比中立地列出利弊更有人味
 
-> "This is impressive but also kind of unsettling" beats "This is impressive."
+## ⚠️ Do NOT Over-Correct（学术语域反向护栏）
 
-**Use "I" when it fits.** First person isn't unprofessional—it's honest.
+通用 humanizer 会把合法的学术构造当 AI 痕迹铲掉——**过度矫正制造的问题和 AI 痕迹一样严重**。以下内容保留，不要"修复"：
 
-> "I keep coming back to..." signals a real person thinking.
+1. **校准过的 hedging**：suggests / is consistent with / we hypothesize / may indicate 用在真不确定的主张上是**必需的**。把 "the results suggest X" 改成 "the results prove X" 是制造 over-claim（见 `PROSE.HEDGING_DISCIPLINE` 校准红线） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
+2. **行动者无关时的被动语态**："Samples were normalized to total protein." 不改主动
+3. **第一人称复数 "we"**：学术标准，不为"去 AI 味"改写规避
+4. **正式定义、命名的方法/指标、术语、公式、符号**：逐字保留
+5. **数字、结果、引用**：永不发明、删除或改动；cite key 一个不丢
+6. **分号与偶发的三项并列**：适度即合法（`PROSE.RULE_OF_THREE` 管的是每段反复出现，不是禁绝）
 
-**中文示例**：
-> "我真的不知道该怎么看待这件事"比中立地列出利弊更有人味。
->
-> "这令人印象深刻但也有点不安"胜过"这令人印象深刻"。
+**Funding proposal 是另一个语域**：proposal 靠 vision + feasibility 卖，论文语域要削的 ambition 语言（"long-term goal"、"transformative"）在 proposal 里是预期形态。改 grant/fellowship 文本走 `grant-application-writing` skill，不要用本 skill 的论文标准去压平 vision。
 
 ## 两个不同的目标：读者 vs 统计检测器
 
