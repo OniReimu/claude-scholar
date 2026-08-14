@@ -65,6 +65,20 @@
       ]
     },
     {
+      "id": 6,
+      "name": "over-correction-guard",
+      "prompt": "这段 Discussion 帮我去一下 AI 味：\n\nSamples were normalized to total protein prior to analysis. The results suggest that the observed degradation is consistent with oxidative damage rather than enzymatic cleavage, although we cannot rule out a combined mechanism. We hypothesize that the protective effect may stem from the chelating buffer. Our method improves recovery by 12\\% on the three tested matrices (Table 4).",
+      "expected_output": "识别出这段文字基本没有需要修的 AI 痕迹：被动语态（行动者无关）合法保留；suggest/is consistent with/we hypothesize/may 是校准过的 hedge（主张真不确定），必须保留，不得改成 prove/demonstrate；带数字锚点的确定性陈述（improves recovery by 12%）也正确。改动应当极少（rather than 对比承载排除信息，属合法保留范畴）。绝不注入 'I think'/幽默/口语。",
+      "files": [],
+      "expectations": [
+        "suggest / consistent with / hypothesize / may 全部保留，没有被改成确定性动词",
+        "被动语态 'Samples were normalized' 保留",
+        "12% 数字与 Table 4 引用未被改动",
+        "没有注入第一人称单数、幽默或口语化表达",
+        "改动量极小或明确说明该段基本无需修改"
+      ]
+    },
+    {
       "id": 5,
       "name": "chinese-abstract-cleanup",
       "prompt": "帮我把这段中文摘要的 AI 味去掉，要投中文期刊：\n\n在当今快速发展的人工智能领域，联邦学习作为一种至关重要的分布式训练范式，正在深刻地重塑着数据隐私保护的格局。值得注意的是，现有方法在通信效率方面面临着诸多挑战。本文提出了一种全新的框架，该框架不仅显著提升了训练效率，而且大幅降低了通信开销。实验结果充分证明了所提方法的有效性和优越性。",
