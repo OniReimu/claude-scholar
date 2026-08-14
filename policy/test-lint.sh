@@ -183,11 +183,13 @@ echo ""
 echo "=== 5. Filter Count Tests ==="
 
 echo "5.1 guardrail rule count"
+# 期望值随 guardrail 规则增减而变化，新增规则时同步更新
+EXPECTED_GUARDRAIL=27
 count=$(bash "$LINT" --constraint-type guardrail --quiet "$TEST_DIR" 2>&1 | grep "Rules checked:" | grep -o '[0-9]*')
-if [[ "$count" == "18" ]]; then
+if [[ "$count" == "$EXPECTED_GUARDRAIL" ]]; then
   ((PASS++)); echo "  ✓ guardrail rules: $count"
 else
-  ((FAIL++)); echo "  ✗ guardrail rules: expected 18, got $count"
+  ((FAIL++)); echo "  ✗ guardrail rules: expected $EXPECTED_GUARDRAIL, got $count"
 fi
 
 echo "5.2 safe rule count"
