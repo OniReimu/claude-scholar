@@ -15,10 +15,8 @@ conflicts_with: []
 constraint_type: guardrail
 autofix: none
 lint_patterns:
-  - pattern: "[^.!?]*\\s[^.!?]*"
-    mode: count
-    threshold: 35
-    threshold_param: max_words
+  - pattern: "(?:[^.!?\\s]+\\s+){35,}[^.!?\\s]+[.!?]"
+    mode: match
 lint_targets: "**/*.tex"
 ---
 
@@ -32,9 +30,9 @@ lint_targets: "**/*.tex"
 
 ## Check
 
-- **计数检查**: 统计每句词数（以句号/问号/感叹号为句子边界），超过 35 词的句子标记为违规
-- **排除**: LaTeX 命令 token 不计入词数（如 `\cite{}`、`\ref{}`）
-- **排除**: 公式环境内的内容
+- **regex（逐行）**: 匹配「≥36 个不含句读的 token 连排 + 终止标点」的行内长句。**已知局限**：grep 逐行匹配，硬换行（每 80 列断行）的 `.tex` 中跨行长句不会被抓到——regex 层只保证零误报的部分召回，软换行文件（一段一行，Overleaf 默认）召回完整
+- **完整检查**: 用 `prose-rhythm-variance.md` 附带的 Python 脚本剥离公式/命令后按句统计，超 35 词逐句标记；`params.max_words` 是该语义检查的阈值（regex 的 35 硬编码在 pattern 中，profile 覆盖 `max_words` 只影响语义检查）
+- **排除**: LaTeX 命令 token 不计入词数（如 `\cite{}`、`\ref{}`）；公式环境内的内容
 
 ## Examples
 
