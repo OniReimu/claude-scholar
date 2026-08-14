@@ -224,6 +224,42 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 >
 > "这令人印象深刻但也有点不安"胜过"这令人印象深刻"。
 
+## 两个不同的目标：读者 vs 统计检测器
+
+本 skill 上面所有内容针对的是**读者**——让熟悉 AI 模式的人（现在包括审稿人）读不出机器痕迹。这和**骗过统计检测器**（Pangram、GPTZero、Originality.ai、Turnitin 的 AI 模块）不是同一件事，两者的失败模式互不相关。
+
+| | 读者层（reader tells） | 检测器层（statistical detectors） |
+|---|---|---|
+| 判据 | 词汇、句式、结构、语气 | 生成动态（planned-text dynamics）+ 主导作者身份 |
+| 本 skill 的规则 | 全部有效 | **基本无效** |
+| 实测 | — | 同一段文字用 11 种风格重写（punchy / rambling / 全小写 / 带错别字 / ESL 腔 / 模仿特定人笔迹）**全部 100% AI，无梯度** |
+
+**必须说清楚的三件事：**
+
+1. **改完所有 tell ≠ 检测器会放过。** 逐条清完本 skill 的规则只保证人读不出来。如果用户关心的是投稿系统的 AI 检测，直说这两件事不是一回事，别让他以为改完就安全了。
+2. **学术语域下唯一可用的检测器手段是 interleave protocol**（见下节）。让文本"看起来乱"的那套办法（全小写、掉撇号、自我打断、`!!`）在论文里是荒谬的，不要用——那是社交/newsletter 语域的技术。
+3. **所有阈值都是快照，不是承诺。** 证据来源、日期和样本量见 `references/evidence.md`；检测器会 retrain，任何"多少比例能过"的数字都要重测。
+
+## Interleave Protocol（人类底稿 + AI 补写）
+
+唯一在学术语域下可用、且有实测支撑的检测器层手段。前提是**存在一份用户自己写的底稿**。
+
+**机制**：分类器判的是主导作者身份，不是句子质量。真人写的底稿能吸收相当比例的 AI 句子而仍被判为人类，前提是 AI 句子始终被真人句子夹住。
+
+**执行规则（五条，缺一条就退化）：**
+
+1. **逐字保留用户的句子。** 不改语法、不改错别字、不改跑题的长句——这些是载荷信号。**改写一句人类句子等于把它变成 AI token。**
+2. **只加不换。** 你的句子插在他的句子**之间**，绝不连续两句都是你写的。
+3. **AI 词占比 ≤ ~40%。**
+4. **开头句必须是用户的，逐字保留。** 首批 token 决定分类器的初始判断。
+5. **交付时标注哪些句子是他的、哪些是你的**，否则他下一轮编辑会把人类信号改掉。
+
+**实测数据**（Pangram v3.3.2，2026-07-22，n 极小，社交/newsletter 语域）：13% AI 交错 → Human；35% → Human；45% 严格交替 → Human；70% 且含一段连续 AI 块 → 100% AI。
+
+**用在论文上的做法**：让用户口述或速记一段自己的话（idea 底稿、口述转录、实验当天的笔记都行，质量无所谓，作者身份才是关键），你在他的句子之间补技术表述、公式引导、引文衔接。**这条路径的产物仍需过一遍本 skill 的读者层规则**——interleave 保的是检测器，不保证句子写得好。
+
+> ⚠️ 上述比例来自社交语域的小样本，**学术长文没有被测过**。当作 hypothesis 用，不要当作保证；用户真的关心结果时让他自己在目标检测器上复测，并把结果记回 `references/evidence.md`。
+
 ## Workflow (工作流程)
 
 > **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
