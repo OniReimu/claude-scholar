@@ -454,6 +454,19 @@ lint_cite_verify_via_api() {
 #
 # Scope is every .tex line, not body prose: in the sweep that motivated this
 # check, 8 of 11 leaks sat in captions, notation tables and appendices.
+#
+# Matching goes through the same GREP_MODE dispatch as regex_match/regex_count:
+# BSD grep has no -P, so a bare `grep -P` here would silently match nothing.
+# Emits "lineno<TAB>matched-span" so the caller can attach the real filename.
+prov_grep_spans() {
+  local pat="$1" f="$2"
+  case "$GREP_MODE" in
+    ggrep) ggrep -noP "$pat" "$f" 2>/dev/null || true ;;
+    grep)  grep  -noP "$pat" "$f" 2>/dev/null || true ;;
+    perl)  LINT_PAT="$pat" perl -ne 'while (/$ENV{LINT_PAT}/g) { print "$.:$&\n" }' "$f" 2>/dev/null || true ;;
+  esac
+}
+
 lint_prose_no_internal_provenance() {
   local severity="$1"
 
