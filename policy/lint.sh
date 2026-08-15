@@ -695,6 +695,24 @@ for rule_file in "$RULES_DIR"/*.md; do
     continue
   fi
 
+  if [[ "$RULE_ID" == "PROSE.NO_INTERNAL_PROVENANCE" ]]; then
+    $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) builtin P1-P5 → *.tex"
+
+    ((RULES_CHECKED++)) || true
+
+    prev_e=$TOTAL_ERRORS
+    prev_w=$TOTAL_WARNINGS
+
+    lint_prose_no_internal_provenance "$local_severity"
+
+    if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
+      ((RULES_PASSED++)) || true
+      $QUIET || echo -e "    ${GREEN}PASS${NC}"
+    fi
+    $QUIET || echo ""
+    continue
+  fi
+
   # Regex engine only handles regex rules with explicit machine patterns
   [[ "$RULE_CHECK_KIND" == "regex" ]] || continue
   [[ ${#PATTERNS[@]} -gt 0 || ($FIX_MODE && ${#FIX_PATTERNS[@]} -gt 0) ]] || continue
