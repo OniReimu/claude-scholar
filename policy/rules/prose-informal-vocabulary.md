@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: [PROSE.VAGUE_QUANTIFIERS]
+conflicts_with: [PROSE.VAGUE_QUANTIFIERS, PROSE.REGISTER_PRESERVATION]
 constraint_type: guardrail
 autofix: safe
 lint_patterns:
@@ -24,6 +24,14 @@ lint_patterns:
   - pattern: "\\bsort of\\b"
     mode: match
   - pattern: "\\bbigger\\b"
+    mode: match
+  - pattern: "\\bfor good\\b(?!\\s+(reason|measure|cause|practice|approximation))"
+    mode: match
+  - pattern: "\\bon heads\\b"
+    mode: match
+  - pattern: "\\bdrives? off\\b"
+    mode: match
+  - pattern: "\\bholds? levers\\b"
     mode: match
 fix_patterns:
   - find: "\\bbigger\\b"
