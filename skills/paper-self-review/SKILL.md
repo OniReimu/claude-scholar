@@ -1,7 +1,7 @@
 ---
 name: paper-self-review
 description: This skill should be used when the user asks to "review paper quality", "check paper completeness", "self-review before submission", "audit this draft", "run the submission checklist", or "is this paper ready to submit". Runs the systematic pre-submission quality checklist — abstract/intro/method/experiment completeness, figure and table conformance (booktabs, direction indicators, resizebox, dimension budget), math/notation consistency, citation checks, prose-rule sweep (PROSE.*), internal-provenance leaks, and venue compliance. Report-and-propose only. Do not use for paragraph-level structural editing (claim-architecture-review, which runs BEFORE this), prose rewriting (ml-paper-writing / writing-anti-ai), or reviewer-response drafting (review-response).
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Paper Self-Review
