@@ -25,13 +25,13 @@ lint_patterns:
     mode: match
   - pattern: "\\bbigger\\b"
     mode: match
-  - pattern: "\\bfor good\\b(?!\\s+(reason|measure|cause|practice|approximation))"
+  - pattern: "(?i)\\bfor good\\b(?!\\s+(reason|measure|cause|practice|approximation))"
     mode: match
-  - pattern: "\\bon heads\\b"
+  - pattern: "(?i)\\bon heads\\b"
     mode: match
-  - pattern: "\\bdrives? off\\b"
+  - pattern: "(?i)\\bdrives? off\\b"
     mode: match
-  - pattern: "\\bholds? levers\\b"
+  - pattern: "(?i)\\bholds? levers\\b"
     mode: match
 fix_patterns:
   - find: "\\bbigger\\b"

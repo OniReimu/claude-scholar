@@ -76,7 +76,8 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `PROSE.PARAGRAPH_TOPIC_SENTENCE` | 首句为topic sentence |
 | `PROSE.SUBSECTION_COMPLETENESS` | subsection≥2段 |
 | `PROSE.EQUATION_EXPLANATION` | 公式三步解释 |
-| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词 |
+| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词（词表层，仅为地板） |
+| `PROSE.REGISTER_PRESERVATION` | 简化/压缩不得降语域（判 diff） |
 | `PROSE.HEDGING_DISCIPLINE` | Hedging需匹配证据 |
 | `PROSE.NUMBER_EXPRESSION` | 数字表达规范 |
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
