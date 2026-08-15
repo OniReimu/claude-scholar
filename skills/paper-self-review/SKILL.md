@@ -62,7 +62,7 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `PROSE.RULE_OF_THREE` | 避免反复三项并列 |
 | `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
 | `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list/texttt） |
-| `PROSE.NO_INTERNAL_PROVENANCE` | 正文/caption 禁内部工作痕迹（脚本名/路径/元话语） |
+| `PROSE.NO_INTERNAL_PROVENANCE` | 正文/caption/表格禁内部工作痕迹（7 类：脚本名·元话语·placeholder·数据路径·schema 列名·内部 fixture 名·修订叙事），provenance 归 ledger 与 artifact |
 | `PROSE.TENSE_CONSISTENCY` | 各章节时态一致 |
 | `PROSE.ABBREVIATION_FIRST_USE` | 缩写首次展开 |
 | `PROSE.VAGUE_QUANTIFIERS` | 禁止模糊量词 |
@@ -139,7 +139,7 @@ Evaluate the quality and effectiveness of figures and tables:
 - Are tables wrapped in `\resizebox` to fit the column width (or do they satisfy all natural-fit exemptions)? <!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->
 - Do comparison tables stay within the 3–4 dimension budget, single-column first, with an explicit reason for anything wider? <!-- policy:TABLE.DIMENSION_BUDGET -->
 - For any full-width (`table*`) table, does `\resizebox` only shrink (in-table font ≤ body font) — not enlarge a sparse table? If it would enlarge, demote to single-column or add metrics/columns. <!-- policy:TABLE.FULLWIDTH_FONT_DENSITY -->
-- Are captions and prose free of internal provenance (script names, paths, DPI notes, placeholder markers, draft meta-text)? <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
+- Are prose, **captions, table cells, notation tables and appendices** free of internal provenance — script names, DPI notes, placeholder markers, draft meta-text, **result paths (`\path{experiments/results/...}`), data schema identifiers (`\texttt{empirical\_rate}`), internal fixture names ("As Golden G4"), and revision narrative ("the old bound is retracted", "superseded by", "renamed to avoid collision with")**? Eight of eleven leaks in the sweep that motivated this check sat outside body prose. Run `bash policy/lint.sh --rule PROSE.NO_INTERNAL_PROVENANCE <dir>` for P1–P5, then `bash policy/scripts/extract-undefined-identifiers.sh <dir>` and confirm every identifier is defined somewhere the reader can find it. <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
 - Do figures/tables support the text narrative?
 - Are figures/tables clear and readable?
 - Do formats comply with journal/conference requirements?
@@ -239,7 +239,7 @@ Paper Quality Checklist:
 - [ ] Table headers include direction indicators (↑/↓) <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - [ ] Tables resizebox-fit to column width unless naturally fitting <!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->
 - [ ] Comparison tables within 3–4 dimension budget, single-column first <!-- policy:TABLE.DIMENSION_BUDGET -->
-- [ ] No internal provenance in prose/captions (scripts, paths, placeholders, meta-text) <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
+- [ ] No internal provenance anywhere rendered — prose, captions, table cells, appendices (scripts, result paths, schema column names, internal fixture names, revision narrative, placeholders, meta-text); `policy/lint.sh --rule PROSE.NO_INTERNAL_PROVENANCE` is clean <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
 - [ ] Symbols consistent throughout paper <!-- policy:LATEX.NOTATION_CONSISTENCY -->
 - [ ] For crypto-oriented security papers, core mechanism is presented as a structured Construction (Primitives/Parameters + named procedures) <!-- policy:PROSE.CRYPTO_CONSTRUCTION_TEMPLATE -->
 - [ ] Empty intensifiers removed <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->

@@ -65,7 +65,7 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `PROSE.RULE_OF_THREE` | 避免反复三项并列 |
 | `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
 | `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list/texttt） |
-| `PROSE.NO_INTERNAL_PROVENANCE` | 正文/caption 禁内部工作痕迹（脚本名/路径/元话语） |
+| `PROSE.NO_INTERNAL_PROVENANCE` | 正文/caption/表格禁内部工作痕迹（7 类：脚本名·元话语·placeholder·数据路径·schema 列名·内部 fixture 名·修订叙事），provenance 归 ledger 与 artifact |
 | `PROSE.TENSE_CONSISTENCY` | 各章节时态一致 |
 | `PROSE.ABBREVIATION_FIRST_USE` | 缩写首次展开 |
 | `PROSE.VAGUE_QUANTIFIERS` | 禁止模糊量词 |
