@@ -225,9 +225,30 @@ For comprehensive pattern lists, see:
 
 ## ⚠️ Do NOT Over-Correct（学术语域反向护栏）
 
-通用 humanizer 会把合法的学术构造当 AI 痕迹铲掉——**过度矫正制造的问题和 AI 痕迹一样严重**。以下内容保留，不要"修复"：
+通用 humanizer 会把合法的学术构造当 AI 痕迹铲掉——**过度矫正制造的问题和 AI 痕迹一样严重**。
 
-1. **校准过的 hedging**：suggests / is consistent with / we hypothesize / may indicate 用在真不确定的主张上是**必需的**。把 "the results suggest X" 改成 "the results prove X" 是制造 over-claim（见 `PROSE.HEDGING_DISCIPLINE` 校准红线） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
+护栏有两个方向，**第 1 条是替换方向，其余是删除方向**。这个顺序是实测逼出来的：一次压缩 pass 产生的九处语域违规，没有一处删掉了下面 2–7 条里的任何东西，它们全都是**用低语域措辞替换了合语域措辞**——只讲"不要删"的护栏对这类问题完全不设防。
+
+### 1. 不要在简化/压缩时降低语域 <!-- policy:PROSE.REGISTER_PRESERVATION -->
+
+**语域是编辑动作的属性，不是词的属性**，所以这条判的是 **diff**：一个替换即使**准确**，只要语域低于它替换掉的措辞，就是违规。
+
+| 改前 | 改后（违规） | 问题 |
+|---|---|---|
+| route micropayments to peers | pay peers | 精确度损失——指称对象没了 |
+| a sanction set too high deters | too heavy a one drives off | 名词被代词顶替 + 短语动词顶替拉丁语源动词 |
+| permanently excluding a verifier | excluding a verifier for good | 口语惯用语 |
+| Institutional instruments impose a cost | Institutions hold levers | 谓语位置的比喻 |
+
+注意前两行**根本不口语**，只是更含糊——词表永远抓不到它们。
+
+**修复规则（先做这个，再考虑自己造措辞）**：**用这篇稿子在别处已经使用的措辞**。实测九处里有七处的正确改法已经存在于更早草稿或另一节中。报告格式必须四列：`original → replacement → suggested wording → source of the suggestion`，写出 source 才可核对。
+
+**压缩为什么必然触发这个**：压缩优化词数，而最便宜可砍的恰恰是精确的多音节词。所以 drift 不是失误，是这个优化目标的预期输出，每次压缩 pass 都会复发，除非语域被单独计分。`PROSE.RHYTHM_VARIANCE`（拉句长方差）推的是同一个方向——**拉方差不得靠写短口语句**。
+
+### 以下内容保留，不要"修复"（删除方向）
+
+2. **校准过的 hedging**：suggests / is consistent with / we hypothesize / may indicate 用在真不确定的主张上是**必需的**。把 "the results suggest X" 改成 "the results prove X" 是制造 over-claim（见 `PROSE.HEDGING_DISCIPLINE` 校准红线） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
 2. **行动者无关时的被动语态**："Samples were normalized to total protein." 不改主动
 3. **第一人称复数 "we"**：学术标准，不为"去 AI 味"改写规避
 4. **正式定义、命名的方法/指标、术语、公式、符号**：逐字保留
