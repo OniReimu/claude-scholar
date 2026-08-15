@@ -21,8 +21,15 @@ if [[ ! -d "$TARGET_DIR" ]]; then
   exit 2
 fi
 
-GREP_BIN=grep
-grep -P '' </dev/null 2>/dev/null || { command -v ggrep >/dev/null && GREP_BIN=ggrep; }
+# BSD grep has no -P. Mirror lint.sh's engine dispatch so this works on macOS.
+CAND_RE='\b[A-Z][A-Za-z]*-?[A-Z]?[0-9]+\b'
+if grep -qP '' </dev/null 2>/dev/null; then
+  scan() { grep -noP "$CAND_RE" 2>/dev/null || true; }
+elif command -v ggrep >/dev/null 2>&1; then
+  scan() { ggrep -noP "$CAND_RE" 2>/dev/null || true; }
+else
+  scan() { CAND_RE="$CAND_RE" perl -ne 'while (/$ENV{CAND_RE}/g) { print "$.:$&\n" }' 2>/dev/null || true; }
+fi
 
 # Model identifiers and version-like domain terms are scientific facts, not
 # internal identifiers — the rule card's exclusion table lists them explicitly.
