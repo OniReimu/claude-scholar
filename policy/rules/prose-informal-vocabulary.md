@@ -56,8 +56,16 @@ lint_targets: "**/*.tex"
 | big | large / substantial |
 | kind of / sort of | 删除，或用 approximately / somewhat |
 | bigger | larger |
+| for good | permanently（`for good reason/measure/cause` 是合法搭配，已在 pattern 中排除） |
+| on heads | on a positive draw（或该实验实际的事件名） |
+| drives off | deters / discourages |
+| holds levers | imposes a cost / has instruments（并查 `PROSE.ABSTRACT_AGENCY`） |
 
 `smaller` 不在禁用列表：它本身就是规范的比较级学术用词。
+
+> ⚠️ **这份词表是地板，不是覆盖范围。** 实测中一次压缩 pass 产生的九处语域违规，本卡的 lint pattern 命中 **0/9**——因为语域是**编辑动作**的属性，不是**词**的属性：`pay peers`、`too heavy a one` 都不口语，只是比它们替换掉的措辞更不精确，任何以"口语词"为范围的规则永远看不见它们。
+>
+> **真正生效的检查是 `PROSE.REGISTER_PRESERVATION`**（diff 范围，比对改动 span 与其改前措辞）。本卡负责：词表层命中，以及**未被本次 pass 改动**的文本。不要把这份加长的列表误当成问题已解决。
 
 ## Rationale
 
