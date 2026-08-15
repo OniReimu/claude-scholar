@@ -481,7 +481,7 @@ lint_prose_no_internal_provenance() {
     '\\path\{[^}]*\}'
     '(experiments|results|scripts|notebooks)/[A-Za-z0-9_./-]+'
     '\.(csv|py|jsonl|json|sh|ipynb|log|pkl|npz|yaml)\b'
-    '\\texttt\{[a-z0-9]+(_[a-z0-9]+)+\}'
+    '\\texttt\{[^}]*[a-z0-9]+\\?_[a-z0-9]+[^}]*\}'
     '(retracted|supersed(es|ed)|legacy [a-z]+|no longer (used|the original version)|old (bound|formula|version)|previously we|earlier draft|to avoid collision with)'
   )
   local -a pids=(P1 P2 P3 P4 P5)
