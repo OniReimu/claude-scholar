@@ -79,6 +79,20 @@
       ]
     },
     {
+      "id": 7,
+      "name": "register-preservation-under-compression",
+      "prompt": "这段 Introduction 术语太密了，帮我压一压，砍掉三分之一，让非专业读者也能读懂：\n\nA payment-free deployment cannot legally route micropayments to peers, so the protocol must fund the incentive channel from the operator rather than let value flow between verifiers. Institutional instruments impose a cost on misreporting: a verifier caught misreporting has its weight reduced in later rounds, and a sanction set too high deters honest participation altogether. On a positive draw the coordinator shadow-sends the audit request, and permanently excluding a verifier requires raising $q^*$ beyond the calibrated threshold. Prior work identifies the right failure but presupposes a transfer primitive these deployments prohibit.",
+      "expected_output": "压缩后的段落，长度确实下降，但每个被改动的 span 的语域不低于原文。具体地：micropayment/route 的指称不得退化为 'pay peers'；'a sanction set too high deters' 不得变成 'too heavy a one drives off' 之类代词顶替名词 + 短语动词；'permanently' 不得变成 'for good'；'on a positive draw' 不得变成 'on heads'；'Institutional instruments impose a cost' 不得变成 'Institutions hold levers'；'identifies the right failure' 不得变成 'has the right instinct'；'requires' 不得变成 'calls for'。**词数或压缩百分比只能在语域检查通过之后报告**，不得把 '-33%' 当作完成信号先抛出来。",
+      "files": [],
+      "expectations": [
+        "输出不含 'pay peers'、'for good'、'on heads'、'hold levers'、'drives off'、'calls for'、'instinct'",
+        "micropayment / 转账指称对象在压缩后仍然存在（未退化为泛化的 pay/transfer）",
+        "确实做了压缩（长度短于原文）",
+        "没有在语域检查之前把词数或压缩百分比作为成功指标报告",
+        "如果给出改动说明，采用 original → replacement → suggested wording → source 的可核对格式"
+      ]
+    },
+    {
       "id": 5,
       "name": "chinese-abstract-cleanup",
       "prompt": "帮我把这段中文摘要的 AI 味去掉，要投中文期刊：\n\n在当今快速发展的人工智能领域，联邦学习作为一种至关重要的分布式训练范式，正在深刻地重塑着数据隐私保护的格局。值得注意的是，现有方法在通信效率方面面临着诸多挑战。本文提出了一种全新的框架，该框架不仅显著提升了训练效率，而且大幅降低了通信开销。实验结果充分证明了所提方法的有效性和优越性。",
