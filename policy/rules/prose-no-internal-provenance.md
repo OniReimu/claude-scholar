@@ -84,7 +84,7 @@ Agent 是在把一条内部规范导出到外部产物上。提示词用什么�
 | P1 | `\\path\{[^}]*\}` | 近乎确定——手稿里出现 `\path` 几乎必然是泄漏 | 4 |
 | P2 | `(experiments\|results\|scripts\|src\|data\|notebooks)/[A-Za-z0-9_./-]+` | 高 | 4 |
 | P3 | `\.(csv\|py\|jsonl\|json\|sh\|ipynb\|log\|pkl\|npz\|yaml)\b` | 高 | 1, 4 |
-| P4 | `\\texttt\{[a-z0-9]+(\\_[a-z0-9]+)+\}`（`\texttt` 内的 snake_case） | 高 | 5 |
+| P4 | `\\texttt\{[^}]*[a-z0-9]+\\?_[a-z0-9]+[^}]*\}`（`\texttt` 组内含 snake_case） | 高 | 5 |
 | P5 | `retract\|supersede[sd]\|legacy\|no longer (used\|the original version)\|old (bound\|formula\|version)\|previously we\|earlier draft\|to avoid collision with` | 中——需人工裁决 | 7 |
 
 P1–P4 属 `autofix: assisted`：工具无法知道替代措辞，但能精确指出位置。
