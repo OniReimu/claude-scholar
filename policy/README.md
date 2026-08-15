@@ -222,7 +222,7 @@ SoK 规则集合（语义规则）：
 | PROSE.OVER_DEFENSIVE | prose-over-defensive | domain | warn | false | doc | guidance | none |
 | PROSE.PROMOTIONAL_LANGUAGE | prose-promotional-language | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.FORMATTING_RESTRAINT | prose-formatting-restraint | domain | warn | false | doc | guidance | none |
-| PROSE.NO_INTERNAL_PROVENANCE | prose-no-internal-provenance | core | warn | false | doc | guardrail | assisted |
+| PROSE.NO_INTERNAL_PROVENANCE | prose-no-internal-provenance | core | error | false | lint_script | guardrail | assisted |
 | PROSE.TENSE_CONSISTENCY | prose-tense-consistency | domain | warn | false | doc | guidance | none |
 | PROSE.ABBREVIATION_FIRST_USE | prose-abbreviation-first-use | domain | warn | false | doc | guidance | none |
 | PROSE.VAGUE_QUANTIFIERS | prose-vague-quantifiers | domain | warn | false | lint_script | guardrail | assisted |
