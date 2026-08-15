@@ -209,7 +209,10 @@ echo "=== 6. PROSE.NO_INTERNAL_PROVENANCE Acceptance Tests ==="
 PROV_DIR="$TEST_DIR/provenance"
 mkdir -p "$PROV_DIR"
 
-prov_lint() { bash "$LINT" --rule PROSE.NO_INTERNAL_PROVENANCE "$PROV_DIR" 2>&1; }
+# lint.sh exits 1 on error-severity findings, and this harness runs under
+# `set -eo pipefail` — without `|| true` the pipeline reads as a harness failure
+# and every must-flag case would report "got none".
+prov_lint() { bash "$LINT" --rule PROSE.NO_INTERNAL_PROVENANCE "$PROV_DIR" 2>&1 || true; }
 
 assert_flags() {
   local desc="$1" content="$2"
