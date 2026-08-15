@@ -47,7 +47,7 @@ while IFS= read -r file; do
     -e 's/\\(label|ref|Cref|cref|eqref|autoref|cite[a-z]*)\{[^}]*\}//g' \
     -e 's/\\(url|href)\{[^}]*\}//g' \
     "$file" 2>/dev/null \
-  | $GREP_BIN -noP '\b[A-Z][A-Za-z]*-?[A-Z]?\d+\b' 2>/dev/null \
+  | scan \
   | while IFS=: read -r lno tok; do
       [[ -n "$tok" ]] || continue
       printf '%s\t%s:%s\n' "$tok" "$file" "$lno"
