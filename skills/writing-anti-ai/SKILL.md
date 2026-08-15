@@ -19,7 +19,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
 > 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
-> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（28 条禁止模式）。
+> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（30 条禁止模式）。
 
 | Rule ID | 摘要 |
 |---------|------|
@@ -37,7 +37,8 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.RULE_OF_THREE` | 避免反复三项并列 |
 | `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
 | `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list） |
-| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词 |
+| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词（词表层，仅为地板） |
+| `PROSE.REGISTER_PRESERVATION` | 简化/压缩不得降语域（判 diff 不判 document） |
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
 | `PROSE.COPULA_DODGE` | 禁止"serves as"替代"is" |
 | `PROSE.NEGATIVE_PARALLELISM` | 禁止"It's not X, it's Y"假深刻 |
@@ -249,11 +250,11 @@ For comprehensive pattern lists, see:
 ### 以下内容保留，不要"修复"（删除方向）
 
 2. **校准过的 hedging**：suggests / is consistent with / we hypothesize / may indicate 用在真不确定的主张上是**必需的**。把 "the results suggest X" 改成 "the results prove X" 是制造 over-claim（见 `PROSE.HEDGING_DISCIPLINE` 校准红线） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
-2. **行动者无关时的被动语态**："Samples were normalized to total protein." 不改主动
-3. **第一人称复数 "we"**：学术标准，不为"去 AI 味"改写规避
-4. **正式定义、命名的方法/指标、术语、公式、符号**：逐字保留
-5. **数字、结果、引用**：永不发明、删除或改动；cite key 一个不丢
-6. **分号与偶发的三项并列**：适度即合法（`PROSE.RULE_OF_THREE` 管的是每段反复出现，不是禁绝）
+3. **行动者无关时的被动语态**："Samples were normalized to total protein." 不改主动
+4. **第一人称复数 "we"**：学术标准，不为"去 AI 味"改写规避
+5. **正式定义、命名的方法/指标、术语、公式、符号**：逐字保留
+6. **数字、结果、引用**：永不发明、删除或改动；cite key 一个不丢
+7. **分号与偶发的三项并列**：适度即合法（`PROSE.RULE_OF_THREE` 管的是每段反复出现，不是禁绝）
 
 **Funding proposal 是另一个语域**：proposal 靠 vision + feasibility 卖，论文语域要削的 ambition 语言（"long-term goal"、"transformative"）在 proposal 里是预期形态。改 grant/fellowship 文本走 `grant-application-writing` skill，不要用本 skill 的论文标准去压平 vision。
 
@@ -296,6 +297,11 @@ For comprehensive pattern lists, see:
 ## Workflow (工作流程)
 
 > **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
+
+> **🚦 压缩闸门（compression / de-jargon / simplify pass 必须遵守）** <!-- policy:PROSE.REGISTER_PRESERVATION -->
+> **register check 未通过之前，不得报告词数或压缩百分比。**
+> 实测教训：agent 在作者读到正文之前三次报告「968 → 728 words, −25%」作为成功指标，而那一版正文里有九处语域塌陷。**数字先于质量出现，就会替代质量成为验收标准。**
+> 顺序固定为：压缩 → 逐个改动 span 跑替换测试（见 Do NOT Over-Correct §1）→ 用稿件已有措辞修复 → **然后**才报数字。
 
 ### For English Text:
 
