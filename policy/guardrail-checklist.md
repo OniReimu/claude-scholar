@@ -11,7 +11,8 @@
 - **NO intensifiers without data**: very, extremely, highly, significantly, remarkably, substantially (except "statistically significant")
 - **NO em-dashes** (---/—): use commas, semicolons, "which" clauses, or new sentences
 - **NO promotional language**: groundbreaking, game-changing, pioneering, revolutionary
-- **NO informal vocabulary**: "a lot of" → "many"; "kind of"/"sort of" → "somewhat"; "bigger" → "larger"
+- **NO informal vocabulary** (word level, floor only): "a lot of" → "many"; "kind of"/"sort of" → "somewhat"; "bigger" → "larger"; "for good" → "permanently"; "drives off" → "deters"
+- **NO register drop when simplifying or shortening** — register is a property of the *edit*, not of the word, so this is judged on the diff: a replacement that is accurate but lower-register than what it replaced is still wrong ("route micropayments to peers" → "pay peers"; "a sanction set too high deters" → "too heavy a one drives off"). When a phrase must be replaced, **use the wording the manuscript already uses elsewhere**. Report word count or reduction percentage only *after* this check passes
 - **NO vague attributions**: "Experts argue" / "Studies show" → cite specific source
 - **NO vague quantifiers**: "some"/"many"/"several" → cite or quantify
 - **NO Unicode arrows**: → ← ↔ ⇒ → use `$\rightarrow$` etc.
