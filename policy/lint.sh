@@ -486,34 +486,36 @@ lint_prose_no_internal_provenance() {
   )
   local -a pids=(P1 P2 P3 P4 P5)
 
+  local scrub_file
+  scrub_file=$(mktemp)
+
   for file in "${tex_files[@]}"; do
     # Strip, in order: comments; source plumbing and reference keys; the
     # artifact URL; EXP-mandated status disclosures (those two rules win).
-    # sed keeps line numbering intact so file:line stays accurate.
-    local scrubbed
-    scrubbed=$(sed -E \
+    # Blanking rather than deleting keeps line numbers aligned with the
+    # original file, so reported file:line points where the author must look.
+    sed -E \
       -e 's/(^|[^\\])%.*$/\1/' \
       -e 's/\\(includegraphics|input|include|bibliography|usepackage|documentclass)(\[[^]]*\])?\{[^}]*\}//g' \
       -e 's/\\(label|ref|Cref|cref|eqref|autoref|cite[a-z]*)\{[^}]*\}//g' \
       -e 's/\\(url|href)\{[^}]*\}//g' \
-      -e '/\[(FABRICATED|SIMULATED|PROJECTED|NOT EXECUTED)\]/d' \
-      -e '/(SIMULATED|FABRICATED|PROJECTED) RESULTS?/d' \
-      "$file" 2>/dev/null)
+      -e 's/.*\[(FABRICATED|SIMULATED|PROJECTED|NOT EXECUTED)\].*//' \
+      -e 's/.*(SIMULATED|FABRICATED|PROJECTED) RESULTS?.*//' \
+      "$file" > "$scrub_file" 2>/dev/null
 
     local i
     for i in "${!pats[@]}"; do
       local hits
-      hits=$(printf '%s\n' "$scrubbed" | grep -nP "${pats[$i]}" 2>/dev/null || true)
+      hits=$(prov_grep_spans "${pats[$i]}" "$scrub_file")
       [[ -n "$hits" ]] || continue
       while IFS= read -r hline; do
         [[ -n "$hline" ]] || continue
-        local lno="${hline%%:*}"
-        local span
-        span=$(printf '%s' "${hline#*:}" | grep -oP "${pats[$i]}" 2>/dev/null | head -1)
-        report_finding "$severity" "$RULE_ID" "${file}:${lno}: [${pids[$i]}] ${span}"
+        report_finding "$severity" "$RULE_ID" "${file}:${hline%%:*}: [${pids[$i]}] ${hline#*:}"
       done <<< "$hits"
     done
   done
+
+  rm -f "$scrub_file"
 }
 
 # ─── Lint Single Rule ───────────────────────────────────────────────────────
