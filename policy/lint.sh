@@ -444,6 +444,65 @@ lint_cite_verify_via_api() {
   done
 }
 
+# ─── Built-in Rule: PROSE.NO_INTERNAL_PROVENANCE ───────────────────────────
+# Development artifacts that reached a compiled PDF (paths, schema identifiers,
+# internal fixture names, revision narrative). Implemented as a builtin rather
+# than lint_patterns because the exclusion list is the difference between a
+# guardrail people keep and one they switch off: LaTeX source plumbing
+# (\includegraphics, \input), reference keys, and the required artifact \url
+# must be stripped BEFORE matching, which the generic pattern engine cannot do.
+#
+# Scope is every .tex line, not body prose: in the sweep that motivated this
+# check, 8 of 11 leaks sat in captions, notation tables and appendices.
+lint_prose_no_internal_provenance() {
+  local severity="$1"
+
+  local -a tex_files=()
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tex_files+=("$f")
+  done < <(find "$TARGET_DIR" -name "*.tex" -type f 2>/dev/null | sort)
+
+  # P1-P5 per the rule card's Check table. P5 is medium confidence (revision
+  # narrative needs adjudication); the rest are high or near-certain.
+  local -a pats=(
+    '\\path\{[^}]*\}'
+    '(experiments|results|scripts|notebooks)/[A-Za-z0-9_./-]+'
+    '\.(csv|py|jsonl|json|sh|ipynb|log|pkl|npz|yaml)\b'
+    '\\texttt\{[a-z0-9]+(_[a-z0-9]+)+\}'
+    '(retracted|supersed(es|ed)|legacy [a-z]+|no longer (used|the original version)|old (bound|formula|version)|previously we|earlier draft|to avoid collision with)'
+  )
+  local -a pids=(P1 P2 P3 P4 P5)
+
+  for file in "${tex_files[@]}"; do
+    # Strip, in order: comments; source plumbing and reference keys; the
+    # artifact URL; EXP-mandated status disclosures (those two rules win).
+    # sed keeps line numbering intact so file:line stays accurate.
+    local scrubbed
+    scrubbed=$(sed -E \
+      -e 's/(^|[^\\])%.*$/\1/' \
+      -e 's/\\(includegraphics|input|include|bibliography|usepackage|documentclass)(\[[^]]*\])?\{[^}]*\}//g' \
+      -e 's/\\(label|ref|Cref|cref|eqref|autoref|cite[a-z]*)\{[^}]*\}//g' \
+      -e 's/\\(url|href)\{[^}]*\}//g' \
+      -e '/\[(FABRICATED|SIMULATED|PROJECTED|NOT EXECUTED)\]/d' \
+      -e '/(SIMULATED|FABRICATED|PROJECTED) RESULTS?/d' \
+      "$file" 2>/dev/null)
+
+    local i
+    for i in "${!pats[@]}"; do
+      local hits
+      hits=$(printf '%s\n' "$scrubbed" | grep -nP "${pats[$i]}" 2>/dev/null || true)
+      [[ -n "$hits" ]] || continue
+      while IFS= read -r hline; do
+        [[ -n "$hline" ]] || continue
+        local lno="${hline%%:*}"
+        local span
+        span=$(printf '%s' "${hline#*:}" | grep -oP "${pats[$i]}" 2>/dev/null | head -1)
+        report_finding "$severity" "$RULE_ID" "${file}:${lno}: [${pids[$i]}] ${span}"
+      done <<< "$hits"
+    done
+  done
+}
+
 # ─── Lint Single Rule ───────────────────────────────────────────────────────
 lint_rule() {
   local severity="$1"
