@@ -203,6 +203,77 @@ else
 fi
 
 echo ""
+echo "=== 6. PROSE.NO_INTERNAL_PROVENANCE Acceptance Tests ==="
+# Fixtures are the real leaks from the ARGUS sweep (2026-08-15) and the real
+# false positives it produced. See docs/req-prose-no-internal-provenance-v2.md §8.
+PROV_DIR="$TEST_DIR/provenance"
+mkdir -p "$PROV_DIR"
+
+prov_lint() { bash "$LINT" --rule PROSE.NO_INTERNAL_PROVENANCE "$PROV_DIR" 2>&1; }
+
+assert_flags() {
+  local desc="$1" content="$2"
+  printf '%s\n' "$content" > "$PROV_DIR/case.tex"
+  if prov_lint | grep -qE '(ERROR|WARN)'; then
+    ((PASS++)); echo "  ✓ $desc"
+  else
+    ((FAIL++)); echo "  ✗ $desc (expected a finding, got none)"
+  fi
+}
+
+assert_clean() {
+  local desc="$1" content="$2"
+  printf '%s\n' "$content" > "$PROV_DIR/case.tex"
+  local out; out=$(prov_lint)
+  if echo "$out" | grep -qE '(ERROR|WARN)'; then
+    ((FAIL++)); echo "  ✗ $desc (false positive)"
+    echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
+  else
+    ((PASS++)); echo "  ✓ $desc"
+  fi
+}
+
+echo "6.1 must flag"
+assert_flags "P1/P2/P3 result path in body prose" \
+  'Dispersion is reported in \path{experiments/results/rc1_pdisp/rc1_pdisp.csv}.'
+assert_flags "same path inside a caption (scope: not body-only)" \
+  '\caption{Spam curve, from \path{experiments/results/rc2_spam/rc2_spam_curve.csv}.}'
+assert_flags "P4 schema identifiers as a table cell" \
+  'Coverage & \texttt{empirical\_rate, empirical\_ucl} \\'
+assert_flags "P5 retraction narrative" \
+  'The old refined general bound is retracted.'
+assert_flags "P5 collision-avoidance narrative" \
+  'The variants are named V0--V3 to avoid collision with the theorem labels C1/C2.'
+
+echo "6.2 must not flag (exclusions)"
+assert_clean "LaTeX source plumbing" \
+  '\includegraphics[width=\linewidth]{figures/fig_f3_stats.pdf}'
+assert_clean "artifact URL" \
+  'Code is at \url{https://anonymous.4open.science/r/Argus-B943}.'
+assert_clean "model identifiers and seeds" \
+  'The Llama-3.1-70B arm uses seed 42 with a grid over 0.1, 0.2, 0.5.'
+assert_clean "domain terms that look like code" \
+  'The L1 commit carries weighted mass rather than the unweighted count.'
+assert_clean "EXP-mandated fabricated-results disclosure" \
+  '\caption{[SIMULATED] Projected throughput; numbers are not from a real run.}'
+
+echo "6.3 undefined-identifier extractor (stage 1)"
+printf '%s\n' 'As Golden G4, at $\tilde r=0$ the branch is inactive. C6 holds throughout.' \
+  'We evaluate the Llama-3.1-70B arm.' > "$PROV_DIR/case.tex"
+extract_out=$(bash "$SCRIPT_DIR/scripts/extract-undefined-identifiers.sh" "$PROV_DIR" 2>&1)
+if echo "$extract_out" | grep -q "C6"; then
+  ((PASS++)); echo "  ✓ extracts undefined claim-register label C6"
+else
+  ((FAIL++)); echo "  ✗ extracts undefined claim-register label C6"
+fi
+if echo "$extract_out" | grep -qE '\bLlama'; then
+  ((FAIL++)); echo "  ✗ model identifier Llama-3.1-70B must be excluded"
+else
+  ((PASS++)); echo "  ✓ model identifier excluded from candidates"
+fi
+rm -rf "$PROV_DIR"
+
+echo ""
 echo "═══ Test Summary ═══"
 echo "  Passed: $PASS"
 echo "  Failed: $FAIL"
