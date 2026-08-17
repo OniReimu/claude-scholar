@@ -144,6 +144,33 @@ for f in "${RULE_CARDS[@]}"; do
 done
 pass "Field value validity checked"
 
+# ─── 4b. conflicts_with Integrity ───────────────────────────────────────────
+# A conflict is inherently mutual: if A says it overlaps B, a reader of B must
+# learn it from B. One-directional declarations leave the older card blind to
+# every newer rule that defers to it — the agent reading only B never discovers
+# the boundary. Also catches references to rule IDs that do not exist.
+section "4b. conflicts_with Integrity"
+
+cw_tmp=$(mktemp)
+for f in "${RULE_CARDS[@]}"; do
+  fm=$(get_fm "$f")
+  rid=$(echo "$fm" | awk '/^id: /{print $2; exit}')
+  echo "$fm" | awk -v R="$rid" '/^conflicts_with: \[/{
+      gsub(/^conflicts_with: \[|\]$/,""); n=split($0,a,",");
+      for(i=1;i<=n;i++){gsub(/^[ \t]+|[ \t]+$/,"",a[i]); if(a[i]!="") print R "\t" a[i]}}'
+done > "$cw_tmp"
+
+cw_bad=0
+while IFS=$'\t' read -r a b; do
+  [[ -n "$a" && -n "$b" ]] || continue
+  if ! echo " $all_rule_ids " | grep -q " $b "; then
+    err "conflicts_with: $a → '$b' is not a known rule ID"; cw_bad=1; continue
+  fi
+  grep -qxF "$b	$a" "$cw_tmp" || { err "conflicts_with asymmetry: $a declares $b, but $b does not declare $a"; cw_bad=1; }
+done < "$cw_tmp"
+rm -f "$cw_tmp"
+(( cw_bad == 0 )) && pass "conflicts_with references resolve and are mutual"
+
 # ─── 5. lint_patterns Format Validation ─────────────────────────────────────
 section "5. lint_patterns Format"
 
