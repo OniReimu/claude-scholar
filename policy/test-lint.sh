@@ -277,6 +277,56 @@ fi
 rm -rf "$PROV_DIR"
 
 echo ""
+echo "=== 7. PROSE.INFORMAL_VOCABULARY Class-1 Acceptance Tests ==="
+# Fixtures from the CISU/ct_unlearning sweep (NDSS, 2026-08-17). Only class 1 is
+# regex-judged; classes 2-5 need an LLM and live in the rule card. The keep-cases
+# matter as much as the flag-cases — over-execution is the documented failure mode.
+INF_DIR="$TEST_DIR/informal"
+mkdir -p "$INF_DIR"
+inf_lint() { bash "$LINT" --rule PROSE.INFORMAL_VOCABULARY "$INF_DIR" 2>&1 || true; }
+
+inf_flags() {
+  local desc="$1" content="$2"
+  printf '%s\n' "$content" > "$INF_DIR/case.tex"
+  if inf_lint | grep -qE '(ERROR|WARN)'; then
+    ((PASS++)); echo "  ✓ $desc"
+  else
+    ((FAIL++)); echo "  ✗ $desc (expected a finding, got none)"
+  fi
+}
+inf_clean() {
+  local desc="$1" content="$2"
+  printf '%s\n' "$content" > "$INF_DIR/case.tex"
+  local out; out=$(inf_lint)
+  if echo "$out" | grep -qE '(ERROR|WARN)'; then
+    ((FAIL++)); echo "  ✗ $desc (false positive)"; echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
+  else
+    ((PASS++)); echo "  ✓ $desc"
+  fi
+}
+
+echo "7.1 class-1 idiomatic adverbials must flag"
+inf_flags "at all" 'The frozen-state baseline does not help at all.'
+inf_flags "in the first place" 'The operator must decide in the first place which segments to quarantine.'
+inf_flags "ahead of time" 'The schedule must be fixed ahead of time.'
+inf_flags "up front" 'The cost is paid up front.'
+inf_flags "at all (capitalised, sentence start)" 'At all, the estimator is unchanged.'
+
+echo "7.2 must not flag (allowlist + legitimate collocations)"
+inf_clean "from scratch is a term of art" 'We retrain the model from scratch as the exact-deletion reference.'
+inf_clean "at all times / at all scales" 'The invariant holds at all times and at all scales.'
+inf_clean "phrasal-verb allowlist" 'Theorem 3 rules out unilateral deviations; the bound follows from Lemma 2.'
+inf_clean "falls back is a field term" 'The estimator falls back to the retrospective regime.'
+inf_clean "cheap unlearning is field terminology" 'Cheap unlearning is the design goal for segment-level deletion.'
+
+echo "7.3 class-1 autofix is one-to-one and safe"
+printf '%s\n' 'The schedule is fixed ahead of time and the cost is paid up front.' > "$INF_DIR/case.tex"
+bash "$LINT" --fix --quiet "$INF_DIR" >/dev/null 2>&1 || true
+assert_file_contains "ahead of time → in advance" "$INF_DIR/case.tex" "in advance"
+assert_file_not_contains "no 'ahead of time' left" "$INF_DIR/case.tex" "ahead of time"
+rm -rf "$INF_DIR"
+
+echo ""
 echo "═══ Test Summary ═══"
 echo "  Passed: $PASS"
 echo "  Failed: $FAIL"
