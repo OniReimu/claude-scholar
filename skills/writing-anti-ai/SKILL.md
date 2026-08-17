@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
 description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.2.0
+version: 1.3.0
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -19,7 +19,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
 > 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
-> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（30 条禁止模式）。
+> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（31 条禁止模式）。
 
 | Rule ID | 摘要 |
 |---------|------|
@@ -37,7 +37,8 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.RULE_OF_THREE` | 避免反复三项并列 |
 | `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
 | `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list） |
-| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词（词表层，仅为地板） |
+| `PROSE.INFORMAL_VOCABULARY` | 口语语域五类分类表（习语状语/短语动词/判断形容词/具象比喻/工作痕迹动词） |
+| `PROSE.IDIOM_COLLISION` | 技术短语与常用习语同形（歧义问题，非语域问题） |
 | `PROSE.REGISTER_PRESERVATION` | 简化/压缩不得降语域（判 diff 不判 document） |
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
 | `PROSE.COPULA_DODGE` | 禁止"serves as"替代"is" |
@@ -161,6 +162,17 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 - **Tier 2 看密度**（comprehensive · essential · vital · innovative · powerful · facilitate · enhance · ensure · explore · highlight · insights · perspective · interplay · paradigm …）：单个合法，聚集违规。同句两个即 cluster，单文件累计 >5 触发。别逐个替换——找最密的那一段改。
 - 词表已按学术语域裁剪：`robust` / `optimize` / `trajectory` / `loss landscape` / `framework` / `approach` 是术语，**不在表内**，不要误伤。
 
+**口语语域按五类查，不是按词表查** <!-- policy:PROSE.INFORMAL_VOCABULARY -->
+词表只够得着第 1 类。实测一篇 author-original 稿件的 30 处语域问题里，**29 处是多词构造**，词表命中 0/26。
+1. **习语性状语**（regex 可判）：`at all` · `in the first place` · `ahead of time` · `up front` · `at the end of the day` · `so far` · `more or less` · `pretty much`。删除测试：删掉命题是否不变？⚠️ `from scratch` 是术语（`retrain from scratch`），**不在此列**
+2. **短语动词顶替拉丁语源动词**：`comes with`→`entails`、`sits in`→`lies in`、`gives up`→`forfeits`、`bears this out`→`confirms this`。⚠️ allowlist：`carries out` / `rules out` / `follows from` / `falls back` 等是本领域标准用法
+3. **判断性形容词**（最易过度执行）：`hard` / `cheap` / `easy` / `huge`。判据只有一条——**该词是否已是本领域既有术语？** `cheap unlearning` 是术语，强改会撞 `ELEGANT_VARIATION`
+4. **具象名词比喻**：`the wall is a property` → 换回本文正式术语（`the obstruction`）。与 `ABSTRACT_AGENCY`（抽象名词做施事）分工
+5. **内部工作痕迹动词**：`what quarantine buys` / `survives the conditioning`。判据：把主语换成不会有体验的对象，句子还成立吗？
+
+**技术短语撞习语要换掉** <!-- policy:PROSE.IDIOM_COLLISION -->
+`A fair bit selects one member` —— `fair bit` 指无偏比特，技术正确，但读者第一遍读成"相当多"。不是语域问题也不是准确性问题，是歧义。同类：`a good deal` · `on the order of` · `significant`（统计 vs 重要）。改法是把隐含限定词显式写出来：`an unbiased random bit`。
+
 **不要给现象起名** <!-- policy:PROSE.INVENTED_CONCEPT_LABEL -->
 "the supervision paradox" / "workload creep" 这类标签只在两种情况下允许：有文献出处并引用，或是本文明确的命名贡献（显式声明 + 定义 + 全文一致）。两者都不满足就用普通语言描述现象。审稿人会去检索你造的"既有概念"。
 
@@ -244,6 +256,8 @@ For comprehensive pattern lists, see:
 注意前两行**根本不口语**，只是更含糊——词表永远抓不到它们。
 
 **修复规则（先做这个，再考虑自己造措辞）**：**用这篇稿子在别处已经使用的措辞**。实测九处里有七处的正确改法已经存在于更早草稿或另一节中。报告格式必须四列：`original → replacement → suggested wording → source of the suggestion`，写出 source 才可核对。
+
+**易懂 ≠ 低语域。** 降低阅读门槛的正确手段是理顺句子结构、讲清术语，不是换上口语措辞。实测中一处 `at all` 正是 agent 在「让句子更好懂」这一步主动加进去的——**anti-AI pass 本身就会触发这个失效模式**，不只是压缩 pass。
 
 **压缩为什么必然触发这个**：压缩优化词数，而最便宜可砍的恰恰是精确的多音节词。所以 drift 不是失误，是这个优化目标的预期输出，每次压缩 pass 都会复发，除非语域被单独计分。`PROSE.RHYTHM_VARIANCE`（拉句长方差）推的是同一个方向——**拉方差不得靠写短口语句**。
 

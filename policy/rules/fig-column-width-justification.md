@@ -31,6 +31,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**：对每个 `figure*`/全宽图，核对其信息密度是否真的需要 `\textwidth`。判断信号：system overview/pipeline/architecture 图用 `figure*` 但组件稀疏、大片留白、单栏明显放得下。命中即建议降为单栏 `figure`，除非作者给出显式密度理由。
 
 ## Examples

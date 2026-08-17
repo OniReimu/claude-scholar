@@ -26,6 +26,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 审查脚本中是否使用 `plt.subplots(n, m)`（n*m > 1）将多个图合并为一个文件
 - **要点**: 每个输出文件对应一个图语义单元（一个 plot、一个 shared legend、一个 colorbar 等）。一个脚本可以多次 `savefig()` 输出多个文件，但每个文件只含一个语义单元
 - **允许**: `fig, ax = plt.subplots()` 创建单个 axes 是合法的（等价于 `plt.figure()`）

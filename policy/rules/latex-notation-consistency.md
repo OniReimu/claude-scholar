@@ -26,6 +26,8 @@ Methods、Experiments、Discussion 中使用的所有数学符号必须与 notat
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 正文中的数学符号是否在 notation table 中出现
 - **新符号检测**: 是否有未在 notation table 中声明的新符号被引入
 

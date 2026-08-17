@@ -32,6 +32,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**:
   - 每页 `\textbf{}` 出现次数是否超过 3 次（Contribution/Definition 除外）
   - 正文段落中是否嵌入了 `itemize` 环境（应改为散文或独立成段）

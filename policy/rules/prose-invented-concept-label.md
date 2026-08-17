@@ -39,6 +39,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 逐处扫描形如 `the <修饰语> (paradox|effect|problem|gap|trap|dilemma|principle|law|phenomenon|tax)` 与 `<名词> (creep|drift|collapse|debt)` 的复合标签，对每一处问三问：
 
 1. 有文献出处并已引用吗？

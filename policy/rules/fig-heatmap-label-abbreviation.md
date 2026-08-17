@@ -30,6 +30,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**：定位 heatmap（`make_heatmap`/`imshow`/`pcolormesh` 生成的图或 caption 含 "heatmap"）。核对：轴标签是否过长导致画布被拉宽或字号压缩；若用了简写，caption 是否给出全称映射；是否为长标签升成 `figure*` 双栏。长标签直接铺满且无 caption 对照，或为此上双栏，即违规。
 
 ## Examples

@@ -30,6 +30,8 @@ Reviewer 快速扫描论文时，takeaway box 帮助他们在不细读数据的�
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 每个实验表格（`\begin{table}`）或关键图（`\begin{figure}`）之后是否有明确的 takeaway 总结
 - **要点**: 检查实验章节中每个结果呈现后是否有加粗总结或 box 环境
 

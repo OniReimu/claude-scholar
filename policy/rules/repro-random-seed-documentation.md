@@ -26,6 +26,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查（代码）**: 审查实验代码中是否包含种子设置函数调用（`random.seed()`、`np.random.seed()`、`torch.manual_seed()`、`torch.cuda.manual_seed_all()`，或封装函数如 `set_seed()`）
 - **LLM 检查（论文）**: 审查论文 Methods 或 Appendix 中是否提及种子值或可复现性声明
 

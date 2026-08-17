@@ -47,6 +47,8 @@ Caption 只负责说明**"这是什么"（what）**，保持简洁，不堆砌�
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **判断图类型**: 概念 / 系统 / 架构 / 流程 → 非实验图；results / ablation / benchmark 图表 → 实验图表
 - **非实验图**: caption 是否含 what/how/intent；是否只写一句空泛标识或"见正文"
 - **实验图表**: caption 是否过度堆砌 setup 与结论；setup 是否应下沉到 threeparttable footnote；结论是否应在正文 / takeaway

@@ -32,6 +32,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 若文中使用 `\cmark` / `\xmark` / `\pmark` 或出现 ✓ / ✗ / ◐ 风格比较表，检查导言区是否包含 `\usepackage{pifont}`、`\usepackage{xcolor}` 与三条宏定义
 - **冲突处理**: 若模板已定义同名命令，允许改用 `\renewcommand`，但符号与颜色语义必须保持一致
 - **常见违规**: 只写了 `\cmark` 表格内容但未定义宏；使用模板默认 `\checkmark` 导致符号风格与其他表格不一致

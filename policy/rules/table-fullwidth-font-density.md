@@ -33,6 +33,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**：对每个 `table*`/全宽表，核对列数×行数的信息密度是否足以撑满 `\textwidth` 而无需放大字体。判断信号：列数很少（如 ≤3 数据列）却用 `\resizebox{\textwidth}`；`\resizebox` 高度参数为 `!` 且自然宽度远小于 `\textwidth`。命中即建议降单栏或加 metrics。
 
 ## Examples

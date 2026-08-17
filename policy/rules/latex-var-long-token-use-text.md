@@ -26,6 +26,8 @@ LaTeX 数学模式默认将连续字母视为独立变量的乘积（如 `$loss$
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 在 `$...$` 或 equation 环境内，识别连续字母序列长度 >= `min_token_length`（默认 4），确认是否用 `\text{}` 或 `\mathrm{}` 包裹
 - **常见违规**: `$L_{total}$`（应为 `$L_{\text{total}}$`）、`$loss$`（应为 `$\text{loss}$`）
 

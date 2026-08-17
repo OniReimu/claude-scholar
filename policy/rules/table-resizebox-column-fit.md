@@ -33,6 +33,8 @@ LaTeX 表格默认用 `\resizebox` 对齐目标栏宽：单栏表用 `\resizebox
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**：`.tex` 中每个 `tabular` 环境，若外层无 `\resizebox` 包裹，核对上述 4 条豁免条件是否成立（重点：列数多、表头长、编译日志有 overfull hbox 的表）
 - 单栏环境误用 `\textwidth`、全宽环境误用 `\columnwidth` 也属违规
 

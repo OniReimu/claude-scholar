@@ -54,6 +54,8 @@ Dangling reference 是 AI 生成文本的常见特征——模型倾向于用一
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 对每个包含 `\ref{` 的句子，判断删除引用部分后是否仍有实质论点
 - **Lint heuristic**:
   - 以 `Fig.~\ref` / `Table~\ref` / `\S\ref` 开头，且 ≤ 15 词，且句末无从句或枚举 → 标记

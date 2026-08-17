@@ -1,7 +1,7 @@
 ---
 name: ml-paper-writing
 description: Write publication-ready ML/AI/security papers for NeurIPS, ICML, ICLR, ACL, AAAI, COLM (policy profiles also cover CCS/S&P and Nature-family journals). Use for drafting or revising abstracts, introductions, contribution lists, related work, background, method/system-model prose, threat models, RQ framing, experiment narratives, discussion, limitations, conclusions, claim calibration, venue-aware section structure, LaTeX templates, and camera-ready preparation; also for literature reviews and finding related work (routes to knows-literature backend). Do not use for figure/table rendering (paper-figure-generator / scientific-figure-making / results-analysis publication-tables reference), paragraph-level structural audit (claim-architecture-review), AI-pattern-only cleanup (writing-anti-ai), or rebuttal drafting (review-response).
-version: 1.0.1
+version: 1.0.2
 author: Orchestra Research
 license: MIT
 tags: [Academic Writing, NeurIPS, ICML, ICLR, ACL, AAAI, COLM, LaTeX, Paper Writing, Citations, Research]
@@ -76,7 +76,8 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `PROSE.PARAGRAPH_TOPIC_SENTENCE` | 首句为topic sentence |
 | `PROSE.SUBSECTION_COMPLETENESS` | subsection≥2段 |
 | `PROSE.EQUATION_EXPLANATION` | 公式三步解释 |
-| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词（词表层，仅为地板） |
+| `PROSE.INFORMAL_VOCABULARY` | 口语语域五类分类表 |
+| `PROSE.IDIOM_COLLISION` | 技术短语与常用习语同形 |
 | `PROSE.REGISTER_PRESERVATION` | 简化/压缩不得降语域（判 diff） |
 | `PROSE.HEDGING_DISCIPLINE` | Hedging需匹配证据 |
 | `PROSE.NUMBER_EXPRESSION` | 数字表达规范 |

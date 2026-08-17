@@ -31,6 +31,8 @@ deprecated_by: scientific-figure-making
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 审查 matplotlib/seaborn 代码中的 `fontsize` 参数，确认 >= `min_font_pt`
 - **要点**: 检查 `ax.set_xlabel(fontsize=...)`, `ax.set_ylabel(fontsize=...)`, `ax.tick_params(labelsize=...)`, `ax.legend(fontsize=...)`, `plt.rcParams['font.size']`
 - **线宽**: 检查 `linewidth` / `lw` 参数 >= `min_line_width_pt`

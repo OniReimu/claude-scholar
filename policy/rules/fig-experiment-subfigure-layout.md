@@ -31,6 +31,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**：定位 Results 章节的 `figure`/`figure*` 环境，统计每个 `\subfigure`/`\subfloat` 的行内数量。任何一行只含 1 个 subfigure 即违规；总数为 2 时须并排同一行，总数 ≥4 时须排成 ≥2 行的网格。单个 `\includegraphics`（无 subfigure）的独立实验图，核对是否应与同实验的另一 metric 成对。
 
 ## Examples

@@ -26,6 +26,8 @@ Conclusion 部分写成一个连贯的单段落。不使用子标题、项目列
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: Conclusion section 是否为单段落（允许段落内换行但不允许空行分段）
 - **要点**: 检查是否有 `\subsection`、`\paragraph`、`\begin{itemize}`、`\begin{enumerate}` 出现在 Conclusion 中
 

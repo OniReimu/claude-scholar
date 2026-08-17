@@ -44,6 +44,8 @@ AI 生成文本两个方向都常见：默认语气倾向 demonstrate/significan
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查（方向 1）**:
   1. Results section 中是否对有数据支撑的结论使用了 may/might/could
   2. Conclusion 中对已完成工作的总结是否过度 hedge

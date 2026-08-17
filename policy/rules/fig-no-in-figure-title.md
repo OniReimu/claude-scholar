@@ -28,6 +28,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **lint 脚本**: `skills/paper-figure-generator/scripts/lint_no_title.py` 检测 SVG/PDF/PNG 产物中的画布内大字号标题文字（启发式：顶部居中、大字号文本）
 - **代码审查 regex**: `(plt\.title|ax\.set_title|fig\.suptitle)\s*\(` 检测 Python 代码中的标题调用
 - **LLM 检查**: 审查生成的图像是否包含画布内文字标题

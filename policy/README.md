@@ -260,6 +260,7 @@ SoK 规则集合（语义规则）：
 | PROSE.INVENTED_CONCEPT_LABEL | prose-invented-concept-label | domain | warn | false | doc | guardrail | none |
 | PROSE.RESTATEMENT_DILUTION | prose-restatement-dilution | domain | warn | false | doc | guardrail | none |
 | PROSE.REGISTER_PRESERVATION | prose-register-preservation | domain | warn | false | doc | guardrail | none |
+| PROSE.IDIOM_COLLISION | prose-idiom-collision | domain | warn | false | doc | guardrail | none |
 | ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc | guidance | none |
 | ANON.DOUBLE_BLIND_ANONYMIZATION | anon-double-blind-anonymization | venue | error | true | doc | guidance | none |
 | SUBMIT.PAGE_LIMIT_STRICT | submit-page-limit-strict | venue | error | false | doc | guidance | none |
@@ -277,7 +278,8 @@ SoK 规则集合（语义规则）：
 | `PROSE.PROMOTIONAL_LANGUAGE` | 推销性/情绪化用词 + novelty padding | groundbreaking, revolutionary; novel 超频, "for the first time" |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 空洞强调**副词** | very, extremely, significantly |
 | `PROSE.FILLER_PHRASES` | 可删除的铺垫**短语** | "in order to", "it is worth noting that" |
-| `PROSE.INFORMAL_VOCABULARY` | 口语化下限 | a lot of, lots of, stuff, bigger |
+| `PROSE.INFORMAL_VOCABULARY` | 口语化下限，**五类分类表**：习语状语(regex) / 短语动词 / 判断形容词 / 具象比喻 / 工作痕迹动词（后四类 LLM 判定 + allowlist） | a lot of, at all, in the first place, comes with, cheap, wall, buys |
+| `PROSE.IDIOM_COLLISION` | 技术短语与常用习语同形（歧义，非语域） | a fair bit, on the order of, significant |
 | `PROSE.VAGUE_QUANTIFIERS` | 模糊量词（仅「量词+文献名词」组合与恒模糊短语，不抓裸词） | "many studies", "a wide range of", "extensive experiments" |
 
 **两条硬性不变量**（由 `validate.sh` Section 5c 机器检查第 2 条）：

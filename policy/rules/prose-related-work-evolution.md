@@ -40,6 +40,8 @@ A did X [1]. B did Y [2]. C proposed Z [3]. D extended W [4].
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**:
   1. 是否存在连续 3 句以上 "X did A. Y did B. Z did C." 的罗列模式
   2. 段落间是否有演进逻辑连接（however, subsequently, despite, building on）

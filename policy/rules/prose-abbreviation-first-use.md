@@ -32,6 +32,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 语义检查**: 扫描全文，列出所有缩写（2-5 个大写字母的 token），检查是否在 Abstract 和 Body 中各有一次展开定义
 - **常见遗漏**: FL (Federated Learning), MU (Machine Unlearning), DP (Differential Privacy)
 

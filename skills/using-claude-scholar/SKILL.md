@@ -6,7 +6,7 @@ description: |
   policy rule compliance for the claude-scholar framework. Also
   provides tool mapping, session behavior, security rules, and user
   preferences for multi-runtime environments (Claude Code + Codex).
-version: 2.0.2
+version: 2.0.3
 tags: [Meta, System, Skills, Academic]
 ---
 
@@ -76,7 +76,8 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `PROSE.PARAGRAPH_TOPIC_SENTENCE` | 首句为topic sentence |
 | `PROSE.SUBSECTION_COMPLETENESS` | subsection≥2段 |
 | `PROSE.EQUATION_EXPLANATION` | 公式三步解释 |
-| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词（词表层，仅为地板） |
+| `PROSE.INFORMAL_VOCABULARY` | 口语语域五类分类表（后四类 LLM 判定 + allowlist） |
+| `PROSE.IDIOM_COLLISION` | 技术短语与常用习语同形（歧义，非语域） |
 | `PROSE.REGISTER_PRESERVATION` | 简化/压缩不得降语域；判 diff 不判 document |
 | `PROSE.HEDGING_DISCIPLINE` | Hedging需匹配证据 |
 | `PROSE.NUMBER_EXPRESSION` | 数字表达规范 |

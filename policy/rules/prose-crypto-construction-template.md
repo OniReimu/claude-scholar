@@ -26,6 +26,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 风格检查**: 对于 security 且含密码学机制的论文，检查核心机制是否用结构化 Construction 呈现，而非纯散文。
 - **结构检查要点**:
   - 是否有明确构造名（如 `Construction 1: ...`）

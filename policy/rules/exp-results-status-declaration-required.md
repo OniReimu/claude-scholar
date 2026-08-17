@@ -30,6 +30,8 @@ caption 披露解决“单图单表可见性”，而 subsection 级状态声明
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 语义检查**:
   - 若某 `\subsubsection` 含 `[FABRICATED]` caption，是否在小节开头有状态声明注释
   - 状态声明是否解释“为何未执行”（例如 waiting for HPC / long GPU job）

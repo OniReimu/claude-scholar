@@ -30,6 +30,8 @@ Experimental Results 中每个 `\subsubsection` 必须满足以下三个结构�
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 每个 `\subsubsection` 是否满足三个结构要求
 - **要点 1**: 第一句是否包含 `Table~\ref{...}` 或 `Figure~\ref{...}`
 - **要点 2**: 是否有 >=2 个实质段落（非空行分隔的段落）

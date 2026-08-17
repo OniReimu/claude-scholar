@@ -36,6 +36,8 @@ autofix: none
 
 ## Check
 
+- **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
+
 - **LLM 检查**: 搜索正文中的 "Figure 1"、"Fig 1"（缺点号）、"Table 2"、"Eq. 3"、"Section 4" 等硬编码引用模式
 - **regex pattern**: `(Figure|Fig\s|Table|Eq\.|Section|Algorithm|Listing)\s+\d+` 检测硬编码引用（排除 caption 内的描述）
 - **格式检查**: 确认使用 `Fig.~\ref`（非 `Figure~\ref`），`\S\ref`（非 `Section~\ref`），`\eqref`（非 `Eq.~\ref`）
