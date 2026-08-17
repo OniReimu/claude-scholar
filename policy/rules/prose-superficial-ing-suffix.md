@@ -28,6 +28,8 @@ lint_targets: "**/*.tex"
 
 如果确实需要说明意义，用独立句子并提供具体证据。
 
+**开集部分（LLM 判定，刻意不进 regex）**：`, enabling…` · `, ensuring…` · `, providing…` · `, allowing…` · `, offering…`。这几个词经常**确实携带内容**（"a lock, ensuring mutual exclusion" 陈述的是机制），做成 regex 会产生假阳性洪水。判据与闭集相同：**删掉这个尾巴，本句是否损失可核对的信息？** 不损失即违规，改写为独立句或直接删除。
+
 ## Rationale
 
 尾部 -ing 分词短语是 AI 生成文本的高频特征。它们通常附加空洞的意义声明（"highlighting its importance", "reflecting broader trends"），不携带可验证的信息。人类学术写作极少这样写。

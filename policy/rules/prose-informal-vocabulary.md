@@ -10,7 +10,7 @@ domains: [core]
 venues: [all]
 check_kind: regex
 enforcement: lint_script
-params: {idiom_allowlist: "from scratch", phrasal_verb_allowlist: "carries out|carried out|rules out|ruled out|points out|pointed out|sets up|set up|holds at|holds with|stems from|follows from|reads off|falls back|falls back to", judgment_adjective_allowlist: "", concrete_metaphor_allowlist: ""}
+params: {idiom_allowlist: "from scratch", phrasal_verb_allowlist: "carries out|carried out|rules out|ruled out|points out|pointed out|sets up|set up|holds at|holds with|stems from|follows from|reads off|falls back|falls back to", judgment_adjective_allowlist: ""}
 conflicts_with: [PROSE.VAGUE_QUANTIFIERS, PROSE.REGISTER_PRESERVATION, PROSE.ABSTRACT_AGENCY, PROSE.ELEGANT_VARIATION, PROSE.IDIOM_COLLISION]
 constraint_type: guardrail
 autofix: safe
@@ -107,6 +107,8 @@ lint_targets: "**/*.tex"
 `cheap` · `cheaper` · `hard` · `easy` · `easier` · `nice` · `neat` · `tricky` · `messy` · `huge` · `big` · `tiny` · `good` · `bad` · `dramatic` · `impressive` · `striking`
 
 **这是最容易过度执行的一类。** 判据只有一条：**该词是否已经是本领域的既有术语？**
+
+领域级的既有术语可由 profile 预先声明在 `params.judgment_adjective_allowlist`（管道分隔），避免每篇稿子重新裁决同一个词。
 
 - 是 → **保留**，并在改动记录里注明理由。实测：`cheap unlearning` / `make deletion cheap` 属 Bourtoule 那一支的既有术语，某稿中 `inexpensive` / `low-cost` / `costly` 出现 **0 次**，强改等于新造术语并要求全稿统一，会撞 `PROSE.ELEGANT_VARIATION`
 - 否，且稿件他处已用正式对应词 → **改**（实测：`is hard → is difficult`，因为该稿他处已用 `difficult` 两次）

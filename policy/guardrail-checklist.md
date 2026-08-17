@@ -1,8 +1,10 @@
 # Guardrail Checklist (Compact)
 
-> Auto-generated from `constraint_type: guardrail` rules. Embed in writing prompts (~200 tokens).
-> Full rule cards in `policy/rules/`. This checklist is for prevention during writing;
-> violations are caught post-hoc by `policy/lint.sh --constraint-type guardrail`.
+> Hand-maintained digest of the `constraint_type: guardrail` rules, meant to be embedded in
+> writing prompts — so entries stay at trigger + fix. Rationale, evidence, thresholds and
+> allowlists live in the rule card; if an entry here needs a paragraph, it belongs there instead.
+> Full cards in `policy/rules/`; violations are caught post-hoc by
+> `policy/lint.sh --constraint-type guardrail`.
 
 ## Prohibited Patterns (do NOT generate these)
 
@@ -11,9 +13,9 @@
 - **NO intensifiers without data**: very, extremely, highly, significantly, remarkably, substantially (except "statistically significant")
 - **NO em-dashes** (---/—): use commas, semicolons, "which" clauses, or new sentences
 - **NO promotional language**: groundbreaking, game-changing, pioneering, revolutionary
-- **NO informal register, five classes** (a wordlist only reaches class 1): (1) idiomatic adverbials — "at all", "in the first place", "ahead of time", "up front", "so far", "more or less" → delete or use the formal equivalent (**but "from scratch" is a term of art, keep it**); (2) phrasal verbs displacing a Latinate verb — "comes with" → "entails", "gives up" → "forfeits" (**allowlist**: "carries out", "rules out", "follows from", "falls back"); (3) judgment adjectives — "is hard" → "is difficult", **unless the word is already a field term** ("cheap unlearning" stays); (4) concrete-noun metaphors in predicate position — "the wall is a property" → the paper's own formal term; (5) internal-work-trace verbs — "what quarantine buys", "survives the conditioning". Legacy word level: "a lot of" → "many"; "kind of"/"sort of" → "somewhat"; "bigger" → "larger"
-- **NO idiom collision**: a technical phrase that is also a common English idiom will be read as the idiom first — "a fair bit" (unbiased bit vs "quite a lot"), "on the order of", "significant" (statistical vs important). Make the qualifier explicit: "an unbiased random bit"
-- **NO register drop when simplifying or shortening** — register is a property of the *edit*, not of the word, so this is judged on the diff: a replacement that is accurate but lower-register than what it replaced is still wrong ("route micropayments to peers" → "pay peers"; "a sanction set too high deters" → "too heavy a one drives off"). When a phrase must be replaced, **use the wording the manuscript already uses elsewhere**. Report word count or reduction percentage only *after* this check passes
+- **NO informal register** — five classes, a wordlist only reaches the first: `LEXIS` "at all", "in the first place", "ahead of time" → delete or formalise; `PHRASAL-VERB` "comes with" → "entails"; `JUDGMENT-ADJ` "is hard" → "is difficult"; `PREDICATE-METAPHOR` "the wall is a property" → the paper's own term; `WORK-TRACE` "what quarantine buys". **Check the card's allowlists first** — "from scratch", "rules out", "cheap unlearning" are terms of art. Word level: "a lot of" → "many"; "kind of" → "somewhat"
+- **NO idiom collision**: a technical phrase that is also a common idiom is read as the idiom first — "a fair bit", "on the order of", "significant". Make the qualifier explicit ("an unbiased random bit")
+- **NO register drop when simplifying or shortening** — judged on the diff: a replacement that is accurate but lower-register than what it replaced is still wrong ("route micropayments to peers" → "pay peers"). Replace using **wording the manuscript already uses elsewhere**. Report word count only *after* this check passes
 - **NO vague attributions**: "Experts argue" / "Studies show" → cite specific source
 - **NO vague quantifiers**: "some"/"many"/"several" → cite or quantify
 - **NO Unicode arrows**: → ← ↔ ⇒ → use `$\rightarrow$` etc.
@@ -27,13 +29,13 @@
 - **NO mid-sentence colons**: "key observation: the model fails" → full sentence or split (heading colons `\textbf{X:}` exempt)
 - **NO trailing afterthoughts**: "..., as editable." comma + short tag → fold into main clause
 - **Comma overuse**: max 3 commas per sentence (≥4 → split or use semicolons)
-- **NO internal provenance in the manuscript**: text, captions and tables never name a result path, data file, column identifier, internal fixture, or a superseded earlier version of the work (`\path{experiments/results/...}`, `\texttt{empirical\_rate}`, "As Golden G4", "the old bound is retracted"). Provenance lives in the ledger and the released artifact; the manuscript cites the artifact. Exempt: `\includegraphics`/`\input` paths, the artifact `\url{}`, model names, seeds, and EXP-mandated status disclosures
-- **NO AI lexicon (tier-1)**: delve, leverage, underscore, harness, foster, showcase, streamline, seamless, intricate, meticulous, nuanced, multifaceted, pivotal, tapestry, realm, myriad, plethora, "paving the way for", "valuable insights", "at its core" → plain word or a concrete noun. Tier-2 (comprehensive, essential, vital, ensure, explore, enhance, insights, paradigm, interplay) ≤1 per sentence. Term-of-art uses (loss landscape, robust, optimize, trajectory) are exempt
-- **NO section previews/recaps**: "In this section, we present…" / "This subsection describes…" / "As we have seen…" / "Having described X, we now…" → start on content, end on the last concrete result; forward references via `\Cref{}`
+- **NO internal provenance** in text, captions or tables — result paths, data files, column identifiers, internal fixture names, or a superseded earlier version (`\path{experiments/...}`, `\texttt{empirical\_rate}`, "As Golden G4", "the old bound is retracted"). Provenance lives in the ledger and the released artifact; the manuscript cites the artifact
+- **NO AI lexicon (tier-1)**: delve, leverage, underscore, harness, foster, showcase, seamless, intricate, nuanced, pivotal, tapestry, realm, myriad, "paving the way for", "valuable insights" → plain word or concrete noun. Tier-2 (comprehensive, essential, ensure, explore, insights, paradigm) ≤1 per sentence. Terms of art exempt (loss landscape, robust, optimize)
+- **NO section previews/recaps**: "In this section, we present…" / "As we have seen…" / "Having described X, we now…" → start on content, end on the last concrete result; forward refs via `\Cref{}`
 - **NO coined concept labels**: "the supervision paradox" / "workload creep" → cite a source, or declare it as your named contribution with a definition, or just describe the phenomenon
 - **NO restating a proposition twice in one section**: abstract lead-in + evidence + synonym recap → keep only the placement next to the evidence
 - **NO despite-dismissal**: "Despite challenges, X continues to thrive" → analyze the challenge
-- **NO superficial -ing suffixes**: trailing ", enabling/ensuring/providing..." → be specific
+- **NO superficial -ing suffixes**: trailing ", highlighting/underscoring/emphasizing/showcasing/fostering…" → be specific. Open set (", enabling/ensuring/providing…") is LLM-judged, not regex: delete the tail and ask whether checkable information was lost
 - **NO dangling cross-references**: "Fig.~\ref{} illustrates X." → weave ref into analytical sentence; delete `\ref{}` and check if claim remains
 - **Sentence length**: max 35 words per sentence
 - **LaTeX**: `\begin{equation}` not `$$`; `\toprule/\midrule/\bottomrule` not `\hline`; BibTeX keys: `lastname_year_word` format

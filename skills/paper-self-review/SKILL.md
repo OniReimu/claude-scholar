@@ -14,86 +14,13 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 
 ## Policy Rules
 
-> 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
-> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+> 本 skill 执行的规则**逐条内联在 Review Process 的检查项里**，每处带 HTML 注释形式的规则标记——
+> 那才是可执行的形态。此处不再镜像一份规则表：97 条规则的权威清单在 `policy/README.md` 的 Rule ID Registry，
+> 单条定义在 `policy/rules/`，**冲突时以 `policy/rules/` 为准**。
+> 紧凑版预防清单见 `policy/guardrail-checklist.md`。
 
-| Rule ID | 摘要 |
-|---------|------|
-| `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
-| `FIG.FONT_GE_24PT` | 图表字号自适应（已弃用固定 24pt；由 `scientific-figure-making` 按图型定字号，紧凑图允许 15–16pt） |
-| `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
-| `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式（已弃用，交 `scientific-figure-making`） |
-| `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色（已弃用，交 `scientific-figure-making`） |
-| `FIG.SELF_CONTAINED_CAPTION` | Caption 自包含（实验图表仅 what）（已弃用为硬检查，保留为写作指引，交 `paper-self-review` 在 review 阶段执行） |
-| `FIG.EXPERIMENT_SUBFIGURE_LAYOUT` | 实验图禁单行单个（1×2 或 2×2+ 网格） |
-| `FIG.HEATMAP_LABEL_ABBREVIATION` | 热量图长标签图内简写、caption 全称、单栏 |
-| `FIG.COLUMN_WIDTH_JUSTIFICATION` | 图单栏优先，全宽须密度自证 |
-| `FIG.RESEARCH_GAP_TEASER` | 可选 gap 图：单栏、overview 前、仅 gap 难言时 |
-| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
-| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
-| `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
-| `PROSE.PSEUDOCODE_ABSTRACTION` | 伪代码复用数学 notation、抽象掉标准操作 |
-| `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
-| `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
-| `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |
-| `EXP.TAKEAWAY_BOX` | 实验结果附 takeaway box |
-| `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
-| `EXP.ABLATION_IN_RESULTS` | 消融实验在Results |
-| `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
-| `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 非实跑结果 caption 强制披露 |
-| `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
-| `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
-| `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
-| `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |
-| `SOK.RESEARCH_AGENDA_REQUIRED` | SoK 必须给出研究议程 |
-| `TABLE.BOOKTABS_FORMAT` | 使用 booktabs 格式 |
-| `TABLE.DIRECTION_INDICATORS` | 表头方向指示符 |
-| `TABLE.RESIZEBOX_COLUMN_FIT` | 表格默认 resizebox 对齐栏宽 |
-| `TABLE.DIMENSION_BUDGET` | 对比表 3–4 维预算、单栏优先 |
-| `TABLE.FULLWIDTH_FONT_DENSITY` | 全宽表 resizebox 只缩不放，字号≤正文，否则降单栏/加 metrics |
-| `CITE.VERIFY_VIA_API` | 引文API验证 |
-| `BIBTEX.CONSISTENT_CITATION_KEY_FORMAT` | BibTeX key格式统一 |
-| `REPRO.RANDOM_SEED_DOCUMENTATION` | 随机种子文档 |
-| `REPRO.COMPUTE_RESOURCES_DOCUMENTED` | 计算资源文档 |
-| `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
-| `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
-| `PROSE.FILLER_PHRASES` | 删除冗余填充短语 |
-| `PROSE.COLON_LIST_OVERUSE` | 禁止正文内联编号列表 |
-| `PROSE.RULE_OF_THREE` | 避免反复三项并列 |
-| `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
-| `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list/texttt） |
-| `PROSE.NO_INTERNAL_PROVENANCE` | 正文/caption/表格禁内部工作痕迹（7 类：脚本名·元话语·placeholder·数据路径·schema 列名·内部 fixture 名·修订叙事），provenance 归 ledger 与 artifact |
-| `PROSE.TENSE_CONSISTENCY` | 各章节时态一致 |
-| `PROSE.ABBREVIATION_FIRST_USE` | 缩写首次展开 |
-| `PROSE.VAGUE_QUANTIFIERS` | 禁止模糊量词 |
-| `PROSE.SENTENCE_LENGTH` | 单句≤35词 |
-| `PROSE.PARAGRAPH_TOPIC_SENTENCE` | 首句为topic sentence |
-| `PROSE.SUBSECTION_COMPLETENESS` | subsection≥2段 |
-| `PROSE.EQUATION_EXPLANATION` | 公式三步解释 |
-| `PROSE.INFORMAL_VOCABULARY` | 禁止口语化用词 |
-| `PROSE.HEDGING_DISCIPLINE` | Hedging需匹配证据 |
-| `PROSE.NUMBER_EXPRESSION` | 数字表达规范 |
-| `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
-| `PROSE.RELATED_WORK_EVOLUTION` | Related Work按脉络组织 |
-| `PROSE.COPULA_DODGE` | 禁止"serves as"替代"is" |
-| `PROSE.NEGATIVE_PARALLELISM` | 禁止"It's not X, it's Y"假深刻 |
-| `PROSE.SUPERFICIAL_ING_SUFFIX` | 禁止句末-ing浮浅分析 |
-| `PROSE.DESPITE_DISMISSAL` | 禁止"Despite challenges"公式化dismissal |
-| `PROSE.VAGUE_ATTRIBUTIONS` | 禁止"experts argue"模糊归因 |
-| `PROSE.RHETORICAL_SELF_ANSWER` | 禁止"The result? X."自问自答 |
-| `PROSE.ANAPHORA_ABUSE` | 禁止同一句首重复3+次 |
-| `PROSE.GERUND_FRAGMENT_LITANY` | 禁止分词片段堆叠 |
-| `PROSE.SHORT_PUNCHY_FRAGMENTS` | 禁止极短句独立成段 |
-| `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词） |
-| `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
-| `PROSE.THEATRICAL_SPLIT` | 禁止两拍式戏剧反驳 |
-| `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
-| `SUBMIT.SECTION_NUMBERING_CONSISTENCY` | Section编号一致 |
-| `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
-| `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
-| `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
-
-> **审稿人视角自查可选走 Knows**：投稿前想要额外的 reviewer-perspective 检查，可用 `knows-literature` bridge 的 `review-sidecar`，对 draft 生成审稿人视角 sidecar，暴露弱点；不替代本 skill 的 checklist。
+> **为什么删表**：这张表此前有 73 行，其中 71 行的规则在本文件的检查项里已有 marker 且附带可执行的检查文本。
+> 镜像表只增加了「改一条规则要同步四个文件」的成本，没有增加任何 agent 读得到的信息。
 
 ## Core Features
 

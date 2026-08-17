@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.COMMA_OVERUSE]
 constraint_type: guardrail
 autofix: none
 lint_patterns:
@@ -53,3 +53,7 @@ The framework exports the processing records (Art.~30) and consent
 withdrawals (Art.~7(3))~\cite{gdpr2016}, as editable.
 % 句末逗号甩一个 "as editable." 短尾巴
 ```
+
+## Conflicts
+
+- `PROSE.COMMA_OVERUSE`：实测同一句常同时命中——句末逗号甩片段本身也把逗号数推过阈值。**先修 `PROSE.TRAILING_AFTERTHOUGHT`**（把尾片段折回主句），逗号数往往随之落回阈值内；反过来先拆句会把甩尾留在其中一半里。两条各报一次，不合并计数

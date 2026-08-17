@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {max_commas: 3}
-conflicts_with: []
+conflicts_with: [PROSE.TRAILING_AFTERTHOUGHT]
 constraint_type: guardrail
 autofix: none
 lint_patterns:
@@ -54,3 +54,7 @@ flags the top-ranked samples, and removes them, operates in a single
 pass.
 % 一句话塞了 5 个逗号，从句套从句，应拆成多句
 ```
+
+## Conflicts
+
+- `PROSE.TRAILING_AFTERTHOUGHT`：实测同一句常同时命中——句末逗号甩片段本身也把逗号数推过阈值。**先修 `PROSE.TRAILING_AFTERTHOUGHT`**（把尾片段折回主句），逗号数往往随之落回阈值内；反过来先拆句会把甩尾留在其中一半里。两条各报一次，不合并计数
