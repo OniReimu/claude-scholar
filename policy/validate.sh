@@ -357,6 +357,33 @@ else
 fi
 
 # ─── 9. Orphan Rules (L1: markers, L2: entry skills) ────────────────────────
+# ─── 8c. Deprecated Successor Resolvability ─────────────────────────────────
+# `deprecated_by` must name something that exists: a skill directory or another
+# rule ID. Section 8b acknowledges a citation by matching the successor's NAME in
+# the citing line, so a successor nobody can name (a skill that was never built)
+# makes its warnings permanently unfixable — the deprecation reads as unfinished
+# work forever. Two cards shipped that way: `writing-convention` and
+# `paper-figure-generator-internal`.
+section "8c. Deprecated Successor Resolvability"
+
+succ_unresolved=0
+for f in "${RULE_CARDS[@]}"; do
+  fm=$(get_fm "$f")
+  succ=$(echo "$fm" | awk '/^deprecated_by: /{print $2; exit}')
+  [[ -n "$succ" ]] || continue
+  fname=$(basename "$f")
+
+  if [[ -e "$PROJECT_DIR/skills/$succ" ]]; then
+    continue                                    # a real skill
+  elif echo " $all_rule_ids " | grep -q " $succ "; then
+    continue                                    # another rule took it over
+  else
+    err "$fname: deprecated_by='$succ' resolves to no skill and no rule ID — Section 8b can never be satisfied"
+    succ_unresolved=1
+  fi
+done
+(( succ_unresolved == 0 )) && pass "All deprecated_by successors resolve"
+
 section "9. Orphan Rule Detection"
 
 # Collect entry skill content into temp file (avoids SIGPIPE with pipefail)
