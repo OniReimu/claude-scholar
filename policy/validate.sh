@@ -152,6 +152,10 @@ pass "Field value validity checked"
 section "4b. conflicts_with Integrity"
 
 cw_tmp=$(mktemp)
+cw_ids=""   # local ID list: all_rule_ids is not built until Section 8
+for f in "${RULE_CARDS[@]}"; do
+  cw_ids="$cw_ids $(get_fm "$f" | awk '/^id: /{print $2; exit}')"
+done
 for f in "${RULE_CARDS[@]}"; do
   fm=$(get_fm "$f")
   rid=$(echo "$fm" | awk '/^id: /{print $2; exit}')
@@ -163,7 +167,7 @@ done > "$cw_tmp"
 cw_bad=0
 while IFS=$'\t' read -r a b; do
   [[ -n "$a" && -n "$b" ]] || continue
-  if ! echo " $all_rule_ids " | grep -q " $b "; then
+  if ! echo " $cw_ids " | grep -q " $b "; then
     err "conflicts_with: $a → '$b' is not a known rule ID"; cw_bad=1; continue
   fi
   grep -qxF "$b	$a" "$cw_tmp" || { err "conflicts_with asymmetry: $a declares $b, but $b does not declare $a"; cw_bad=1; }
