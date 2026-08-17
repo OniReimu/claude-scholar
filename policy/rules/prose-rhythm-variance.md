@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {min_stdev_words: 10, max_band_share: 0.55}
-conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE, PROSE.THEATRICAL_SPLIT, PROSE.SHORT_PUNCHY_FRAGMENTS]
+conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE, PROSE.REGISTER_PRESERVATION, PROSE.SHORT_PUNCHY_FRAGMENTS, PROSE.THEATRICAL_SPLIT]
 constraint_type: guidance
 autofix: none
 ---

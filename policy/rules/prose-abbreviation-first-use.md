@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.IDIOM_COLLISION, PROSE.INVENTED_CONCEPT_LABEL]
 constraint_type: guidance
 autofix: none
 ---

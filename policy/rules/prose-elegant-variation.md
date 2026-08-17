@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.INFORMAL_VOCABULARY, PROSE.INVENTED_CONCEPT_LABEL, PROSE.REGISTER_PRESERVATION, PROSE.RESTATEMENT_DILUTION]
 constraint_type: guidance
 autofix: none
 ---

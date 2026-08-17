@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.REGISTER_PRESERVATION]
 constraint_type: guidance
 autofix: none
 ---

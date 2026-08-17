@@ -69,9 +69,11 @@ lint_targets: "**/*.tex"
 
 **易懂 ≠ 低语域。** 降低阅读门槛的正确手段是把句子结构理顺、把术语定义清楚，不是换上口语措辞。这两件事被系统性地混为一谈，是本卡存在的理由。
 
-学术语域的违规分**五类**，只有第 1 类是词表能覆盖的。
+学术语域的违规分五类，只有 `LEXIS` 是词表能覆盖的。
 
-### 类 1 — 习语性状语 / 语气短语（闭集，regex 判定）
+> **类别用具名标签，不用编号。** `PROSE.REGISTER_PRESERVATION` 也按类别组织，若两边都用「类 3」会指向完全不同的东西（这里是判断性形容词，那里是精确度损失）。本卡是这五个标签的**唯一定义方**；`REGISTER_PRESERVATION` 在 diff 场景下复用它们，不重复定义。
+
+### `LEXIS` — 习语性状语 / 语气短语（闭集，regex 判定）
 
 `at all` · `in the first place` · `ahead of time` · `up front` · `of course` · `after all` · `at the end of the day` · `that said` · `to be fair` · `needless to say` · `so far` · `on par` · `at a glance` · `at first glance` · `more or less` · `pretty much` · `a fair bit`
 
@@ -79,7 +81,7 @@ lint_targets: "**/*.tex"
 
 **allowlist（`params.idiom_allowlist`）**：`from scratch` **不在禁用之列**——`retrain from scratch` 是 ML / unlearning 的固定说法。这类"看起来口语、其实是术语"的项必须进 allowlist，不得机械替换。
 
-### 类 2 — 短语动词顶替拉丁语源动词（半开集，LLM 判定）
+### `PHRASAL-VERB` — 短语动词顶替拉丁语源动词（半开集，LLM 判定）
 
 | 原 | 建议替换 |
 |---|---|
@@ -100,7 +102,7 @@ lint_targets: "**/*.tex"
 
 **不做 autofix**：正确替换依赖领域上下文。
 
-### 类 3 — 判断性形容词（**必须查 allowlist，不可硬禁**）
+### `JUDGMENT-ADJ` — 判断性形容词（**必须查 allowlist，不可硬禁**）
 
 `cheap` · `cheaper` · `hard` · `easy` · `easier` · `nice` · `neat` · `tricky` · `messy` · `huge` · `big` · `tiny` · `good` · `bad` · `dramatic` · `impressive` · `striking`
 
@@ -110,7 +112,7 @@ lint_targets: "**/*.tex"
 - 否，且稿件他处已用正式对应词 → **改**（实测：`is hard → is difficult`，因为该稿他处已用 `difficult` 两次）
 - 无对照物的比较级（`cheaper` 比谁便宜？）→ 那不是语域问题，交 `PROSE.HEDGING_DISCIPLINE` 的无锚点比较
 
-### 类 4 — 谓语位置的具象名词比喻（LLM 判定）
+### `PREDICATE-METAPHOR` — 谓语位置的具象名词比喻（LLM 判定）
 
 `wall` · `lever` · `knob` · `corner` · `route` · `room` · `story` · `picture`
 
@@ -120,7 +122,7 @@ lint_targets: "**/*.tex"
 
 与 `PROSE.ABSTRACT_AGENCY` 的分工：那条管**抽象名词做施事**（"the estimator carries decades of validation"），本类管**具象名词做表语/宾语的比喻**（"the wall is a property"）。交叉引用，不重复判定。
 
-### 类 5 — 内部工作痕迹动词（LLM 判定）
+### `WORK-TRACE` — 内部工作痕迹动词（LLM 判定）
 
 `buys`（"what quarantine **buys**"、"the invariant object this **buys**"）、`survives`（"the residual **survives** the conditioning"）。这类词把"我们做实验时的体验"写进了论文。
 
@@ -128,7 +130,7 @@ lint_targets: "**/*.tex"
 
 实测改法：`what quarantine buys` → `separate quarantine from keyed capacity`；`survives the conditioning` → `is not an artifact of the conditioning`。
 
-### 遗留词表（类 1 之外的单词级项）
+### 遗留词表（`LEXIS` 之外的单词级项）
 
 | 禁用 | 替代 |
 |------|------|
@@ -150,7 +152,7 @@ lint_targets: "**/*.tex"
 
 关键在于这批文本的性质：**稿件不是 agent 生成的**，此前已跑过 `writing-anti-ai`，tier-1 AI 词表、em-dash、cleft、negation-contrast 均已清零。**正因为词表层早就干净，这一轮暴露出来的才全是词表抓不到的那一类**——30 处里 **29 处是多词构造**（习语 / 短语动词 / 名词性比喻），不是单词。只看词表命中率，这份稿子会被判为"已达标"。
 
-本卡当时的正文写着「本卡负责：词表层命中，**以及未被本次 pass 改动的文本**」——它**声明**了后一块领地，但工具只有 9 条单词级 regex，其中 `for good` / `on heads` / `drives off` 三条还是从上一次实测案例逆向补进来的单例，没有泛化。**声明范围与工具能力不匹配，等于把一块地圈起来无人看守。** 五类分类表就是补上这个缺口：类 1 交给 regex，类 2–5 交给带判据和 allowlist 的 LLM 判定。
+本卡当时的正文写着「本卡负责：词表层命中，**以及未被本次 pass 改动的文本**」——它**声明**了后一块领地，但工具只有 9 条单词级 regex，其中 `for good` / `on heads` / `drives off` 三条还是从上一次实测案例逆向补进来的单例，没有泛化。**声明范围与工具能力不匹配，等于把一块地圈起来无人看守。** 五类分类表就是补上这个缺口：`LEXIS` 交给 regex，其余四类交给带判据和 allowlist 的 LLM 判定。
 
 用户给出的判据值得原样记下：
 
@@ -160,8 +162,8 @@ lint_targets: "**/*.tex"
 
 ## Check
 
-- **regex（类 1 + 遗留词表）**：`policy/lint.sh` 自动执行，见 `lint_patterns`
-- **LLM 判定（类 2–5）**：无 regex，按各类判据逐处裁决，**先查该类的 `params` allowlist**
+- **regex（`LEXIS` + 遗留词表）**：`policy/lint.sh` 自动执行，见 `lint_patterns`
+- **LLM 判定（`PHRASAL-VERB` / `JUDGMENT-ADJ` / `PREDICATE-METAPHOR` / `WORK-TRACE`）**：无 regex，按各类判据逐处裁决，**先查该类的 `params` allowlist**
 - **提取正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。不要手搓 `.tex` 扫描器——用 `line.split('%')[0]` 剔注释会在 `$95\%$` 处截断整行后半段，用 `re.sub(r'\$[^$]*\$','',t)` 剔数学会在 `$` 计数为奇数时吞掉成段散文，逐行扫描会漏掉被硬换行劈开的短语。这三种写法都会产生**假的"已清零"结论**
 - **排除**：直接引语（quote 环境）、被引文献标题、注释掉的历史草稿（`rg` 直扫原始 `.tex` 会命中它们）
 
@@ -172,14 +174,14 @@ lint_targets: "**/*.tex"
 ### Pass
 
 ```latex
-% 类 1 allowlist：术语，不是口语
+% LEXIS allowlist：术语，不是口语
 We retrain the model from scratch as the exact-deletion reference.
 
-% 类 2 allowlist：本领域标准短语动词
+% PHRASAL-VERB allowlist：本领域标准短语动词
 Theorem 3 rules out unilateral deviations; the bound follows from Lemma 2,
 and the estimator falls back to the retrospective regime when $t < t_0$.
 
-% 类 3：既有术语，保留并注明
+% JUDGMENT-ADJ：既有术语，保留并注明
 Cheap unlearning is the design goal: deletion must cost less than retraining.
 
 % 修法通则：替换词取自稿件他处
@@ -189,26 +191,26 @@ The residual is not an artifact of the conditioning.
 ### Fail
 
 ```latex
-% 类 1：习语性状语
+% LEXIS：习语性状语
 The frozen-state baseline does not help at all, and in the first place
 the operator must decide ahead of time which segments to quarantine.
 
-% 类 2：短语动词顶替拉丁语源动词
+% PHRASAL-VERB：短语动词顶替拉丁语源动词
 Segment-level deletion comes with a capacity cost, and the guarantee
 gives up its exact form once the update is folded into the live backbone.
 
-% 类 4：具象名词比喻（同时是 ELEGANT_VARIATION，wall = obstruction）
+% PREDICATE-METAPHOR：具象名词比喻（同时是 ELEGANT_VARIATION，wall = obstruction）
 The wall is a property of the continuous-time dynamics.
 
-% 类 5：内部工作痕迹动词
+% WORK-TRACE：内部工作痕迹动词
 What quarantine buys is an invariant object that survives the conditioning.
 ```
 
 ## Conflicts
 
-- `PROSE.REGISTER_PRESERVATION` 判 **diff**（一次编辑 pass 改动过的 span 是否降了语域）；本卡判 **document**（作者原文本身的语域），且只在有明确判据和 allowlist 的五类范围内。**不要因为本卡而扩大 REGISTER_PRESERVATION 的范围**——它的 diff-only 收窄有 precision 0.00 / recall 0.00 的实测支撑
-- `PROSE.ABSTRACT_AGENCY` 管抽象名词做施事；本卡类 4 管具象名词做表语/宾语的比喻
-- `PROSE.ELEGANT_VARIATION` 是类 3 与类 4 的**修法约束**：换词前先确认稿件他处用的是什么，避免新造术语
+- `PROSE.REGISTER_PRESERVATION` 判 **diff**（一次编辑 pass 改动过的 span 是否降了语域）；本卡判 **document**（作者原文本身的语域），且只在这五个具名类别范围内。**不要因为本卡而扩大 REGISTER_PRESERVATION 的范围**——它的 diff-only 收窄有 precision 0.00 / recall 0.00 的实测支撑
+- `PROSE.ABSTRACT_AGENCY` 管抽象名词做施事；本卡 `PREDICATE-METAPHOR` 管具象名词做表语/宾语的比喻
+- `PROSE.ELEGANT_VARIATION` 是 `JUDGMENT-ADJ` 与 `PREDICATE-METAPHOR` 的**修法约束**：换词前先确认稿件他处用的是什么，避免新造术语
 - `PROSE.HEDGING_DISCIPLINE` 拥有无锚点比较级（`cheaper` 比谁便宜），那不是语域问题
 - `PROSE.VAGUE_QUANTIFIERS` 拥有 `several` / `various` / `a number of`，不得重复报告
-- `PROSE.IDIOM_COLLISION` 拥有"技术短语与常用习语同形"（`a fair bit` 指无偏比特却被读成"相当多"）。本卡把 `a fair bit` 当口语量词收在类 1；当它是技术义时交由那条规则处理
+- `PROSE.IDIOM_COLLISION` 拥有"技术短语与常用习语同形"（`a fair bit` 指无偏比特却被读成"相当多"）。本卡把 `a fair bit` 当口语量词收在 `LEXIS`；当它是技术义时交由那条规则处理

@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.INFORMAL_VOCABULARY, PROSE.REGISTER_PRESERVATION]
 constraint_type: guardrail
 autofix: none
 lint_patterns:

@@ -162,13 +162,13 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 - **Tier 2 看密度**（comprehensive · essential · vital · innovative · powerful · facilitate · enhance · ensure · explore · highlight · insights · perspective · interplay · paradigm …）：单个合法，聚集违规。同句两个即 cluster，单文件累计 >5 触发。别逐个替换——找最密的那一段改。
 - 词表已按学术语域裁剪：`robust` / `optimize` / `trajectory` / `loss landscape` / `framework` / `approach` 是术语，**不在表内**，不要误伤。
 
-**口语语域按五类查，不是按词表查** <!-- policy:PROSE.INFORMAL_VOCABULARY -->
+**口语语域按五个具名类别查，不是按词表查** <!-- policy:PROSE.INFORMAL_VOCABULARY -->
 词表只够得着第 1 类。实测一篇 author-original 稿件的 30 处语域问题里，**29 处是多词构造**，词表命中 0/26。
-1. **习语性状语**（regex 可判）：`at all` · `in the first place` · `ahead of time` · `up front` · `at the end of the day` · `so far` · `more or less` · `pretty much`。删除测试：删掉命题是否不变？⚠️ `from scratch` 是术语（`retrain from scratch`），**不在此列**
-2. **短语动词顶替拉丁语源动词**：`comes with`→`entails`、`sits in`→`lies in`、`gives up`→`forfeits`、`bears this out`→`confirms this`。⚠️ allowlist：`carries out` / `rules out` / `follows from` / `falls back` 等是本领域标准用法
-3. **判断性形容词**（最易过度执行）：`hard` / `cheap` / `easy` / `huge`。判据只有一条——**该词是否已是本领域既有术语？** `cheap unlearning` 是术语，强改会撞 `ELEGANT_VARIATION`
-4. **具象名词比喻**：`the wall is a property` → 换回本文正式术语（`the obstruction`）。与 `ABSTRACT_AGENCY`（抽象名词做施事）分工
-5. **内部工作痕迹动词**：`what quarantine buys` / `survives the conditioning`。判据：把主语换成不会有体验的对象，句子还成立吗？
+1. `LEXIS` **习语性状语**（regex 可判）：`at all` · `in the first place` · `ahead of time` · `up front` · `at the end of the day` · `so far` · `more or less` · `pretty much`。删除测试：删掉命题是否不变？⚠️ `from scratch` 是术语（`retrain from scratch`），**不在此列**
+2. `PHRASAL-VERB` **短语动词顶替拉丁语源动词**：`comes with`→`entails`、`sits in`→`lies in`、`gives up`→`forfeits`、`bears this out`→`confirms this`。⚠️ allowlist：`carries out` / `rules out` / `follows from` / `falls back` 等是本领域标准用法
+3. `JUDGMENT-ADJ` **判断性形容词**（最易过度执行）：`hard` / `cheap` / `easy` / `huge`。判据只有一条——**该词是否已是本领域既有术语？** `cheap unlearning` 是术语，强改会撞 `ELEGANT_VARIATION`
+4. `PREDICATE-METAPHOR` **具象名词比喻**：`the wall is a property` → 换回本文正式术语（`the obstruction`）。与 `ABSTRACT_AGENCY`（抽象名词做施事）分工
+5. `WORK-TRACE` **内部工作痕迹动词**：`what quarantine buys` / `survives the conditioning`。判据：把主语换成不会有体验的对象，句子还成立吗？
 
 **技术短语撞习语要换掉** <!-- policy:PROSE.IDIOM_COLLISION -->
 `A fair bit selects one member` —— `fair bit` 指无偏比特，技术正确，但读者第一遍读成"相当多"。不是语域问题也不是准确性问题，是歧义。同类：`a good deal` · `on the order of` · `significant`（统计 vs 重要）。改法是把隐含限定词显式写出来：`an unbiased random bit`。

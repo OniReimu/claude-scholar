@@ -38,13 +38,21 @@ autofix: none
 
 ### Drift 分类
 
-第 1 类可以列表；第 2–5 类不能，而实测九处里它们占了六处。
+**类别用具名标签，不用编号**——`PROSE.INFORMAL_VOCABULARY` 也按类别组织，两边都用「类 3」会指向完全不同的东西。
 
-1. **口语词汇**——`stuff`、`a lot of`、`kind of`、`for good`、`on heads`。黑名单唯一够得着的一类，九处里占三处。归 `PROSE.INFORMAL_VOCABULARY` 的词表兜底。
-2. **短语动词顶替拉丁语源动词**——`drives off` 代 `deters`、`calls for` 代 `requires`、`pay for the checking` 代 `fund the checking`。**判据**：本领域是否已有一个单词动词在用？有就用那个。
-3. **伪装成简化的精确度损失**——`pay peers` 代 `route micropayments to peers`、`too heavy a one` 代 `a sanction set too high`。结果不口语，只是**更含糊**。**判据**：说出替换掉的那个指称对象。说得出来，就把它放回去。
-4. **谓语位置的比喻**——`institutions hold levers`、`RQ4 closes the loop`、`the literature has the right instinct`。与 `PROSE.ABSTRACT_AGENCY` 重叠，交叉引用而非重复判定。
-5. **正式对象的对话式框架**——`the whole point is`、`we just`、`either way`、`so we also observe it directly`。按上下文裁决，其中部分是合法连接词。
+**复用 `PROSE.INFORMAL_VOCABULARY` 定义的四类**（那张卡是唯一定义方，含各类判据与 allowlist，本卡不重复定义）：
+
+| 标签 | 在 diff 场景下的表现 |
+|---|---|
+| `LEXIS` | 替换引入了口语词（`permanently` → `for good`）。九处实测里占三处，是黑名单唯一够得着的 |
+| `PHRASAL-VERB` | 替换用短语动词顶掉了拉丁语源动词（`deters` → `drives off`、`requires` → `calls for`） |
+| `JUDGMENT-ADJ` | 替换引入了判断性形容词。**先查 allowlist**：既有术语不算违规 |
+| `PREDICATE-METAPHOR` | 替换把陈述改成了谓语位置的比喻（`impose a cost` → `hold levers`）。与 `PROSE.ABSTRACT_AGENCY` 交叉引用，不重复判定 |
+
+**本卡独有的两类**（只在有「改前措辞」时才可判定，因此不属于 `INFORMAL_VOCABULARY` 的 document 范围）：
+
+- `PRECISION-LOSS` — **伪装成简化的精确度损失**：`pay peers` 代 `route micropayments to peers`、`too heavy a one` 代 `a sanction set too high`。结果不口语，只是**更含糊**。**判据**：说出替换掉的那个指称对象；说得出来，就把它放回去。**这一类没有改前文本就不存在**——单看 `pay peers` 完全正常。
+- `CONVERSATIONAL-FRAMING` — **正式对象的对话式框架**：`the whole point is`、`we just`、`either way`、`so we also observe it directly`。按上下文裁决，其中部分是合法连接词。
 
 ### 排除（必须放行，每条都是实测假阳性）
 
@@ -128,25 +136,25 @@ a sanction set too high deters  →  a sanction set too high deters entry
 ```text
 original: route micropayments to peers
 replacement: pay peers
-→ 第 3 类，精确度损失：micropayment 这个指称对象消失了
+→ `PRECISION-LOSS`：micropayment 这个指称对象消失了
 
 original: a sanction set too high deters
 replacement: too heavy a one drives off
-→ 第 3 类 + 第 2 类：名词被代词 one 顶替，deters 被短语动词顶替
+→ `PRECISION-LOSS` + `PHRASAL-VERB`：名词被代词 one 顶替，deters 被短语动词顶替
 
 original: permanently excluding a verifier
 replacement: excluding a verifier for good
-→ 第 1 类，口语惯用语
+→ `LEXIS`：口语惯用语
 
 original: Institutional instruments impose a cost
 replacement: Institutions hold levers
-→ 第 4 类，谓语位置的比喻（并触发 PROSE.ABSTRACT_AGENCY）
+→ `PREDICATE-METAPHOR`（并触发 PROSE.ABSTRACT_AGENCY）
 ```
 
 ## Conflicts
 
-- `PROSE.INFORMAL_VOCABULARY` 拥有**词表层**（第 1 类）与**未改动文本**的判定；本规则拥有**改动 span** 的语域 delta。同一处命中时以本规则的报告为准，不重复计数
-- `PROSE.ABSTRACT_AGENCY` 拥有比喻性谓语的通用判定；第 4 类交叉引用它，不重复立案
+- `PROSE.INFORMAL_VOCABULARY` 是 `LEXIS` / `PHRASAL-VERB` / `JUDGMENT-ADJ` / `PREDICATE-METAPHOR` 四类的**唯一定义方**，并拥有**未改动文本**的判定；本规则拥有**改动 span** 的语域 delta，外加 `PRECISION-LOSS` / `CONVERSATIONAL-FRAMING` 两类（无改前文本则不可判定）。同一处命中时以本规则的报告为准，不重复计数
+- `PROSE.ABSTRACT_AGENCY` 拥有比喻性谓语的通用判定；`PREDICATE-METAPHOR` 交叉引用它，不重复立案
 - `PROSE.VAGUE_QUANTIFIERS` 拥有 `several` / `various` / `a number of`，本规则不得重复报告
 - `PROSE.HEDGING_DISCIPLINE` 拥有校准 hedge 的存废，**优先级高于本规则**：不得以"语域"为由删除或强化一个校准过的 hedge
 - `PROSE.RHYTHM_VARIANCE` 要求句长有落差，而最省事的加落差方式是写短口语句——本规则是它的对向约束：**拉方差不得靠降语域**
