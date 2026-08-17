@@ -14,7 +14,7 @@ params: {}
 conflicts_with: []
 constraint_type: guidance
 autofix: none
-deprecated_by: paper-figure-generator-internal
+deprecated_by: paper-figure-generator
 ---
 
 > **⚠️ Deprecated**: 本规则仅适用于 `paper-figure-generator` skill（AutoFigure-Edit 概念图），

@@ -27,7 +27,7 @@ Generate publication-quality conceptual figures for academic papers using [AutoF
 | Rule ID | 摘要 |
 |---------|------|
 | `FIG.NO_IN_FIGURE_TITLE` | 图内不加标题 |
-| `FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1` | system overview/pipeline/architecture 图宽高比不小于 2:1 |
+| `FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1` | system overview/pipeline/architecture 图宽高比不小于 2:1（全局弃用，**本 skill 内仍是硬约束**——规则由 `paper-figure-generator` 自己承担） |
 
 **Key advantages over generic image APIs:**
 - Output is SVG (editable), not just raster PNG

@@ -171,10 +171,10 @@ SoK 规则集合（语义规则）：
 | FIG.NO_IN_FIGURE_TITLE | fig-no-in-figure-title | core | error | true | lint_script | guidance | none |
 | FIG.FONT_GE_24PT | fig-font-ge-24pt (deprecated → scientific-figure-making) | core | error | false | doc | guidance | none |
 | FIG.ONE_FILE_ONE_FIGURE | fig-one-file-one-figure | core | error | true | doc | guidance | none |
-| FIG.COLORBLIND_SAFE_PALETTE | fig-colorblind-safe-palette | core | warn | false | doc | guidance | none |
-| FIG.SELF_CONTAINED_CAPTION | fig-self-contained-caption | core | warn | false | doc | guidance | none |
-| FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 | fig-system-overview-aspect-ratio-ge-2to1 | core | error | true | doc | guidance | none |
-| FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required | core | error | false | doc | guidance | none |
+| FIG.COLORBLIND_SAFE_PALETTE | fig-colorblind-safe-palette (deprecated → scientific-figure-making) | core | warn | false | doc | guidance | none |
+| FIG.SELF_CONTAINED_CAPTION | fig-self-contained-caption (deprecated → paper-self-review) | core | warn | false | doc | guidance | none |
+| FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 | fig-system-overview-aspect-ratio-ge-2to1 (deprecated → paper-figure-generator) | core | error | true | doc | guidance | none |
+| FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required (deprecated → scientific-figure-making) | core | error | false | doc | guidance | none |
 | FIG.EXPERIMENT_SUBFIGURE_LAYOUT | fig-experiment-subfigure-layout | core | warn | false | doc | guardrail | none |
 | FIG.HEATMAP_LABEL_ABBREVIATION | fig-heatmap-label-abbreviation | core | warn | false | doc | guidance | none |
 | FIG.COLUMN_WIDTH_JUSTIFICATION | fig-column-width-justification | core | warn | false | doc | guardrail | none |

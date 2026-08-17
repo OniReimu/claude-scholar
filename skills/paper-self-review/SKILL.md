@@ -24,7 +24,7 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 | `FIG.ONE_FILE_ONE_FIGURE` | 1 文件 = 1 图 |
 | `FIG.VECTOR_FORMAT_REQUIRED` | 数据图用矢量格式（已弃用，交 `scientific-figure-making`） |
 | `FIG.COLORBLIND_SAFE_PALETTE` | 色盲安全配色（已弃用，交 `scientific-figure-making`） |
-| `FIG.SELF_CONTAINED_CAPTION` | Caption 自包含（实验图表仅 what） |
+| `FIG.SELF_CONTAINED_CAPTION` | Caption 自包含（实验图表仅 what）（已弃用为硬检查，保留为写作指引，交 `paper-self-review` 在 review 阶段执行） |
 | `FIG.EXPERIMENT_SUBFIGURE_LAYOUT` | 实验图禁单行单个（1×2 或 2×2+ 网格） |
 | `FIG.HEATMAP_LABEL_ABBREVIATION` | 热量图长标签图内简写、caption 全称、单栏 |
 | `FIG.COLUMN_WIDTH_JUSTIFICATION` | 图单栏优先，全宽须密度自证 |
@@ -133,7 +133,7 @@ Evaluate the quality and effectiveness of figures and tables:
 - Do experiment subfigures avoid a lone subfigure on any row — 2 side-by-side (1×2) or a 4+ grid (2×2+)? <!-- policy:FIG.EXPERIMENT_SUBFIGURE_LAYOUT -->
 - Do heatmaps with long row/col names abbreviate in-figure, define full names in the caption, and stay single-column? <!-- policy:FIG.HEATMAP_LABEL_ABBREVIATION -->
 - If a research-gap teaser figure exists, is it single-column, placed before the system overview, and warranted (gap hard to convey in words)? Not every paper needs one. <!-- policy:FIG.RESEARCH_GAP_TEASER -->
-- Are captions self-contained — non-experiment figures cover what / how / intent, while experiment figures & tables carry only "what" (finding/takeaway goes to prose per `EXP.TAKEAWAY_BOX`, never the caption)? <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
+- Are captions self-contained — non-experiment figures cover what / how / intent, while experiment figures & tables carry only "what" (finding/takeaway goes to prose per `EXP.TAKEAWAY_BOX`, never the caption)? (rule deprecated as a hard check; retained as a writing guideline owned by this skill and `ml-paper-writing` at review time) <!-- policy:FIG.SELF_CONTAINED_CAPTION -->
 - Do tables use booktabs format? <!-- policy:TABLE.BOOKTABS_FORMAT -->
 - Do table headers include direction indicators (↑/↓)? <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - Are tables wrapped in `\resizebox` to fit the column width (or do they satisfy all natural-fit exemptions)? <!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->

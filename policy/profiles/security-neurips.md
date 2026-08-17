@@ -47,10 +47,12 @@ venue: neurips
 | Rule ID | 字段 | 新值 | 原因 |
 |---------|------|------|------|
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | severity | error | NeurIPS 篇幅紧（9 页正文），Conclusion 必须紧凑 |
-| FIG.FONT_GE_24PT | params.min_font_pt | 28 | Security 图表符号密集，需要更大字号确保可读性 |
+| FIG.FONT_GE_24PT | params.min_font_pt | 28 | ⚠️ **已弃用规则，此覆盖不生效** —— 字号已交 `scientific-figure-making` 的 `FigureStyle` 自适应处理。保留本行仅为记录 Security 图表需要更大字号这一意图，实际执行时把该意图作为 `FigureStyle` 的输入 |
 | SE.RESEARCH_QUESTIONS_EXPLICIT | severity | warn | AI-security 下 RQ 为强默认而非绝对必需：单一主结果/同质评估的论文可不用 RQ |
 
-> 注：FIG.FONT_GE_24PT 规则卡片声明 `params: {min_font_pt: 24}`，此处覆盖为 28。
+> 注：FIG.FONT_GE_24PT 已 `deprecated_by: scientific-figure-making`，其 `params.min_font_pt` 覆盖**不再产生效果**——
+> 覆盖一条已弃用规则是无声失效的典型形态（profile 看起来配置了，实际什么也没发生）。
+> 需要更大字号时，把要求传给 `scientific-figure-making` 的 `FigureStyle`，不要依赖本行。
 > FIG.NO_IN_FIGURE_TITLE 为 locked=true，不可覆盖。
 
 ## Domain-Specific Rules

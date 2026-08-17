@@ -14,7 +14,7 @@ params: {}
 conflicts_with: []
 constraint_type: guidance
 autofix: none
-deprecated_by: writing-convention
+deprecated_by: paper-self-review
 ---
 
 > **⚠️ Deprecated**: 本规则作为写作层面的 guideline 保留参考，不再作为代码级硬约束检查。
