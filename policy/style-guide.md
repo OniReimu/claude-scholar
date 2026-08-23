@@ -44,9 +44,11 @@
 ### 3.1 Background（背景）
 
 ```
-Recently, ... has attracted significant attention.
-With the rapid development of X, Y has become increasingly important.
+X currently relies on A, which holds only when B.
+Deployments of X are constrained by A: every additional B costs C.
 ```
+
+> **注意**：背景句从一个可验证的具体事实开篇，不从趋势断言开篇。`Recently, ... has attracted significant attention` / `With the rapid development of X, ...` / `In recent years, ...` 属于 `PROSE.AI_LEXICON` 的 formulaic openers 零容忍条款，写出来即违规。
 
 ### 3.2 Limitation（现有工作局限）
 
