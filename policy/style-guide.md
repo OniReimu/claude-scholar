@@ -180,6 +180,13 @@ communication budget.
 
 推进逻辑：context → limitation → solution → evidence
 
+**Background 句要求**：五段式的**形状**不变，但开头那 1-2 句 Background 必须具体到能自己生成 gap——读完它们，读者应当已经看得出下一段 Problem tension 从哪里来。泛化背景句（"领域 X 受到广泛关注"、"随着 X 的快速发展"）被 `PROSE.AI_LEXICON` 零容忍禁止，且它本来也承担不了生成 gap 的功能：它没有给出任何可以被证伪的东西。
+
+> **与 Farquhar 公式的关系（作者未决事项，不由 agent 代决）**
+> `ml-paper-writing` Step 3 教的是 Sebastian Farquhar 的 achievement-first 五句 abstract 公式：先说 achieved（"We introduce/prove/demonstrate..."），再说 why hard、how、evidence、最亮的那个数字。它把 achievement 放在第一句，与本节 background-first 的推进顺序不同。
+> **两者在一个条件下兼容**：只要开头的 Background 句携带的是具体张力（上一段的要求），本节的五段式就仍然成立——差别只是把同一批信息按什么顺序铺开，而不是写不写 tension。
+> **未决**：面向 NeurIPS / ICML / ICLR 这类 top-ML venue 时，是否整体切换到 achievement-first，是作者本人的取舍（涉及个人风格指纹与 venue 期待的权衡），不在 agent 的权限内。在作者明确决定之前，按本节 background-first 写。
+
 ### 6.2 Contribution Section 格式
 
 ```latex
