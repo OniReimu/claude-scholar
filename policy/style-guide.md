@@ -133,6 +133,8 @@ The system is evaluated through simulations.
 | 第二段 | Existing work → Limitation |
 | 第三段 | Paper contribution introduction |
 
+**开篇句要求**：三段的**形状**不变，但第一段第一句必须携带具体的张力或 gap，不能是泛化的趋势陈述。"Technology trend" 是这一句要达到的**效果**，不是它的写法——写法是给出一个可验证的结构性事实，让趋势由这个事实自己带出来（例："Tabular deep learning discards feature-type metadata."）。泛化开场白（`With the rapid development of X, ...` / `X has attracted significant attention` / `In recent years, ...`）被 `PROSE.AI_LEXICON` 的 formulaic openers 条款零容忍禁止，同时它也无法为第二段的 Limitation 提供落点。
+
 ### 5.2 五步叙事逻辑
 
 所有论文遵循：
