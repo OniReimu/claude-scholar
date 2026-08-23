@@ -40,6 +40,7 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `LATEX.CMARK_XMARK_PMARK_MACROS` | 定性比较表统一 cmark/xmark/pmark 宏 |
 | `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
 | `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
+| `PAPER.OUTCOME_LOGIC` | 写成果逻辑不写过程流水账；证据撑不住原叙事时授权重定义问题、重排贡献 |
 | `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |
 | `EXP.TAKEAWAY_BOX` | 实验结果附 takeaway box |
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
@@ -47,6 +48,7 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
 | `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 非实跑结果 caption 强制披露 |
 | `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
+| `EXP.EXPERIMENT_ROLE` | 每个实验须承担四种职责之一（证明有效／归因 gain／目标场景价值／排除竞争解释），否则重设计→弱化→删除 |
 | `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
 | `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
 | `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |
@@ -80,6 +82,7 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `PROSE.IDIOM_COLLISION` | 技术短语与常用习语同形（歧义，非语域） |
 | `PROSE.REGISTER_PRESERVATION` | 简化/压缩不得降语域；判 diff 不判 document |
 | `PROSE.HEDGING_DISCIPLINE` | Hedging需匹配证据 |
+| `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果三步处置；只管措辞不减披露 |
 | `PROSE.NUMBER_EXPRESSION` | 数字表达规范 |
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
 | `PROSE.RELATED_WORK_EVOLUTION` | Related Work按脉络组织 |

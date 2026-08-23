@@ -9,8 +9,8 @@ Field contracts for the five files under `architecture-review/`. Working-state f
 # Spine
 
 ## Paper-level claims (1–3)
-- C1: <one sentence — the central claim>
-- C2: <...>
+- C1: <one sentence — the central claim> — `lead: capability`
+- C2: <...> — `lead: none`
 
 ## Section obligations (one per core section)
 - §Intro: motivate C1; state the gap.
@@ -20,6 +20,16 @@ Field contracts for the five files under `architecture-review/`. Working-state f
 ```
 
 Keep it small; it stays resident across all passes.
+
+`lead` is the **kind of defensible advantage** the claim carries, from the closed set:
+
+| `lead` | Meaning |
+|---|---|
+| `capability` | 新能力 — the paper does something that could not be done before |
+| `mechanism` | 新机制 — it explains something competing work cannot explain |
+| `cost` | 更低成本 — same outcome, materially cheaper (compute / data / annotation / latency) |
+| `scale` | 更好扩展性 — it holds where others break (size, distribution shift, deployment scope) |
+| `none` | true but leads on nothing — legal and explicit; a spine of all-`none` is a positioning problem, see `ml-paper-writing` → *选对战场* |
 
 ## `information-ledger.md` (working state — redundancy index, append-only)
 
@@ -45,12 +55,13 @@ One row per paragraph, appended section-by-section.
 | `role` | `claim` \| `evidence` \| `interpretation` \| `method-setup` \| `positioning` \| `scope-limitation` \| `navigation` |
 | `supports` | which `paper_claim` (C1..) or `section_obligation` it serves |
 | `unique_info` | `true` \| `false` (false = its information has another home; cross-check the ledger) |
+| `backs_lead` | `true` \| `false` (true = the claim it `supports` has `lead ≠ none`; `false` ⇒ candidate for `tighten` / `move:appendix`, never a licence to `delete`) |
 | `required_caveat` | `true` \| `false` (true = threat-model boundary / scope condition / overclaim defense / venue-mandated Limitation — load-bearing, not deletable) |
 | `canonical_home` | where this information should live (may differ from `loc`) |
 | `verdict` | `keep` \| `tighten` \| `merge` \| `move:<section>` \| `move:appendix` \| `split` \| `delete` \| `escalate` |
 | `confidence` | `high` \| `medium` \| `low` (low ⇒ verdict must be `escalate`, never `delete`) |
 
-Rules: `delete` legal only when `unique_info=false` AND `required_caveat=false`; every `move`/`merge`/`delete` names the surviving `canonical_home`.
+Rules: `delete` legal only when `unique_info=false` AND `required_caveat=false`; every `move`/`merge`/`delete` names the surviving `canonical_home`. `backs_lead=false` alone never authorises `delete` — it caps the paragraph at `tighten` / `move:appendix`, and `required_caveat=true` overrides it entirely.
 
 ## `relocation-map.md` (final artifact — cross-section consolidation)
 

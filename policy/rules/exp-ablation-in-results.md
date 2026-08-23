@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [EXP.EXPERIMENT_ROLE, PAPER.OUTCOME_LOGIC]
 constraint_type: guidance
 autofix: none
 ---
@@ -50,3 +50,8 @@ autofix: none
   \subsection{Ablation Study}
   We also conduct ablation experiments to analyze...
 ```
+
+## Conflicts
+
+- `EXP.EXPERIMENT_ROLE` — 本卡管消融**放在哪一节**，那条管这个消融**是否该存在**。先按那条确认它承担职责 2（说明优势从何而来），再按本卡放进 Experimental Results
+- `PAPER.OUTCOME_LOGIC` — 消融是成果逻辑的组成部分；那条的流水账禁令不得用来删消融，只有「只交代作者行踪」的段落才在禁令范围内

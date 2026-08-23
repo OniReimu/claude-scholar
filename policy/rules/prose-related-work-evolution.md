@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [PAPER.OUTCOME_LOGIC]
 constraint_type: guidance
 autofix: none
 ---
@@ -69,3 +69,7 @@ method. Bourtoule et al.~\cite{sisa} proposed SISA training.
 Golatkar et al.~\cite{golatkar} used Fisher information for unlearning.
 Sekhari et al.~\cite{sekhari} provided theoretical guarantees.
 ```
+
+## Conflicts
+
+- `PAPER.OUTCOME_LOGIC` — 本卡要求 Related Work 按**领域**的 intellectual evolution 组织，那条禁止按**本文作者**的工作时序组织。领域演进 = 成果逻辑，作者行踪 = 流水账，二者不矛盾

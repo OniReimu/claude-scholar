@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.ELEGANT_VARIATION, PAPER.CONCLUSION_SINGLE_PARAGRAPH]
+conflicts_with: [PROSE.ELEGANT_VARIATION, PAPER.CONCLUSION_SINGLE_PARAGRAPH, EXP.EXPERIMENT_ROLE]
 constraint_type: guardrail
 autofix: none
 ---
@@ -76,3 +76,4 @@ efficiency by eliminating redundant per-step work.
 - `PAPER.CONCLUSION_SINGLE_PARAGRAPH` 允许 Conclusion 复述全文主张，本卡不适用于 Abstract 与 Conclusion
 - `PROSE.PARAGRAPH_TOPIC_SENTENCE` 要求段首为 topic sentence；topic sentence 与段内展开不是复述，只有段**末**的同义回归才是
 - `PROSE.SUBSECTION_COMPLETENESS` 要求 subsection ≥2 段——删复述后不足 2 段的，补内容而不是把复述留着凑数
+- `EXP.EXPERIMENT_ROLE` 管**实验层**的冗余（一张不承担职责的表），本卡管**命题层**的文字复述。成本同源（页数），对象不同，可以同时发生

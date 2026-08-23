@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.NO_INTERNAL_PROVENANCE]
+conflicts_with: [PROSE.NO_INTERNAL_PROVENANCE, PROSE.SELF_UNDERMINING, EXP.EXPERIMENT_ROLE, PAPER.OUTCOME_LOGIC]
 constraint_type: guidance
 autofix: none
 ---
@@ -67,3 +67,9 @@ caption 披露解决“单图单表可见性”，而 subsection 级状态声明
 \end{figure}
 % 问题：有 fabricated caption，但小节开头缺少状态声明注释
 ```
+
+## Conflicts
+
+- `PROSE.SELF_UNDERMINING` — 本卡要求的状态声明是合规内容，不是自我攻击；那条只管措辞，不得据以弱化、移位或删除状态声明
+- `EXP.EXPERIMENT_ROLE` — 那条管一个实验是否服务于某条主张，不授权因结果不利而删实验。已跑过且与主张相左的实验是证据，报告义务以本卡为准
+- `PAPER.OUTCOME_LOGIC` — 那条授权重排叙事与重定义问题，改的是顺序与 framing，不是报告集合；状态声明义务不因重排改变

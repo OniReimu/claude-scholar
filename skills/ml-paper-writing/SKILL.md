@@ -1,7 +1,7 @@
 ---
 name: ml-paper-writing
 description: Write publication-ready ML/AI/security papers for NeurIPS, ICML, ICLR, ACL, AAAI, COLM (policy profiles also cover CCS/S&P and Nature-family journals). Use for drafting or revising abstracts, introductions, contribution lists, related work, background, method/system-model prose, threat models, RQ framing, experiment narratives, discussion, limitations, conclusions, claim calibration, venue-aware section structure, LaTeX templates, and camera-ready preparation; also for literature reviews and finding related work (routes to knows-literature backend). Do not use for figure/table rendering (paper-figure-generator / scientific-figure-making / results-analysis publication-tables reference), paragraph-level structural audit (claim-architecture-review), AI-pattern-only cleanup (writing-anti-ai), or rebuttal drafting (review-response).
-version: 1.0.2
+version: 1.0.3
 author: Orchestra Research
 license: MIT
 tags: [Academic Writing, NeurIPS, ICML, ICLR, ACL, AAAI, COLM, LaTeX, Paper Writing, Citations, Research]
@@ -38,6 +38,7 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `LATEX.NOTATION_CONSISTENCY` | 符号全文一致 |
 | `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
 | `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
+| `PAPER.OUTCOME_LOGIC` | 写成果逻辑不写过程流水账；证据撑不住原叙事时授权重定义问题、重排贡献 |
 | `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |
 | `EXP.TAKEAWAY_BOX` | 实验结果附 takeaway box |
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
@@ -45,6 +46,7 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `EXP.RESULTS_SUBSECTION_STRUCTURE` | 实验小节结构 |
 | `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` | 非实跑结果 caption 强制披露 |
 | `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
+| `EXP.EXPERIMENT_ROLE` | 每个实验须承担四种职责之一（证明有效／归因 gain／目标场景价值／排除竞争解释），否则重设计→弱化→删除 |
 | `EXP.MULTIRUN_AGGREGATE_CONSISTENCY` | 多 run 聚合数字须出自带一致性判定的 aggregate 工件 |
 | `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
 | `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
@@ -516,6 +518,26 @@ Every successful ML paper centers on what Neel Nanda calls "the narrative": a sh
 
 **If you cannot state your contribution in one sentence, you don't yet have a paper.**
 
+**成果逻辑，不是过程流水账** <!-- policy:PAPER.OUTCOME_LOGIC -->：每一节按「问题 → 设计 → 为何这样设计 → 证据」组织，不按工作发生的先后组织——`we first tried X, then switched to Y`、按实现历史排序的 Method、按跑实验时间排序的 Results，都是把作者的搜索路径当成读者的阅读路径。这条同时给出授权：**当最强证据支持的命题与最初 outline 的命题不同时，改命题**——重定义问题、重排贡献、重写结构都是正确动作，不需要在文中致歉或交代改动过程。改的是顺序与 framing，**不是报告集合**：已跑过且与主张相左的实验照常报告（`EXP.RESULTS_STATUS_DECLARATION_REQUIRED`），消融与负面结果不在禁令范围内。
+
+---
+
+### 选对战场 — Choosing the Battlefield
+
+**Trigger**: the results are in and you are **not ahead on the metric the field defaults to**. Do not open the paper by losing that comparison, and do not quietly pad it into a win. Ask instead whether the default contest is the one that reflects this contribution.
+
+**The moves, in order** — take the first one that is honestly true:
+
+1. **换评价口径 (change the evaluation protocol)** — is the default metric the one this contribution is about? If the lead is efficiency, report cost-normalised performance (accuracy per FLOP / per dollar / per labelled example); if the lead is reliability, report performance under distribution shift, adversarial input, or long-tail slices. Raw accuracy is a *choice* of yardstick, not the definition of progress.
+2. **换任务定义 (change the task definition)** — does a narrower or differently-scoped task express what the method actually does? A method that is mediocre at open-ended generation may be the right tool for a constrained, verifiable sub-task. Define that task properly, with its own baselines — do not just relabel the old one.
+3. **换应用场景 (change the deployment setting)** — is there a setting where this method's property is the *binding constraint*? On-device, streaming, privacy-constrained, low-annotation-budget, or per-query-billed regimes turn a secondary property into the deciding one.
+
+**The hard limit — 只提证据撑得住的主张.** Choosing a different battlefield is legitimate **positioning**; it becomes misconduct the moment the change hides a comparison the reader needs in order to judge the work. Concretely: **the standard comparison the field expects still gets reported. You may argue it is not the right frame; you may not omit it.** Keep it in the main results table (or, at minimum, a clearly forward-referenced table the main text points to), state plainly that you do not lead on it, and let the reframed comparison carry the headline. Verb strength must track the evidence — see `PROSE.HEDGING_DISCIPLINE`; and every reported number keeps its status declaration — see `EXP.RESULTS_STATUS_DECLARATION_REQUIRED`. Not being ahead everywhere is normal; **claiming to be is the only fatal move**.
+
+**Worked example.** A retrieval-augmented method scores 71.4 vs. the 73.8 of the strongest baseline on the benchmark's headline accuracy — a clean loss. But it needs one retrieval pass instead of five, giving ~4× lower cost per query. Repositioned: the main table's headline column becomes **accuracy at matched inference budget** (where the method wins 71.4 vs. 64.1, because the baseline is throttled to the same budget), the abstract claims *comparable accuracy at a fraction of the query cost* rather than state-of-the-art accuracy, and the **unconstrained-budget accuracy is still reported in the same table**, with one sentence in Results conceding the 2.4-point gap and one in Limitations naming the regime where the baseline is the right choice. The claim that survives is the one the evidence supports.
+
+**This is a positioning decision, not a writing rule.** It deliberately has **no policy rule card** — there is no sentence-level check that can tell a well-chosen frame from a self-serving one; it is judged per-paper against the evidence. Record the outcome where the paper's claim structure lives: `claim-architecture-review`'s `spine.md` is where each paper-level claim is tagged with the kind of lead it carries (`capability` / `mechanism` / `cost` / `scale` / `none`). If that pass comes back with every claim at `lead: none`, come back here — the answer is usually a different battlefield, not a shorter paper.
+
 ---
 
 ## Cross-Skill Integration Map
@@ -534,6 +556,7 @@ The paper writing workflow orchestrates multiple skills at specific steps:
 | Step 11 | `paper-self-review` | Multi-item quality checklist (includes figure/title and LaTeX math conformance) |
 | Step 11 | `citation-verification` | Final reference validation |
 | Step 11 | `writing-anti-ai` | Remove AI writing patterns if needed |
+| Step 8c / 9 | `claim-architecture-review` | When results show no clean win: run *选对战场* above, then record the resulting `lead` per claim in `architecture-review/spine.md` |
 
 **Knowledge base** (populated by `paper-miner` agent, used throughout writing):
 - `references/knowledge/structure.md` → Section organization patterns (Steps 4, 5, 6)
@@ -844,6 +867,8 @@ Experiment Plan:
 ```
 
 Validate alignment — for each experiment, verify: `Claim (Step 1) → Experiment Design → Expected Evidence → Planned Figure/Table`. If any claim lacks support, add experiments. If any experiment doesn't support a claim, move to appendix.
+
+为计划中的每个实验指派**四种职责之一**（① 证明核心方法有效 ② 说明优势从何而来 ③ 在目标场景展示价值 ④ 排除最可能的替代解释），全文至少要有一个实验承担职责 ④——先用一句话写出 reviewer 最可能提出的竞争解释（更长训练预算 / 更大模型 / 调过的超参 / 更宽松评测协议 / 数据泄漏），再给出消掉它的对照。指派不上的实验按序处置：重设计 → 弱化为附录 → 删除；已跑过但结果不利的实验不走这条阶梯，照 `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` 如实报告。 <!-- policy:EXP.EXPERIMENT_ROLE -->
 
 > **GATE: Do NOT proceed to 8b until the user confirms the experiment plan.**
 >

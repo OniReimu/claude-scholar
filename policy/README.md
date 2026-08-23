@@ -36,8 +36,9 @@ severity: error | warn               # 统一用 warn（不用 warning）
 locked: true | false                 # locked=true 时 severity 和 params 均不可被 profile 覆盖
 layer: core | domain | venue         # M2 新增：规则分层
 artifacts: [figure, equation, text, table, code, bibtex]
-phases: [ideation, writing-background, writing-system-model, writing-methods,
-         writing-experiments, writing-conclusion, self-review, revision, camera-ready]
+phases: [ideation, writing-intro, writing-background, writing-system-model,
+         writing-methods, writing-experiments, writing-conclusion, self-review,
+         revision, camera-ready]
 domains: [core] | [security, hci, se, is]
 venues: [all] | [neurips, icml, iclr, ccs, usenix, ndss, sp, chi, icse, fse, ase, misq, isr, ...]
 check_kind: regex | ast | llm_semantic | llm_style | manual
@@ -98,6 +99,7 @@ fix_patterns: []                     # 可选：自动修复映射（仅 autofix
 | Phase | 描述 |
 |-------|------|
 | `ideation` | 研究构思、选题、大纲、Figure 1 |
+| `writing-intro` | Introduction（问题陈述、贡献列表、叙事开篇） |
 | `writing-background` | Background & Related Work |
 | `writing-system-model` | System Model |
 | `writing-methods` | Methods / Our Approach |
@@ -116,6 +118,7 @@ fix_patterns: []                     # 可选：自动修复映射（仅 autofix
 | ml-paper-writing Step | Phase |
 |----------------------|-------|
 | Step 1-3 (选题/大纲/Figure 1) | ideation |
+| Step 3-4 (Abstract / Introduction) | writing-intro |
 | Step 5 (Background & Related Work) | writing-background |
 | Step 6 (System Model) | writing-system-model |
 | Step 7 (Methods / Our Approach) | writing-methods |
@@ -192,6 +195,7 @@ SoK 规则集合（语义规则）：
 | REF.WOVEN_CROSS_REFERENCE | ref-woven-cross-reference | core | warn | false | doc | guardrail | assisted |
 | PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | false | lint_script | guidance | none |
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc | guidance | none |
+| PAPER.OUTCOME_LOGIC | paper-outcome-logic | core | warn | false | doc | guidance | none |
 | CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script | guidance | none |
 | CITE.CLAIM_SUPPORT_REQUIRED | cite-claim-support-required | core | warn | false | lint_script | guidance | none |
 | EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc | guidance | none |
@@ -201,6 +205,7 @@ SoK 规则集合（语义规则）：
 | EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE | exp-fabricated-results-caption-disclosure | core | error | false | doc | guidance | none |
 | EXP.RESULTS_STATUS_DECLARATION_REQUIRED | exp-results-status-declaration-required | core | warn | false | doc | guidance | none |
 | EXP.MULTIRUN_AGGREGATE_CONSISTENCY | exp-multirun-aggregate-consistency | core | error | false | doc | guardrail | none |
+| EXP.EXPERIMENT_ROLE | exp-experiment-role | core | warn | false | doc | guidance | none |
 | REPRO.RANDOM_SEED_DOCUMENTATION | repro-random-seed-documentation | core | error | false | doc | guidance | none |
 | REPRO.COMPUTE_RESOURCES_DOCUMENTED | repro-compute-resources-documented | core | warn | false | doc | guidance | none |
 | SUBMIT.SECTION_NUMBERING_CONSISTENCY | submit-section-numbering-consistency | core | warn | false | lint_script | guidance | none |
@@ -220,6 +225,7 @@ SoK 规则集合（语义规则）：
 | PROSE.COLON_LIST_OVERUSE | prose-colon-list-overuse | domain | warn | false | lint_script | guardrail | none |
 | PROSE.RULE_OF_THREE | prose-rule-of-three | domain | warn | false | doc | guidance | none |
 | PROSE.OVER_DEFENSIVE | prose-over-defensive | domain | warn | false | doc | guidance | none |
+| PROSE.SELF_UNDERMINING | prose-self-undermining | domain | warn | false | lint_script | guardrail | none |
 | PROSE.PROMOTIONAL_LANGUAGE | prose-promotional-language | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.FORMATTING_RESTRAINT | prose-formatting-restraint | domain | warn | false | doc | guidance | none |
 | PROSE.NO_INTERNAL_PROVENANCE | prose-no-internal-provenance | core | error | false | lint_script | guardrail | assisted |
@@ -270,7 +276,7 @@ SoK 规则集合（语义规则）：
 
 ## 词汇类规则归属表（Lexicon Ownership）
 
-六条规则都在管"哪些词不能用"，词表**互斥分工**如下。新增禁用词时先查此表，归属唯一；一个 surface form 只允许出现在一条规则的 lint_patterns 里。
+八条规则都在管"哪些词不能用"，词表**互斥分工**如下。新增禁用词时先查此表，归属唯一；一个 surface form 只允许出现在一条规则的 lint_patterns 里。
 
 | 规则 | 管辖范围 | 例词 |
 |------|---------|------|
@@ -281,6 +287,7 @@ SoK 规则集合（语义规则）：
 | `PROSE.INFORMAL_VOCABULARY` | 口语化下限，**五类分类表**：习语状语(regex) / 短语动词 / 判断形容词 / 具象比喻 / 工作痕迹动词（后四类 LLM 判定 + allowlist） | a lot of, at all, in the first place, comes with, cheap, wall, buys |
 | `PROSE.IDIOM_COLLISION` | 技术短语与常用习语同形（歧义，非语域） | a fair bit, on the order of, significant |
 | `PROSE.VAGUE_QUANTIFIERS` | 模糊量词（仅「量词+文献名词」组合与恒模糊短语，不抓裸词） | "many studies", "a wide range of", "extensive experiments" |
+| `PROSE.SELF_UNDERMINING` | 自我削弱词汇（情绪副词与自贬式比较措辞）；边界：`PROSE.OVER_DEFENSIVE` 管辩护的结构与放置，本条只管词级措辞 | unfortunately, regrettably, admittedly, merely, falls short, lags behind |
 
 **两条硬性不变量**（由 `validate.sh` Section 5c 机器检查第 2 条）：
 

@@ -19,7 +19,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
 > 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
-> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（31 条禁止模式）。
+> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（32 条禁止模式）。
 
 | Rule ID | 摘要 |
 |---------|------|
@@ -61,6 +61,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
 | `PROSE.THEATRICAL_SPLIT` | 禁止"设预期—短促击碎"两拍式反驳 |
 | `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾 |
+| `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
 ## Overview
@@ -154,6 +155,10 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 ### 7. No Over-Defensive Placement <!-- policy:PROSE.OVER_DEFENSIVE -->
 每条 scope 限定只能有**一个** canonical home（设计描述 或 Limitations 块）。禁止：让步放在段落主题句、贡献/结果段以「做不到什么」收尾、为正文未提出的质疑预先辩解、正面句已蕴含还用否定重说。
 这是**结构**问题，逐句读全部合格也可能整篇在道歉——须按节隔离扫描，且裁决前确认该句不是某条 reviewer comment 的唯一落点。
+
+### 7b. 不主动示弱，不递刀子 <!-- policy:PROSE.SELF_UNDERMINING -->
+删掉情绪副词与自贬措辞（`unfortunately` · `regrettably` · `admittedly` · `merely` · `falls short` · `lags behind` · `does not outperform` · `far from practical` · `遗憾的是` · `仅仅`）——判据是"删掉这个词，命题是否不变"，不变则删；同时回填不利句丢失的锚点（数据集/指标/幅度/表号），不得把一个局部结果（"on D recall is 3.1 points lower"）写成普遍能力判决（"our method is weaker at recall"）。每个不利结果按序走三步处置：**是否必须讨论 → 能否换目标解释 → 能否收缩主张到证据实际支持的范围**，三步全失败才写成平实的 limitation，落点交 §7 裁决。
+**这条只管措辞与位置，不管披露**：真实的负面结果、失败模式、不利比较照常报告；`ETHICS.LIMITATIONS_SECTION_MANDATORY` 与 `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` 要求的内容优先，任何以本条为由删数字、隐去不利比较或削薄 Limitations 的改动都是误用，回滚。
 
 ### 8. 词汇指纹与内容稀释
 

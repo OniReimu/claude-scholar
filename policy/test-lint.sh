@@ -186,7 +186,7 @@ echo "=== 5. Filter Count Tests ==="
 
 echo "5.1 guardrail rule count"
 # 期望值随 guardrail 规则增减而变化，新增规则时同步更新
-EXPECTED_GUARDRAIL=28
+EXPECTED_GUARDRAIL=29
 count=$(bash "$LINT" --constraint-type guardrail --quiet "$TEST_DIR" 2>&1 | grep "Rules checked:" | grep -o '[0-9]*')
 if [[ "$count" == "$EXPECTED_GUARDRAIL" ]]; then
   ((PASS++)); echo "  ✓ guardrail rules: $count"
@@ -325,6 +325,46 @@ bash "$LINT" --fix --quiet "$INF_DIR" >/dev/null 2>&1 || true
 assert_file_contains "ahead of time → in advance" "$INF_DIR/case.tex" "in advance"
 assert_file_not_contains "no 'ahead of time' left" "$INF_DIR/case.tex" "ahead of time"
 rm -rf "$INF_DIR"
+
+echo ""
+echo "=== 8. PROSE.SELF_UNDERMINING Acceptance Tests ==="
+# Only the closed-set lexis layer is regex-judged; responsibility-scope and the
+# three-step disposition need an LLM and live in the rule card. The keep-cases are
+# the point of the rule: a neutral, quantified, local statement of an unfavourable
+# result is correct writing and must survive the lint.
+SU_DIR="$TEST_DIR/self-undermining"
+mkdir -p "$SU_DIR"
+su_lint() { bash "$LINT" --rule PROSE.SELF_UNDERMINING "$SU_DIR" 2>&1 || true; }
+
+su_flags() {
+  local desc="$1" content="$2"
+  printf '%s\n' "$content" > "$SU_DIR/case.tex"
+  if su_lint | grep -qE '(ERROR|WARN)'; then
+    ((PASS++)); echo "  ✓ $desc"
+  else
+    ((FAIL++)); echo "  ✗ $desc (expected a finding, got none)"
+  fi
+}
+su_clean() {
+  local desc="$1" content="$2"
+  printf '%s\n' "$content" > "$SU_DIR/case.tex"
+  local out; out=$(su_lint)
+  if echo "$out" | grep -qE '(ERROR|WARN)'; then
+    ((FAIL++)); echo "  ✗ $desc (false positive)"; echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
+  else
+    ((PASS++)); echo "  ✓ $desc"
+  fi
+}
+
+echo "8.1 self-weakening lexis must flag"
+su_flags "unfortunately + does not outperform" 'Unfortunately, our method does not outperform the strongest baseline.'
+su_flags "regrettably + falls short + lags behind" 'Regrettably, recall falls short of the ceiling and lags behind prior work.'
+
+echo "8.2 must not flag (neutral, anchored, or non-self-directed)"
+su_clean "quantified local unfavourable result" 'Our recall is 3.1 points lower on ImageNet-LT than the strongest baseline (Table 4).'
+su_clean "falls short of a theoretical limit" 'The bound falls short of the information-theoretic limit by a factor of two.'
+su_clean "lags behind by N time steps" 'The estimator lags behind by two time steps under the causal constraint.'
+rm -rf "$SU_DIR"
 
 echo ""
 echo "═══ Test Summary ═══"

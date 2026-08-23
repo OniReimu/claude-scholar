@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [EXP.EXPERIMENT_ROLE]
 constraint_type: guidance
 autofix: none
 ---
@@ -65,3 +65,7 @@ We compare our method with baselines. Results are shown in Table 1. Our method
 achieves the best results.
 % 问题：(1) 未使用 \ref 引用表格, (2) 仅 1 段, (3) 无 Takeaway box
 ```
+
+## Conflicts
+
+- `EXP.EXPERIMENT_ROLE` — 本卡管**呈现格式**（引用图表、≥2 段、takeaway 收尾），那条在本卡之前生效：不承担职责的子节应先走处置阶梯（重设计 → 弱化 → 删除），补齐三项格式只是把 padding 包装得更整齐

@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {max_homes_per_caveat: 1}
-conflicts_with: []
+conflicts_with: [PROSE.SELF_UNDERMINING]
 constraint_type: guidance
 autofix: none
 ---
@@ -103,3 +103,7 @@ O(1). The remainder would require clean replacements the operator does not have.
 Our privacy claim is therefore limited to membership inference from the sanitized
 post-deletion artifact.
 ```
+
+## Conflicts
+
+- `PROSE.SELF_UNDERMINING` 管**词级措辞与责任范围**（情绪副词、自贬词表、把局部结果升格为普遍缺陷），本卡管**结构与落点**（辩护放在哪里、放了几次）。一处文本可能同时违反两条，各报各的；走完那条的三步处置后仍要写的 limitation，落点由本卡裁决

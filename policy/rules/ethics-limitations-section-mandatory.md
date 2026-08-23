@@ -11,7 +11,7 @@ venues: [neurips, icml, iclr, acl]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.SELF_UNDERMINING]
 constraint_type: guidance
 autofix: none
 ---
@@ -60,3 +60,7 @@ The effectiveness on morphologically rich languages remains unexplored.
 \section*{Limitations}
 Our method has some limitations.
 ```
+
+## Conflicts
+
+- `PROSE.SELF_UNDERMINING` 管的是措辞，不管披露——本节要求的诚实报告优先，不得以「不递刀子」为由删减局限点或使其敷衍；那条只允许改写这些局限点的措辞（去情绪副词、回填锚点、把普遍判决收回局部）

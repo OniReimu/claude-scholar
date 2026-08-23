@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.REGISTER_PRESERVATION]
+conflicts_with: [PROSE.REGISTER_PRESERVATION, PROSE.SELF_UNDERMINING]
 constraint_type: guidance
 autofix: none
 ---
@@ -84,3 +84,7 @@ Our results could possibly suggest an improvement of 5.2\%.
 We prove that our method significantly outperforms all prior approaches.
 This demonstrates that our framework is universally superior.
 ```
+
+## Conflicts
+
+- `PROSE.SELF_UNDERMINING` 管与证据强度无关的情绪与自贬措辞（`unfortunately`、`merely`、`far from practical`），本卡管动词强度与证据强度的校准。校准正确的 hedge（`suggests` / `we hypothesize`）以本卡为准，不得因「听起来示弱」被改强——那是制造 over-claim

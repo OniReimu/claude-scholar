@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.NO_INTERNAL_PROVENANCE]
+conflicts_with: [PROSE.NO_INTERNAL_PROVENANCE, PROSE.SELF_UNDERMINING, EXP.EXPERIMENT_ROLE, PAPER.OUTCOME_LOGIC]
 constraint_type: guidance
 autofix: none
 ---
@@ -66,3 +66,9 @@ scalability trend for draft layout only; actual results pending HPC runs.}
 \end{figure}
 % 问题：占位图/非真实结果未在 caption 中披露 fabricated 状态
 ```
+
+## Conflicts
+
+- `PROSE.SELF_UNDERMINING` — 本卡要求的 caption 披露是合规声明，不是自我攻击。那条对其零管辖：不得弱化、不得移位、不得以「读起来不好看」为由改写
+- `EXP.EXPERIMENT_ROLE` — 那条判一个实验是否配占版面；无论职责如何，占位或未执行结果的披露义务以本卡为准，处置阶梯不得用来绕开披露
+- `PAPER.OUTCOME_LOGIC` — 重定义问题后若新叙事需要尚未执行的实验，仍须走本卡的披露，不得用「叙事已重排」掩盖缺失证据

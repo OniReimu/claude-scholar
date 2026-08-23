@@ -40,6 +40,7 @@ Verify the logical coherence of the paper:
 - Does the experimental design support the research hypotheses?
 - Are result interpretations reasonable?
 - Are conclusions supported by evidence?
+- Is each section organised by outcome logic (problem → design → why → evidence) rather than by the order the work happened, and does the Abstract match what the strongest evidence actually supports (re-frame the claim, never the reported set)? <!-- policy:PAPER.OUTCOME_LOGIC -->
 
 ### 3. Citation Completeness
 
@@ -116,6 +117,7 @@ Check experiment section completeness:
 - Does each experiment subsection follow the required structure? <!-- policy:EXP.RESULTS_SUBSECTION_STRUCTURE -->
 - If any result is fabricated/synthetic/dummy, is it explicitly disclosed in red uppercase in caption? <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
 - If a subsection contains fabricated results, is there a subsection-level `[FABRICATED]` status declaration comment? <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
+- Does every result table/figure/subsection carry one of the four roles (prove the method works / explain where the gain comes from / show value in the target setting / rule out a competing explanation), with at least one experiment doing the fourth? Roleless ones go redesign → demote → delete, never delete-because-unfavourable. <!-- policy:EXP.EXPERIMENT_ROLE -->
 - Are random seeds documented? <!-- policy:REPRO.RANDOM_SEED_DOCUMENTATION -->
 - Are compute resources documented? <!-- policy:REPRO.COMPUTE_RESOURCES_DOCUMENTED -->
 
@@ -127,6 +129,7 @@ Check submission requirements:
 - Does the paper meet the page limit? <!-- policy:SUBMIT.PAGE_LIMIT_STRICT -->
 - Is double-blind anonymization correct? <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION -->
 - Is there a Limitations section? <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
+- 补 Limitations 与任何不利结果时，按「是否必须讨论 → 能否换目标解释 → 能否收缩主张到证据实际支持的范围」三步处置逐条过，并删掉情绪副词、回填数据集/指标/幅度/表号锚点；披露量由 `ETHICS.LIMITATIONS_SECTION_MANDATORY` 决定且优先，本条只约束措辞与放置，不减内容。 <!-- policy:PROSE.SELF_UNDERMINING -->
 
 ### 9. SoK Scope Checks (When SoK profile is active)
 
@@ -180,6 +183,8 @@ Paper Quality Checklist:
 - [ ] Experiment subsections follow required structure <!-- policy:EXP.RESULTS_SUBSECTION_STRUCTURE -->
 - [ ] Fabricated/synthetic/dummy results are explicitly disclosed in red uppercase caption <!-- policy:EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE -->
 - [ ] Subsections containing fabricated results include a `[FABRICATED]` status declaration comment <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
+- [ ] Every experiment carries one of the four roles; at least one rules out a competing explanation <!-- policy:EXP.EXPERIMENT_ROLE -->
+- [ ] Sections organised by outcome logic, not by the order the work happened <!-- policy:PAPER.OUTCOME_LOGIC -->
 - [ ] SoK: taxonomy is explicit and operational <!-- policy:SOK.TAXONOMY_REQUIRED -->
 - [ ] SoK: methodology reporting is complete (sources + screening criteria) <!-- policy:SOK.METHODOLOGY_REPORTING -->
 - [ ] SoK: big comparison table aligned with taxonomy <!-- policy:SOK.BIG_TABLE_REQUIRED -->
@@ -191,6 +196,7 @@ Paper Quality Checklist:
 - [ ] Page limit met <!-- policy:SUBMIT.PAGE_LIMIT_STRICT -->
 - [ ] Double-blind anonymization correct <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION -->
 - [ ] Limitations section present <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
+- [ ] Limitations/unfavourable results went through the three-step disposition, with emotive adverbs removed and anchors kept — disclosure unchanged <!-- policy:PROSE.SELF_UNDERMINING -->
 ```
 
 ## Orchestrator Integration

@@ -144,6 +144,33 @@ for f in "${RULE_CARDS[@]}"; do
 done
 pass "Field value validity checked"
 
+# ─── 4c. Phase Vocabulary Conformance ───────────────────────────────────────
+# `phases:` values are drawn from the Phase 词汇表 in policy/README.md, but
+# Section 4 never checked them — so a card could name a phase that does not
+# exist and nothing noticed. `writing-intro` sat in prose-over-defensive.md for
+# 30+ commits that way. Same family as 4b/5c/8b/8c: a declared vocabulary with
+# no machine check drifts. The vocabulary is read from README at runtime so the
+# table stays the single source of truth.
+section "4c. Phase Vocabulary Conformance"
+
+valid_phases=$(awk -F'|' '/^## Phase 词汇表/{f=1;next} f&&/^## /{exit} f&&NF>2{gsub(/[` ]/,"",$2); if($2!="Phase" && $2 !~ /^-*$/ && $2!="") print $2}' "$PROJECT_DIR/policy/README.md" | tr '\n' ' ')
+ph_bad=0
+if [[ -z "${valid_phases// /}" ]]; then
+  err "could not parse the Phase 词汇表 from policy/README.md (extractor drift)"
+  ph_bad=1
+else
+  for f in "${RULE_CARDS[@]}"; do
+    fname=$(basename "$f")
+    phases=$(get_fm "$f" | awk '/^phases: \[/{gsub(/^phases: \[|\]$/,"");print}' | tr ',' ' ')
+    for p in $phases; do
+      p="${p// /}"
+      [[ -n "$p" ]] || continue
+      echo " $valid_phases " | grep -q " $p " || { err "$fname: phase '$p' is not in the Phase 词汇表"; ph_bad=1; }
+    done
+  done
+fi
+(( ph_bad == 0 )) && pass "All phase values are in the Phase 词汇表"
+
 # ─── 4b. conflicts_with Integrity ───────────────────────────────────────────
 # A conflict is inherently mutual: if A says it overlaps B, a reader of B must
 # learn it from B. One-directional declarations leave the older card blind to

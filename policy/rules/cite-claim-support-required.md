@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.SELF_UNDERMINING]
 constraint_type: guidance
 autofix: none
 lint_patterns:
@@ -73,3 +73,7 @@ Some surveys suggest the trend is accelerating~\cite{x2025survey}. [CLAIM NOT VE
 % 成稿仍保留未解决 marker（lint 直接命中）
 The channel survives multi-turn use~\cite{anon2026covert}. [QUOTE NOT VERIFIED]
 ```
+
+## Conflicts
+
+- `PROSE.SELF_UNDERMINING` — 那条第三步「收缩主张到证据实际支持的范围」会重写比较句；重写后的句子仍须携带自己的支撑（表号 / 图号 / 引用）。收缩主张与补锚点是同一次编辑，否则只是用一条违规换另一条
