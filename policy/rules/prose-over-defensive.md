@@ -26,6 +26,9 @@ autofix: none
 2. **免责收尾**——贡献段、方法段、结果段以"做不到什么"结束。读者离开该段时手里应该是主张，不是例外。
 3. **预防性辩解**——为正文从未提出过的质疑辩护，且不在 Limitations 块内。
 4. **负向重述**——正面陈述已经蕴含的内容，再用否定说一遍。
+5. **贡献未立先谈不足（文档域）**——Abstract 与 Introduction 中，在贡献落地之前出现的 caveat / 局限 / 排除声明。读者应当先拿到"这篇做成了什么"，再拿到边界。判定只看**位置**：该句是否出现在贡献陈述（contribution 列表或等价的主张句）之前？
+
+> 第 1–4 条是**段落域**（一个段落内部的落点），第 5 条是**文档域**（Abstract/Intro 的先后顺序）。第 5 条只判"贡献之前有没有"，**不做跨节搬迁规划**——跨节冗余聚类与 canonical home 选择归 `claim-architecture-review`（它的 P2 pass 拥有 relocation-map）。本卡在 Abstract/Intro 内部给出"移到 Limitations 或删除"的建议，由掌握全局的人裁决。
 
 ## Rationale
 
@@ -37,7 +40,13 @@ autofix: none
 
 **边界很重要，不要过度执行。** threat model 的边界写在 threat model 里、定理假设写在定理里、operating model 说明系统提供什么——这些是**设计**，不是辩护，必须保留。Limitations 块本身也不是违规。venue 要求的 Limitations 章节是硬性的。
 
-**最危险的误删**：某条 caveat 可能是某条审稿意见的**唯一可见答复**。删之前必须确认它不是。这类判断无法由只看单节的检查者完成。
+**最危险的误删**：某条 caveat 可能是某条审稿意见的**唯一可见答复**。删之前必须确认它不是。这类判断无法由只看单节的检查者完成。**第 5 条（文档域）同样受这条约束**：Intro 里一句看似多余的局限，可能正是上一轮 reviewer 要求前置的声明；确认它在 Limitations 有完整落点之前，只允许"移"不允许"删"。
+
+## Conflicts
+
+- `PROSE.SELF_UNDERMINING` 管词级措辞与责任范围（`unfortunately` / 把局部写成普遍）；本卡管辩护的**落点与次数**。同一句可同时触发，各报一次
+- **`claim-architecture-review`（skill，非规则）** 拥有跨节冗余聚类与 canonical home 的搬迁规划（P2 relocation-map）。本卡第 5 条只在 Abstract/Intro 内部判"贡献之前是否出现 caveat"，给建议不做全局重排；两者顺序是 `claim-architecture-review`（结构编辑）先于 `writing-anti-ai`（线编）
+- `ETHICS.LIMITATIONS_SECTION_MANDATORY` 优先：把 caveat 从 Intro 移走的前提是 Limitations 已完整承担它，**不得因移动而削薄披露**
 
 ## Check
 

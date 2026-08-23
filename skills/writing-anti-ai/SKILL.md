@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
 description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.3.0
+version: 1.4.0
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -60,7 +60,8 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词），上限规则不是目标值 |
 | `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
 | `PROSE.THEATRICAL_SPLIT` | 禁止"设预期—短促击碎"两拍式反驳 |
-| `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾 |
+| `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足 |
+| `PAPER.OUTCOME_LOGIC` | 删句级过程流水账（we first tried…）；结构级重排归 claim-architecture-review |
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
@@ -156,6 +157,10 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 每条 scope 限定只能有**一个** canonical home（设计描述 或 Limitations 块）。禁止：让步放在段落主题句、贡献/结果段以「做不到什么」收尾、为正文未提出的质疑预先辩解、正面句已蕴含还用否定重说。
 这是**结构**问题，逐句读全部合格也可能整篇在道歉——须按节隔离扫描，且裁决前确认该句不是某条 reviewer comment 的唯一落点。
 
+**文档域第 5 条：贡献未立先谈不足。** 扫 Abstract 与 Introduction，任何出现在**贡献陈述之前**的 caveat / 局限 / 排除声明都是违规——读者应当先拿到"这篇做成了什么"，再拿到边界。判定只看位置，不看措辞。
+处置**只允许"移"不允许"删"**，且移之前先确认 Limitations 已完整承担该条（`ETHICS.LIMITATIONS_SECTION_MANDATORY` 优先，不得因移动削薄披露）；那句也可能是上一轮 reviewer 要求前置的唯一答复。
+**分工**：本条只在 Abstract/Intro 内部判先后，**不做跨节搬迁规划**——那归 `claim-architecture-review` 的 P2 relocation-map，且它在本 skill 之前跑。
+
 ### 7b. 不主动示弱，不递刀子 <!-- policy:PROSE.SELF_UNDERMINING -->
 删掉情绪副词与自贬措辞（`unfortunately` · `regrettably` · `admittedly` · `merely` · `falls short` · `lags behind` · `does not outperform` · `far from practical` · `遗憾的是` · `仅仅`）——判据是"删掉这个词，命题是否不变"，不变则删；同时回填不利句丢失的锚点（数据集/指标/幅度/表号），不得把一个局部结果（"on D recall is 3.1 points lower"）写成普遍能力判决（"our method is weaker at recall"）。每个不利结果按序走三步处置：**是否必须讨论 → 能否换目标解释 → 能否收缩主张到证据实际支持的范围**，三步全失败才写成平实的 limitation，落点交 §7 裁决。
 **这条只管措辞与位置，不管披露**：真实的负面结果、失败模式、不利比较照常报告；`ETHICS.LIMITATIONS_SECTION_MANDATORY` 与 `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` 要求的内容优先，任何以本条为由删数字、隐去不利比较或削薄 Limitations 的改动都是误用，回滚。
@@ -166,6 +171,8 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 - **Tier 1 零容忍**（delve · leverage · underscore · harness · foster · streamline · showcase · seamless · intricate · meticulous · nuanced · multifaceted · pivotal · tapestry · realm · myriad · plethora · intricacies · "paving the way for" · "valuable insights" · "at its core" …）：一次都不出现。替换原则是用你会读出声的那个词，更优先用本文语域里的具体名词。
 - **Tier 2 看密度**（comprehensive · essential · vital · innovative · powerful · facilitate · enhance · ensure · explore · highlight · insights · perspective · interplay · paradigm …）：单个合法，聚集违规。同句两个即 cluster，单文件累计 >5 触发。别逐个替换——找最密的那一段改。
 - 词表已按学术语域裁剪：`robust` / `optimize` / `trajectory` / `loss landscape` / `framework` / `approach` 是术语，**不在表内**，不要误伤。
+- **套话开场（零容忍，本条此前在本 skill 里不可见）**：`In recent years,` · `has attracted increasing attention` · `With the rapid development of`。lint 已在抓，但执行者读本 skill 时看不到它，等于扫描时不会去查开篇句。**正面要求**：Abstract / Introduction 的第一句必须携带**具体的张力或 gap**（一个可验证的结构性事实），不能是泛化趋势陈述——趋势应由那个事实自己带出来。与 `PROSE.FRACTAL_SUMMARY` 分工：那条管**节内**的预告/回顾（"In this section we…"），本条管**论文/章节的开篇**是不是套话。
+- **句首连接词密度**：`Moreover,` / `Furthermore,` / `Additionally,` / `In addition,` 全文合计 ≤4。超出说明逻辑靠连接词粘贴而非论证顺序承载；修法是重排句序，不是换个同义连接词。
 
 **口语语域按五个具名类别查，不是按词表查** <!-- policy:PROSE.INFORMAL_VOCABULARY -->
 词表只够得着第 1 类。实测一篇 author-original 稿件的 30 处语域问题里，**29 处是多词构造**，词表命中 0/26。
@@ -183,6 +190,26 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 **同一命题一节内只说一次** <!-- policy:PROSE.RESTATEMENT_DILUTION -->
 AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。删除测试：删掉后出现的那句，本段信息零损失即确认是复述，删掉定稿（不要合并改写）。跨节的重复主张不归这里，交 `claim-architecture-review`。
+
+### 8b. 删掉过程流水账（句级） <!-- policy:PAPER.OUTCOME_LOGIC -->
+
+论文写**最终成立的逻辑**，不写**做事的顺序**。时间顺序属于 lab notebook。线编能处理的是其中三种**纯句级**泄漏：
+
+```
+we first tried X, which did not work, so we then ...
+initially we used A but later switched to B
+in an earlier version of this work / in our preliminary implementation
+```
+
+**判据（删除测试）**：删掉这段行踪，**最终设计是否仍然完整**？完整则删，直接陈述最终设计；不完整说明那不是行踪，是设计理由，保留并改写成理由。
+
+**不要为这条写 regex。** `first` / `then` / `initially` 在学术散文里合法用法远多于违规用法（"We first define the threat model" 完全正常），规则卡因此刻意不发 `lint_patterns`。逐处判断，不做模式匹配。
+
+**边界（这条最容易被误用成删证据）**：
+- 只删**实现弯路**。一个**跑过并被报告的实验**即使当初是"试了一下"，它的结果一旦限定了主张，就是证据不是行踪——保留（`EXP.RESULTS_STATUS_DECLARATION_REQUIRED`）。解释"优势来自哪里"的消融、划定失效边界的负面结果同理，禁令不适用。
+- 与 §7b 的分工：`we first tried X, which did not work` 可能同时触发两条——**§7b 管这个不利结果怎么措辞**（别写成自贬），**本条管这段时间顺序该不该出现**。两条各报一次，不合并。
+
+**结构级不归本 skill**：Method 按实现史排序、Results 按跑的时间排序、只为交代"我们也试过"而存在的整段——这些要重排章节，归 `claim-architecture-review`（在本 skill 之前跑）。规则卡里那半条**重定义问题、重排贡献的授权**同样是写作/结构层的事，线编不执行。
 
 ### 9. Claim–Evidence Calibration（动词对证据） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
 
