@@ -489,6 +489,75 @@ for sysfile in CLAUDE.md AGENTS.md; do
   fi
 done
 
+# ─── 11b. Style-Guide Exemplar Conformance ──────────────────────────────────
+# `style-guide.md` is declared co-equal authority with `rules/`, and every
+# writing task is required to load it first. So its exemplars are not
+# illustrations — they are what the agent copies. When an exemplar violates a
+# guardrail rule, the agent that obeys the style guide is flagged by this same
+# repo's own linter one step later, and there is no way to satisfy both. That
+# shipped once: the §5.3 Canonical Paragraph Template opened with "With the
+# rapid development of X, ... has attracted significant attention" and closed
+# with "significantly improves", i.e. it violated PROSE.AI_LEXICON and
+# PROSE.INTENSIFIERS_ELIMINATION verbatim. This check extracts the prose code
+# blocks and runs the repo's own guardrail lint over them.
+#
+# Extraction is deliberately conservative — a false FAIL here blocks CI. Only
+# untagged fences are considered, and any block containing a LaTeX command,
+# a table pipe, or a schematic glyph (arrow / check / cross) is skipped as
+# not-prose. Checking fewer blocks reliably beats checking all blocks noisily.
+section "11b. Style-Guide Exemplar Conformance"
+
+sg_file="$SCRIPT_DIR/style-guide.md"
+if [[ ! -f "$sg_file" ]]; then
+  err "policy/style-guide.md not found (declared co-equal authority with rules/)"
+elif [[ ! -x "$SCRIPT_DIR/lint.sh" && ! -f "$SCRIPT_DIR/lint.sh" ]]; then
+  err "policy/lint.sh not found — cannot verify style-guide exemplars"
+else
+  sg_dir=$(mktemp -d)
+  awk -v OUT="$sg_dir" '
+    /^```/ {
+      if (inb) { inb=0 }
+      else { inb=1; lang=substr($0,4); start=NR; buf=""; skip=(lang!="" && lang!="text") }
+      next
+    }
+    inb {
+      buf = buf $0 "\n"
+      # not prose: LaTeX command, table pipe, or schematic glyph
+      if ($0 ~ /\\[a-zA-Z]/ || $0 ~ /\|/ || $0 ~ /→/ || $0 ~ /✓/ || $0 ~ /✗/) skip=1
+    }
+    !inb && buf != "" {
+      if (!skip) { f = OUT "/line-" start ".tex"; printf "%s", buf > f; close(f) }
+      buf = ""
+    }
+  ' "$sg_file"
+
+  sg_blocks=$(find "$sg_dir" -name '*.tex' | wc -l | tr -d ' ')
+  if (( sg_blocks == 0 )); then
+    warn "style-guide.md: no prose code blocks extracted — extractor may have drifted"
+  else
+    sg_out=$(mktemp)
+    if bash "$SCRIPT_DIR/lint.sh" --constraint-type guardrail --strict-warn "$sg_dir" \
+         > "$sg_out" 2>&1; then
+      pass "style-guide.md exemplars pass guardrail lint ($sg_blocks prose block(s))"
+    else
+      err "style-guide.md exemplars violate guardrail rules the file is co-equal with:"
+      # Report each hit as: RULE_ID @ style-guide.md line N — offending snippet
+      sed 's/\x1b\[[0-9;]*m//g' "$sg_out" | awk '
+        /^  \[/ { rule=$1; gsub(/[][]/,"",rule); next }
+        /^ +(WARN|ERROR) / {
+          line=$0
+          sub(/^ +(WARN|ERROR) +/,"",line)
+          n=split(line, p, ":")
+          src=p[1]; sub(/.*line-/,"",src); sub(/\.tex$/,"",src)
+          snippet=line; sub(/^[^:]*:[0-9]+: */,"",snippet)
+          printf "    %s @ style-guide.md block starting line %s: %s\n", rule, src, snippet
+        }'
+    fi
+    rm -f "$sg_out"
+  fi
+  rm -rf "$sg_dir"
+fi
+
 # ─── 12. Rule Count ─────────────────────────────────────────────────────────
 section "12. Rule Count"
 count="$RULE_CARD_COUNT"
