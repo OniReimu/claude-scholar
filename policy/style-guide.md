@@ -149,13 +149,18 @@ Existing ... → However ... → To address this issue ... → In this paper, we
 
 ### 5.3 Canonical Paragraph Template
 
+五步：现有工作 → gap → 本文动作 → 具体做法 → 证据。
+
 ```
-With the rapid development of X, Y has attracted significant attention.
-However, existing studies mainly focus on A and fail to address B.
-To tackle this issue, this paper proposes C. Specifically, we formulate
-D as E and develop F. Simulation results demonstrate that the proposed
-method significantly improves G compared with existing approaches.
+Existing X-based schemes assume A and therefore treat B as fixed.
+However, B varies with C once the system is deployed, which invalidates
+the assumption and leaves D unaddressed. To tackle this issue, this paper
+proposes E. Specifically, we formulate D as F and develop G. Simulation
+results demonstrate that E reduces H from 0.42 to 0.31 under the same
+communication budget.
 ```
+
+> **注意**：第一句直接落在现有工作的具体假设上，不铺垫趋势；最后一句给数字，不给 `significantly improves`（`PROSE.INTENSIFIERS_ELIMINATION`）。
 
 ---
 
