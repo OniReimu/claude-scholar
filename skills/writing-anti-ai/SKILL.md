@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
 description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.4.0
+version: 1.4.1
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -34,7 +34,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
 | `PROSE.FILLER_PHRASES` | 删除冗余填充短语 |
 | `PROSE.COLON_LIST_OVERUSE` | 禁止正文内联编号列表 |
-| `PROSE.RULE_OF_THREE` | 避免反复三项并列 |
+| `PROSE.RULE_OF_THREE` | 并列列举的密度与重复（不止三项并列）；同一集合不得枚举两次 |
 | `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
 | `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list） |
 | `PROSE.INFORMAL_VOCABULARY` | 口语语域五类分类表（习语状语/短语动词/判断形容词/具象比喻/工作痕迹动词） |
@@ -107,7 +107,7 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 **Patterns to avoid**:
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
 - Unnecessary contrast: "X, not Y" / "X rather than Y" / "X instead of Y" — default to plain positive "X is A"; keep the contrast only when ruling out Y carries real information (don't reflexively swap "not Y" → "rather than Y") <!-- policy:PROSE.NEGATION_CONTRAST -->
-- Rule of three: "A, B, and C" (prefer two or four items)
+- 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**
 - Em-dash (zero allowed — not even one): "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including") <!-- policy:PROSE.COLON_LIST_OVERUSE -->
 - Mid-sentence colon: "key observation: the model fails" — rewrite as a full sentence or split; only heading colons (`\textbf{X:}`) are exempt <!-- policy:PROSE.MIDSENTENCE_COLON -->
@@ -240,7 +240,7 @@ in an earlier version of this work / in our preliminary implementation
 | **Copula avoidance** | "serves as", "stands for", "represents" | "作为"，"代表"，"充当" |
 | **Em dash (zero allowed)** | "X---Y---Z" parenthetical insertions | 破折号一个都不允许（做插入语） | <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 | **Colon-list overuse** | "X: A, B, and C" inline enumeration | 冒号引出内联列表 |
-| **Rule of three** | Forcing ideas into groups of three | 强行三段式 |
+| **Rule of three / 列举堆积** | Forcing ideas into groups of three; the same set enumerated twice; multi-word noun phrases stacked inline | 强行三段式；同一集合列两遍；长名词短语内联堆叠 |
 | **Elegant variation** | Excessive synonym substitution | 过度换词 |
 
 For comprehensive pattern lists, see:
@@ -300,7 +300,7 @@ For comprehensive pattern lists, see:
 4. **第一人称复数 "we"**：学术标准，不为"去 AI 味"改写规避
 5. **正式定义、命名的方法/指标、术语、公式、符号**：逐字保留
 6. **数字、结果、引用**：永不发明、删除或改动；cite key 一个不丢
-7. **分号与偶发的三项并列**：适度即合法（`PROSE.RULE_OF_THREE` 管的是每段反复出现，不是禁绝）
+7. **分号、偶发的三项并列、真实需要的列举**：适度即合法。`PROSE.RULE_OF_THREE` 管的是**密度与重复**，不是禁绝列举——一个方法确实作用于四种维度就该说出那四种；它的修法是给集合命名后引用，**不是删项**
 
 **Funding proposal 是另一个语域**：proposal 靠 vision + feasibility 卖，论文语域要削的 ambition 语言（"long-term goal"、"transformative"）在 proposal 里是预期形态。改 grant/fellowship 文本走 `grant-application-writing` skill，不要用本 skill 的论文标准去压平 vision。
 

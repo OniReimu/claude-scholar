@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.INFORMAL_VOCABULARY, PROSE.INVENTED_CONCEPT_LABEL, PROSE.REGISTER_PRESERVATION, PROSE.RESTATEMENT_DILUTION]
+conflicts_with: [PROSE.INFORMAL_VOCABULARY, PROSE.INVENTED_CONCEPT_LABEL, PROSE.REGISTER_PRESERVATION, PROSE.RESTATEMENT_DILUTION, PROSE.RULE_OF_THREE]
 constraint_type: guidance
 autofix: none
 ---
@@ -58,3 +58,7 @@ of three components. We evaluate the framework on four datasets.
 We propose a federated unlearning framework. The system consists
 of three modules. We evaluate the architecture on four datasets.
 ```
+
+## Conflicts
+
+- `PROSE.RULE_OF_THREE` 的首选修法是给一组被反复列举的对象命名，之后引用该名字——命名之后必须按本卡全文一致使用，不得再换同义说法

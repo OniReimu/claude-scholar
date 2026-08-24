@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.RULE_OF_THREE]
 constraint_type: guardrail
 autofix: none
 lint_patterns:
@@ -66,3 +66,7 @@ Our method has three advantages:
 Our method has three advantages: (1) it reduces computation cost,
 (2) it improves accuracy, and (3) it scales to large datasets.
 ```
+
+## Conflicts
+
+- `PROSE.RULE_OF_THREE` 管不带冒号的并列列举密度与重复；本卡管冒号引出的内联编号列举（`we: (1)...(2)...`）。形态不同，不重叠

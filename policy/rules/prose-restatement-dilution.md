@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.ELEGANT_VARIATION, PAPER.CONCLUSION_SINGLE_PARAGRAPH, EXP.EXPERIMENT_ROLE]
+conflicts_with: [EXP.EXPERIMENT_ROLE, PAPER.CONCLUSION_SINGLE_PARAGRAPH, PROSE.ELEGANT_VARIATION, PROSE.RULE_OF_THREE]
 constraint_type: guardrail
 autofix: none
 ---
@@ -72,6 +72,7 @@ efficiency by eliminating redundant per-step work.
 
 ## Conflicts
 
+- `PROSE.RULE_OF_THREE` 拥有**列举层**的同一集合重复（一组对象被列举两次）。本卡管命题层，那条管列举层；同一处可能两条都成立，修法以那条的「命名 + 引用」为准，不重复计数
 - `PROSE.ELEGANT_VARIATION` 管**术语层**换词（同一概念用不同名字），本卡管**命题层**复述（同一主张用不同句子）。一段文字可能同时犯两条
 - `PAPER.CONCLUSION_SINGLE_PARAGRAPH` 允许 Conclusion 复述全文主张，本卡不适用于 Abstract 与 Conclusion
 - `PROSE.PARAGRAPH_TOPIC_SENTENCE` 要求段首为 topic sentence；topic sentence 与段内展开不是复述，只有段**末**的同义回归才是
