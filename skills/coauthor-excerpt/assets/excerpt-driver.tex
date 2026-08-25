@@ -1,0 +1,74 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Standalone excerpt for co-author review. NOT the submission document.
+%
+% Build:  cd <excerpt-dir> && latexmk -pdf excerpt.tex
+% Xrefs:  run freeze-xrefs.py after the main document renumbers.
+%
+% Every file this inputs is SHARED with the main document through \evalbase,
+% which is empty here and the excerpt's directory name there. Never copy a
+% source file into this directory; a copy drifts and the two builds start
+% disagreeing without anyone noticing.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[onecolumn,11pt]{IEEEtran}
+
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}                      % >{\raggedright\arraybackslash}p{} columns
+\usepackage[flushleft]{threeparttable}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[capitalize]{cleveref}
+\usepackage{cite}
+
+% Macros the shared sources expect. Keep in sync with the main preamble.
+\newcommand{\sysname}{SYSTEM}
+\newcommand{\evalbase}{}                % empty here; "<dir>/" in the main document
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+% \newlabel is only valid while LaTeX is reading a .aux file, so the frozen
+% cross-references cannot simply be \input: doing so raises "Can be used only in
+% preamble" for every entry. Read them with \newlabel locally redefined to
+% install the reference directly, which is what \ref and \cref look up.
+%
+% The \@ifundefined guard matters. LaTeX reads this document's own .aux at
+% \begin{document}, so by the time this macro runs, labels the excerpt defines
+% itself are already set. Without the guard the frozen copy would overwrite them
+% with the MAIN document's numbering, and the excerpt would print, say, "Table
+% VIII" for a table that is its own Table IV.
+\makeatletter
+\newcommand{\importfrozenlabels}[1]{%
+  \begingroup
+    \def\newlabel##1##2{%
+      \@ifundefined{r@##1}{\global\@namedef{r@##1}{##2}}{}}%
+    \input{#1}%
+  \endgroup}
+\makeatother
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+
+\title{\sysname{}: SECTION NAME}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\fbox{\parbox{0.9\linewidth}{\small
+Reference material for co-authors. The prose here is deliberately
+fragmentary and is not manuscript text. Read it for content and for numbers.
+Do not paste it into the paper.}}
+\end{center}
+
+\importfrozenlabels{xrefs-frozen.tex}
+
+% Shared sources. Add every file here AND to the freeze-xrefs --scan set.
+\input{\evalbase SECTION-BODY.tex}
+
+\bibliographystyle{IEEEtran}
+\bibliography{ref}
+
+\end{document}
