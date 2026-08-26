@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
 description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.4.1
+version: 1.4.2
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -107,7 +107,7 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 **Patterns to avoid**:
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
 - Unnecessary contrast: "X, not Y" / "X rather than Y" / "X instead of Y" — default to plain positive "X is A"; keep the contrast only when ruling out Y carries real information (don't reflexively swap "not Y" → "rather than Y") <!-- policy:PROSE.NEGATION_CONTRAST -->
-- 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**
+- 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**。**跨节转诊**：本条只判本段/本节内的重复列举；若怀疑同一组对象在别节也列过，转 `claim-architecture-review`——`information-ledger.md` 以集合为 info-key，第二次列举在 `lookup-before-create` 时撞上（最小调用见下方转诊说明）
 - Em-dash (zero allowed — not even one): "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including") <!-- policy:PROSE.COLON_LIST_OVERUSE -->
 - Mid-sentence colon: "key observation: the model fails" — rewrite as a full sentence or split; only heading colons (`\textbf{X:}`) are exempt <!-- policy:PROSE.MIDSENTENCE_COLON -->
@@ -162,7 +162,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 **分工**：本条只在 Abstract/Intro 内部判先后，**不做跨节搬迁规划**——那归 `claim-architecture-review` 的 P2 relocation-map，且它在本 skill 之前跑。
 
 ### 7b. 不主动示弱，不递刀子 <!-- policy:PROSE.SELF_UNDERMINING -->
-删掉情绪副词与自贬措辞（`unfortunately` · `regrettably` · `admittedly` · `merely` · `falls short` · `lags behind` · `does not outperform` · `far from practical` · `遗憾的是` · `仅仅`）——判据是"删掉这个词，命题是否不变"，不变则删；同时回填不利句丢失的锚点（数据集/指标/幅度/表号），不得把一个局部结果（"on D recall is 3.1 points lower"）写成普遍能力判决（"our method is weaker at recall"）。每个不利结果按序走三步处置：**是否必须讨论 → 能否换目标解释 → 能否收缩主张到证据实际支持的范围**，三步全失败才写成平实的 limitation，落点交 §7 裁决。
+删掉情绪副词与自贬措辞（`unfortunately` · `regrettably` · `admittedly` · `merely` · `falls short` · `lags behind` · `does not outperform` · `far from practical` · `遗憾的是` · `仅仅`）——判据是"删掉这个词，命题是否不变"，不变则删；同时回填不利句丢失的锚点（数据集/指标/幅度/表号），不得把一个局部结果（"on D recall is 3.1 points lower"）写成普遍能力判决（"our method is weaker at recall"）。每个不利结果按序走三步处置：**是否必须讨论 → 能否换目标解释 → 能否收缩主张到证据实际支持的范围**，三步全失败才写成平实的 limitation。**落点**：先按 §7 判本段/本节；若这条 caveat 在别节也出现过（同一限定的多个 home），那是跨节问题，转 `claim-architecture-review` 的 P2 relocation-map 定 canonical home（最小调用见下方转诊说明）。
 **这条只管措辞与位置，不管披露**：真实的负面结果、失败模式、不利比较照常报告；`ETHICS.LIMITATIONS_SECTION_MANDATORY` 与 `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` 要求的内容优先，任何以本条为由删数字、隐去不利比较或削薄 Limitations 的改动都是误用，回滚。
 
 ### 8. 词汇指纹与内容稀释
@@ -343,6 +343,14 @@ For comprehensive pattern lists, see:
 ## Workflow (工作流程)
 
 > **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
+
+> **📄 转诊说明（定点调用本 skill 时读这条）**
+> 逐节定点跑本 skill 是**合法用法**，不是流水线的错误入口。但本 skill 判不了跨节的事，遇到上述转诊点时，
+> **不必重跑整篇 arch-review**——它的 P1 本来就是逐节的：
+> - `architecture-review/spine.md` 已存在 → **只对当前这一节跑 P1**，读 ledger 判跨节重复
+> - spine 不存在 → 先跑 **P0**（只读 abstract + intro + 各节标题 + 每段主题句，不读正文，很便宜），再 P1 单节
+> - 只有需要全局搬迁规划时才跑 P2/P3
+> 转诊要说清**最小需要跑什么**，只丢一个 skill 名字等于没转。
 
 > **🚦 压缩闸门（compression / de-jargon / simplify pass 必须遵守）** <!-- policy:PROSE.REGISTER_PRESERVATION -->
 > **register check 未通过之前，不得报告词数或压缩百分比。**

@@ -116,6 +116,9 @@ throughout; the full sweep is reported in Appendix~\ref{app:hparam}.
 
 ## Conflicts
 
+- **`claim-architecture-review`（skill，非规则）现在在 P1 执行本卡**：对 Results / Evaluation 节，逐个实验对照 `spine.md` 判职责，处置阶梯映射到它的 verdict（重设计→`tighten`、弱化→`move:appendix`、删除→`delete`，且 `delete` 仍需 `unique_info=false AND required_caveat=false`）。起草阶段由 `ml-paper-writing` Step 8a 执行，post-draft 路径由该 skill 执行——**两条路径都要有落点**，否则改稿流程里这条规则永远不跑
+
+
 - `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` / `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` 划定本卡的**硬边界**。本卡管的是一个实验**是否配占论文的版面**，不授权因为结果不利而删实验。已经跑过、且与主张相左的实验是**证据**：为了故事干净把它拿掉是学术不端，不是编辑决策。此类结果的正确处置是照 `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` 如实呈现并在正文解释，或写入 Limitations。**预注册实验与 reviewer 要求补的实验永远保留席位**，不进处置阶梯。判据只有一个：处置理由是"这个实验不服务于任何主张"（本卡适用），还是"这个实验的数字不好看"（本卡不适用）。
 - `EXP.ABLATION_IN_RESULTS` 管消融**放在哪一节**，本卡管这个消融**是否该存在**。先用本卡确认它承担职责 2，再按该卡放进 Experimental Results。
 - `EXP.RESULTS_SUBSECTION_STRUCTURE` 要求每个结果子节引用图表、≥2 段、以 takeaway 收尾。那是**呈现格式**；本卡在其之前生效——一个不承担职责的子节，补齐三项格式只是把 padding 包装得更整齐，应先走处置阶梯。若处置结果是"弱化"，该子节整体消失，格式要求自然不再适用。
