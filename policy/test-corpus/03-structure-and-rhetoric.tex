@@ -1,0 +1,135 @@
+% Corpus: the rhetorical-shape rules. These carry the highest false-positive
+% risk in this engine, because the shapes they forbid are one word away from
+% shapes that are ordinary technical prose. Most cases here are precision cases.
+
+% @CASE cleft-that-is-what
+% @EXPECT PROSE.CLEFT_CONSTRUCTION
+The router keeps every expert warm, and that is what makes the latency stable.
+% @ENDCASE
+
+% @CASE cleft-what-x-does
+% @EXPECT PROSE.CLEFT_CONSTRUCTION
+What the projection does is decorrelate the two heads.
+% @ENDCASE
+
+% @CASE cleft-plain-svo-clean
+% @EXPECT none
+The projection decorrelates the two heads.
+% @ENDCASE
+
+% @CASE foil-once-you-view
+% @EXPECT PROSE.HYPOTHETICAL_FOIL
+Once you view the cache as a fixed-size sketch, the eviction policy is obvious.
+% @ENDCASE
+
+% @CASE foil-a-method-that-would
+% @EXPECT PROSE.HYPOTHETICAL_FOIL
+A scheme with only per-round randomness would stop at this bound.
+% @ENDCASE
+
+% @CASE foil-threat-model-adversary-clean
+% @EXPECT none
+The adversary observes every ciphertext and adaptively corrupts up to $t$ parties.
+% @ENDCASE
+
+% @CASE negparallel-not-x-its-y
+% @EXPECT PROSE.NEGATIVE_PARALLELISM
+It is not a scheduling problem, it is a memory-bandwidth problem.
+% @ENDCASE
+
+% @CASE negparallel-not-just-but
+% @EXPECT PROSE.NEGATIVE_PARALLELISM
+The gain comes not just from the wider MLP but from the residual scaling.
+% @ENDCASE
+
+% @CASE negation-contrast-comma-not
+% @EXPECT PROSE.NEGATION_CONTRAST
+The bottleneck is bandwidth, not arithmetic.
+% @ENDCASE
+
+% @CASE negation-contrast-positive-rewrite-clean
+% @EXPECT none
+The bottleneck is memory bandwidth at every batch size we measured.
+% @ENDCASE
+
+% @CASE rhetorical-self-answer
+% Two rules fire on one sentence and both are correct: the question-then-answer
+% shape, and the "X, not Y" contrast inside the answer. Declared, not suppressed.
+% @EXPECT PROSE.RHETORICAL_SELF_ANSWER, PROSE.NEGATION_CONTRAST
+So what changes at scale? The optimiser, not the architecture.
+% @ENDCASE
+
+% @CASE fractal-in-this-section
+% @EXPECT PROSE.FRACTAL_SUMMARY
+In this section we describe the training pipeline.
+% @ENDCASE
+
+% @CASE fractal-as-we-have-seen
+% @EXPECT PROSE.FRACTAL_SUMMARY
+As we have seen, the residual path dominates the gradient norm.
+% @ENDCASE
+
+% @CASE fractal-forward-ref-cref-clean
+% @EXPECT none
+The convergence proof is deferred to \Cref{app:proof}.
+% @ENDCASE
+
+% @CASE despite-dismissal
+% @EXPECT PROSE.DESPITE_DISMISSAL
+Despite these limitations, federated training continues to see wide adoption.
+% @ENDCASE
+
+% @CASE superficial-ing-highlighting
+% @EXPECT PROSE.SUPERFICIAL_ING_SUFFIX
+Accuracy rises by 2.4 points, highlighting the value of the auxiliary loss.
+% @ENDCASE
+
+% @CASE superficial-ing-load-bearing-clean
+% @EXPECT none
+Accuracy rises by 2.4 points, which the ablation in \Cref{tab:abl} attributes to the auxiliary loss.
+% @ENDCASE
+
+% @CASE trailing-afterthought
+% @EXPECT PROSE.TRAILING_AFTERTHOUGHT
+The graph is stored column-major, as expected. Downstream kernels assume that layout.
+% @ENDCASE
+
+% @CASE midsentence-colon
+% @EXPECT PROSE.MIDSENTENCE_COLON
+The key observation: the model fails only on unseen tokenisations.
+% @ENDCASE
+
+% @CASE colon-numbered-list
+% @EXPECT PROSE.COLON_LIST_OVERUSE
+We make three contributions: (1) a new bound, (2) a faster solver, (3) an open dataset.
+% @ENDCASE
+
+% @CASE em-dash
+% @EXPECT PROSE.EM_DASH_RESTRICTION
+The estimator --- unbiased under mild conditions --- converges at the parametric rate.
+% @ENDCASE
+
+% @CASE comma-overuse-five
+% @EXPECT PROSE.COMMA_OVERUSE
+We evaluate on CIFAR, SVHN, ImageNet, Places, and iNaturalist, using identical schedules.
+% @ENDCASE
+
+% @CASE comma-three-clean
+% @EXPECT none
+We evaluate on CIFAR, SVHN, and ImageNet using identical schedules.
+% @ENDCASE
+
+% @CASE sentence-length-over-35
+% @EXPECT PROSE.SENTENCE_LENGTH
+The encoder processes the input sequence and produces a contextual representation for every position, which the decoder then attends over while generating the output sequence one token at a time, and this arrangement holds for every configuration we tested across all of the eleven datasets in our evaluation suite.
+% @ENDCASE
+
+% @CASE abstract-agency-analogys-job
+% @EXPECT PROSE.ABSTRACT_AGENCY
+The analogy's job is to make the bound intuitive.
+% @ENDCASE
+
+% @CASE abstract-agency-passive-literal-clean
+% @EXPECT none
+The estimator has been validated on three independent cohorts.
+% @ENDCASE

@@ -15,7 +15,7 @@ conflicts_with: [PROSE.AI_LEXICON]
 constraint_type: guardrail
 autofix: assisted
 lint_patterns:
-  - pattern: "\\b(very|extremely|highly|significantly|remarkably|substantially)\\b"
+  - pattern: "(?i)\\b(very|extremely|highly|significantly|remarkably|substantially)\\b"
     mode: match
 lint_targets: "**/*.tex"
 ---

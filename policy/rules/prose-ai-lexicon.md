@@ -15,7 +15,14 @@ conflicts_with: [PROSE.FILLER_PHRASES, PROSE.INTENSIFIERS_ELIMINATION, PROSE.PRO
 constraint_type: guardrail
 autofix: assisted
 lint_patterns:
-  - pattern: "(?i)\\b(delv\\w+|leverag\\w+|underscor\\w+|harness\\w*|foster\\w*|streamlin\\w+|bolster\\w*|illuminat\\w+|showcas\\w+|embark\\w*|empower\\w*|unleash\\w*|garner\\w*|resonat\\w+|transcend\\w*|reimagin\\w+|intertwin\\w+|espous\\w+)\\b"
+  - pattern: "(?i)\\b(delv\\w+|leverag\\w+|underscor\\w+|foster\\w*|streamlin\\w+|bolster\\w*|illuminat\\w+|showcas\\w+|embark\\w*|empower\\w*|unleash\\w*|garner\\w*|resonat\\w+|transcend\\w*|reimagin\\w+|intertwin\\w+|espous\\w+)\\b"
+  # "harness" is tier-1 only as a verb. The noun is the standard name for an
+  # evaluation harness in this field, and flagging it trains authors to ignore
+  # the rule on the one word they use most.
+  - pattern: "(?i)\\b(harnesses|harnessing|harnessed)\\b"
+    mode: match
+  - pattern: "(?i)\\b(to|can|could|will|would|we|they|which|that)\\s+harness\\b"
+    mode: match
     mode: match
   - pattern: "(?i)\\b(tapestry|realms?|myriad|plethora|beacon|symphony|kaleidoscope|whimsy|intricacies|advancements)\\b"
     mode: match

@@ -1,0 +1,57 @@
+% Corpus: markup-level rules and the internal-provenance builtin.
+
+% @CASE unicode-real-arrow
+% @EXPECT PROSE.UNICODE_ARROWS
+The reduction maps SAT → 3-COLOUR in linear time.
+% @ENDCASE
+
+% @CASE unicode-curly-quote-is-not-an-arrow
+% @EXPECT none
+The authors call this the “sharpness” regime, following prior notation.
+% @ENDCASE
+
+% @CASE unicode-em-dash-char-is-not-an-arrow
+% @EXPECT none
+The bound holds for every prefix length we tested.
+% @ENDCASE
+
+% @CASE unicode-latex-arrow-macro-clean
+% @EXPECT none
+The reduction maps SAT $\rightarrow$ 3-COLOUR in linear time.
+% @ENDCASE
+
+% @CASE latex-display-dollar-dollar
+% @EXPECT LATEX.EQ.DISPLAY_STYLE
+$$ x = \sum_i a_i b_i $$
+% @ENDCASE
+
+% @CASE latex-equation-env-clean
+% @EXPECT none
+\begin{equation} x = \sum_i a_i b_i \end{equation}
+% @ENDCASE
+
+% @CASE provenance-path-macro
+% @EXPECT PROSE.NO_INTERNAL_PROVENANCE
+The raw traces are in \path{experiments/run_17/traces.csv}.
+% @ENDCASE
+
+% @CASE provenance-column-identifier
+% @EXPECT PROSE.NO_INTERNAL_PROVENANCE
+We report \texttt{empirical\_rate} averaged over ten seeds.
+% @ENDCASE
+
+% @CASE provenance-superseded-version
+% @EXPECT PROSE.NO_INTERNAL_PROVENANCE
+The old bound is retracted; the constant below supersedes it.
+% @ENDCASE
+
+% @CASE provenance-artifact-citation-clean
+% @EXPECT none
+All measurements and the harness that produced them are released with the artifact.
+% @ENDCASE
+
+% @CASE commented-out-prose-is-not-linted
+% @EXPECT none
+The controller reaches steady state within four rounds.
+% Unfortunately an earlier draft leveraged a comprehensive tapestry of things.
+% @ENDCASE

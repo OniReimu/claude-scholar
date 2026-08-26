@@ -1,0 +1,92 @@
+% Corpus: PROSE.SELF_UNDERMINING — the newest guardrail, and the one with the
+% most term-of-art collisions. Half these cases exist to prove the lookaheads hold.
+
+% @CASE su-unfortunately
+% @EXPECT PROSE.SELF_UNDERMINING
+Unfortunately, the pruned model recovers only 88.4 percent of baseline accuracy.
+% @ENDCASE
+
+% @CASE su-admittedly
+% @EXPECT PROSE.SELF_UNDERMINING
+Admittedly, the analysis assumes a static adversary.
+% @ENDCASE
+
+% @CASE su-falls-short-verdict
+% @EXPECT PROSE.SELF_UNDERMINING
+On long-tail classes the detector falls short of the supervised baseline.
+% @ENDCASE
+
+% @CASE su-falls-short-information-theoretic-termofart
+% @EXPECT none
+The achievable rate falls short of the information-theoretic limit by 0.4 bits per channel use.
+% @ENDCASE
+
+% @CASE su-falls-short-minimax-termofart
+% @EXPECT none
+Every estimator in this class falls short of the minimax rate on heavy-tailed inputs.
+% @ENDCASE
+
+% @CASE su-lags-behind-verdict
+% @EXPECT PROSE.SELF_UNDERMINING
+Our throughput lags behind the specialised kernel on short sequences.
+% @ENDCASE
+
+% @CASE su-lags-behind-timing-termofart
+% @EXPECT none
+The reconstruction lags behind by two frames, which the buffer absorbs.
+% @ENDCASE
+
+% @CASE su-does-not-outperform
+% @EXPECT PROSE.SELF_UNDERMINING
+The proposed sampler does not outperform ancestral sampling at 50 steps.
+% @ENDCASE
+
+% @CASE su-failed-to-match
+% @EXPECT PROSE.SELF_UNDERMINING
+We failed to match the reported numbers under the same seed.
+% @ENDCASE
+
+% @CASE su-unable-to
+% @EXPECT PROSE.SELF_UNDERMINING
+We were unable to evaluate on the closed-source system.
+% @ENDCASE
+
+% @CASE su-far-from-practical
+% @EXPECT PROSE.SELF_UNDERMINING
+End-to-end latency is still far from practical for interactive use.
+% @ENDCASE
+
+% @CASE su-merely-matches
+% @EXPECT PROSE.SELF_UNDERMINING
+Our variant merely matches the distillation baseline on CIFAR.
+% @ENDCASE
+
+% @CASE su-not-competitive
+% @EXPECT PROSE.SELF_UNDERMINING
+The quantised model is not competitive with the half-precision reference.
+% @ENDCASE
+
+% @CASE su-performance-drop
+% @EXPECT PROSE.SELF_UNDERMINING
+Under distribution shift the classifier suffers a performance drop.
+% @ENDCASE
+
+% @CASE su-compliant-disclosure-anchored
+% @EXPECT none
+Recall is 3.1 points lower on ImageNet-LT, reported in Table 4, and the gap closes to 0.6 points once the tail classes are reweighted.
+% @ENDCASE
+
+% @CASE su-compliant-quantified-unfavourable
+% @EXPECT none
+Throughput is 0.71 times that of the specialised kernel at sequence length 128 and 1.4 times at length 2048.
+% @ENDCASE
+
+% @CASE su-compliant-scope-limit-stated-plainly
+% @EXPECT none
+The evaluation covers English-only corpora; multilingual behaviour is untested.
+% @ENDCASE
+
+% @CASE su-chinese-lexical
+% @EXPECT PROSE.SELF_UNDERMINING
+遗憾的是，本文方法在长尾类别上仍明显落后于监督基线。
+% @ENDCASE

@@ -15,15 +15,15 @@ conflicts_with: [PROSE.VAGUE_QUANTIFIERS, PROSE.REGISTER_PRESERVATION, PROSE.ABS
 constraint_type: guardrail
 autofix: safe
 lint_patterns:
-  - pattern: "\\b(a lot of|lots of)\\b"
+  - pattern: "\\b([Aa] lot of|[Ll]ots of)\\b"
     mode: match
-  - pattern: "\\b(things|stuff)\\b"
+  - pattern: "\\b([Tt]hings|[Ss]tuff)\\b"
     mode: match
-  - pattern: "\\bkind of\\b"
+  - pattern: "\\b[Kk]ind of\\b"
     mode: match
-  - pattern: "\\bsort of\\b"
+  - pattern: "\\b[Ss]ort of\\b"
     mode: match
-  - pattern: "\\bbigger\\b"
+  - pattern: "\\b[Bb]igger\\b"
     mode: match
   - pattern: "(?i)\\bfor good\\b(?!\\s+(reason|measure|cause|practice|approximation))"
     mode: match
@@ -54,10 +54,16 @@ lint_patterns:
 fix_patterns:
   - find: "\\bbigger\\b"
     replace: "larger"
+  - find: "\\bBigger\\b"
+    replace: "Larger"
   - find: "\\bkind of\\b"
     replace: "somewhat"
+  - find: "\\bKind of\\b"
+    replace: "Somewhat"
   - find: "\\bsort of\\b"
     replace: "somewhat"
+  - find: "\\bSort of\\b"
+    replace: "Somewhat"
   - find: "(?i)\\bahead of time\\b"
     replace: "in advance"
   - find: "(?i)\\bup ?front\\b"

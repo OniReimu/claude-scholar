@@ -17,7 +17,7 @@ autofix: assisted
 lint_patterns:
   - pattern: "\\b([Ss]ome|[Mm]any|[Ss]everal|[Nn]umerous|[Vv]arious) (studies|works|papers|methods|approaches|techniques|baselines|researchers|authors|applications|domains|scenarios|settings|datasets)\\b"
     mode: match
-  - pattern: "\\b(a number of|a large amount of|a great deal of|plenty of|a wide range of|a variety of)\\b"
+  - pattern: "(?i)\\b(a number of|a large amount of|a great deal of|plenty of|a wide range of|a variety of)\\b"
     mode: match
   - pattern: "\\b([Ee]xtensive|[Cc]omprehensive|[Tt]horough) (experiments|evaluations?|ablations?|analys[ei]s)\\b"
     mode: match

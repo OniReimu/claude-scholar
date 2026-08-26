@@ -296,6 +296,25 @@ SoK 规则集合（语义规则）：
 
 ---
 
+## 测试套件
+
+四套，问的是四个不同的问题。改规则卡或改 skill 后全部跑一遍。
+
+| 脚本 | 问的问题 |
+|------|----------|
+| `policy/validate.sh` | Registry 不变量成立吗？（字段完整、conflicts_with 互相声明、phase 词汇合规、无孤儿规则、pattern 块语法合法） |
+| `policy/test-lint.sh` | lint **机制**对吗？（flag 过滤、fix 发射与回验、退出码、边界情形） |
+| `policy/test-corpus.sh` | 规则报在**对的句子**上吗？逐 case 报漏报与误报 |
+| `policy/test-referrals.sh` | 转诊图完整吗？（目的地存在 / 目的地真的执行那条规则 / 转诊写明了最小操作） |
+
+前两套测的是**结构与机制**，都不读散文；后两套补的正是这个洞。
+
+**语料测试**（`policy/test-corpus/`，格式见该目录 README）：precision case 与 recall case 同等重要，甚至更重要——过度触发是本引擎的失效模式，一条把每个 threat-model 句子都报出来的规则会被作者关掉，代价远大于它带来的收益。新增或收紧任何 `lint_patterns` 时，**同时补一条会误命中的近似句**，把边界钉死。
+
+**引擎分歧**：`grep -P` 与 perl 不可互换。macOS 解析到 perl，Linux CI 解析到 GNU grep，因此只在一侧跑的测试看不到另一侧的缺陷。`LINT_ENGINE=ggrep|grep|perl` 强制指定，`test-corpus.sh --engine <name>` 用它在同一份语料上对比两个引擎。
+
+**转诊图**（`test-referrals.sh`）：一条转诊边 = 某条规则的 marker 管辖范围内，出现了显式转诊动词（转 / 归 / 交 / refer to）加一个反引号包住的真实 skill 名。仅仅**提到**另一个 skill 不算转诊。R2 的豁免必须带理由登记在脚本里；vendor submodule symlink skill 自动豁免（marker 不写进 vendor 树）。
+
 ## 与 `rules/` 目录的边界
 
 - `rules/` = 开发运维规则（代码风格、安全、agent 编排、实验可复现性）

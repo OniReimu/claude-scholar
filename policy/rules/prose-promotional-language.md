@@ -15,9 +15,9 @@ conflicts_with: [PROSE.AI_LEXICON]
 constraint_type: guardrail
 autofix: assisted
 lint_patterns:
-  - pattern: "\\b(exciting|remarkable|revolutionary|groundbreaking|dramatically|game-changing|cutting-edge|unprecedented|transformative)\\b"
+  - pattern: "(?i)\\b(exciting|remarkable|revolutionary|groundbreaking|dramatically|game-changing|cutting-edge|unprecedented|transformative)\\b"
     mode: match
-  - pattern: "\\bnovel\\b"
+  - pattern: "(?i)\\bnovel\\b"
     mode: count
     threshold: 2
     threshold_param: novel_max_per_file

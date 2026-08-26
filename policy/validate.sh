@@ -22,6 +22,7 @@ set -eo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 RULES_DIR="$SCRIPT_DIR/rules"
+WORK_TMP_PB=$(mktemp)
 PROFILES_DIR="$SCRIPT_DIR/profiles"
 ERRORS=0
 WARNINGS=0
@@ -210,6 +211,38 @@ while IFS=$'\t' read -r a b; do
 done < "$cw_tmp"
 rm -f "$cw_tmp"
 (( cw_bad == 0 )) && pass "conflicts_with references resolve and are mutual"
+
+# ─── 4d. Pattern-Block Grammar ──────────────────────────────────────────────
+# lint.sh ends a lint_patterns / fix_patterns block at the first line it does
+# not recognise, and drops every pattern after it without a diagnostic. A stray
+# line in one of these blocks therefore disables rules silently. Comments are
+# recognised; anything else in the block is a hazard, so it is an error here
+# rather than a surprise at lint time.
+section "4d. Pattern-Block Grammar"
+pb_bad=0
+for f in "$RULES_DIR"/*.md; do
+  rid=$(grep -m1 "^id:" "$f" | sed 's/id: *//')
+  awk -v rid="$rid" -v file="$(basename "$f")" '
+    /^---$/ { n++; if (n == 2) exit; next }
+    n != 1 { next }
+    /^(lint_patterns|fix_patterns):/ { blk = $1; next }
+    blk == "" { next }
+    /^[a-z_]+:/ { blk = ""; next }                 # next frontmatter key ends the block
+    /^[[:space:]]*$/ { blk = ""; next }
+    /^[[:space:]]*#/ { next }
+    /^  - (pattern|find):/ { next }
+    /^    (mode|threshold|threshold_param|replace):/ { next }
+    { print file "\t" rid "\t" NR "\t" $0 }
+  ' "$f"
+done > "$WORK_TMP_PB" 2>/dev/null || true
+if [[ -s "$WORK_TMP_PB" ]]; then
+  while IFS=$'\t' read -r bf brid bline btext; do
+    err "$brid ($bf:$bline): unrecognised line in pattern block silently truncates it → $btext"
+    pb_bad=1
+  done < "$WORK_TMP_PB"
+fi
+rm -f "$WORK_TMP_PB"
+(( pb_bad == 0 )) && pass "pattern blocks contain only recognised lines"
 
 # ─── 5. lint_patterns Format Validation ─────────────────────────────────────
 section "5. lint_patterns Format"

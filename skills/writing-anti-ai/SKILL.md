@@ -189,7 +189,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 "the supervision paradox" / "workload creep" 这类标签只在两种情况下允许：有文献出处并引用，或是本文明确的命名贡献（显式声明 + 定义 + 全文一致）。两者都不满足就用普通语言描述现象。审稿人会去检索你造的"既有概念"。
 
 **同一命题一节内只说一次** <!-- policy:PROSE.RESTATEMENT_DILUTION -->
-AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。删除测试：删掉后出现的那句，本段信息零损失即确认是复述，删掉定稿（不要合并改写）。跨节的重复主张不归这里，交 `claim-architecture-review`。
+AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。删除测试：删掉后出现的那句，本段信息零损失即确认是复述，删掉定稿（不要合并改写）。跨节的重复主张不归这里，交 `claim-architecture-review` 的 **P2 relocation-map**——同一命题有多个 home 时由它定 canonical home（最小调用见下方转诊说明）。
 
 ### 8b. 删掉过程流水账（句级） <!-- policy:PAPER.OUTCOME_LOGIC -->
 
@@ -209,7 +209,7 @@ in an earlier version of this work / in our preliminary implementation
 - 只删**实现弯路**。一个**跑过并被报告的实验**即使当初是"试了一下"，它的结果一旦限定了主张，就是证据不是行踪——保留（`EXP.RESULTS_STATUS_DECLARATION_REQUIRED`）。解释"优势来自哪里"的消融、划定失效边界的负面结果同理，禁令不适用。
 - 与 §7b 的分工：`we first tried X, which did not work` 可能同时触发两条——**§7b 管这个不利结果怎么措辞**（别写成自贬），**本条管这段时间顺序该不该出现**。两条各报一次，不合并。
 
-**结构级不归本 skill**：Method 按实现史排序、Results 按跑的时间排序、只为交代"我们也试过"而存在的整段——这些要重排章节，归 `claim-architecture-review`（在本 skill 之前跑）。规则卡里那半条**重定义问题、重排贡献的授权**同样是写作/结构层的事，线编不执行。
+**结构级不归本 skill**：Method 按实现史排序、Results 按跑的时间排序、只为交代"我们也试过"而存在的整段——这些要重排章节，归 `claim-architecture-review` 的 **P3 narrative closure**——它判 spine 是否闭环、以及这个 spine 是不是最强证据指向的那个命题（最小调用见下方转诊说明）。规则卡里那半条**重定义问题、重排贡献的授权**同样是写作/结构层的事，线编不执行。
 
 ### 9. Claim–Evidence Calibration（动词对证据） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
 

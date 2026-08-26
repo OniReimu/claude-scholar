@@ -17,7 +17,7 @@ autofix: none
 lint_patterns:
   - pattern: "\\b[A-Za-z]+'s (job|task|role|purpose|goal|mission|duty)\\b"
     mode: match
-  - pattern: "\\b(model|method|analysis|framework|estimator|diagnostic|analogy|theory|equation|algorithm|approach|result|paper|metric) (wants|knows|decides|refuses|believes|cares|tries)\\b"
+  - pattern: "(?i)\\b(model|method|analysis|framework|estimator|diagnostic|analogy|theory|equation|algorithm|approach|result|paper|metric) (wants|knows|decides|refuses|believes|cares|tries)\\b"
     mode: match
   - pattern: "\\bis (built|designed|meant) to (catch|hunt|chase|beat|kill|attack)\\b"
     mode: match

@@ -110,7 +110,14 @@ fi
 # ─── Pattern Engine Detection ────────────────────────────────────────────────
 # Perl regex support is required for \b, \d, \w, (?!...) in patterns.
 # Priority: ggrep -P (Homebrew) > grep -P (Linux) > perl (macOS default)
+# LINT_ENGINE=ggrep|grep|perl forces one engine. The engines are not
+# interchangeable in practice — macOS resolves to perl and Linux CI to GNU grep,
+# so an engine-specific defect is invisible to whichever half does not run it.
+# policy/test-corpus.sh --engine uses this to check both against one corpus.
 detect_engine() {
+  if [[ -n "${LINT_ENGINE:-}" ]]; then
+    GREP_MODE="$LINT_ENGINE"; return 0
+  fi
   if command -v ggrep &>/dev/null && echo "test" | ggrep -P "test" &>/dev/null 2>&1; then
     GREP_MODE="ggrep"; return 0
   fi
@@ -128,8 +135,40 @@ if ! detect_engine; then
   exit 2
 fi
 
+# ─── Comment-Blanked View (.tex only) ────────────────────────────────────────
+# Prose sitting behind a % is not part of the manuscript. Linting it reports
+# violations the author cannot act on — deleting a comment is not an edit to the
+# paper — and an author who learns to ignore one report learns to ignore them
+# all. Blank the comment body rather than drop the line, so file:line still
+# points at the source. \% is an escaped percent and does not open a comment.
+# .bib is excluded: % is not a BibTeX comment.
+# The cache key is a hash of the path, so an existing view file *is* the cache
+# entry. Associative arrays are bash 4; macOS ships bash 3.2 and this repo runs
+# there.
+VIEW_DIR=""
+lint_view() {
+  local file="$1"
+  case "$file" in
+    *.tex) ;;
+    *) printf '%s' "$file"; return ;;
+  esac
+  [[ -n "$VIEW_DIR" ]] || VIEW_DIR=$(mktemp -d)
+  local out
+  out="$VIEW_DIR/$(printf '%s' "$file" | cksum | tr -d ' /').tex"
+  if [[ ! -f "$out" ]]; then
+    sed -E 's/(^|[^\\])%.*$/\1/' "$file" > "$out" 2>/dev/null || cp "$file" "$out"
+  fi
+  printf '%s' "$out"
+}
+# Preserve the exit status: an EXIT trap returns the status of its last command,
+# and a bare [[ ]] that tests false would turn a clean run into exit 1.
+cleanup_views() { local st=$?; [[ -n "$VIEW_DIR" ]] && rm -rf "$VIEW_DIR"; return $st; }
+trap cleanup_views EXIT
+
 # ─── Regex Helpers ───────────────────────────────────────────────────────────
-# Pattern passed via env var to avoid shell interpolation issues.
+# Pattern passed via env var to avoid shell interpolation issues, then decoded
+# before use: %ENV hands back bytes, and a byte-wise character class matches any
+# character sharing a lead byte with a member (an em dash reads as an arrow).
 
 # Returns matching lines as "filename:lineno: content"
 regex_match() {
@@ -137,7 +176,7 @@ regex_match() {
   case "$GREP_MODE" in
     ggrep) ggrep -Pn "$pattern" "$file" 2>/dev/null || true ;;
     grep)  grep -Pn "$pattern" "$file" 2>/dev/null || true ;;
-    perl)  LINT_PAT="$pattern" perl -ne 'print "$ARGV:$.: $_" if /$ENV{LINT_PAT}/' "$file" 2>/dev/null || true ;;
+    perl)  LINT_PAT="$pattern" perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} print "$ARGV:$.: $_" if /$re/' "$file" 2>/dev/null || true ;;
   esac
 }
 
@@ -147,7 +186,7 @@ regex_count() {
   case "$GREP_MODE" in
     ggrep) (ggrep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
     grep)  (grep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
-    perl)  LINT_PAT="$pattern" perl -ne '$c++ while /$ENV{LINT_PAT}/g; END{print $c//0}' "$file" 2>/dev/null || echo 0 ;;
+    perl)  LINT_PAT="$pattern" perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} $c++ while /$re/g; END{print $c//0}' "$file" 2>/dev/null || echo 0 ;;
   esac
 }
 
@@ -157,7 +196,7 @@ regex_quiet() {
   case "$GREP_MODE" in
     ggrep) ggrep -Pq "$pattern" "$file" 2>/dev/null ;;
     grep)  grep -Pq "$pattern" "$file" 2>/dev/null ;;
-    perl)  LINT_PAT="$pattern" perl -ne 'BEGIN{$f=1} $f=0 if /$ENV{LINT_PAT}/; END{exit $f}' "$file" 2>/dev/null ;;
+    perl)  LINT_PAT="$pattern" perl -CSD -ne 'BEGIN{$f=1; $p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} $f=0 if /$re/; END{exit $f}' "$file" 2>/dev/null ;;
   esac
 }
 
@@ -171,7 +210,13 @@ yaml_unescape() {
 find_target_files() {
   local glob="$1" dir="$2"
   local name_pattern="${glob##*/}"  # **/*.tex → *.tex
-  find "$dir" -name "$name_pattern" -type f 2>/dev/null | sort
+  # policy/test-corpus/ is deliberately full of violations — it is the fixture
+  # set for policy/test-corpus.sh, which passes the directory explicitly. Left
+  # in scope, a repo-wide lint would report the fixtures as findings.
+  # ...unless the corpus itself is the target, which is how the runner calls it.
+  local filter='cat'
+  case "$dir" in *policy/test-corpus*) ;; *) filter='grep -v /policy/test-corpus/' ;; esac
+  find "$dir" -name "$name_pattern" -type f 2>/dev/null | $filter | sort
 }
 
 # ─── Profile Override Parsing ────────────────────────────────────────────────
@@ -273,6 +318,12 @@ parse_rule() {
   local cur_find="" cur_replace=""
 
   while IFS= read -r line; do
+    # A YAML comment inside a pattern block must not terminate it. Rule cards
+    # are documentation-heavy by design, and silently dropping every pattern
+    # after the first comment disables rules with no diagnostic at all.
+    if { $in_lp || $in_fp; } && [[ "$line" =~ ^[[:space:]]*# ]]; then
+      continue
+    fi
     # ── lint_patterns block ──
     if $in_lp; then
       if [[ "$line" =~ ^\ \ -\ pattern:\ \"(.+)\" ]]; then
@@ -346,11 +397,11 @@ lint_cite_verify_via_api() {
   local -a bib_files=() tex_files=()
   while IFS= read -r f; do
     [[ -n "$f" ]] && bib_files+=("$f")
-  done < <(find "$TARGET_DIR" -name "*.bib" -type f 2>/dev/null | sort)
+  done < <(find_target_files "*.bib" "$TARGET_DIR")
 
   while IFS= read -r f; do
     [[ -n "$f" ]] && tex_files+=("$f")
-  done < <(find "$TARGET_DIR" -name "*.tex" -type f 2>/dev/null | sort)
+  done < <(find_target_files "*.tex" "$TARGET_DIR")
 
   # 1) unresolved marker check
   local unresolved_pat="\\[CITATION NEEDED\\]"
@@ -463,7 +514,7 @@ prov_grep_spans() {
   case "$GREP_MODE" in
     ggrep) ggrep -noP "$pat" "$f" 2>/dev/null || true ;;
     grep)  grep  -noP "$pat" "$f" 2>/dev/null || true ;;
-    perl)  LINT_PAT="$pat" perl -ne 'while (/$ENV{LINT_PAT}/g) { print "$.:$&\n" }' "$f" 2>/dev/null || true ;;
+    perl)  LINT_PAT="$pat" perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} while (/$re/g) { print "$.:$&\n" }' "$f" 2>/dev/null || true ;;
   esac
 }
 
@@ -473,7 +524,7 @@ lint_prose_no_internal_provenance() {
   local -a tex_files=()
   while IFS= read -r f; do
     [[ -n "$f" ]] && tex_files+=("$f")
-  done < <(find "$TARGET_DIR" -name "*.tex" -type f 2>/dev/null | sort)
+  done < <(find_target_files "*.tex" "$TARGET_DIR")
 
   # P1-P5 per the rule card's Check table. P5 is medium confidence (revision
   # narrative needs adjudication); the rest are high or near-certain.
@@ -550,8 +601,11 @@ lint_rule() {
     local pat
     pat=$(yaml_unescape "$raw_pat")
     for file in "${tfiles[@]}"; do
-      local matches
-      matches=$(regex_match "$pat" "$file")
+      local matches view
+      view=$(lint_view "$file")
+      matches=$(regex_match "$pat" "$view")
+      # regex_match stamps the view path; report the path the author edits.
+      [[ "$view" == "$file" ]] || matches="${matches//$view/$file}"
       if [[ -n "$matches" ]]; then
         flagged_files+=("$file")
         while IFS= read -r mline; do
@@ -573,7 +627,7 @@ lint_rule() {
     pat=$(yaml_unescape "$raw_pat")
     for file in "${tfiles[@]}"; do
       local cnt
-      cnt=$(regex_count "$pat" "$file")
+      cnt=$(regex_count "$pat" "$(lint_view "$file")")
       if (( cnt > effective_thresh )); then
         ((findings++)) || true
         report_finding "$severity" "$RULE_ID" "${file}: count=${cnt} > threshold=${effective_thresh}"
@@ -604,7 +658,7 @@ lint_rule() {
       local pat
       pat=$(yaml_unescape "$raw_pat")
       for file in "${scope[@]}"; do
-        if ! regex_quiet "$pat" "$file"; then
+        if ! regex_quiet "$pat" "$(lint_view "$file")"; then
           ((findings++)) || true
           report_finding "$severity" "$RULE_ID" "${file}: MISSING required pattern"
         fi

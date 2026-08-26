@@ -1,0 +1,52 @@
+% Corpus: whole paragraphs rather than single sentences.
+%
+% The single-sentence cases above measure whether a pattern fires. These
+% measure whether the engine is usable: a paragraph of ordinary technical
+% prose must come back near-silent, because a report with a dozen findings on
+% a clean paragraph is a report the author stops reading. The slop paragraph
+% is the control.
+
+% @CASE para-clean-threat-model
+% @EXPECT none
+We assume a semi-honest server that follows the protocol and attempts to infer
+client data from the messages it observes. Each client holds a local dataset of
+$n_i$ labelled examples and never transmits raw features. The server aggregates
+masked updates, so a single client's contribution is recoverable only if the
+server colludes with all remaining clients. This is the standard assumption in
+secure aggregation, and we inherit it without modification.
+% @ENDCASE
+
+% @CASE para-clean-results-with-unfavourable-number
+% @EXPECT none
+On CIFAR-100 the masked aggregate reaches 71.8 percent top-1, within 0.4 points
+of the unmasked baseline. On Tiny-ImageNet the gap widens to 2.6 points, and
+\Cref{tab:ablation} attributes most of it to the quantisation step rather than
+to masking. Replacing 8-bit with 16-bit quantisation recovers 1.9 of the 2.6
+points at twice the upload cost. We report both settings so that the
+bandwidth-accuracy tradeoff is visible.
+% @ENDCASE
+
+% @CASE para-clean-method
+% @EXPECT none
+The encoder produces one embedding per feature axis. We project each embedding
+through a shared linear map, then normalise the result to unit norm so that the
+downstream similarity is scale-free. Gradients flow through the projection but
+not through the normaliser, which keeps the update direction independent of the
+embedding magnitude.
+% @ENDCASE
+
+% @CASE para-slop-intro
+% @EXPECT PROSE.AI_LEXICON, PROSE.FILLER_PHRASES, PROSE.INTENSIFIERS_ELIMINATION, PROSE.VAGUE_QUANTIFIERS, PROSE.COPULA_DODGE
+In recent years, federated learning has attracted significant attention. It is
+important to note that many works delve into the intricate tradeoffs of this
+paradigm, and several studies leverage secure aggregation to protect client
+data. Privacy serves as a crucial concern, and it plays a crucial role in
+deployment. Our framework significantly improves upon these approaches.
+% @ENDCASE
+
+% @CASE para-slop-conclusion
+% @EXPECT PROSE.AI_LEXICON, PROSE.SUPERFICIAL_ING_SUFFIX, PROSE.PROMOTIONAL_LANGUAGE, PROSE.FRACTAL_SUMMARY
+In this section we have presented a groundbreaking approach to private
+aggregation, showcasing the value of masking. Our results underscore the
+potential of this direction, paving the way for future work.
+% @ENDCASE

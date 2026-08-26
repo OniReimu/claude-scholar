@@ -1,0 +1,149 @@
+% Corpus: PROSE.AI_LEXICON / FILLER_PHRASES / INTENSIFIERS / PROMOTIONAL /
+% VAGUE_*. Count-mode patterns in these rules are file-scoped, so this file
+% deliberately stays under every threshold (tier-2 <=5, connectives <=4,
+% "novel" <=2, "to the best of our knowledge" <=1) and the count-mode cases
+% live in 05-thresholds.tex instead.
+
+% @CASE lex-tier1-delve
+% @EXPECT PROSE.AI_LEXICON
+We delve into the failure modes of the retrieval stage.
+% @ENDCASE
+
+% @CASE lex-tier1-leverage
+% @EXPECT PROSE.AI_LEXICON
+The controller leverages the cached key-value states.
+% @ENDCASE
+
+% @CASE lex-tier1-seamless
+% @EXPECT PROSE.AI_LEXICON
+Integration with the existing runtime is seamless.
+% @ENDCASE
+
+% @CASE lex-formulaic-opener-recent-years
+% @EXPECT PROSE.AI_LEXICON
+In recent years, graph neural networks have been applied to molecular property prediction.
+% @ENDCASE
+
+% @CASE lex-formulaic-opener-attracted-attention
+% @EXPECT PROSE.AI_LEXICON
+Federated learning has attracted increasing attention from the systems community.
+% @ENDCASE
+
+% @CASE lex-formulaic-opener-with-rapid-development
+% @EXPECT PROSE.AI_LEXICON
+With the rapid development of edge accelerators, on-device inference has become feasible.
+% @ENDCASE
+
+% @CASE lex-termofart-robust-optimize-clean
+% @EXPECT none
+The objective is optimised with AdamW, and the resulting classifier is robust to label noise up to 30 percent.
+% @ENDCASE
+
+% @CASE lex-termofart-loss-landscape-clean
+% @EXPECT none
+Sharpness-aware minimisation flattens the loss landscape around the found minimum.
+% @ENDCASE
+
+% @CASE filler-in-order-to
+% @EXPECT PROSE.FILLER_PHRASES
+In order to isolate the effect, we freeze the encoder.
+% @ENDCASE
+
+% @CASE filler-worth-noting
+% @EXPECT PROSE.FILLER_PHRASES
+It is worth noting that the gain vanishes beyond eight heads.
+% @ENDCASE
+
+% @CASE filler-plays-a-crucial-role
+% @EXPECT PROSE.FILLER_PHRASES
+The temperature parameter plays a crucial role in calibration.
+% @ENDCASE
+
+% @CASE filler-in-the-context-of
+% @EXPECT PROSE.FILLER_PHRASES
+In the context of streaming workloads, the cache is refilled every 200 milliseconds.
+% @ENDCASE
+
+% @CASE intensifier-significantly-bare
+% @EXPECT PROSE.INTENSIFIERS_ELIMINATION
+The proposed loss significantly reduces calibration error.
+% @ENDCASE
+
+% @CASE intensifier-statistically-significant-clean
+% @EXPECT none
+The improvement is statistically significant under a paired $t$-test ($p = 0.003$, $n = 12$).
+% @ENDCASE
+
+% @CASE promo-groundbreaking
+% @EXPECT PROSE.PROMOTIONAL_LANGUAGE
+This groundbreaking architecture redefines sequence modelling.
+% @ENDCASE
+
+% @CASE promo-first-time
+% @EXPECT PROSE.PROMOTIONAL_LANGUAGE
+For the first time, we train a 7B model on a single consumer GPU.
+% @ENDCASE
+
+% @CASE vague-attribution-researchers-argue
+% @EXPECT PROSE.VAGUE_ATTRIBUTIONS
+Researchers argue that scaling laws break down past the compute-optimal point.
+% @ENDCASE
+
+% @CASE vague-quantifier-several-works
+% @EXPECT PROSE.VAGUE_QUANTIFIERS
+Several works study post-hoc calibration.
+% @ENDCASE
+
+% @CASE vague-quantifier-extensive-experiments
+% @EXPECT PROSE.VAGUE_QUANTIFIERS
+Extensive experiments on four benchmarks confirm the trend.
+% @ENDCASE
+
+% @CASE vague-counted-clean
+% @EXPECT none
+Four prior systems adopt this decomposition, and all four assume a fixed vocabulary.
+% @ENDCASE
+
+% @CASE copula-serves-as
+% @EXPECT PROSE.COPULA_DODGE
+The residual stream serves as a communication channel between layers.
+% @ENDCASE
+
+% @CASE informal-a-lot-of
+% @EXPECT PROSE.INFORMAL_VOCABULARY
+A lot of gradient noise remains after warmup.
+% @ENDCASE
+
+% @CASE informal-at-all-bare
+% @EXPECT PROSE.INFORMAL_VOCABULARY
+The defence does not transfer at all.
+% @ENDCASE
+
+% @CASE informal-at-all-scales-clean
+% @EXPECT none
+The scaling exponent is stable at all scales we measured.
+% @ENDCASE
+
+% @CASE informal-from-scratch-termofart-clean
+% @EXPECT none
+We retrain the reward model from scratch on the filtered corpus.
+% @ENDCASE
+
+% Sentence-initial probes. Several patterns in these rules are case-sensitive
+% while their siblings are (?i), so the capitalised form at a sentence start
+% is exactly where the lexicon leaks.
+
+% @CASE intensifier-sentence-initial
+% @EXPECT PROSE.INTENSIFIERS_ELIMINATION
+Significantly fewer tokens are needed once the prefix is cached.
+% @ENDCASE
+
+% @CASE informal-things-sentence-initial
+% @EXPECT PROSE.INFORMAL_VOCABULARY
+Things degrade once the buffer overflows.
+% @ENDCASE
+
+% @CASE promo-sentence-initial-dramatically
+% @EXPECT PROSE.PROMOTIONAL_LANGUAGE
+Dramatically lower memory traffic follows from the fused kernel.
+% @ENDCASE

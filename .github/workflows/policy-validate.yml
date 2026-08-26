@@ -77,5 +77,23 @@ jobs:
           echo "plugin.json=$pv  marketplace.json=$mv"
           [ "$pv" = "$mv" ] || { echo "::error::version mismatch between plugin.json ($pv) and marketplace.json ($mv)"; exit 1; }
 
+      - name: Rule accuracy over the annotated corpus (both engines)
+        run: |
+          # Runs the same corpus under each regex engine. This matters: macOS
+          # resolves to perl and this runner to GNU grep, so an engine-specific
+          # defect is otherwise invisible to whichever half does not run it.
+          # A byte-wise character-class bug in the perl path reached production
+          # exactly this way.
+          rc=0
+          bash policy/test-corpus.sh --engine grep || rc=1
+          bash policy/test-corpus.sh --engine perl || rc=1
+          exit "$rc"
+
+      - name: Referral graph integrity
+        run: bash policy/test-referrals.sh
+
+      - name: Lint mechanics
+        run: bash policy/test-lint.sh
+
       - name: Policy lint (informational)
         run: bash policy/lint.sh || true
