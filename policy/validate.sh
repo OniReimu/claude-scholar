@@ -65,16 +65,25 @@ collect_rule_cards
 section "1. Required Frontmatter Fields"
 REQUIRED_FIELDS="id slug severity locked layer artifacts phases domains venues check_kind enforcement constraint_type autofix"
 
+# Field presence is tested with bash pattern matching, not `grep`. The grep form
+# forked 14 times per card (1400 forks over the rule set) and, under heavy system
+# load, an occasional failed fork was indistinguishable from a missing field —
+# producing a FAIL that names a content error when the real cause is resource
+# starvation. A validator that intermittently fails on correct files teaches its
+# users to re-run until green, which is worse than not checking at all.
 for f in "${RULE_CARDS[@]}"; do
   fname=$(basename "$f")
   fm=$(get_fm "$f")
+  if [[ -z "$fm" ]]; then
+    err "$fname: frontmatter is empty or unreadable"
+    continue
+  fi
+  probe=$'\n'"$fm"$'\n'
   missing=""
   for field in $REQUIRED_FIELDS; do
-    if ! echo "$fm" | grep -q "^${field}: "; then
-      # Special case: field might be followed by newline (block value)
-      if ! echo "$fm" | grep -q "^${field}:"; then
-        missing="$missing $field"
-      fi
+    # matches "field: value" and the block form "field:" at line start
+    if [[ "$probe" != *$'\n'"${field}:"* ]]; then
+      missing="$missing $field"
     fi
   done
   if [[ -n "$missing" ]]; then

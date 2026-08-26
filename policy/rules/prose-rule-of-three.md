@@ -56,6 +56,8 @@ autofix: none
 1. 数本段有多少句携带内联列表 → 超过 `max_list_sentences_per_paragraph` 即候选
 2. 对每个列表：项是短项还是长项？项数是否超过对应阈值？
 3. **集合比对**：本段（及本节）是否已经列举过同一组对象？是则第二次改为引用首次给出的名字
+
+**边界**：本卡管**段内与节内**的重复列举。**跨节**的重复列举（同一组对象在 Method 列一次、Discussion 又列一次）属结构问题，交 `claim-architecture-review` —— 它的 P1 `lookup-before-create` 把枚举集合作为一个 information unit 记进 ledger，跨节重复由那次查表发现，不由逐节线编发现。这与 `PROSE.RESTATEMENT_DILUTION` 在命题层的分界完全一致（那条也是段内/节内自管、跨节交出）。
 4. 逐个候选问：**这个列表是在推进论证，还是在逐项交代？** 交代型的合并成一句概括 + 附录/引用
 
 **排除**：`enumerate` / `itemize` 环境内的列表项；contribution 列表；定义中穷举的形式化集合（如 $\{a,b,c\}$ 的语言化重述）；表格单元格。
@@ -95,7 +97,8 @@ explanation generators.
 
 ## Conflicts
 
-- `PROSE.RESTATEMENT_DILUTION` 拥有**命题层**复述（同一主张说两遍）；本卡第 2 条是它在**列举层**的表现（同一集合列两遍）。同一处可能两条都成立，以本卡的"命名 + 引用"修法为准，不重复计数
+- `PROSE.RESTATEMENT_DILUTION` 拥有**命题层**复述（同一主张说两遍）；本卡第 2 条是它在**列举层**的表现（同一集合列两遍）。同一处可能两条都成立，以本卡的"命名 + 引用"修法为准，不重复计数。**两条的跨节边界也一致**：都只管段内/节内，跨节归 `claim-architecture-review`
+- **`claim-architecture-review`（skill，非规则）** 拥有跨节重复列举：其 `information-ledger.md` 把一组被列举的对象记为一个 information unit，第二次列举由 `lookup-before-create` 命中。本卡在**线编**阶段只判段内/节内，且 arch-review 在本 skill 之前跑——它给出的"命名"结果正是本卡"引用名字"修法的输入
 - `PROSE.COMMA_OVERUSE`（单句 ≤3 逗号）会在四项列表上**副作用命中**——它报的是逗号数，不是列举结构。**先按本卡判定**：列表合规（短项 ≤4）则改用分号或重述以满足逗号规则，**不得为了降逗号数而删项**
 - `PROSE.COLON_LIST_OVERUSE` 管冒号引出的内联编号列举（`we: (1)...(2)...`）；本卡管不带冒号的并列列举密度，两者形态不同不重叠
 - `PROSE.ELEGANT_VARIATION` 是本卡首选修法的约束：给集合命名后，全文必须一致使用该名字，不得再换同义说法

@@ -2,7 +2,7 @@
 name: claim-architecture-review
 description: This skill performs a post-draft STRUCTURAL edit of a paper — judging whether each paragraph should EXIST, where it belongs, and whether information is duplicated across sections — before any line-level polish. Use when the user asks to "review the paper structure", "check the story/logic is closed", "is this section bloated", "should this paragraph be here / moved / merged / cut", "find redundancy across Method/Results/Appendix", or "audit the claim architecture". It is SUBTRACTIVE and PROPOSE-ONLY — it emits a structural-edit plan, it does not rewrite the manuscript. Run it BEFORE writing-anti-ai (architecture before line edit) and BEFORE paper-self-review. Do not use for sentence-level polish (writing-anti-ai), checklist QA (paper-self-review), or drafting replacement text (ml-paper-writing).
 tags: [Writing, Structure, Claim, Architecture, Review]
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Claim & Paragraph Architecture Review
@@ -32,7 +32,7 @@ Do NOT pre-create empty files; write each as its pass produces content. Field sc
 ## Protocol (4 passes)
 
 - **P0 — Spine + lead.** Read only abstract + intro + section headings + each paragraph's topic sentence. Extract 1–3 paper-level claims + one obligation per core section. For **each** claim also record `lead` — what kind of defensible advantage it carries — from the closed set `{capability, mechanism, cost, scale, none}` (新能力 = a capability that did not exist before / 新机制 = an explanation or mechanism others lack / 更低成本 / 更好扩展性 / `none` = this claim is true but leads on nothing). `none` is an explicit, legal value and a **finding**, not a blank: a spine where every claim is `lead: none` usually means the paper is on the wrong battlefield, and the fix is repositioning (see `ml-paper-writing` → *选对战场 — Choosing the Battlefield*), not cutting paragraphs. Write `spine.md`.
-- **P1 — Per-section sweep.** For each section, read ONLY that section. Audit each paragraph against the resident `spine.md`; append a row to `paragraph-audit.md`. Decompose a compound paragraph into multiple information units. For each unit: **lookup-before-create** in `information-ledger.md` (does this proposition already have a home?) — if yes, record the duplicate home; if no, create a row with a canonical-proposition gloss. Also record `backs_lead` — does this paragraph serve a claim whose `lead ≠ none`? **没有形成优势的内容不进主线**: `backs_lead=false` makes the paragraph a candidate for `tighten` or `move:appendix` (see Verdicts & safety for the limits on this). Update `progress.md`.
+- **P1 — Per-section sweep.** For each section, read ONLY that section. Audit each paragraph against the resident `spine.md`; append a row to `paragraph-audit.md`. Decompose a compound paragraph into multiple information units. **An enumerated set counts as one unit, keyed by the set** — `{CNN channels, MLP hidden units, attention coords}` is one info-key, not four; that is how a second enumeration of the same set in another section gets caught (`PROSE.RULE_OF_THREE` owns the within-section case, this pass owns cross-section). For each unit: **lookup-before-create** in `information-ledger.md` (does this proposition or set already have a home?) — if yes, record the duplicate home; if no, create a row with a canonical-proposition gloss. Also record `backs_lead` — does this paragraph serve a claim whose `lead ≠ none`? **没有形成优势的内容不进主线**: `backs_lead=false` makes the paragraph a candidate for `tighten` or `move:appendix` (see Verdicts & safety for the limits on this). Update `progress.md`.
 - **P2 — Redundancy / relocation.** Read the ledger only. Any proposition with >1 home → a cluster. Choose ONE canonical home (Method = protocol; Results = read the table; Appendix = detail, not re-explanation; Limitation = mark the boundary, not soothe) and write the collapse plan to `relocation-map.md`.
 - **P3 — Narrative closure.** Read `spine.md` + section topic sentences only. Is the spine a closed loop (each claim set up and paid off, in order) or scattered? Record the gap list at the top of `relocation-map.md`.
 
@@ -64,7 +64,7 @@ Bypass (checklist-only review requested): set `run.inputs.skip_architecture_revi
 - `ml-paper-writing` — how to structure WHILE drafting (write-time narrative principle; also owns *选对战场 — Choosing the Battlefield*, the repositioning move to reach for when the spine's leads come back `none`). Hands off here after the draft exists.
 - **`claim-architecture-review` (this) — post-draft architecture audit + relocation plan.**
 - `paper-self-review` — completeness / compliance checklist (additive); runs AFTER this skill so completeness is judged on a de-bloated draft.
-- `writing-anti-ai` — line/copy polish, LAST.
+- `writing-anti-ai` — line/copy polish, LAST. It owns within-paragraph and within-section repeated enumeration (`PROSE.RULE_OF_THREE`); a set this pass names once is what its "refer to the name" fix references.
 
 ## When to use
 

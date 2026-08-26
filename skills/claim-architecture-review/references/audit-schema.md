@@ -39,7 +39,7 @@ proposition; if found, append the new location to `other-homes` instead of creat
 
 | Field | Meaning |
 |---|---|
-| `info-key` | short stable slug, e.g. `baseline-adaptation-protocol` |
+| `info-key` | short stable slug, e.g. `baseline-adaptation-protocol`. An **enumerated set** gets one key for the whole set (e.g. `feature-axis-instances`), never one key per member — a second enumeration of that set elsewhere must collide with this row |
 | `canonical-proposition-gloss` | one plain sentence of the actual proposition (guards against paraphrase/key drift — two rows with the same gloss are duplicates even if worded differently) |
 | `first-home` | section + paragraph locator where it first appears |
 | `other-homes` | additional locators carrying the same proposition (the redundancy) |
