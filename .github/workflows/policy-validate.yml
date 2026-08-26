@@ -30,6 +30,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Three skills are symlinks into vendor submodules. Without this the
+          # runner validates a tree where those skills do not exist.
+          submodules: recursive
 
       - name: Policy engine structural validation
         run: |

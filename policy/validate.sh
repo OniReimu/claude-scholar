@@ -473,7 +473,11 @@ for f in "${RULE_CARDS[@]}"; do
   [[ -n "$succ" ]] || continue
   fname=$(basename "$f")
 
-  if [[ -e "$PROJECT_DIR/skills/$succ" ]]; then
+  # -e follows symlinks, and three skills are symlinks into vendor submodules.
+  # A clone without `--recurse-submodules` leaves those dangling, which is a
+  # statement about the checkout, not about whether the successor name resolves.
+  # -L keeps the answer the same in both trees.
+  if [[ -e "$PROJECT_DIR/skills/$succ" || -L "$PROJECT_DIR/skills/$succ" ]]; then
     continue                                    # a real skill
   elif echo " $all_rule_ids " | grep -q " $succ "; then
     continue                                    # another rule took it over
