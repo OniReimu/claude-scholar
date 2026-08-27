@@ -38,11 +38,13 @@ autofix: none
 
 - **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。
 
-**命题提取测试**（逐句执行，这是本卡唯一的检查方法）：
+**命题提取测试**（**逐句提取，逐段判定**——这是本卡唯一的检查方法）：
 
 1. 用一句话写出这句断言了什么，**必须包含至少一个具体对象**（变量名、数值、模块名、数据集、机制）；
 2. 写不出来 → 形态 A；
 3. 若句中含因果连接词，分别写出解释项与被解释项。二者是同一命题的两种措辞 → 形态 B。
+
+**判定必须落在段上，不要脱离上下文判单句。** 实测：同一批判据在段落粒度上对真实已发表论文零误报（两轮共 30 段），在孤立单句粒度上误报 3/10——被误报的正是「下一句就兑现的 topic sentence」和领域惯例的动机句。提取是逐句的，**verdict 是逐段的**；单句拿出来判会系统性高估。
 
 **不要用指标代替判断。** 不做嵌入余弦相似度、不做 padding-token 占比、不做命题密度阈值。这些代理量在本仓库的实测中全部塌陷：结构性重复信号自评 16x，换 fresh 模型盲评后降到 1.22x，组内离散度（2.11–6.81）比组间差异还大。凡是"给判断套一个阈值"的仪器，测的都是仪器自己。
 
@@ -63,6 +65,18 @@ autofix: none
 **整段不推进**是另一回事，归 `claim-architecture-review` **P1 逐段审计**——判"这段该不该独立存在"需要看相邻段落各自承载什么信息，那是 `merge` / `delete` 的 verdict 集合，本卡的 verdict 只有"具体化 / 删句"。
 
 分流规则：一段之内**多数句子**都判为形态 A，不要逐句报，**整段转 `claim-architecture-review` 跑 P1**（若 `architecture-review/spine.md` 不存在，先跑 P0）。这不是把问题推走——逐句"具体化"一个本身没有内容的段落，产出的是更好听的空话。
+
+## Rewrite
+
+**只有当这一段还有命题存活时，才输出改写。** 存活的命题必须 **100% 保留**——改写可以压缩措辞，不得丢掉任何一条通过了提取测试的断言。改写方向是**强动词 + 紧凑谓语**，删掉 `thereby` / `which serves to` / `allowing us to` 这类虚词接从句的结构。
+
+**一句都没存活时，不要输出改写。** 这是 escalate 的情形，正确输出是删除或转诊，不是一个更短的版本。
+
+这条不是保守，是实测结论：对一份十段的"轱辘话"测试集，出题方给出的十条 gold rewrite 送进本规则盲判，**6 条仍然违规**——四条仍是形态 A（`Our framework consistently outperforms baseline methods on standard benchmarks` 依然没有 baseline、benchmark、幅度；`Future work will investigate alternative configurations` 依然没有 configuration），两条仍是形态 B（`Minimizing intermediate computation time reduces overall end-to-end inference latency` 里两个量是同一个量；`removing any single component degrades performance, confirming their synergy` 的后半句仍在复述前半句）。而且这两条恰恰是出题方**自己诊断对了**的那两段——诊断为回环，改写仍是回环。
+
+失败的六条集中在无命题存活的段落，通过的四条集中在有命题存活的段落。**压缩对有内容的段落是提纯，对没内容的段落是把空话变短。** 后者更危险：短的空话读起来像结论。
+
+**不设压缩率目标。** "压缩 75–85%" 是删完填充之后**观察到**的结果，不是应当瞄准的指标。把它当指标会制造出为凑比例而删内容的压力，而这正是本卡在 Check 里拒绝阈值的同一个理由。压缩率可以报告，不可以作为判据。
 
 ## Limitations
 

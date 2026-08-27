@@ -279,6 +279,12 @@ AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措�
 
 **修法只有两条：具体化或删除。** 不要改写成更好听的空话。
 
+**输出改写的前提是这一段还有命题存活**，且存活的命题必须 100% 保留（可压措辞，不可丢断言），方向是**强动词 + 紧凑谓语**，删 `thereby` / `which serves to` / `allowing us to` 这类虚词接从句。**一句都没存活就不要给改写**——那是 escalate，正确输出是删除或转诊。实测依据：对一份十段测试集，出题方给的十条 gold rewrite 盲判后 **6 条仍然违规**，且失败的全部集中在无命题存活的段落（`Our framework consistently outperforms baseline methods on standard benchmarks` 仍无 baseline/benchmark/幅度；`Minimizing intermediate computation time reduces overall end-to-end inference latency` 两个量仍是同一个量）。**压缩对有内容的段落是提纯，对没内容的段落是把空话变短**，而短的空话读起来更像结论。
+
+**不设压缩率目标**：75–85% 是删完填充后观察到的结果，不是该瞄准的指标；当指标会制造为凑比例而删内容的压力。可以报告，不可以当判据。
+
+**逐句提取，逐段判定**：单句脱离上下文判会系统性高估——实测段落粒度对真实已发表论文零误报（30 段），孤立单句粒度误报 3/10，被误报的正是「下一句就兑现的 topic sentence」和领域惯例的动机句。
+
 ⚠️ **不要用指标代替判断**：不做嵌入余弦、不做 filler-token 占比、不做命题密度阈值。本仓库实测过这类代理量——结构性重复信号自评 16x，换 fresh 模型盲评后塌到 1.22x，组内离散度比组间差异还大。给判断套阈值，测的是仪器自己。
 
 **豁免**：定义句与形式化陈述；**下一句就落地兑现**的抽象铺垫（那是 topic sentence，判据是兑现距离——隔三句还在抽象层才违规）；Ethics / Threats to Validity / Broader Impact 的规定动作与 `\paragraph{}` 标题句；直接引语与被批评的对象文本。
