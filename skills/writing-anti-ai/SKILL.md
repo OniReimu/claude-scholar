@@ -231,7 +231,9 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 `A fair bit selects one member` —— `fair bit` 指无偏比特，技术正确，但读者第一遍读成"相当多"。不是语域问题也不是准确性问题，是歧义。同类：`a good deal` · `on the order of` · `significant`（统计 vs 重要）。改法是把隐含限定词显式写出来：`an unbiased random bit`。
 
 **造一次、用一次的连字符复合词要拆开** <!-- policy:PROSE.ADHOC_COMPOUND_MODIFIER -->
-`X-based` / `X-aware` / `X-driven` / `X-guided` 这类构造**本身是标准的**，本条不管它。管的是**临时造一个、全文只用一次**：读者要在句中现场解码 `community-shift-aware signals`，解码完这个词再不出现——**成本付了，收益为零**。
+连字符复合修饰语这个构造**本身是标准的**，本条不管它。管的是**临时造一个、全文只用一次**：读者要在句中现场解码 `community-shift-aware signals`，解码完这个词再不出现——**成本付了，收益为零**。
+
+⚠️ **后缀是开集，不要按列表找。** 下面 lint 用的那张后缀表是**廉价兜底**，不是判据边界——`score-blinded` · `research-bearing` · `throughput-hardened` 这类它一个都抓不到，而它们正是本条要抓的。**你读稿时的判据是「这个复合词读者要不要停下来解码」，不是「它的后缀在不在表里」。** `research-bearing` 尤其典型：`-bearing` 的既有搭配是 `load-bearing`（承重）、`interest-bearing`（计息），接到抽象名词 `research` 上，读者必须现场猜是"承担科研任务的"还是"产出科研成果的"。
 
 判据两条必须同时成立：**① 全文只出现一次 ② 不是本领域既有术语**。`blockchain-based` 在区块链论文里、`gradient-based` 在优化论文里都是标准说法，反复出现即合规。
 
@@ -245,7 +247,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 红线：**不要把一次性造词换成另一个一次性造词**（`exposure-aware` → `visibility-conditioned`），那只是换壳。
 
-机械层已做四件事：**只报前置定语位置**、**放行缩略语定义与全段大写的命名约定**、**给左项复合的命中打 `[multi-part left element]` 风险标记**、**`-based` 默认不报**（`X-based` 是 "based on X" 的构式不是造词，两个年代都在用；含它信号从 16x 稀释到 4x）。造词集中在 `-aware` / `-oriented` / `-centric` / `-guided` / `-conditioned` 这几个后缀上。
+`lint.sh` 的 builtin（**只是兜底，不是入口**）已做四件事：**只报前置定语位置**、**放行缩略语定义与全段大写的命名约定**、**给左项复合的命中打 `[multi-part left element]` 风险标记**、**`-based` 默认不报**（`X-based` 是 "based on X" 的构式不是造词，两个年代都在用；含它信号从 16x 稀释到 4x）。造词集中在 `-aware` / `-oriented` / `-centric` / `-guided` / `-conditioned` 这几个后缀上。
 
 机械层由 `policy/lint.sh` 的 builtin 给候选（只报 hapax），**是不是领域术语由你判**——这一步依据你的训练知识，**不可复现、有知识截止、冷门子领域识别率低**。因此**不确定时不报**：误报一个真实领域术语会让作者判定工具不懂本领域、整条规则被关掉，代价远高于漏一个造词。
 
@@ -420,6 +422,8 @@ For comprehensive pattern lists, see:
 > **register check 未通过之前，不得报告词数或压缩百分比。**
 > 实测教训：agent 在作者读到正文之前三次报告「968 → 728 words, −25%」作为成功指标，而那一版正文里有九处语域塌陷。**数字先于质量出现，就会替代质量成为验收标准。**
 > 顺序固定为：压缩 → 逐个改动 span 跑替换测试（见 Do NOT Over-Correct §1）→ 用稿件已有措辞修复 → **然后**才报数字。
+
+> **📏 输入尺度会静默削掉覆盖率。** 一段（~200 词）和一整个 `.tex`（1.2 万–6 万词）不是同一件事，但一遍读完再报告，两种情况读起来一样自信。**给整篇时不要一次通读就出结论**——按 section 逐个过，或者明说这一轮只覆盖了哪些规则、哪些部分。给一段或一节时不需要这条。
 
 > **🔁 收尾必做：跑一次机械兜底**
 > ```bash

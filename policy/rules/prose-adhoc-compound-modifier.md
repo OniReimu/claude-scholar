@@ -80,9 +80,11 @@ lint_targets: "**/*.tex"
   `aware|driven|guided|centric|oriented|enabled|agnostic|informed|preserving|grounded|conditioned|specific|augmented|enhanced`
   `LINT_ADHOC_INCLUDE_BASED=1` 可折回——`concatenation-based` / `euclidean-based` 说明 `-based` 仍可能被造得生涩，只是造词不集中在那里
   ⚠️ **16.27x 不可作为效应量引用**：pre-GPT 侧非 `-based` 的 hapax 只有 **3 个**（`document-specific` · `image-aware` · `report-specific`），分母过小、方差极大。可靠的只有方向
+- ⚠️ **后缀集是廉价兜底，不是判据边界**。后缀是开集：`score-blinded` · `research-bearing` · `throughput-hardened` 都是本卡要抓的对象，而机械层一个都命中不了。实测过形态泛化（`-ed` / `-ing` 分词形式）：召回从 43 条升到 287 条，但两组分离度从 15.4x 塌到 2.75x，多抓的是 `decision-making` · `cross-validated` · `layer-wise` · `english-speaking` 这类标准英语。**因此机械层刻意选高精度低召回**：召回由阅读承担，机械层只做不会疲劳的兜底。曾试过做一个不限后缀的候选生成器交由 LLM 批量裁决，在一篇 2 万词的真实稿件上产出 415 条候选，其中 `channel-wise` · `end-to-end` · `block-diagonal` · `union-find` 这类标准技术英语占大多数——**那个量级的清单比没有清单更糟，它制造「已经查过了」的假象**。已删除
 - **句法过滤：仅前置定语**。`a model-agnostic estimator`（修饰后接名词）才让读者在句中解码；`the estimator is model-agnostic`（表语）时主语已解析完毕，成本低得多。实测：该过滤保留 95 个命中里的 87 个，分离度 3.26x → 3.17x 基本不变，**误报少 8%**
 - **机械豁免（两条，均为显式命名行为）**：① 复合词后紧跟缩略语定义 `Latency-Budget-Aware (LBA)`；② 各段首字母全大写 `Delay-Tolerant-Enabled`（句首大写只抬升第一段，不会被误吞）
 - **风险标记（不过滤，只分级）**：左项本身为复合结构（≥2 个连字符，`out-of-distribution-driven`）的命中附 `[multi-part left element]`。实测该形态分离度最高（3.50x）但绝对量极小（PRE 2 / POST 6），**当过滤器会漏掉九成命中，只能当权重**
+- **机械层在真实工作流中不是入口**。`writing-anti-ai` 逐节执行时不调用 `lint.sh`（skill 内无该指令，hooks 也不触发），识别完全由阅读完成。builtin 的职责是**给不读全文的场合一个廉价兜底**，以及给逐节阅读补一层不会疲劳的覆盖——**它不定义本卡的范围**
 - **为什么必须是 builtin**：判据是**频次**，逐行正则无法表达。`lint_patterns` 只能判「这一行有没有」，判不了「全文出现几次」
 - **allowlist 是地板不是边界**：脚本内置的 26 个（`agent-based` · `data-driven` · `privacy-preserving` …）只挡最通用的。**某个 hapax 是不是本文领域的既有术语，是语义层的判断**，机械层只负责给候选
 - **语义层逐条问两件事**：① 这个词在本领域文献里已有吗？有 → 保留；② 没有的话，它在本文出现几次？只有一次 → 拆开或改写；反复出现 → 转 `PROSE.INVENTED_CONCEPT_LABEL` 走命名声明
@@ -93,7 +95,7 @@ lint_targets: "**/*.tex"
 
 这一步**由 LLM 依据其训练知识判断**，不是查表，也没有可验证的权威来源。三条局限必须随规则一起交付：
 
-1. **不可复现**——换模型、换版本，同一个词可能判得不一样。本卡的机械部分（hapax 计数）换谁跑都一样，**这一步不是**
+1. **不可复现性集中在边界，不是均匀分布**——清晰案例跨模型高度一致：`research-bearing` 与 `score-blinded` 经三个独立模型判定均为造词，连改写方向都收敛到"拆成介词短语"。不可靠的是**边界案例**（`brokerage-oriented` 就是本卡自己判错的那个）。因此"不可复现"不能笼统地说；准确的表述是**清晰案例可复现、边界案例不可靠**，而判定方向保守正是为了让边界案例落在"不报"一侧
 2. **有知识截止**——训练截止之后出现的术语、或截止前但极冷门子领域的术语，会被误判为造词
 3. **领域不均衡**——判官对自己熟悉领域的术语识别率明显更高
 
