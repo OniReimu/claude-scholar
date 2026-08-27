@@ -109,6 +109,8 @@ Remove throat-clearing openers and emphasis crutches.
 Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 
 **Patterns to avoid**:
+- **段落长度异常 → 转诊，不要自己判**：只有一两句的段落（可以并进上下文的）、或明显超长的段落，是 `merge` / `split` 的问题——判它需要看相邻段落各自承载什么信息，那是 `claim-architecture-review` **P1 逐段审计**的 verdict 集合（`{keep, tighten, merge, move, split, delete, escalate}`），不是线编能定的。最小调用见下方转诊说明。
+  ⚠️ **段长本身不是 AI 痕迹**：实测 40 篇语料，2019–2021 与 2025–2026 的段落长度中位数同为 **57 词**，均值 74 vs 71，CV 0.86 vs 0.80——**没有差别**。所以**不要按词数抓段落**，触发转诊的是「这段该不该独立存在」，不是它有多长。（句长分布是另一回事，那条有依据，见 §3 `PROSE.RHYTHM_VARIANCE`。）
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
 - Unnecessary contrast: "X, not Y" / "X rather than Y" / "X instead of Y" — default to plain positive "X is A"; keep the contrast only when ruling out Y carries real information (don't reflexively swap "not Y" → "rather than Y") <!-- policy:PROSE.NEGATION_CONTRAST -->
 - 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**。**跨节转诊**：本条只判本段/本节内的重复列举；若怀疑同一组对象在别节也列过，转 `claim-architecture-review`——`information-ledger.md` 以集合为 info-key，第二次列举在 `lookup-before-create` 时撞上（最小调用见下方转诊说明）
@@ -238,6 +240,12 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 判据两条必须同时成立：**① 全文只出现一次 ② 不是本领域既有术语**。`blockchain-based` 在区块链论文里、`gradient-based` 在优化论文里都是标准说法，反复出现即合规。
 
 ⚠️ **反向护栏**：一份区块链方向的 pre-GPT 稿件复合词出现率是基线的 7 倍，但几乎全是同几个领域术语反复使用。**按总量判会把整个领域误伤，只能按「一次性」判。**
+
+**判定三值，不是二值**：**flag**（造词，须停下解码 → 给两个不同类型的改法）· **hint**（合法且清晰，只是笨重或可优化 → 一句提示，作者可以不理）· **clear**（领域既有术语 → **必须写出出处**）。二值在中间地带必然失准，实测同时报重 `gradient-norm-dependent` 和漏掉 `pre-training/fine-tuning`。
+
+**已放行的也要报**——只报违规时，作者分不清 `read/write` 是"查过合格"还是"没看到"。**沉默不等于干净。**
+
+**斜杠并列同属本条**：`load-balancing/routing module` 是"一个模块做两件事"还是"两个模块之一"？标准对偶（`read/write` · `GPU/TPU` · `client/server`）clear；两侧都是修饰语且关系不明才 flag。⚠️ **不要按密度报**——斜杠密度实测不是年代信号（arXiv 2.0x，而本地稿件反向）。
 
 **放行必须举证**：判定它是既有术语时，**同时说出领域先验出处**（`sharpness-aware minimisation` → Foret et al., SAM）。说不出出处就不能放行。反事实测试：把这个词抽离本文语境、直接放进该领域顶会论文里，**同行审稿人会不会停顿**？
 

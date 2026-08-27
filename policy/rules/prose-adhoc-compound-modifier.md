@@ -21,7 +21,19 @@ lint_targets: "**/*.tex"
 
 连字符复合修饰语（`X-based` · `X-aware` · `X-driven` · `X-guided` · `X-centric` · `X-oriented` · `X-agnostic` · `X-preserving` …）在技术散文里**是标准构造**。本卡不管这个构造，管的是**临时造一个、只用一次**。
 
-### 判据只有两条，必须同时成立
+### 判定是三值的，不是二值
+
+二值判定（报 / 不报）在中间地带必然失准。实测：`gradient-norm-dependent`（表意清晰但笨重）被报重，`pre-training/fine-tuning`（标准但可优化）被漏掉——**一次错两个方向**。
+
+| 判定 | 用于 | 输出 |
+|------|------|------|
+| **flag** | 造词，读者必须停下来解码 | 诊断 + 两个具体改法 |
+| **hint** | 语法合法、语义清晰，但笨重或可优化 | 一句提示，不给改法清单，作者可以不理 |
+| **clear** | 领域既有术语 | **必须写出领域先验出处** |
+
+`hint` 这一档是给"知道它不好但改不改随你"的情形留位置。没有它，这类词只能被塞进 flag（作者觉得工具吵）或 clear（作者觉得工具瞎）。
+
+### flag 档的判据：两条必须同时成立
 
 1. **全文只出现一次**（hapax）——领域已有的术语会反复出现；临时造的用完就扔
 2. **不是本领域已有的术语**——`blockchain-based` 在区块链论文里是标准说法，`gradient-based` 在优化论文里是标准说法
@@ -113,10 +125,31 @@ lint_targets: "**/*.tex"
 - *以 pre-GPT 语料建通用词表* —— 已实测，**不可行**：56 篇仅提取到 89 个类型，`agent-based` / `model-agnostic` / `sharpness-aware` 均不在内，规模远不够
 - *查论文自身参考文献标题* —— 有吸引力（本地、可复现），但**未完成测量**，不作结论；作为后续候选
 
+## Report
+
+**已放行的也要报。** 只报违规时，`read/write` 到底是"查过、判定合格"还是"根本没看到"，作者无从分辨——**沉默不等于干净**。
+
+每条一行，`clear` 档必须带出处：
+
+```
+research-bearing          sec1.tex:12   flag    -bearing 的既有搭配是 load-/interest-，
+                                                接抽象名词后读者需在「承担科研任务」与
+                                                「产出科研成果」之间猜
+                                        → A  university teams conducting active research
+                                        → B  research-intensive university teams
+sharpness-aware           sec3.tex:41   clear   Foret et al., SAM
+gradient-norm-dependent   sec3.tex:08   hint    表意清晰，略笨重
+```
+
+**两个改法必须是不同类型**（拆成从句 / 换常规搭配），不能两个都是新造的复合词——`cache-miss-aware` → `cache-miss-sensitive` 不是修复，是换壳。
+
+**诊断不作语法裁决**：写「这个复合词增加读者的解码成本」，不写「这是语法错误」——它在语法上通常没错。
+
 ## Conflicts
 
 - `PROSE.INVENTED_CONCEPT_LABEL` 拥有**反复使用**的造词（要不要显式声明命名、给定义）。本卡拥有**只用一次**的造词。同一个词不会同时落入两边：判据是出现次数。本卡修法 3（确实是核心概念）就是把它交给那条
 - `PROSE.ELEGANT_VARIATION` 是本卡修法的约束：拆开或改写之后，全文必须一致使用同一个说法，不得每次换一种拆法
+- **斜杠并列（`A/B noun`）是本卡的同一现象**：同样把修饰关系压进标点、让读者现场解码。`load-balancing/routing module` 是"做两件事的一个模块"还是"两个模块之一"，读者判不了。**但不要按密度报**——实测斜杠密度不是年代信号：arXiv 两组 0.52 → 1.04/千词（2.0x，弱），而一份本地 pre-GPT 稿件 1.44、其当前 draft 1.16（**反向**）。标准对偶（`read/write` · `GPU/TPU` · `input/output` · `client/server`）一律 clear；**只有两侧都是修饰语且并列关系不明时才 flag**，改法是展开为 `A and B` 或 `A-B`
 - `PROSE.ABBREVIATION_FIRST_USE` 在修法 3 生效：若造词最终保留并缩写，首次出现处定义
 
 ## Examples
