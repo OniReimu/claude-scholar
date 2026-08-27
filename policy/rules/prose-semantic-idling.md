@@ -52,6 +52,8 @@ autofix: none
 - **领域惯例的套式**：Ethics / Threats to Validity / Broader Impact 段落的规定动作，以及 `\paragraph{}` 标题句；
 - **直接引语、reviewer comment 原文、被批评的对象文本**。
 
+**不豁免**：Future Work / Conclusion 的套话**不在豁免之列**。`paving the way for progressive improvements in subsequent research endeavors` 与任何一篇论文的未来工作段可以互换，正是形态 A——未来工作必须点名一个具体的限制或一个具体的下一步配置。（Ethics / Threats to Validity 之所以豁免，是因为那里的规定动作本身就是被要求的内容；Future Work 没有这个豁免依据。）
+
 **报告已放行项。** 只报违规会让作者分不清"查过合格"与"没看到"。每段至少报出该段被检查的句数与放行数。
 
 ## Boundary
@@ -61,6 +63,12 @@ autofix: none
 **整段不推进**是另一回事，归 `claim-architecture-review` **P1 逐段审计**——判"这段该不该独立存在"需要看相邻段落各自承载什么信息，那是 `merge` / `delete` 的 verdict 集合，本卡的 verdict 只有"具体化 / 删句"。
 
 分流规则：一段之内**多数句子**都判为形态 A，不要逐句报，**整段转 `claim-architecture-review` 跑 P1**（若 `architecture-review/spine.md` 不存在，先跑 P0）。这不是把问题推走——逐句"具体化"一个本身没有内容的段落，产出的是更好听的空话。
+
+## Limitations
+
+**形态 B 会在"标准机制"上过判。** 盲评中一段 OOD robustness 文本被判 `escalate`，理由行称 `because the representations remain invariant across distribution shifts` 是回环。这一条不成立——invariance → OOD reliability 是真实的因果机制，不是同一命题的换词。该段整体判 `escalate` 仍然正确（另外三句确实零具体对象），但**形态 B 的判据在"机制是标准的、因而听起来像同义"的地方会失准**。
+
+判 B 之前先问：解释项是否引入了一个**独立可测的量**？引入了就不是回环，哪怕这个因果关系在领域内是常识。未被测量的机制主张是含糊（归 `PROSE.VAGUE_QUANTIFIERS` / 证据强度问题），不是空转。
 
 ## Examples
 

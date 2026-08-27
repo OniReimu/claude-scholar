@@ -282,6 +282,9 @@ AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措�
 ⚠️ **不要用指标代替判断**：不做嵌入余弦、不做 filler-token 占比、不做命题密度阈值。本仓库实测过这类代理量——结构性重复信号自评 16x，换 fresh 模型盲评后塌到 1.22x，组内离散度比组间差异还大。给判断套阈值，测的是仪器自己。
 
 **豁免**：定义句与形式化陈述；**下一句就落地兑现**的抽象铺垫（那是 topic sentence，判据是兑现距离——隔三句还在抽象层才违规）；Ethics / Threats to Validity / Broader Impact 的规定动作与 `\paragraph{}` 标题句；直接引语与被批评的对象文本。
+**Future Work / Conclusion 套话不豁免**——`paving the way for progressive improvements in subsequent research endeavors` 和任何一篇论文的未来工作段可以互换，正是形态 A。未来工作必须点名一个具体限制或一个具体的下一步配置。
+
+⚠️ **判形态 B 之前先问：解释项有没有引入一个独立可测的量？** 有就不是回环，哪怕这个因果在领域内是常识。实测过判案例：`because the representations remain invariant across distribution shifts` 被判成回环，但 invariance → OOD reliability 是真机制。**没被测量的机制主张是含糊，不是空转。**
 
 **报告已放行项**：每段报出被检查句数与放行数。只报违规，作者分不清"查过合格"和"没看到"。
 
