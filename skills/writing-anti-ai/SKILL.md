@@ -127,7 +127,10 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - 句首重复 ≥3 次 <!-- policy:PROSE.ANAPHORA_ABUSE -->：`We show… We show… We show…` — 靠重复句首造节奏在学术散文里不自然。修法是让第二、三句从各自的**内容**起句，不是换个同义动词
 - 分词片段堆叠 <!-- policy:PROSE.GERUND_FRAGMENT_LITANY -->：`Improving throughput. Reducing memory. Enabling longer contexts.` — 每句必须有主语和谓语。改法是合成一句带并列宾语的完整句，或各自补主语
 - 极短句独立成段 <!-- policy:PROSE.SHORT_PUNCHY_FRAGMENTS -->：≤5 词的句子单独成段制造戏剧效果。⚠️ **短句本身没问题**——问题只在两种（见 §3 的两道门槛：预告而非主张、两拍式反驳）；一个承载具体结论的短句该留
-- Fractal summary: "In this section, we present…" / "As we have seen…" / "Having discussed X, we now…" — 同一信息在标题、预告句、回顾句里讲三遍。节的首句直接进内容，末句停在最后一个具体结论上；前向引用交给 `\Cref{}`，不要用叙述句预告 <!-- policy:PROSE.FRACTAL_SUMMARY -->
+- Fractal summary: "In this section, we present…" / "As we have seen…" / "Having discussed X, we now…" — 同一信息在标题、预告句、回顾句里讲三遍。节的首句直接进内容，末句停在最后一个具体结论上；前向引用交给 `\Cref{}`，不要用叙述句预告。
+  **重锚不是预告**：一节要用到几节之前定义的构件（RQ 集合、命名术语、框架阶段）时重新说一遍，是正常人类写法。两条判据**都要成立**才放行——**自足**（不持有「标签→内容」绑定也读得懂：`The study asks three questions. First, what does ...?` 自足；`RQ1 establishes which ...` 不自足，只点标签在任何距离下都不合格）＋**距离足以让读者本来要回翻**（判回翻成本，**不设数字阈值**，按节量不按页）。紧贴标题上方两行的完整复述仍然违规——读者刚看过。
+  ⚠️ 距离只解除本条的构型判定，**不解除 `PROSE.SEMANTIC_IDLING` 形态 A**：什么都没断言的回顾隔多远都是空转，两条分别过。
+  **跨节不归本条**：同一命题在几个节各有一个 home，转 `claim-architecture-review` 的 **P2 relocation**——那里才是重锚会被误杀的地方（ledger 只看见「一个命题两个 home」，设计目标就是压成一个）。最小调用：`spine.md` 在就只跑该节的 P1 再进 P2 判这一个 cluster，不在就先跑 P0；要求 P2 把保留的 home 标 `(re-anchor)` 并写出 canonical home 的位置 <!-- policy:PROSE.FRACTAL_SUMMARY -->
 
 ### 3. Vary Rhythm
 Mix sentence lengths. End paragraphs differently.

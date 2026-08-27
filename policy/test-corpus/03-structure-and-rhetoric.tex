@@ -167,3 +167,32 @@ The coordinator commits at a load factor of 0.85 and logs the decision.
 % @EXPECT none
 The coordinator evaluates each candidate placement against the residual capacity of every rack in the target zone. It then records the outcome in the durable log so a later failover can replay it.
 % @ENDCASE
+
+% ── PROSE.FRACTAL_SUMMARY: the re-anchor 2x2 ────────────────────────────────
+% All four cells are `@EXPECT none` on purpose. Self-containment and distance
+% are judgment-layer questions and the card deliberately adds no pattern for
+% them; what these cases lock down is that the five existing patterns stay
+% silent on every cell — including the two that ARE violations. If someone
+% later reaches for an `RQ\d` pattern, the two legitimate cells break first.
+% Cells: {self-contained, label-ping} x {far, adjacent}. Only far+self-contained
+% is legitimate; the other three are the judgment layer's to catch.
+
+% @CASE reanchor-far-self-contained-legitimate
+% @EXPECT none
+The study asks three questions. First, what does a reviewer's visible action contain? Second, does that content predict downstream acceptance? Third, is the association causal?
+% @ENDCASE
+
+% @CASE reanchor-far-label-ping-violation-invisible-to-regex
+% @EXPECT none
+RQ1 establishes which public events can be interpreted. RQ2 asks whether the association survives controls.
+% @ENDCASE
+
+% @CASE reanchor-adjacent-self-contained-violation-invisible-to-regex
+% @EXPECT none
+The study asks three questions, restated here immediately above the heading that answers the first of them.
+% @ENDCASE
+
+% @CASE reanchor-adjacent-label-ping-violation-invisible-to-regex
+% @EXPECT none
+RQ1 is addressed next, and RQ2 follows in the subsection after it.
+% @ENDCASE
