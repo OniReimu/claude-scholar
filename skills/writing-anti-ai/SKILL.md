@@ -239,7 +239,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 修法优先级：① 拆成介词短语或从句（`exposure-aware signals` → `signals that record what each user was shown`）；② 直接用普通语言说清楚；③ 若它确实是本文核心概念，**不要一次性使用**——显式声明命名、给定义、全文一致，此时转 `PROSE.INVENTED_CONCEPT_LABEL`。**不要把一次性造词换成另一个一次性造词。**
 
-机械层由 `policy/lint.sh` 的 builtin 给候选（只报 hapax），**是不是领域术语由你判**。
+机械层由 `policy/lint.sh` 的 builtin 给候选（只报 hapax），**是不是领域术语由你判**——这一步依据你的训练知识，**不可复现、有知识截止、冷门子领域识别率低**。因此**不确定时不报**：误报一个真实领域术语会让作者判定工具不懂本领域、整条规则被关掉，代价远高于漏一个造词。
 
 **不要给现象起名** <!-- policy:PROSE.INVENTED_CONCEPT_LABEL -->
 "the supervision paradox" / "workload creep" 这类标签只在两种情况下允许：有文献出处并引用，或是本文明确的命名贡献（显式声明 + 定义 + 全文一致）。两者都不满足就用普通语言描述现象。审稿人会去检索你造的"既有概念"。
