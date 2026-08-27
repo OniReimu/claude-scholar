@@ -1,6 +1,6 @@
 ---
 name: writing-anti-ai
-description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
+description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
 version: 1.4.2
 author: gaoruizhang
 license: MIT
@@ -63,6 +63,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足 |
 | `PAPER.OUTCOME_LOGIC` | 删句级过程流水账（we first tried…）；结构级重排归 claim-architecture-review |
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
+| `PROSE.CAUSAL_CONNECTIVE` | 因果连接词按类型选，不默认用 `, so`；**只改三个可诊断子类**（设计选择伪装成推论 / 因果无证据支持 / 证明步骤），其余保留 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
 ## Overview
@@ -173,6 +174,29 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 - 词表已按学术语域裁剪：`robust` / `optimize` / `trajectory` / `loss landscape` / `framework` / `approach` 是术语，**不在表内**，不要误伤。
 - **套话开场（零容忍，本条此前在本 skill 里不可见）**：`In recent years,` · `has attracted increasing attention` · `With the rapid development of`。lint 已在抓，但执行者读本 skill 时看不到它，等于扫描时不会去查开篇句。**正面要求**：Abstract / Introduction 的第一句必须携带**具体的张力或 gap**（一个可验证的结构性事实），不能是泛化趋势陈述——趋势应由那个事实自己带出来。与 `PROSE.FRACTAL_SUMMARY` 分工：那条管**节内**的预告/回顾（"In this section we…"），本条管**论文/章节的开篇**是不是套话。
 - **句首连接词密度**：`Moreover,` / `Furthermore,` / `Additionally,` / `In addition,` 全文合计 ≤4。超出说明逻辑靠连接词粘贴而非论证顺序承载；修法是重排句序，不是换个同义连接词。
+
+**因果连接词要选，不能默认用 `so`** <!-- policy:PROSE.CAUSAL_CONNECTIVE -->
+`X, so Y` 是口语里默认的因果连接——**正因为默认，用它时通常没做过选择**。Pre-GPT 基线（两组不重叠类别，56 篇 51 万词）：`, so` 0.18–0.28/千词，`therefore/hence/thus/consequently` 约 2.2/千词，比例 8–12:1。
+
+⚠️ **这不是 AI 痕迹检测**。42 条真实句子的盲评实测：任取一个 `, so`，无论出自 pre-GPT 论文还是当代 draft，"可改进"的比例都差不多（收紧判据后 pre-GPT 64% vs draft 29%，顺序还反转）。差别只在**有多少个**——本地 draft 抽样是基线的 15–25 倍。所以**判据不能是「能否改得更精确」**，否则会把 pre-GPT 水准的散文一起改掉。
+
+**只有三个子类触发改写，其余一律保留：**
+
+1. **设计选择伪装成推论**——`The adversary is adaptive, so we sample fresh randomness each round.` 这是动机不是推论 → `To defend against an adaptive adversary, we sample…`
+2. **因果未被证据支持**——只有相关或只是猜测 → 交 `PROSE.HEDGING_DISCIPLINE`
+3. **证明 / 推导步骤**——数学蕴含里 `hence` / `thus` 是本领域惯例
+
+后果显而易见的 `so`、解释性的 `so`、`so it remains to show` 这类证明惯用语——**不动**。
+
+归入三类之后，再走三问定修法：
+
+1. **这是哪一种因果？** `therefore` 逻辑蕴含（从前提必然得出）· `hence` 就近承接刚建立的结论 · `thus` 以此方式/据此（构造性推论）· `consequently` 经验后果（实测/运行中观察到）。**说不出是哪一种 = 这个因果本身没想清楚**，先想清楚再选词，不要因为说不清就退回 `so`
+2. **证据支持这个因果吗？** 只支持相关、或那其实是个设计选择 → 不是语域问题，是 over-claim，交 `PROSE.HEDGING_DISCIPLINE`：降级动词或拆开陈述，**不是换连接词**
+3. **需要连接词吗？**（首选修法在这里）两个独立子句用逗号+`so` 粘着，多数时候应把因果写进**句法**：从属化 `Because A, B` · 关系从句 `, which tightens the bound` · 断句 `A. It follows that B.` 从属化同时少一个逗号（协同 `PROSE.COMMA_OVERUSE`）
+
+⚠️ **反向护栏**：**不要机械替换**，把全篇 `so` 统一换成 `therefore` 只是把一种指纹换成另一种，并造出新的均质化（撞 `PROSE.RHYTHM_VARIANCE`）。正式连接词必须按语义分布。
+
+不在范围内：`so that`（目的从句，合法）· `so far`（习语性状语，归 `PROSE.INFORMAL_VOCABULARY` 第 1 类）· `so large` 式程度副词。
 
 **口语语域按五个具名类别查，不是按词表查** <!-- policy:PROSE.INFORMAL_VOCABULARY -->
 词表只够得着第 1 类。实测一篇 author-original 稿件的 30 处语域问题里，**29 处是多词构造**，词表命中 0/26。

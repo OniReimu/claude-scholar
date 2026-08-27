@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {max_commas: 3}
-conflicts_with: [PROSE.RULE_OF_THREE, PROSE.TRAILING_AFTERTHOUGHT]
+conflicts_with: [PROSE.RULE_OF_THREE, PROSE.TRAILING_AFTERTHOUGHT, PROSE.CAUSAL_CONNECTIVE]
 constraint_type: guardrail
 autofix: none
 lint_patterns:

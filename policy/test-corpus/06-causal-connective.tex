@@ -1,0 +1,78 @@
+% Corpus: PROSE.CAUSAL_CONNECTIVE.
+%
+% The regex layer only LOCATES; the four-way choice and the restructure-first
+% preference are judgment. So the reverse-guard case below is expected to FIRE
+% here — a correct `so` is resolved at the judgment layer, not by the pattern.
+% What the pattern must never do is fire on the four non-causal senses.
+
+% @CASE causal-so-logical-entailment
+% @EXPECT PROSE.CAUSAL_CONNECTIVE
+The map is monotone in both arguments, so any downstream continuation bound tightens.
+% @ENDCASE
+
+% @CASE causal-so-design-choice-dressed-as-inference
+% @EXPECT PROSE.CAUSAL_CONNECTIVE
+The adversary is adaptive, so we sample fresh randomness each round.
+% @ENDCASE
+
+% @CASE causal-so-empirical-consequence
+% @EXPECT PROSE.CAUSAL_CONNECTIVE
+The kernel spills to global memory at length 4096, so throughput drops by 38 percent.
+% @ENDCASE
+
+% @CASE causal-so-sentence-initial
+% @EXPECT PROSE.CAUSAL_CONNECTIVE
+So the bound is tight only in the balanced regime.
+% @ENDCASE
+
+% @CASE causal-so-reverse-guard-fires-at-regex-layer-by-design
+% The consequence is obvious enough that `therefore` would be stilted, so this
+% instance survives judgment. The pattern cannot know that, and must not try.
+% @EXPECT PROSE.CAUSAL_CONNECTIVE
+The server never sees raw features, so it cannot invert them directly.
+% @ENDCASE
+
+% @CASE causal-so-that-purpose-clause-clean
+% @EXPECT none
+We normalise the embedding so that the similarity is scale-free.
+% @ENDCASE
+
+% @CASE causal-so-as-to-clean
+% @EXPECT none
+The masks are seeded pairwise so as to cancel in the aggregate.
+% @ENDCASE
+
+% @CASE causal-so-long-as-clean
+% @EXPECT none
+The bound holds so long as the noise is sub-Gaussian.
+% @ENDCASE
+
+% @CASE causal-so-called-clean
+% @EXPECT none
+This is the so-called balanced regime, where both terms contribute equally.
+% @ENDCASE
+
+% @CASE causal-and-so-on-clean
+% @EXPECT none
+The registry stores the model name, its revision, its licence, and so on.
+% @ENDCASE
+
+% @CASE causal-so-far-belongs-to-informal-vocabulary
+% @EXPECT PROSE.INFORMAL_VOCABULARY
+No attack reported so far recovers the full feature axis.
+% @ENDCASE
+
+% @CASE causal-therefore-correct-clean
+% @EXPECT none
+The map is monotone in both arguments; therefore any downstream continuation bound tightens.
+% @ENDCASE
+
+% @CASE causal-subordination-clean
+% @EXPECT none
+Because the mask density is known at aggregation time, the unbiased estimator needs no extra communication.
+% @ENDCASE
+
+% @CASE causal-relative-clause-clean
+% @EXPECT none
+We rescale by the inverse mask density, which restores unbiasedness without a second pass.
+% @ENDCASE

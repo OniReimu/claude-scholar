@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {idiom_allowlist: "from scratch", phrasal_verb_allowlist: "carries out|carried out|rules out|ruled out|points out|pointed out|sets up|set up|holds at|holds with|stems from|follows from|reads off|falls back|falls back to", judgment_adjective_allowlist: ""}
-conflicts_with: [PROSE.VAGUE_QUANTIFIERS, PROSE.REGISTER_PRESERVATION, PROSE.ABSTRACT_AGENCY, PROSE.ELEGANT_VARIATION, PROSE.IDIOM_COLLISION]
+conflicts_with: [PROSE.VAGUE_QUANTIFIERS, PROSE.REGISTER_PRESERVATION, PROSE.ABSTRACT_AGENCY, PROSE.ELEGANT_VARIATION, PROSE.IDIOM_COLLISION, PROSE.CAUSAL_CONNECTIVE]
 constraint_type: guardrail
 autofix: safe
 lint_patterns:

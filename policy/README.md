@@ -261,6 +261,7 @@ SoK 规则集合（语义规则）：
 | PROSE.COMMA_OVERUSE | prose-comma-overuse | domain | warn | false | lint_script | guardrail | none |
 | PROSE.MIDSENTENCE_COLON | prose-midsentence-colon | domain | warn | false | lint_script | guardrail | none |
 | PROSE.NEGATION_CONTRAST | prose-negation-contrast | domain | warn | false | lint_script | guardrail | none |
+| PROSE.CAUSAL_CONNECTIVE | prose-causal-connective | domain | warn | false | lint_script | guidance | none |
 | PROSE.AI_LEXICON | prose-ai-lexicon | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.FRACTAL_SUMMARY | prose-fractal-summary | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.INVENTED_CONCEPT_LABEL | prose-invented-concept-label | domain | warn | false | doc | guardrail | none |

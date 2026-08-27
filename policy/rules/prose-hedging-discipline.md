@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.REGISTER_PRESERVATION, PROSE.SELF_UNDERMINING]
+conflicts_with: [PROSE.REGISTER_PRESERVATION, PROSE.SELF_UNDERMINING, PROSE.CAUSAL_CONNECTIVE]
 constraint_type: guidance
 autofix: none
 ---
