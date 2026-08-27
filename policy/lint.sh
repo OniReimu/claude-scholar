@@ -639,6 +639,74 @@ lint_cite_verify_via_api() {
 #
 # Matching goes through the same GREP_MODE dispatch as regex_match/regex_count:
 # BSD grep has no -P, so a bare `grep -P` here would silently match nothing.
+
+# ─── Builtin: PROSE.SEMICOLON_RESTRICTION ───────────────────────────────────
+# A plain pattern would fire inside inline math: `p(y \mid x; \theta)` is
+# ordinary ML notation, and measured across the reference corpora 7-16% of all
+# semicolons sit inside `$...$`. `\;` is a thin-space macro, not punctuation.
+# Both have to be stripped before anything is judged, hence a builtin.
+# List items ending in a semicolon are a list separator convention, not a
+# mid-paragraph join, so list environments are skipped entirely.
+lint_prose_semicolon_restriction() {
+  local severity="$1"
+  local -a tex_files=()
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tex_files+=("$f")
+  done < <(find_target_files "*.tex" "$TARGET_DIR")
+  [[ ${#tex_files[@]} -gt 0 ]] || return 0
+
+  local file view hits stripped
+  for file in "${tex_files[@]}"; do
+    view=$(lint_view "$file")
+    hits=$(perl -CSD -e '
+      my ($math, $list, $verb) = (0, 0, 0);
+      my $depth_list = 0; my $in_verb = 0;
+      open(my $fh, "<:encoding(UTF-8)", $ARGV[0]) or exit 0;
+      my @out;
+      while (my $l = <$fh>) {
+        my $ln = $.;
+        if ($l =~ /\\begin\{(algorithm|algorithmic|lstlisting|verbatim|tikzpicture|equation|align)\*?\}/) { $in_verb++ }
+        if ($l =~ /\\end\{(algorithm|algorithmic|lstlisting|verbatim|tikzpicture|equation|align)\*?\}/) { $in_verb-- if $in_verb > 0; next }
+        if ($in_verb) { $verb += ($l =~ tr/;//); next }
+        if ($l =~ /\\begin\{(itemize|enumerate|description)\}/) { $depth_list++ }
+        if ($l =~ /\\end\{(itemize|enumerate|description)\}/)   { $depth_list-- if $depth_list > 0; next }
+        if ($depth_list) { $list += ($l =~ tr/;//); next }
+
+        my $c = $l;
+        my $thin = ($c =~ s/\\;/ /g) || 0;         # thin-space macro: literal backslash-semicolon,
+        #   NOT /\;/ — in a regex that is just `;` and silently deletes every one.
+        my $before = ($c =~ tr/;//);
+        $c =~ s/\$[^\$]*\$/ MATH /g;                 # inline math
+        my $after = ($c =~ tr/;//);
+        $math += $before - $after;
+        next unless $after;
+        while ($c =~ /(\S*\s?\S*);(\s?\S*\s?\S*)/g) {
+          my $ctx = "$1;$2"; $ctx =~ s/\s+/ /g; $ctx =~ s/^\s+|\s+$//g;
+          push @out, "HIT\t$ln\t$ctx";
+        }
+      }
+      close $fh;
+      print "$_\n" for @out;
+      print "SKIP\t$math\t$list\t$verb\n";
+    ' "$view" 2>/dev/null || true)
+    [[ -n "$hits" ]] || continue
+    while IFS=$'\t' read -r kind a b c; do
+      case "$kind" in
+        HIT)
+          report_finding "$severity" "$RULE_ID" "${file}:${a}: semicolon joins two clauses — split into two sentences — ${b}"
+          ;;
+        SKIP)
+          # Silence is not cleanliness: say what was stripped, so the author can
+          # tell "checked and clean" from "never looked".
+          if (( a > 0 || b > 0 || c > 0 )); then
+            $QUIET || echo -e "    ${DIM}cleared in ${file##*/}: ${a} in math, ${b} in list items, ${c} in verbatim/algorithm${NC}"
+          fi
+          ;;
+      esac
+    done <<< "$hits"
+  done
+}
+
 # Emits "lineno<TAB>matched-span" so the caller can attach the real filename.
 prov_grep_spans() {
   local pat="$1" f="$2"
@@ -908,6 +976,20 @@ for rule_file in "$RULES_DIR"/*.md; do
     prev_e=$TOTAL_ERRORS
     prev_w=$TOTAL_WARNINGS
     lint_prose_adhoc_compound_modifier "$local_severity"
+    if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
+      ((RULES_PASSED++)) || true
+      $QUIET || echo -e "    ${GREEN}PASS${NC}"
+    fi
+    $QUIET || echo ""
+    continue
+  fi
+
+  if [[ "$RULE_ID" == "PROSE.SEMICOLON_RESTRICTION" ]]; then
+    $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) builtin semicolon → *.tex"
+    ((RULES_CHECKED++)) || true
+    prev_e=$TOTAL_ERRORS
+    prev_w=$TOTAL_WARNINGS
+    lint_prose_semicolon_restriction "$local_severity"
     if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
       ((RULES_PASSED++)) || true
       $QUIET || echo -e "    ${GREEN}PASS${NC}"

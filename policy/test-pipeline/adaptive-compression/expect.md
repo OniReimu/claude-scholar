@@ -20,7 +20,8 @@ false-positive traps.
 
 | # | instance | expected action |
 |---|----------|-----------------|
-| L1 | `---` in P3 | fix — zero-tolerance em dash |
+| L1 | `---` in P3 | fix — zero-tolerance em dash, and **structurally**: rewriting to `, a 12.5x reduction` keeps the trailing appositive and does not count |
+| L1b | `; the inner codebook` in P3 | fix — `PROSE.SEMICOLON_RESTRICTION`, split into two sentences |
 | L2 | `convergence-aware scheduler` | `flag` or `hint`; either is defensible. The card's conservative direction (§Rationale: do not report when uncertain) makes `hint` the better answer if the judge cannot cite a prior source |
 | L3 | `, so the per-step communication volume drops` | **keep** — the consequence is empirically supported (512→41 MB) and falls outside the three convertible subclasses. Converting it to `therefore` is a failure |
 | L4 | `Our approach` / `The proposed framework` / `the presented method` | one term survives; the other two go with their paragraphs |
@@ -31,7 +32,7 @@ false-positive traps.
 | # | target | why it must survive |
 |---|--------|---------------------|
 | F1 | P3 body | named structure, dimensions, bit widths, measured numbers |
-| F2 | P6 whole paragraph | the `because` clause introduces `1/(1-β)`, a quantity independent of the conclusion — a real mechanism, not circular attribution. Byte-identical survival is the assertion |
+| F2 | P6 whole paragraph | the `because` clause introduces `1/(1-β)`, a quantity independent of the conclusion — a real mechanism, not circular attribution. Byte-identical survival is the assertion. Kept deliberately clean on every other axis (no semicolon, longest sentence 30 words) so that anything firing on it is the thing under test |
 | F3 | `therefore` in P6 | correctly typed entailment from a stated premise |
 
 ## Ordering trap

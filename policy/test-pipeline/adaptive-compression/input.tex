@@ -33,10 +33,10 @@ substantially accelerates convergence.
 Compression interacts with momentum in a way that constrains the refresh
 schedule. Because the EMA in the optimizer integrates gradients over roughly
 $1/(1-\beta)$ steps, a codebook refresh inside that window injects quantization
-noise that the momentum buffer amplifies rather than averages out; with
-$\beta=0.9$ we therefore align refreshes to 500-step boundaries, ten times the
-integration window, and observe no measurable accuracy gap relative to
-uncompressed training (Table~\ref{tab:acc}).
+noise that the momentum buffer amplifies rather than averages out. With
+$\beta=0.9$ we align refreshes to 500-step boundaries, ten times the
+integration window, and measure no accuracy gap against uncompressed
+training (Table~\ref{tab:acc}).
 
 While the presented method demonstrates promising results, several avenues
 remain open for future exploration. Investigating alternative configurations

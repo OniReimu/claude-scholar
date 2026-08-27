@@ -267,6 +267,7 @@ SoK 规则集合（语义规则）：
 | PROSE.INVENTED_CONCEPT_LABEL | prose-invented-concept-label | domain | warn | false | doc | guardrail | none |
 | PROSE.ADHOC_COMPOUND_MODIFIER | prose-adhoc-compound-modifier | domain | warn | false | lint_script | guidance | none |
 | PROSE.RESTATEMENT_DILUTION | prose-restatement-dilution | domain | warn | false | doc | guardrail | none |
+| PROSE.SEMICOLON_RESTRICTION | prose-semicolon-restriction | domain | warn | false | lint_script | guardrail | none |
 | PROSE.SEMANTIC_IDLING | prose-semantic-idling | domain | warn | false | doc | guardrail | none |
 | PROSE.REGISTER_PRESERVATION | prose-register-preservation | domain | warn | false | doc | guardrail | none |
 | PROSE.IDIOM_COLLISION | prose-idiom-collision | domain | warn | false | doc | guardrail | none |

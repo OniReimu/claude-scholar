@@ -41,7 +41,7 @@ We report \texttt{empirical\_rate} averaged over ten seeds.
 % @ENDCASE
 
 % @CASE provenance-superseded-version
-% @EXPECT PROSE.NO_INTERNAL_PROVENANCE
+% @EXPECT PROSE.NO_INTERNAL_PROVENANCE, PROSE.SEMICOLON_RESTRICTION
 The old bound is retracted; the constant below supersedes it.
 % @ENDCASE
 
@@ -54,4 +54,34 @@ All measurements and the harness that produced them are released with the artifa
 % @EXPECT none
 The controller reaches steady state within four rounds.
 % Unfortunately an earlier draft leveraged a comprehensive tapestry of things.
+% @ENDCASE
+
+% ── PROSE.SEMICOLON_RESTRICTION ─────────────────────────────────────────────
+% The builtin strips three things before judging. Each has a precision case
+% here, because the failure that matters is firing on notation an author knows
+% is correct — that is how a rule gets switched off.
+
+% @CASE semicolon-joins-two-clauses
+% @EXPECT PROSE.SEMICOLON_RESTRICTION
+The outer codebook quantizes each block to one of 256 centroids; the inner codebook encodes the residual at 4 bits per dimension.
+% @ENDCASE
+
+% @CASE semicolon-before-however
+% @EXPECT PROSE.SEMICOLON_RESTRICTION
+The bound is tight in the balanced regime; however, it degrades sharply once the skew exceeds two.
+% @ENDCASE
+
+% @CASE semicolon-in-inline-math-conditioning-clean
+% @EXPECT none
+The estimator is defined as $p(y \mid x; \theta)$ with $\theta$ held fixed during evaluation.
+% @ENDCASE
+
+% @CASE semicolon-thin-space-macro-clean
+% @EXPECT none
+The measured latency is $11\;\mathrm{ms}$ at batch size 32 and $18\;\mathrm{ms}$ at batch size 64.
+% @ENDCASE
+
+% @CASE semicolon-two-plain-sentences-clean
+% @EXPECT none
+The outer codebook quantizes each block to one of 256 centroids. The inner codebook encodes the residual at 4 bits per dimension.
 % @ENDCASE

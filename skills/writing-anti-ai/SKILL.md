@@ -34,7 +34,8 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.SEMANTIC_IDLING` | 每句必须新增可证伪内容：零命题的元叙述句 / 理由复述结论的因果回环 |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
 | `PROSE.HEDGING_DISCIPLINE` | 动词强度匹配证据强度（双向：不 over-hedge 也不 over-claim） |
-| `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
+| `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍）；替换标点不算修法，结构必须变 |
+| `PROSE.SEMICOLON_RESTRICTION` | 正文段落禁止分号，两个独立子句拆成两句 |
 | `PROSE.FILLER_PHRASES` | 删除冗余填充短语 |
 | `PROSE.COLON_LIST_OVERUSE` | 禁止正文内联编号列表 |
 | `PROSE.RULE_OF_THREE` | 并列列举的密度与重复（不止三项并列）；同一集合不得枚举两次 |
@@ -115,7 +116,8 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
 - Unnecessary contrast: "X, not Y" / "X rather than Y" / "X instead of Y" — default to plain positive "X is A"; keep the contrast only when ruling out Y carries real information (don't reflexively swap "not Y" → "rather than Y") <!-- policy:PROSE.NEGATION_CONTRAST -->
 - 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**。**跨节转诊**：本条只判本段/本节内的重复列举；若怀疑同一组对象在别节也列过，转 `claim-architecture-review`——`information-ledger.md` 以集合为 info-key，第二次列举在 `lookup-before-create` 时撞上（最小调用见下方转诊说明）
-- Em-dash (zero allowed — not even one): "X---Y---Z" parentheticals (use relative clause ", which..." or start a new sentence) <!-- policy:PROSE.EM_DASH_RESTRICTION -->
+- Em-dash (zero allowed — not even one): "X---Y---Z" parentheticals. **替换标点不算修法**——`X --- a 12.5$\times$ reduction` 改成 `X, a 12.5$\times$ reduction` 只换了标点，同位语仍然是尾巴，而本条存在的理由正是这种挂载方式。按尾巴性质选：完整命题→拆成新句；对前面名词的限定→关系从句 `, which ...`；真旁白→括号或删。判据是"原来挂着的内容是否已经进入某个语法主结构" <!-- policy:PROSE.EM_DASH_RESTRICTION -->
+- **正文段落禁止分号** <!-- policy:PROSE.SEMICOLON_RESTRICTION -->：分号连起来的两个独立子句**拆成两句**，第二句首字母大写。不要把分号换成逗号——那还是标点替换。豁免：行内数学里的条件记号 `p(y \mid x; \theta)`、`\;` 细空格宏、列表项分隔、algorithm/verbatim 环境（lint 的 builtin 会先剥掉这三类再判，并报出剥掉了多少）。⚠️ **这是作者选定的风格约束，不是被验证过的 AI 痕迹**：作者 pre-GPT 2.62/千词 vs 当前 draft 5.60（2.14x），arXiv 同期 1.32→1.80（1.36x），但两侧语料不可比且未做盲评——不要在报告里把它写成"AI 味"证据
 - Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including") <!-- policy:PROSE.COLON_LIST_OVERUSE -->
 - Mid-sentence colon: "key observation: the model fails" — rewrite as a full sentence or split; only heading colons (`\textbf{X:}`) are exempt <!-- policy:PROSE.MIDSENTENCE_COLON -->
 - Trailing afterthought: "..., as editable." comma + short tag tacked onto a sentence end (fold into the main clause) <!-- policy:PROSE.TRAILING_AFTERTHOUGHT -->

@@ -13,6 +13,15 @@
 #        ./test-pipeline.sh --list
 
 set -uo pipefail
+
+# Resolve a caller-supplied final.tex against the ORIGINAL cwd before chdir'ing
+# to the script directory. Without this, the ordinary invocation
+#   ./policy/test-pipeline.sh <case> policy/test-pipeline/<case>/input.tex
+# dies with "missing final text" (exit 2) because the path is re-resolved
+# relative to policy/ — which reads as a broken fixture rather than a usage slip.
+if [ "${2:-}" ] && [ "${2#/}" = "$2" ]; then
+  set -- "${1:-}" "$PWD/$2"
+fi
 cd "$(dirname "$0")" || exit 1
 
 RED=$'\033[0;31m'; GREEN=$'\033[0;32m'; YELLOW=$'\033[1;33m'; DIM=$'\033[2m'; BOLD=$'\033[1m'; NC=$'\033[0m'
@@ -96,16 +105,18 @@ while IFS=$'\t' read -r verb pattern label; do
         echo "       ${DIM}end anchor not found after start — fixture is broken${NC}"
         declare_fail
       else
+        # Compare on whitespace-normalised text, not line by line. A polish pass
+        # may re-wrap a paragraph it did not otherwise touch; VERBATIM is about
+        # the wording surviving, not the line breaks. The line-based form passed
+        # here only because the reflow happened to leave a matching substring.
+        span_flat="$(printf '%s' "$span" | tr '\n' ' ' | tr -s ' ' | sed 's/^ //; s/ $//')"
         missing=""
-        while IFS= read -r line; do
-          [ -n "$line" ] || continue
-          grep -qF -- "$line" "$FINAL" || missing="$line"
-        done <<<"$span"
+        printf '%s' "$FINAL_FLAT" | grep -qF -- "$span_flat" || missing="$span_flat"
         if [ -z "$missing" ]; then
           echo "  ${GREEN}pass${NC} VERBATIM  ${label}"; pass=$((pass+1))
         else
           echo "  ${RED}FAIL${NC} VERBATIM  ${label}"
-          echo "       ${DIM}span was modified, first divergence: ${missing}${NC}"
+          echo "       ${DIM}span was modified${NC}"
           declare_fail
         fi
       fi

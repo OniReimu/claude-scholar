@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {max_per_paragraph: 0}
-conflicts_with: []
+conflicts_with: [PROSE.SEMICOLON_RESTRICTION]
 constraint_type: guardrail
 autofix: assisted
 lint_patterns:
@@ -22,7 +22,21 @@ lint_targets: "**/*.tex"
 
 ## Requirement
 
-禁止使用 em-dash（`---`）。一个都不允许。用以下替代方案：(1) 拆成新句子，(2) 关系从句（`, which...`），(3) 逗号插入语，(4) 括号。Em-dash 是强烈的 AI 写作信号。
+禁止使用 em-dash（`---`）。一个都不允许。
+
+**替换标点不算修法——结构必须变。** em-dash 挂着的那截尾巴，换成逗号之后原样还在，而本卡存在的理由正是这种"想起来再补一句"的挂载方式。判据：改完之后，原来被破折号挂着的内容是否已经进入某个语法主结构？
+
+按尾巴的性质选：
+
+| 尾巴是什么 | 改法 |
+|---|---|
+| 一个完整命题 | (1) **拆成新句子** |
+| 对前面名词的限定 | (2) **关系从句**（`, which ...`）——它把尾巴接进从句结构，不是并排挂着 |
+| 真正的旁白、可以删掉而不损失论证 | (4) **括号**，或直接删 |
+
+**不推荐逗号插入语**：`X --- a 12.5$\times$ reduction` 改成 `X, a 12.5$\times$ reduction` 只换了标点，同位语仍然是尾巴。要么写成 `X. This is a 12.5$\times$ reduction ...`，要么并进主句。
+
+Em-dash 是强烈的 AI 写作信号。
 
 ## Rationale
 

@@ -28,6 +28,11 @@ GONE	valuable insights	PROSE.AI_LEXICON gone
 
 # ── line layer ──────────────────────────────────────────────────────────────
 GONE	---	PROSE.EM_DASH_RESTRICTION (zero tolerance)
+# The em-dash remedy is structural, not a punctuation swap: `on ResNet-50 --- a
+# 12.5x reduction` becoming `on ResNet-50, a 12.5x reduction` keeps the trailing
+# appositive the rule exists to remove. Assert the comma form does not appear.
+GONE	ResNet-50, a 12\.5\$\\times\$ reduction	em-dash swapped for a comma is not a fix
+GONE	centroids; the inner	PROSE.SEMICOLON_RESTRICTION mid-paragraph join
 GONE	the presented method	PROSE.ELEGANT_VARIATION third method synonym
 GONE	(significantly|extremely|considerably|remarkably|substantially) 	PROSE.INTENSIFIERS_ELIMINATION
 
@@ -42,7 +47,11 @@ KEPT	Table~\\ref\{tab:acc\}	cross-reference
 KEPT	Our approach	surviving method term
 
 # ── the two-sentence orphan must be MERGED, not dropped ─────────────────────
-KEPT	refreshed every 500 steps	orphan paragraph content survives the merge
+# Assert the FACT, not the phrasing. The orphan's 500-step fact may survive as
+# `refreshed every 500 steps` or be absorbed into `align refreshes to 500-step
+# boundaries` in the destination paragraph; both keep the number, and which one
+# a run picks is an editorial call this suite has no business fixing.
+KEPT	(refreshed every 500 steps|500-step boundaries)	orphan's 500-step fact survives the merge
 KEPT	exponential moving average of assignment counts	orphan paragraph content survives the merge
 
 # ── false-positive trap ─────────────────────────────────────────────────────
@@ -50,4 +59,11 @@ KEPT	exponential moving average of assignment counts	orphan paragraph content su
 # (the 1/(1-beta) integration window), so it is a real mechanism, not a
 # circular attribution. Recorded as an over-fire in prose-semantic-idling.md
 # Limitations. This paragraph must come through untouched.
+#
+# It is deliberately clean on every OTHER axis: no semicolon, longest sentence
+# 30 words. The first version of this fixture carried both defects here, so when
+# PROSE.SEMICOLON_RESTRICTION and the SENTENCE_LENGTH fix landed, the trap and
+# the rules contradicted each other. A trap must test one thing. The semicolon
+# defect now lives in the surviving codebook paragraph instead, where it belongs:
+# a line-layer defect in text that is kept.
 VERBATIM	Compression interacts with momentum|(Table~\ref{tab:acc}).	momentum paragraph survives byte-identical

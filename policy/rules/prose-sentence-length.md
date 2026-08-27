@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {max_words: 35}
-conflicts_with: []
+conflicts_with: [PROSE.SEMICOLON_RESTRICTION]
 constraint_type: guardrail
 autofix: none
 lint_patterns:
@@ -19,14 +19,27 @@ lint_patterns:
   # with no sentence punctuation the engine expands to the end of the line and
   # backtracks from every start position. A 35-60 word window is enough to
   # detect the violation: a 200-word sentence still matches on its final window.
-  - pattern: "(?:[^.!?\\s]+\\s+){35,60}[^.!?\\s]+[.!?]"
+  #
+  # A word is any run of characters in which `.`/`!`/`?` appear only INSIDE the
+  # token: `[.!?](?!\s|$)`. The previous form used `[^.!?\s]+`, which treated
+  # every dot as a sentence boundary, so `$\beta=0.9$` cut a 55-word sentence
+  # into runs of 30 and 24 and the rule went silent. Decimals sit in exactly the
+  # sentences this rule is meant to catch, so the under-count was systematic.
+  # The word group is atomic — `(?>...)` inside `{35,60}` is a nested quantifier,
+  # and without it this is the same backtracking hazard that already hit
+  # PROSE.COMMA_OVERUSE. Benchmarked at 44ms on 400 tokens with no terminator.
+  # Abbreviations (`i.e.`, `et al.`) still split a run; their dot really is
+  # followed by a space and no regex can tell them from a full stop.
+  - pattern: "(?:(?>(?:[^\\s.!?]|[.!?](?!\\s|$))+)\\s+){35,60}(?>(?:[^\\s.!?]|[.!?](?!\\s|$))+)[.!?](?=\\s|$)"
     mode: match
 lint_targets: "**/*.tex"
 ---
 
 ## Requirement
 
-单句不超过 **35 词**。典型句长区间为 25-35 词。超过时拆成多个短句，或使用分号连接两个独立子句。
+单句不超过 **35 词**。典型句长区间为 25-35 词。超过时**拆成多个短句**。
+
+不要用分号连接两个独立子句来"缩短"句子——分号不产生新句子，只是把同一个长句换个标点，而 `PROSE.SEMICOLON_RESTRICTION` 禁止这个构造。本卡此前把它列为合法修法，那是错的。
 
 ## Rationale
 

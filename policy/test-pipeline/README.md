@@ -54,6 +54,14 @@ has only ever passed carries no information:
 ./test-pipeline.sh <case> <case>/input.tex          # unedited draft must FAIL loudly
 ```
 
+Better still, build a **near-miss**: an output that fixes the defect the wrong
+way. For this fixture that is the em-dash swapped for a comma, which satisfies
+the zero-tolerance pattern while keeping the trailing appositive the rule exists
+to remove. Construct near-misses with a script that operates on the *flattened*
+text — the first attempt here used `sed` against a phrase that a line break had
+split in two, so the "trap" file was byte-identical to the reference and the
+control reported a pass while testing nothing.
+
 The first fixture was written with two assertions whose labels claimed to catch
 the ordering trap; feeding in a line-only edit showed they pass in exactly that
 case, and the real guard is the paragraph's own topic phrase. Labels drift

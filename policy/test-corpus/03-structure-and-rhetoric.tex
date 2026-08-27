@@ -133,3 +133,37 @@ The analogy's job is to make the bound intuitive.
 % @EXPECT none
 The estimator has been validated on three independent cohorts.
 % @ENDCASE
+
+% ── PROSE.SENTENCE_LENGTH: dot-bearing tokens must not act as sentence ends ──
+% Regression. The pattern counted words with `[^.!?\s]+`, so a decimal in the
+% MIDDLE of a long sentence split it into two sub-threshold runs and the rule
+% went silent. The position matters: a decimal near either end leaves a long
+% enough run on the other side that even the broken pattern fires, which is why
+% the first draft of these cases passed under the old regex and proved nothing.
+% Decimals live in exactly the sentences this rule exists to catch.
+
+% @CASE sentence-length-long-plain
+% @EXPECT PROSE.SENTENCE_LENGTH
+When the coordinator receives a prepare message it evaluates each candidate placement against the residual capacity of every rack in the target zone before it commits the assignment and afterwards records the outcome in the durable log so that a subsequent failover is able to replay the whole decision without consulting the placement service again.
+% @ENDCASE
+
+% @CASE sentence-length-decimal-splits-the-middle
+% @EXPECT PROSE.SENTENCE_LENGTH
+When the coordinator receives a prepare message it evaluates each candidate placement against the residual capacity of every rack in the target zone before it commits the assignment at a load factor of 0.85 and afterwards records the outcome in the durable log so that a subsequent failover is able to replay the whole decision without consulting the placement service again.
+% @ENDCASE
+
+% @CASE sentence-length-abbreviation-splits-the-middle
+% @EXPECT PROSE.SENTENCE_LENGTH
+% @XFAIL `i.e.` ends in a dot followed by a space, which is byte-for-byte what a full stop looks like. The decimal fix cannot reach this and no regex can; abbreviation-bearing long sentences stay invisible to the mechanical layer and are the judgment layer's to catch.
+When the coordinator receives a prepare message it evaluates each candidate placement against the residual capacity of every rack in the target zone before it commits the assignment using the fastest available transport i.e. RDMA and afterwards records the outcome in the durable log so that a subsequent failover is able to replay the whole decision without consulting the placement service again.
+% @ENDCASE
+
+% @CASE sentence-length-short-with-decimal-clean
+% @EXPECT none
+The coordinator commits at a load factor of 0.85 and logs the decision.
+% @ENDCASE
+
+% @CASE sentence-length-two-normal-sentences-clean
+% @EXPECT none
+The coordinator evaluates each candidate placement against the residual capacity of every rack in the target zone. It then records the outcome in the durable log so a later failover can replay it.
+% @ENDCASE

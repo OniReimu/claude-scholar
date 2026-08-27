@@ -142,8 +142,9 @@ lint_targets: "**/*.tex"
 ### Pass
 
 ```latex
-% 逻辑蕴含：从已陈述的单调性必然得出
-The map is monotone in $p$ and $q$; therefore any downstream continuation
+% 逻辑蕴含：从已陈述的单调性必然得出。连接词放在新句句首，不用分号——
+% 分号只是把同一个长句换个标点，见 PROSE.SEMICOLON_RESTRICTION
+The map is monotone in $p$ and $q$. Therefore any downstream continuation
 bound tightens under the same substitution.
 
 % 从属化——因果写进句法，同时少一个逗号
@@ -155,7 +156,7 @@ We rescale by the inverse mask density, which restores unbiasedness without
 a second pass.
 
 % 经验后果，不是推论
-The kernel spills to global memory at sequence length 4096; consequently
+The kernel spills to global memory at sequence length 4096. Consequently,
 throughput drops by 38 percent.
 
 % 反向护栏：后果显然，therefore 会显得端着，so 就是对的语域
