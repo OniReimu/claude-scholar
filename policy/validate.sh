@@ -23,6 +23,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 RULES_DIR="$SCRIPT_DIR/rules"
 WORK_TMP_PB=$(mktemp)
+WORK_TMP_TB=$(mktemp)
+WORK_TMP_BD=$(mktemp)
 PROFILES_DIR="$SCRIPT_DIR/profiles"
 ERRORS=0
 WARNINGS=0
@@ -38,7 +40,8 @@ NC='\033[0m'
 err() { echo -e "  ${RED}FAIL${NC}: $*"; ((ERRORS++)) || true; }
 warn() { echo -e "  ${YELLOW}WARN${NC}: $*"; ((WARNINGS++)) || true; }
 pass() { echo -e "  ${GREEN}PASS${NC}: $*"; }
-section() { echo -e "\n${BOLD}$*${NC}"; }
+SECTIONS_RUN=0
+section() { ((SECTIONS_RUN++)) || true; echo -e "\n${BOLD}$*${NC}"; }
 
 # ─── Extract frontmatter using awk ──────────────────────────────────────────
 get_fm() { awk '/^---$/{n++;next} n==1{print}' "$1"; }
@@ -519,6 +522,52 @@ done
 pass "Orphan detection complete"
 
 # ─── 10. Rule ID Registry Consistency ───────────────────────────────────────
+# ─── 9b. Doc-Enforced Rules Need an Execution Block ─────────────────────────
+# A skill's "## Policy Rules" table is a declaration, not an instruction. For a
+# rule with enforcement: lint_script, that is enough — the regex layer runs
+# whatever the skill body says. A rule with enforcement: doc has no mechanical
+# backstop: if the skill only names it in the table, nothing executes it, and
+# the table reads as coverage the skill does not actually have.
+section "9b. Doc-Enforced Rules Have an Execution Block"
+
+doc_unbacked=0
+for skill_md in "$PROJECT_DIR"/skills/*/SKILL.md; do
+  [[ -f "$skill_md" ]] || continue
+  # Opt-in. A "## Policy Rules" table is sometimes a checklist the skill works
+  # through and sometimes a catalogue it merely indexes — using-claude-scholar
+  # lists all 101 rules for Codex discovery and executes none of them. Only a
+  # table that declares itself a checklist is held to this.
+  grep -q '<!-- policy-table:checklist -->' "$skill_md" || continue
+  sname=$(basename "$(dirname "$skill_md")")
+
+  # Table region: from "## Policy Rules" to the next level-2 heading.
+  # `|| true` on both greps: a skill whose table is empty makes grep exit 1,
+  # and under `set -o pipefail` that ends the scan at whichever skill happens
+  # to be empty — silently, having checked only the ones before it.
+  { awk '/^## Policy Rules/{t=1;next} t && /^## /{exit} t' "$skill_md" \
+    | grep -oE '`[A-Z][A-Z0-9._]*`' || true; } | tr -d '`' | sort -u > "$WORK_TMP_TB"
+  # Body markers: every inline marker outside that region.
+  { awk '/^## Policy Rules/{t=1;next} t && /^## /{t=0} !t' "$skill_md" \
+    | grep -oE 'policy:[A-Z][A-Z0-9._]*' || true; } | sed 's/policy://' | sort -u > "$WORK_TMP_BD"
+
+  while IFS= read -r rid; do
+    [[ -n "$rid" ]] || continue
+    # No `| head -1` here: under `set -o pipefail`, head closing the pipe early
+    # SIGPIPEs grep -r and kills the whole script mid-section. Take the first
+    # line in the shell instead.
+    card=$(grep -rlF "id: $rid" "$RULES_DIR" 2>/dev/null || true)
+    card="${card%%$'\n'*}"
+    [[ -n "$card" ]] || continue
+    enf=$(get_fm "$card" | awk '/^enforcement: /{print $2; exit}')
+    [[ "$enf" == "doc" ]] || continue
+    grep -qxF "$rid" "$WORK_TMP_BD" && continue
+    err "$sname: $rid is enforcement=doc and appears only in the Policy Rules table — nothing executes it"
+    doc_unbacked=1
+  done < "$WORK_TMP_TB"
+done
+rm -f "$WORK_TMP_TB" "$WORK_TMP_BD"
+(( doc_unbacked == 0 )) && pass "every doc-enforced rule named in a skill table has an execution block"
+
 section "10. Rule ID Registry Consistency"
 
 readme="$SCRIPT_DIR/README.md"
@@ -632,6 +681,12 @@ else
 fi
 
 # ─── 12. Rule Count ─────────────────────────────────────────────────────────
+# ─── Completion sentinel ────────────────────────────────────────────────────
+# `set -eo pipefail` means one grep that legitimately matches nothing can end
+# the run mid-section. The danger is not the crash: a truncated run prints
+# FEWER "FAIL:" lines, so a gate that counts them reads the truncation as an
+# improvement. Print the count of sections that actually ran, and let the gate
+# check it.
 section "12. Rule Count"
 count="$RULE_CARD_COUNT"
 echo -e "  Total rule cards: $count"
@@ -639,6 +694,14 @@ echo -e "  Total rule cards: $count"
 # ─── Summary ─────────────────────────────────────────────────────────────────
 echo ""
 echo -e "${BOLD}═══ Validation Summary ═══${NC}"
+  # Self-counted, so it cannot drift: the denominator is read from this file.
+  sections_total=$(grep -c '^section "' "$0")
+  if (( SECTIONS_RUN < sections_total )); then
+    echo -e "  ${RED}TRUNCATED${NC}: ran ${SECTIONS_RUN}/${sections_total} sections — the run ended early and the FAIL count below is not a full result"
+    ERRORS=$((ERRORS + 1))
+  else
+    echo -e "  Sections: ${SECTIONS_RUN}/${sections_total}"
+  fi
 if (( WARNINGS > 0 )); then
   echo -e "  ${YELLOW}$WARNINGS warning(s) — review, non-blocking${NC}"
 fi

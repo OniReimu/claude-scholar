@@ -65,6 +65,18 @@ jobs:
           # `grep -c` exits 1 when the count is 0, and GitHub runs this step under
           # `bash -eo pipefail` — so a CLEAN validate.sh would kill the step here.
           # `|| true` keeps a zero count a normal result instead of a failure.
+          # A truncated run prints FEWER "FAIL:" lines than a complete one, so
+          # counting them alone reads an early exit as an improvement. The
+          # summary's "Sections: N/N" line is only reached if every section ran.
+          if ! echo "$out" | grep -q "Sections: "; then
+            echo "::error::validate.sh did not reach its summary — the run ended early and the FAIL count is not a full result"
+            echo "$out" | tail -20 | sed 's/^/    /'
+            exit 1
+          fi
+          if echo "$out" | grep -q "TRUNCATED"; then
+            echo "::error::validate.sh reported a truncated run"
+            exit 1
+          fi
           fails=$(echo "$out" | grep -c "FAIL:" || true)
           echo "validate.sh FAIL count: $fails (baseline $BASELINE)"
           if [ "$fails" -gt "$BASELINE" ]; then

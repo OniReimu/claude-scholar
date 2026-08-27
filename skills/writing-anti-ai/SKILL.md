@@ -20,6 +20,8 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
 > 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
 > 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（32 条禁止模式）。
+> **本表是执行清单，不是索引** <!-- policy-table:checklist -->——表里每一条 `enforcement: doc` 的规则
+> 都必须在正文有对应的执行块（`validate.sh` 9b 节机器检查），否则它没有任何东西会执行它。
 
 | Rule ID | 摘要 |
 |---------|------|
@@ -116,6 +118,9 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - Cleft construction: "That is what sets X" / "which is what makes X" / "What X is is Y" — front the real subject instead: "X sets Y" <!-- policy:PROSE.CLEFT_CONSTRUCTION -->
 - Hypothetical foil: "A method that only described the data would stop there. Ours predicts." — the invented opponent adds nothing the evidence does not; also "Once you view it as X" second-person staging <!-- policy:PROSE.HYPOTHETICAL_FOIL -->
 - Abstract agency: "the analogy's job", "the estimator carries decades of validation", "built to catch" — abstractions do not act; use literal verbs, and never reuse the same figurative verb twice in one document <!-- policy:PROSE.ABSTRACT_AGENCY -->
+- 句首重复 ≥3 次 <!-- policy:PROSE.ANAPHORA_ABUSE -->：`We show… We show… We show…` — 靠重复句首造节奏在学术散文里不自然。修法是让第二、三句从各自的**内容**起句，不是换个同义动词
+- 分词片段堆叠 <!-- policy:PROSE.GERUND_FRAGMENT_LITANY -->：`Improving throughput. Reducing memory. Enabling longer contexts.` — 每句必须有主语和谓语。改法是合成一句带并列宾语的完整句，或各自补主语
+- 极短句独立成段 <!-- policy:PROSE.SHORT_PUNCHY_FRAGMENTS -->：≤5 词的句子单独成段制造戏剧效果。⚠️ **短句本身没问题**——问题只在两种（见 §3 的两道门槛：预告而非主张、两拍式反驳）；一个承载具体结论的短句该留
 - Fractal summary: "In this section, we present…" / "As we have seen…" / "Having discussed X, we now…" — 同一信息在标题、预告句、回顾句里讲三遍。节的首句直接进内容，末句停在最后一个具体结论上；前向引用交给 `\Cref{}`，不要用叙述句预告 <!-- policy:PROSE.FRACTAL_SUMMARY -->
 
 ### 3. Vary Rhythm
@@ -144,6 +149,16 @@ If it sounds like a pull-quote, rewrite it.
 
 **Bad**: "This represents a major step in the right direction."
 **Good**: "The company plans to open two more locations."
+
+### 5b. 格式克制 <!-- policy:PROSE.FORMATTING_RESTRAINT -->
+
+排版装饰是最容易被误当成"强调"的 AI 习惯。五条：
+
+1. `\textbf{}` 只给**首次定义的核心术语**，不给普通词做强调。一段里三处 bold 等于没有 bold
+2. `\textit{}` 只给术语引入和外来语，不做情绪强调
+3. 正文段落用连贯散文，**不在段落中间插 `itemize`**。Contribution 列表与算法描述除外
+4. `\texttt{}` 只给代码字面量、命令名、以及确属贡献一部分的文件名。方法名和系统名定义一次后用正体，不持续 `\texttt{}`
+5. 用模板的原生格式，不加装饰性排版
 
 ### 6. Preserve LaTeX Math Rules (Academic Manuscripts)
 When editing paper text, preserve math-style constraints instead of "humanizing" them away.
@@ -205,6 +220,11 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 3. `JUDGMENT-ADJ` **判断性形容词**（最易过度执行）：`hard` / `cheap` / `easy` / `huge`。判据只有一条——**该词是否已是本领域既有术语？** `cheap unlearning` 是术语，强改会撞 `ELEGANT_VARIATION`
 4. `PREDICATE-METAPHOR` **具象名词比喻**：`the wall is a property` → 换回本文正式术语（`the obstruction`）。与 `ABSTRACT_AGENCY`（抽象名词做施事）分工
 5. `WORK-TRACE` **内部工作痕迹动词**：`what quarantine buys` / `survives the conditioning`。判据：把主语换成不会有体验的对象，句子还成立吗？
+
+**一个概念全文只用一个词** <!-- policy:PROSE.ELEGANT_VARIATION -->
+为"避免重复"而换同义词是中学作文的要求，学术散文相反：术语重复是**精确**，换词是**制造新指称**。最常见的四组混用：`model / framework / architecture / system` · `method / approach / technique / scheme` · `dataset / data / corpus / benchmark` · `training / learning / optimization`。首次引入时定义，此后全文一致。
+
+**这条是另外两条修法的约束**，执行它们时会撞上：`PROSE.RULE_OF_THREE` 要求"首次列举时给集合命名，之后引用名字"——名字必须全文同一个；`PROSE.INFORMAL_VOCABULARY` 要求"替换用稿件已有的措辞"——同样是这个词。所以改任何一条时，先查该概念在别处叫什么，不要新造。
 
 **技术短语撞习语要换掉** <!-- policy:PROSE.IDIOM_COLLISION -->
 `A fair bit selects one member` —— `fair bit` 指无偏比特，技术正确，但读者第一遍读成"相当多"。不是语域问题也不是准确性问题，是歧义。同类：`a good deal` · `on the order of` · `significant`（统计 vs 重要）。改法是把隐含限定词显式写出来：`an unbiased random bit`。
