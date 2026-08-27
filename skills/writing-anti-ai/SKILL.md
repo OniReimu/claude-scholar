@@ -1,6 +1,6 @@
 ---
 name: writing-anti-ai
-description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
+description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
 version: 1.4.2
 author: gaoruizhang
 license: MIT
@@ -65,6 +65,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足 |
 | `PAPER.OUTCOME_LOGIC` | 删句级过程流水账（we first tried…）；结构级重排归 claim-architecture-review |
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
+| `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
 | `PROSE.CAUSAL_CONNECTIVE` | 因果连接词按类型选，不默认用 `, so`；**只改三个可诊断子类**（设计选择伪装成推论 / 因果无证据支持 / 证明步骤），其余保留 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
@@ -228,6 +229,17 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 **技术短语撞习语要换掉** <!-- policy:PROSE.IDIOM_COLLISION -->
 `A fair bit selects one member` —— `fair bit` 指无偏比特，技术正确，但读者第一遍读成"相当多"。不是语域问题也不是准确性问题，是歧义。同类：`a good deal` · `on the order of` · `significant`（统计 vs 重要）。改法是把隐含限定词显式写出来：`an unbiased random bit`。
+
+**造一次、用一次的连字符复合词要拆开** <!-- policy:PROSE.ADHOC_COMPOUND_MODIFIER -->
+`X-based` / `X-aware` / `X-driven` / `X-guided` 这类构造**本身是标准的**，本条不管它。管的是**临时造一个、全文只用一次**：读者要在句中现场解码 `community-shift-aware signals`，解码完这个词再不出现——**成本付了，收益为零**。
+
+判据两条必须同时成立：**① 全文只出现一次 ② 不是本领域既有术语**。`blockchain-based` 在区块链论文里、`gradient-based` 在优化论文里都是标准说法，反复出现即合规。
+
+⚠️ **反向护栏**：一份区块链方向的 pre-GPT 稿件复合词出现率是基线的 7 倍，但几乎全是同几个领域术语反复使用。**按总量判会把整个领域误伤，只能按「一次性」判。**
+
+修法优先级：① 拆成介词短语或从句（`exposure-aware signals` → `signals that record what each user was shown`）；② 直接用普通语言说清楚；③ 若它确实是本文核心概念，**不要一次性使用**——显式声明命名、给定义、全文一致，此时转 `PROSE.INVENTED_CONCEPT_LABEL`。**不要把一次性造词换成另一个一次性造词。**
+
+机械层由 `policy/lint.sh` 的 builtin 给候选（只报 hapax），**是不是领域术语由你判**。
 
 **不要给现象起名** <!-- policy:PROSE.INVENTED_CONCEPT_LABEL -->
 "the supervision paradox" / "workload creep" 这类标签只在两种情况下允许：有文献出处并引用，或是本文明确的命名贡献（显式声明 + 定义 + 全文一致）。两者都不满足就用普通语言描述现象。审稿人会去检索你造的"既有概念"。
@@ -400,6 +412,14 @@ For comprehensive pattern lists, see:
 > **register check 未通过之前，不得报告词数或压缩百分比。**
 > 实测教训：agent 在作者读到正文之前三次报告「968 → 728 words, −25%」作为成功指标，而那一版正文里有九处语域塌陷。**数字先于质量出现，就会替代质量成为验收标准。**
 > 顺序固定为：压缩 → 逐个改动 span 跑替换测试（见 Do NOT Over-Correct §1）→ 用稿件已有措辞修复 → **然后**才报数字。
+
+> **🔁 收尾必做：跑一次机械兜底**
+> ```bash
+> bash policy/lint.sh <本节所在目录>
+> ```
+> 本 skill 的 101 条规则由**阅读**执行，其中 33 条同时有正则实现。读一节两千词，第 12 段的一个破折号、一句 36 词的长句，**人会看漏，正则不会**。两层是互补的：判断力来自阅读，不疲劳的覆盖来自 lint。
+> 报出来的每一条逐个确认——**不要**因为「我刚才读过了」就跳过。若某条是本 skill 判定后**刻意保留**的（例如 `PROSE.CAUSAL_CONNECTIVE` 三个子类之外的 `, so`），在回复里写明保留理由，不要默默忽略。
+> ⚠️ `--constraint-type guardrail` **看不到 guidance 类规则**，收尾要跑不带过滤的完整版。
 
 ### For English Text:
 

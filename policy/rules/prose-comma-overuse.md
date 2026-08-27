@@ -15,7 +15,12 @@ conflicts_with: [PROSE.RULE_OF_THREE, PROSE.TRAILING_AFTERTHOUGHT, PROSE.CAUSAL_
 constraint_type: guardrail
 autofix: none
 lint_patterns:
-  - pattern: "[^.!?]*,[^.!?]*,[^.!?]*,[^.!?]*,[^.!?]*[.!?]"
+  # Each segment excludes the comma as well as sentence punctuation. The comma
+  # is itself a member of [^.!?], so the original form gave the engine an
+  # exponential number of ways to split a comma run: a 60-comma line with no
+  # sentence punctuation — an ordinary concatenated bibliography or table row —
+  # did not finish in 15 minutes. Excluding the comma makes each split unique.
+  - pattern: "[^.!?,]*,[^.!?,]*,[^.!?,]*,[^.!?,]*,[^.!?]*[.!?]"
     mode: match
 lint_targets: "**/*.tex"
 ---

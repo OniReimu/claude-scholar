@@ -40,7 +40,13 @@ The objective is optimised with AdamW, and the resulting classifier is robust to
 % @ENDCASE
 
 % @CASE lex-termofart-loss-landscape-clean
-% @EXPECT none
+% `Sharpness-aware minimisation` is an established term (SAM), but it is a hapax
+% here, so the ADHOC_COMPOUND_MODIFIER locator fires. That is the designed
+% division of labour: the builtin surfaces candidates on frequency alone, and
+% whether a candidate is a term of the field is decided at the judgment layer.
+% Declared rather than suppressed — this is the rule's main false-positive class
+% and it should stay visible in the corpus.
+% @EXPECT PROSE.ADHOC_COMPOUND_MODIFIER
 Sharpness-aware minimisation flattens the loss landscape around the found minimum.
 % @ENDCASE
 

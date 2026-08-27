@@ -1,0 +1,59 @@
+% Corpus: PROSE.ADHOC_COMPOUND_MODIFIER.
+%
+% The discriminator is frequency, and frequency is counted PER FILE. A compound
+% that recurs anywhere in this fixture is non-hapax everywhere in it, so each
+% recurrence case keeps its repeats inside its own block and uses a word no
+% other case uses.
+
+% @CASE adhoc-coined-once
+% @EXPECT PROSE.ADHOC_COMPOUND_MODIFIER
+We build a community-shift-aware sampler over the interaction graph.
+% @ENDCASE
+
+% @CASE adhoc-two-coinages-one-sentence
+% @EXPECT PROSE.ADHOC_COMPOUND_MODIFIER
+The brokerage-oriented encoder feeds a concatenation-based fusion network.
+% @ENDCASE
+
+% @CASE adhoc-coined-once-guided
+% @EXPECT PROSE.ADHOC_COMPOUND_MODIFIER
+A compass-guided traversal reaches the boundary in logarithmic time.
+% @ENDCASE
+
+% @CASE adhoc-recurring-field-term-clean
+% The same compound three times: it has become a term of this document, so the
+% reader's decoding cost is amortised. Frequency, not construction, is the test.
+% @EXPECT none
+We compare against sharding-based consensus throughout this evaluation.
+Every sharding-based protocol we test assumes a synchronous network.
+The sharding-based baseline remains the strongest competitor at 64 shards.
+% @ENDCASE
+
+% @CASE adhoc-recurring-blockchain-term-clean
+% @EXPECT none
+Existing pbft-based replication tolerates one third faulty replicas.
+We adopt the pbft-based variant of the protocol without modification.
+% @ENDCASE
+
+% @CASE adhoc-allowlisted-once-clean
+% @EXPECT none
+The estimator is data-driven and requires no hand-tuned thresholds.
+% @ENDCASE
+
+% @CASE adhoc-allowlisted-privacy-preserving-clean
+% @EXPECT none
+We instantiate the protocol with a privacy-preserving aggregation layer.
+% @ENDCASE
+
+% @CASE adhoc-rewritten-as-clause-clean
+% @EXPECT none
+The dataset records signals that indicate what each user was shown, which lets us separate exposure from engagement.
+% @ENDCASE
+
+% @CASE adhoc-declared-named-contribution-clean
+% Named explicitly, defined, and reused — this is INVENTED_CONCEPT_LABEL's path,
+% and the compound is no longer a hapax.
+% @EXPECT none
+We refer to a mask whose density is fixed at aggregation time as a static mask.
+Static masks admit the unbiased estimator, and every experiment uses static masks.
+% @ENDCASE

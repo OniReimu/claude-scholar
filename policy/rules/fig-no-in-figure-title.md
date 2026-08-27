@@ -9,7 +9,7 @@ phases: [ideation, writing-system-model, writing-methods, writing-experiments, s
 domains: [core]
 venues: [all]
 check_kind: llm_semantic
-enforcement: lint_script
+enforcement: doc
 params: {}
 conflicts_with: []
 constraint_type: guidance

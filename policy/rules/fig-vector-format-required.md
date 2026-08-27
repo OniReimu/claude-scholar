@@ -9,7 +9,7 @@ phases: [writing-experiments, self-review, camera-ready]
 domains: [core]
 venues: [all]
 check_kind: regex
-enforcement: doc
+enforcement: lint_script
 params: {}
 conflicts_with: []
 constraint_type: guidance

@@ -15,7 +15,11 @@ conflicts_with: []
 constraint_type: guardrail
 autofix: none
 lint_patterns:
-  - pattern: "(?:[^.!?\\s]+\\s+){35,}[^.!?\\s]+[.!?]"
+  # Upper-bounded repetition. `{35,}` is greedy and unbounded, so on a long line
+  # with no sentence punctuation the engine expands to the end of the line and
+  # backtracks from every start position. A 35-60 word window is enough to
+  # detect the violation: a 200-word sentence still matches on its final window.
+  - pattern: "(?:[^.!?\\s]+\\s+){35,60}[^.!?\\s]+[.!?]"
     mode: match
 lint_targets: "**/*.tex"
 ---

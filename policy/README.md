@@ -171,13 +171,13 @@ SoK 规则集合（语义规则）：
 
 | Rule ID | slug | layer | severity | locked | enforcement | constraint_type | autofix |
 |---------|------|-------|----------|--------|-------------|-----------------|---------|
-| FIG.NO_IN_FIGURE_TITLE | fig-no-in-figure-title | core | error | true | lint_script | guidance | none |
+| FIG.NO_IN_FIGURE_TITLE | fig-no-in-figure-title | core | error | true | doc | guidance | none |
 | FIG.FONT_GE_24PT | fig-font-ge-24pt (deprecated → scientific-figure-making) | core | error | false | doc | guidance | none |
 | FIG.ONE_FILE_ONE_FIGURE | fig-one-file-one-figure | core | error | true | doc | guidance | none |
 | FIG.COLORBLIND_SAFE_PALETTE | fig-colorblind-safe-palette (deprecated → scientific-figure-making) | core | warn | false | doc | guidance | none |
 | FIG.SELF_CONTAINED_CAPTION | fig-self-contained-caption (deprecated → paper-self-review) | core | warn | false | doc | guidance | none |
 | FIG.SYSTEM_OVERVIEW_ASPECT_RATIO_GE_2TO1 | fig-system-overview-aspect-ratio-ge-2to1 (deprecated → paper-figure-generator) | core | error | true | doc | guidance | none |
-| FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required (deprecated → scientific-figure-making) | core | error | false | doc | guidance | none |
+| FIG.VECTOR_FORMAT_REQUIRED | fig-vector-format-required (deprecated → scientific-figure-making) | core | error | false | lint_script | guidance | none |
 | FIG.EXPERIMENT_SUBFIGURE_LAYOUT | fig-experiment-subfigure-layout | core | warn | false | doc | guardrail | none |
 | FIG.HEATMAP_LABEL_ABBREVIATION | fig-heatmap-label-abbreviation | core | warn | false | doc | guidance | none |
 | FIG.COLUMN_WIDTH_JUSTIFICATION | fig-column-width-justification | core | warn | false | doc | guardrail | none |
@@ -188,7 +188,7 @@ SoK 规则集合（语义规则）：
 | TABLE.DIMENSION_BUDGET | table-dimension-budget | core | warn | false | doc | guidance | none |
 | TABLE.FULLWIDTH_FONT_DENSITY | table-fullwidth-font-density | core | warn | false | doc | guardrail | none |
 | LATEX.CMARK_XMARK_PMARK_MACROS | latex-cmark-xmark-pmark-macros | core | error | false | doc | guidance | none |
-| LATEX.EQ.DISPLAY_STYLE | latex-eq-display-style | core | error | true | doc | guardrail | none |
+| LATEX.EQ.DISPLAY_STYLE | latex-eq-display-style | core | error | true | lint_script | guardrail | none |
 | LATEX.VAR.LONG_TOKEN_USE_TEXT | latex-var-long-token-use-text | core | warn | false | doc | guidance | none |
 | LATEX.NOTATION_CONSISTENCY | latex-notation-consistency | core | error | true | doc | guidance | none |
 | REF.CROSS_REFERENCE_STYLE | ref-cross-reference-style | core | warn | false | doc | guidance | none |
@@ -265,6 +265,7 @@ SoK 规则集合（语义规则）：
 | PROSE.AI_LEXICON | prose-ai-lexicon | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.FRACTAL_SUMMARY | prose-fractal-summary | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.INVENTED_CONCEPT_LABEL | prose-invented-concept-label | domain | warn | false | doc | guardrail | none |
+| PROSE.ADHOC_COMPOUND_MODIFIER | prose-adhoc-compound-modifier | domain | warn | false | lint_script | guidance | none |
 | PROSE.RESTATEMENT_DILUTION | prose-restatement-dilution | domain | warn | false | doc | guardrail | none |
 | PROSE.REGISTER_PRESERVATION | prose-register-preservation | domain | warn | false | doc | guardrail | none |
 | PROSE.IDIOM_COLLISION | prose-idiom-collision | domain | warn | false | doc | guardrail | none |

@@ -135,6 +135,19 @@ if ! detect_engine; then
   exit 2
 fi
 
+# ─── Per-Pattern Timeout ─────────────────────────────────────────────────────
+# One pattern must not be able to hang the whole run. A regex with ambiguous
+# adjacent quantifiers backtracks exponentially on the right input, and the
+# failure is silent from the caller's side — the tool simply never returns.
+# Worse, killing the caller leaves the engine process orphaned and still
+# burning CPU, so each hang makes the next run slower.
+# A timed-out pattern is REPORTED, never treated as "no matches": a pattern
+# that silently returns nothing reads as a clean file.
+LINT_TIMEOUT=""
+if command -v timeout &>/dev/null; then LINT_TIMEOUT="timeout 20"
+elif command -v gtimeout &>/dev/null; then LINT_TIMEOUT="gtimeout 20"; fi
+PATTERN_TIMEOUTS=0
+
 # ─── Comment-Blanked View (.tex only) ────────────────────────────────────────
 # Prose sitting behind a % is not part of the manuscript. Linting it reports
 # violations the author cannot act on — deleting a comment is not an edit to the
@@ -156,7 +169,34 @@ lint_view() {
   local out
   out="$VIEW_DIR/$(printf '%s' "$file" | cksum | tr -d ' /').tex"
   if [[ ! -f "$out" ]]; then
-    sed -E 's/(^|[^\\])%.*$/\1/' "$file" > "$out" 2>/dev/null || cp "$file" "$out"
+    # Two passes. First blank comment bodies. Then rejoin hard-wrapped prose:
+    # every pattern here matches within one line, and traditional LaTeX wraps at
+    # ~72 columns, so a 35-word sentence — or a plain "X, so Y" — is split across
+    # lines and silently never matches. Measured on 20 pre-2022 arXiv sources:
+    # 1920 sentences split by a hard wrap, against 476 in a 2026 sample. Linting
+    # them as-is compares typesetting convention, not prose.
+    # A joined paragraph is emitted on its FIRST line with the remaining lines
+    # blanked, so file:line still points at where the author must look.
+    sed -E 's/(^|[^\\])%.*$/\1/' "$file" 2>/dev/null \
+      | perl -0777 -ne '
+          my @in = split /\n/, $_, -1;
+          my @out = ("") x scalar(@in);
+          my ($start, $buf) = (-1, "");
+          my $flush = sub { if ($start >= 0) { $out[$start] = $buf; $start = -1; $buf = ""; } };
+          for my $i (0 .. $#in) {
+            my $l = $in[$i];
+            # Only prose lines are joined. A blank line, or one that begins or
+            # ends with LaTeX markup, keeps its own line so environments,
+            # display math and \\ breaks are not welded together.
+            if ($l =~ /^\s*$/ || $l =~ /^\s*\\/ || $l =~ /\\\\\s*$/) {
+              $flush->(); $out[$i] = $l; next;
+            }
+            if ($start < 0) { $start = $i; $buf = $l }
+            else { $buf .= " " . $l =~ s/^\s+//r }
+          }
+          $flush->();
+          print join("\n", @out);
+        ' > "$out" 2>/dev/null || sed -E 's/(^|[^\\])%.*$/\1/' "$file" > "$out" 2>/dev/null || cp "$file" "$out"
   fi
   printf '%s' "$out"
 }
@@ -174,9 +214,9 @@ trap cleanup_views EXIT
 regex_match() {
   local pattern="$1" file="$2"
   case "$GREP_MODE" in
-    ggrep) ggrep -Pn "$pattern" "$file" 2>/dev/null || true ;;
-    grep)  grep -Pn "$pattern" "$file" 2>/dev/null || true ;;
-    perl)  LINT_PAT="$pattern" perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} print "$ARGV:$.: $_" if /$re/' "$file" 2>/dev/null || true ;;
+    ggrep) $LINT_TIMEOUT ggrep -Pn "$pattern" "$file" 2>/dev/null; [[ $? -eq 124 ]] && echo "__LINT_TIMEOUT__:${file}"; true ;;
+    grep)  $LINT_TIMEOUT grep -Pn "$pattern" "$file" 2>/dev/null; [[ $? -eq 124 ]] && echo "__LINT_TIMEOUT__:${file}"; true ;;
+    perl)  LINT_PAT="$pattern" $LINT_TIMEOUT perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} print "$ARGV:$.: $_" if /$re/' "$file" 2>/dev/null; [[ $? -eq 124 ]] && echo "__LINT_TIMEOUT__:${file}"; true ;;
   esac
 }
 
@@ -184,9 +224,9 @@ regex_match() {
 regex_count() {
   local pattern="$1" file="$2"
   case "$GREP_MODE" in
-    ggrep) (ggrep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
-    grep)  (grep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
-    perl)  LINT_PAT="$pattern" perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} $c++ while /$re/g; END{print $c//0}' "$file" 2>/dev/null || echo 0 ;;
+    ggrep) ($LINT_TIMEOUT ggrep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
+    grep)  ($LINT_TIMEOUT grep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
+    perl)  LINT_PAT="$pattern" $LINT_TIMEOUT perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} $c++ while /$re/g; END{print $c//0}' "$file" 2>/dev/null || echo 0 ;;
   esac
 }
 
@@ -194,9 +234,9 @@ regex_count() {
 regex_quiet() {
   local pattern="$1" file="$2"
   case "$GREP_MODE" in
-    ggrep) ggrep -Pq "$pattern" "$file" 2>/dev/null ;;
-    grep)  grep -Pq "$pattern" "$file" 2>/dev/null ;;
-    perl)  LINT_PAT="$pattern" perl -CSD -ne 'BEGIN{$f=1; $p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} $f=0 if /$re/; END{exit $f}' "$file" 2>/dev/null ;;
+    ggrep) $LINT_TIMEOUT ggrep -Pq "$pattern" "$file" 2>/dev/null ;;
+    grep)  $LINT_TIMEOUT grep -Pq "$pattern" "$file" 2>/dev/null ;;
+    perl)  LINT_PAT="$pattern" $LINT_TIMEOUT perl -CSD -ne 'BEGIN{$f=1; $p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} $f=0 if /$re/; END{exit $f}' "$file" 2>/dev/null ;;
   esac
 }
 
@@ -372,6 +412,64 @@ parse_rule() {
   [[ -n "$cur_pat" ]] && PATTERNS+=("${cur_pat}"$'\t'"${cur_mode}"$'\t'"${cur_thresh}"$'\t'"${cur_thresh_param}")
   [[ -n "$cur_find" ]] && FIX_PATTERNS+=("${cur_find}"$'\t'"${cur_replace}")
   return 0
+}
+
+# ─── Builtin: PROSE.ADHOC_COMPOUND_MODIFIER ─────────────────────────────────
+# Hyphenated compound modifiers built from a productive suffix (-based, -aware,
+# -driven, …) are ordinary technical English when the field already uses them.
+# What is not ordinary is coining a fresh one and using it once: the reader pays
+# to decode `community-shift-aware` and the decoding is never reused.
+#
+# The discriminator is therefore FREQUENCY, which no per-line regex can express —
+# hence a builtin. A term the field uses recurs; a coinage is a hapax. Measured
+# over 40 arXiv sources: hapax compounds run 0.16 per 1000 words in 2019–2021
+# against 0.48 in 2025–2026.
+#
+# The allowlist is a floor, not the boundary. Whether a hapax compound is a real
+# term of the paper's field is a judgment the skill makes; this check only
+# surfaces the candidates.
+ADHOC_SUFFIXES='based|aware|driven|guided|centric|oriented|enabled|agnostic|informed|preserving|grounded|conditioned|specific|augmented|enhanced'
+ADHOC_ALLOW=' agent-based model-based rule-based gradient-based learning-based sampling-based physics-based energy-based attention-based transformer-based content-based knowledge-based feature-based graph-based template-based search-based simulation-based optimization-based data-driven model-driven event-driven task-specific domain-specific application-specific model-agnostic privacy-preserving structure-preserving '
+
+lint_prose_adhoc_compound_modifier() {
+  local severity="$1"
+  local -a tex_files=()
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tex_files+=("$f")
+  done < <(find_target_files "*.tex" "$TARGET_DIR")
+  [[ ${#tex_files[@]} -gt 0 ]] || return 0
+
+  local file view hits
+  for file in "${tex_files[@]}"; do
+    view=$(lint_view "$file")
+    # Two passes over the same view: tally every compound, then report only the
+    # ones seen exactly once. Line number comes from the single occurrence.
+    hits=$(ADHOC_SUF="$ADHOC_SUFFIXES" ADHOC_OK="$ADHOC_ALLOW" perl -CSD -e '
+      my $suf = $ENV{ADHOC_SUF}; my %ok = map { $_ => 1 } split " ", $ENV{ADHOC_OK};
+      my (%n, %line, %shown);
+      open(my $fh, "<:raw", $ARGV[0]) or exit 0;
+      my @L = <$fh>; close $fh;
+      for my $i (0 .. $#L) {
+        my $l = $L[$i];
+        $l =~ s/\$[^\$]*\$//g;
+        while ($l =~ /\b([a-z]{3,}(?:-[a-z]{2,})*-(?:$suf))\b/gi) {
+          my $w = lc $1;
+          $n{$w}++;
+          $line{$w} //= $i + 1;
+          $shown{$w} //= $1;
+        }
+      }
+      for my $w (sort { $line{$a} <=> $line{$b} } keys %n) {
+        next if $n{$w} != 1 || $ok{$w};
+        print "$line{$w}\t$shown{$w}\n";
+      }
+    ' "$view" 2>/dev/null || true)
+    [[ -n "$hits" ]] || continue
+    while IFS=$'\t' read -r ln word; do
+      [[ -n "$ln" ]] || continue
+      report_finding "$severity" "$RULE_ID" "${file}:${ln}: coined once and never reused — ${word}"
+    done <<< "$hits"
+  done
 }
 
 # ─── Report Finding ─────────────────────────────────────────────────────────
@@ -604,6 +702,13 @@ lint_rule() {
       local matches view
       view=$(lint_view "$file")
       matches=$(regex_match "$pat" "$view")
+      # A timed-out pattern is a defect in the pattern, reported as an error.
+      # Falling through would record zero matches, which reads as a clean file.
+      if [[ "$matches" == *"__LINT_TIMEOUT__"* ]]; then
+        ((PATTERN_TIMEOUTS++)) || true
+        report_finding "error" "$RULE_ID" "${file}: pattern timed out after ${LINT_TIMEOUT##* }s — catastrophic backtracking, this file was NOT checked against it"
+        matches=$(printf '%s\n' "$matches" | grep -v '__LINT_TIMEOUT__' || true)
+      fi
       # regex_match stamps the view path; report the path the author edits.
       [[ "$view" == "$file" ]] || matches="${matches//$view/$file}"
       if [[ -n "$matches" ]]; then
@@ -756,6 +861,20 @@ for rule_file in "$RULES_DIR"/*.md; do
 
     lint_cite_verify_via_api "$local_severity"
 
+    if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
+      ((RULES_PASSED++)) || true
+      $QUIET || echo -e "    ${GREEN}PASS${NC}"
+    fi
+    $QUIET || echo ""
+    continue
+  fi
+
+  if [[ "$RULE_ID" == "PROSE.ADHOC_COMPOUND_MODIFIER" ]]; then
+    $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) builtin hapax-compound → *.tex"
+    ((RULES_CHECKED++)) || true
+    prev_e=$TOTAL_ERRORS
+    prev_w=$TOTAL_WARNINGS
+    lint_prose_adhoc_compound_modifier "$local_severity"
     if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
       ((RULES_PASSED++)) || true
       $QUIET || echo -e "    ${GREEN}PASS${NC}"

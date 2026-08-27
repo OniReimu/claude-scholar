@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.ELEGANT_VARIATION, PROSE.ABBREVIATION_FIRST_USE]
+conflicts_with: [PROSE.ELEGANT_VARIATION, PROSE.ABBREVIATION_FIRST_USE, PROSE.ADHOC_COMPOUND_MODIFIER]
 constraint_type: guardrail
 autofix: none
 ---

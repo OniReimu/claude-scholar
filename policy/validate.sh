@@ -568,6 +568,35 @@ done
 rm -f "$WORK_TMP_TB" "$WORK_TMP_BD"
 (( doc_unbacked == 0 )) && pass "every doc-enforced rule named in a skill table has an execution block"
 
+# ─── 9c. enforcement Matches the Implementation ─────────────────────────────
+# `enforcement` is not a label, it is a claim other checks depend on — 9b uses it
+# to decide which rules need an execution block in a skill. Three cards had it
+# wrong: two said `doc` while lint runs their patterns, and one said
+# `lint_script` with no patterns and no builtin behind it, claiming a mechanical
+# check that did not exist.
+section "9c. enforcement Matches the Implementation"
+
+enf_bad=0
+for f in "${RULE_CARDS[@]}"; do
+  fm=$(get_fm "$f")
+  rid=$(echo "$fm" | awk '/^id: /{print $2; exit}')
+  enf=$(echo "$fm" | awk '/^enforcement: /{print $2; exit}')
+  has_pat=0; echo "$fm" | grep -q '^lint_patterns:' && has_pat=1
+  # A rule with no patterns may still be enforced by a hand-written builtin in
+  # lint.sh; those name the rule ID directly.
+  builtin=0; grep -qF "$rid" "$SCRIPT_DIR/lint.sh" 2>/dev/null && builtin=1
+
+  if [[ "$enf" == "lint_script" && $has_pat -eq 0 && $builtin -eq 0 ]]; then
+    err "$rid: enforcement=lint_script but has no lint_patterns and no builtin in lint.sh — the mechanical check it claims does not exist"
+    enf_bad=1
+  fi
+  if [[ "$enf" == "doc" && $has_pat -eq 1 ]]; then
+    err "$rid: enforcement=doc but carries lint_patterns — lint runs them regardless, so the field understates it"
+    enf_bad=1
+  fi
+done
+(( enf_bad == 0 )) && pass "enforcement agrees with lint_patterns and builtins"
+
 section "10. Rule ID Registry Consistency"
 
 readme="$SCRIPT_DIR/README.md"
