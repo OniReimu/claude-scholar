@@ -1,0 +1,18 @@
+\section{Adaptive Gradient Compression}\label{sec:method}
+
+Our approach compresses gradients with a two-level codebook. The outer codebook
+quantizes each 64-dimensional block to one of 256 centroids learned online by a
+convergence-aware scheduler; the inner codebook encodes the residual at 4 bits
+per dimension. Workers ship only centroid indices and residual codes, so the
+per-step communication volume drops from 512\,MB to 41\,MB on ResNet-50, a
+12.5$\times$ reduction that holds across all measured batch sizes. The
+codebooks are refreshed every 500 steps, and stale centroids are evicted using
+an exponential moving average of assignment counts.
+
+Compression interacts with momentum in a way that constrains the refresh
+schedule. Because the EMA in the optimizer integrates gradients over roughly
+$1/(1-\beta)$ steps, a codebook refresh inside that window injects quantization
+noise that the momentum buffer amplifies rather than averages out; with
+$\beta=0.9$ we therefore align refreshes to 500-step boundaries, ten times the
+integration window, and observe no measurable accuracy gap relative to
+uncompressed training (Table~\ref{tab:acc}).

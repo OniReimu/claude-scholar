@@ -109,6 +109,24 @@ jobs:
       - name: Referral graph integrity
         run: bash policy/test-referrals.sh
 
+      - name: Pipeline acceptance (assertions vs recorded run)
+        run: |
+          # CI cannot run the agent half, so it scores the recorded reference
+          # output. That keeps the assertions honest as the rules evolve: if a
+          # rule change would alter what the pipeline removes, this fails and
+          # the fixture must be re-run and re-recorded deliberately.
+          rc=0
+          for c in $(bash policy/test-pipeline.sh --list); do
+            bash policy/test-pipeline.sh "$c" || rc=1
+            # Negative control: the unedited draft must fail loudly. A scorer
+            # that passes everything reports nothing.
+            if bash policy/test-pipeline.sh "$c" "policy/test-pipeline/$c/input.tex" >/dev/null 2>&1; then
+              echo "::error::negative control passed for $c — the assertions do not discriminate"
+              rc=1
+            fi
+          done
+          exit "$rc"
+
       - name: Lint mechanics
         run: bash policy/test-lint.sh
 

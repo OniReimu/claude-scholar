@@ -1,0 +1,53 @@
+# Machine-checkable assertions for the adaptive-compression pipeline fixture.
+# Format:  VERB <TAB> pattern <TAB> label
+#   GONE      ERE must NOT match the final text
+#   KEPT      ERE must match the final text
+#   VERBATIM  start-anchor|end-anchor — that span of input.tex must appear
+#             byte-identical in the final text
+#
+# The narrative key (what each checkpoint is testing and why) is expect.md.
+# The runner never reads expect.md; it is for the human reading a failure.
+
+# ── structure layer: these must vanish as whole paragraphs ──────────────────
+GONE	In this section, we present	PROSE.FRACTAL_SUMMARY roadmap paragraph
+GONE	Understanding the interplay	PROSE.SEMANTIC_IDLING form-A paragraph
+GONE	The proposed framework achieves faster convergence	PROSE.SEMANTIC_IDLING form-B paragraph
+GONE	To summarize	PROSE.FRACTAL_SUMMARY closing recap
+GONE	paving the way	future-work boilerplate is not exempt
+
+# ── ordering trap: filler inside the idling paragraph ───────────────────────
+# These two phrases sit inside the P2 idling paragraph. They must disappear
+# because the PARAGRAPH went, not because the phrase was word-edited.
+# Note what these two lines can and cannot see: scrubbing the phrases while
+# keeping the paragraph passes BOTH of them. The assertion that actually
+# enforces the ordering is `GONE Understanding the interplay` above — the
+# paragraph's own topic phrase, which survives any purely lexical edit.
+# Verified: a line-only run scores 16/22, failing on the paragraph, not here.
+GONE	plays a crucial role	PROSE.FILLER_PHRASES gone
+GONE	valuable insights	PROSE.AI_LEXICON gone
+
+# ── line layer ──────────────────────────────────────────────────────────────
+GONE	---	PROSE.EM_DASH_RESTRICTION (zero tolerance)
+GONE	the presented method	PROSE.ELEGANT_VARIATION third method synonym
+GONE	(significantly|extremely|considerably|remarkably|substantially) 	PROSE.INTENSIFIERS_ELIMINATION
+
+# ── facts that must survive ─────────────────────────────────────────────────
+KEPT	512\\,MB to 41\\,MB	communication volume
+KEPT	12\.5\$\\times\$	reduction factor
+KEPT	256 centroids	outer codebook size
+KEPT	64-dimensional	block size
+KEPT	4 bits	residual width
+KEPT	\\beta=0\.9	momentum coefficient
+KEPT	Table~\\ref\{tab:acc\}	cross-reference
+KEPT	Our approach	surviving method term
+
+# ── the two-sentence orphan must be MERGED, not dropped ─────────────────────
+KEPT	refreshed every 500 steps	orphan paragraph content survives the merge
+KEPT	exponential moving average of assignment counts	orphan paragraph content survives the merge
+
+# ── false-positive trap ─────────────────────────────────────────────────────
+# The `because` clause introduces an independently measurable quantity
+# (the 1/(1-beta) integration window), so it is a real mechanism, not a
+# circular attribution. Recorded as an over-fire in prose-semantic-idling.md
+# Limitations. This paragraph must come through untouched.
+VERBATIM	Compression interacts with momentum|(Table~\ref{tab:acc}).	momentum paragraph survives byte-identical

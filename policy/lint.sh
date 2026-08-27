@@ -250,12 +250,16 @@ yaml_unescape() {
 find_target_files() {
   local glob="$1" dir="$2"
   local name_pattern="${glob##*/}"  # **/*.tex → *.tex
-  # policy/test-corpus/ is deliberately full of violations — it is the fixture
-  # set for policy/test-corpus.sh, which passes the directory explicitly. Left
-  # in scope, a repo-wide lint would report the fixtures as findings.
-  # ...unless the corpus itself is the target, which is how the runner calls it.
+  # policy/test-corpus/ and policy/test-pipeline/ are deliberately full of
+  # violations — they are fixture sets for their own runners, which pass the
+  # directory explicitly. Left in scope, a repo-wide lint would report the
+  # fixtures as findings.
+  # ...unless the fixture dir itself is the target, which is how a runner calls it.
   local filter='cat'
-  case "$dir" in *policy/test-corpus*) ;; *) filter='grep -v /policy/test-corpus/' ;; esac
+  case "$dir" in
+    *policy/test-corpus*|*policy/test-pipeline*) ;;
+    *) filter='grep -vE /policy/(test-corpus|test-pipeline)/' ;;
+  esac
   find "$dir" -name "$name_pattern" -type f 2>/dev/null | $filter | sort
 }
 
