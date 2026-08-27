@@ -57,3 +57,51 @@ The dataset records signals that indicate what each user was shown, which lets u
 We refer to a mask whose density is fixed at aggregation time as a static mask.
 Static masks admit the unbiased estimator, and every experiment uses static masks.
 % @ENDCASE
+
+% Syntactic and naming exemptions. The builtin flags a compound only in
+% attributive position, and clears it when the author has performed an explicit
+% naming act.
+
+% @CASE adhoc-predicative-position-clean
+% Predicative: the reader has already parsed the subject, so the compound is not
+% decoded mid-phrase. Downgraded to silence at the mechanical layer.
+% @EXPECT none
+The estimator is calibration-aware, and we report both settings side by side.
+% @ENDCASE
+
+% @CASE adhoc-acronym-definition-clean
+% Defining an acronym IS the explicit naming act PROSE.INVENTED_CONCEPT_LABEL
+% asks for, so the mechanical layer clears it rather than passing it on.
+% @EXPECT none
+We adopt Latency-Budget-Aware (LBA) scheduling throughout this study.
+% @ENDCASE
+
+% @CASE adhoc-all-segments-capitalised-clean
+% Every segment capitalised is a naming convention, not prose. Sentence-initial
+% capitalisation raises only the first segment, so it is not swallowed here.
+% @EXPECT none
+The Delay-Tolerant-Enabled stack is unchanged in our deployment.
+% @ENDCASE
+
+% @CASE adhoc-multipart-left-element
+% Highest-risk shape: the left element is itself a compound. Tagged, not a
+% separate rule.
+% @EXPECT PROSE.ADHOC_COMPOUND_MODIFIER
+We use an out-of-distribution-driven sampler for the ablation study.
+% @ENDCASE
+
+% Suffix tier. `-based` is a construction, not a coinage: `X-based` is the
+% compressed form of "based on X" and composes freely, so both eras use it. It is
+% off by default and folded back in with LINT_ADHOC_INCLUDE_BASED=1.
+
+% @CASE adhoc-based-suffix-off-by-default
+% Awkward, but -based is not where coinage lives, and reporting it dilutes the
+% signal from 16x to 4x. Silent under the default suffix set.
+% @EXPECT none
+We adopt a concatenation-based fusion network for the two streams.
+% @ENDCASE
+
+% @CASE adhoc-high-risk-suffix-still-fires
+% @EXPECT PROSE.ADHOC_COMPOUND_MODIFIER
+The pipeline uses a freshness-aware retrieval stage before reranking.
+% @ENDCASE

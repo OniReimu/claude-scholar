@@ -237,7 +237,15 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 ⚠️ **反向护栏**：一份区块链方向的 pre-GPT 稿件复合词出现率是基线的 7 倍，但几乎全是同几个领域术语反复使用。**按总量判会把整个领域误伤，只能按「一次性」判。**
 
-修法优先级：① 拆成介词短语或从句（`exposure-aware signals` → `signals that record what each user was shown`）；② 直接用普通语言说清楚；③ 若它确实是本文核心概念，**不要一次性使用**——显式声明命名、给定义、全文一致，此时转 `PROSE.INVENTED_CONCEPT_LABEL`。**不要把一次性造词换成另一个一次性造词。**
+**放行必须举证**：判定它是既有术语时，**同时说出领域先验出处**（`sharpness-aware minimisation` → Foret et al., SAM）。说不出出处就不能放行。反事实测试：把这个词抽离本文语境、直接放进该领域顶会论文里，**同行审稿人会不会停顿**？
+
+**修法先判意图，不要按优先级试**：
+- **场景 A｜图省事**（这个词不承载任何主张）：动词化或拆成从句 —— `norm-dependent coordinate escaping behavior` → `coordinates that depend on the norm escape ...`
+- **场景 B｜想立概念但只用了一次**：换常规搭配 `signals robust to community shifts`；**或**显式命名 `We define a community-shift-aware signal as ...` 并全文一致使用（转 `PROSE.INVENTED_CONCEPT_LABEL`）
+
+红线：**不要把一次性造词换成另一个一次性造词**（`exposure-aware` → `visibility-conditioned`），那只是换壳。
+
+机械层已做四件事：**只报前置定语位置**、**放行缩略语定义与全段大写的命名约定**、**给左项复合的命中打 `[multi-part left element]` 风险标记**、**`-based` 默认不报**（`X-based` 是 "based on X" 的构式不是造词，两个年代都在用；含它信号从 16x 稀释到 4x）。造词集中在 `-aware` / `-oriented` / `-centric` / `-guided` / `-conditioned` 这几个后缀上。
 
 机械层由 `policy/lint.sh` 的 builtin 给候选（只报 hapax），**是不是领域术语由你判**——这一步依据你的训练知识，**不可复现、有知识截止、冷门子领域识别率低**。因此**不确定时不报**：误报一个真实领域术语会让作者判定工具不懂本领域、整条规则被关掉，代价远高于漏一个造词。
 

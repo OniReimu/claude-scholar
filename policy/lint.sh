@@ -428,7 +428,15 @@ parse_rule() {
 # The allowlist is a floor, not the boundary. Whether a hapax compound is a real
 # term of the paper's field is a judgment the skill makes; this check only
 # surfaces the candidates.
-ADHOC_SUFFIXES='based|aware|driven|guided|centric|oriented|enabled|agnostic|informed|preserving|grounded|conditioned|specific|augmented|enhanced'
+# Suffix tiers. `-based` is excluded by default because it is a CONSTRUCTION,
+# not a coinage: `X-based` is the compressed form of "based on X", so it composes
+# freely and both eras use it. Measured on the 40-paper corpus: 22 of 25 hapax
+# compounds in 2019-2021 sources end in -based, against 43 of 83 in 2025-2026.
+# Including it dilutes the signal from 16x to 4x. Set LINT_ADHOC_INCLUDE_BASED=1
+# to fold it back in — `concatenation-based` and `euclidean-based` show that
+# -based can still be coined awkwardly; it is just not where coinage lives.
+ADHOC_SUFFIXES='aware|driven|guided|centric|oriented|enabled|agnostic|informed|preserving|grounded|conditioned|specific|augmented|enhanced'
+[[ "${LINT_ADHOC_INCLUDE_BASED:-0}" == "1" ]] && ADHOC_SUFFIXES="based|$ADHOC_SUFFIXES"
 ADHOC_ALLOW=' agent-based model-based rule-based gradient-based learning-based sampling-based physics-based energy-based attention-based transformer-based content-based knowledge-based feature-based graph-based template-based search-based simulation-based optimization-based data-driven model-driven event-driven task-specific domain-specific application-specific model-agnostic privacy-preserving structure-preserving '
 
 lint_prose_adhoc_compound_modifier() {
@@ -446,28 +454,49 @@ lint_prose_adhoc_compound_modifier() {
     # ones seen exactly once. Line number comes from the single occurrence.
     hits=$(ADHOC_SUF="$ADHOC_SUFFIXES" ADHOC_OK="$ADHOC_ALLOW" perl -CSD -e '
       my $suf = $ENV{ADHOC_SUF}; my %ok = map { $_ => 1 } split " ", $ENV{ADHOC_OK};
-      my (%n, %line, %shown);
+      my (%n, %line, %shown, %attr, %exempt);
+      # Function words and finite verbs that follow a compound in PREDICATIVE
+      # position ("the estimator is model-agnostic, and ..."). A compound only
+      # costs the reader mid-parse when it modifies a following noun.
+      my $FUNC = qr/^(is|are|was|were|be|been|and|or|but|which|that|to|in|on|of|for|with|when|if|as|at|by|from|than|so|then|thus|hence|we|it|this|these|those|there|however|therefore)$/i;
       open(my $fh, "<:raw", $ARGV[0]) or exit 0;
       my @L = <$fh>; close $fh;
       for my $i (0 .. $#L) {
         my $l = $L[$i];
         $l =~ s/\$[^\$]*\$//g;
-        while ($l =~ /\b([a-z]{3,}(?:-[a-z]{2,})*-(?:$suf))\b/gi) {
-          my $w = lc $1;
+        while ($l =~ /\b([A-Za-z]{3,}(?:-[A-Za-z]{2,})*-(?:$suf))\b([^\n]{0,40})/gi) {
+          my ($raw, $after) = ($1, $2 // "");
+          my $w = lc $raw;
           $n{$w}++;
           $line{$w} //= $i + 1;
-          $shown{$w} //= $1;
+          $shown{$w} //= $raw;
+          # Attributive: the next token is a word, and not a function word or copula.
+          if ($after =~ /^\s+([A-Za-z][A-Za-z-]*)/) { $attr{$w}++ unless $1 =~ $FUNC }
+          # Exempt: the author defines an acronym for it — that is an explicit
+          # naming act, which is the path PROSE.INVENTED_CONCEPT_LABEL asks for.
+          $exempt{$w} = 1 if $after =~ /^\s*\(\s*[A-Z]{2,}\s*\)/;
+          # Exempt: every segment capitalised (Community-Shift-Aware) is a naming
+          # convention. Sentence-initial capitalisation only raises the first
+          # segment, so this does not swallow it.
+          my @seg = split /-/, $raw;
+          $exempt{$w} = 1 if @seg > 1 && !grep { !/^[A-Z]/ } @seg;
         }
       }
       for my $w (sort { $line{$a} <=> $line{$b} } keys %n) {
-        next if $n{$w} != 1 || $ok{$w};
-        print "$line{$w}\t$shown{$w}\n";
+        next if $n{$w} != 1 || $ok{$w} || $exempt{$w};
+        next unless $attr{$w};                      # attributive position only
+        my $parts = () = $w =~ /-/g;
+        my $risk = $parts >= 2 ? "\thigh" : "\t";
+        print "$line{$w}\t$shown{$w}$risk\n";
       }
     ' "$view" 2>/dev/null || true)
     [[ -n "$hits" ]] || continue
-    while IFS=$'\t' read -r ln word; do
+    while IFS=$'\t' read -r ln word risk; do
       [[ -n "$ln" ]] || continue
-      report_finding "$severity" "$RULE_ID" "${file}:${ln}: coined once and never reused — ${word}"
+      # A multi-part left element (community-shift-aware) is the highest-risk
+      # shape and is tagged so the author can triage; it is not a separate rule.
+      local tag=""; [[ "$risk" == "high" ]] && tag=" [multi-part left element]"
+      report_finding "$severity" "$RULE_ID" "${file}:${ln}: coined once, attributive, never reused — ${word}${tag}"
     done <<< "$hits"
   done
 }

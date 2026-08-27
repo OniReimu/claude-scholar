@@ -10,7 +10,7 @@ domains: [core]
 venues: [all]
 check_kind: regex
 enforcement: lint_script
-params: {}
+params: {include_based: false}
 conflicts_with: [PROSE.INVENTED_CONCEPT_LABEL, PROSE.ELEGANT_VARIATION, PROSE.ABBREVIATION_FIRST_USE]
 constraint_type: guidance
 autofix: none
@@ -34,15 +34,26 @@ lint_targets: "**/*.tex"
 
 反过来，一个复合词若在全文反复出现，第一次的解码成本被后续每一次使用摊薄，它已经成为本文的术语。那时它归 `PROSE.INVENTED_CONCEPT_LABEL` 管（要不要显式声明命名），不归本卡。
 
-### 修法
+### 修法：先判意图，再选改法
 
-按优先级：
+不要按优先级逐个试。**先问作者当时想干什么**，两条路的改法完全不同：
 
-1. **拆成介词短语或从句**——`exposure-aware signals` → `signals that record what each user was shown`
-2. **直接用普通语言说清楚**——多数一次性造词删掉后句子更清楚
-3. **若它确实是本文的核心概念**，不要一次性使用：显式声明命名（`we refer to this as ...`）、给可判定的定义、全文一致使用。此时按 `PROSE.INVENTED_CONCEPT_LABEL` 与 `PROSE.ABBREVIATION_FIRST_USE` 走
+**场景 A — 图省事，把修饰语压缩进连字符。** 特征：这个词不承载本文的任何主张，只是省了几个词。
 
-**不要把一次性造词换成另一个一次性造词**——那只是换个壳。
+> `norm-dependent coordinate escaping behavior`
+> → `coordinates that depend on the norm escape ...`
+
+改法是**动词化或拆成介词短语/从句**。顺带消除密集名词化，可读性净增。
+
+**场景 B — 想立一个概念，但只用了一次。** 特征：这个词指向本文真正关心的对象。
+
+> `community-shift-aware signal`
+> → 换常规搭配：`signals robust to community shifts`
+> → 或**显式命名**：`We define a community-shift-aware signal as ...`，此后全文一致使用
+
+选哪条取决于它是不是本文的命名贡献。是 → 声明 + 定义 + 全文一致（转 `PROSE.INVENTED_CONCEPT_LABEL` 与 `PROSE.ABBREVIATION_FIRST_USE`）；不是 → 换常规搭配。
+
+**两个场景共同的红线**：**不要把一次性造词换成另一个一次性造词**（`exposure-aware` → `visibility-conditioned`），那只是换个壳。
 
 ## Rationale
 
@@ -64,8 +75,14 @@ lint_targets: "**/*.tex"
 
 ## Check
 
-- **机械层（builtin，非 regex pattern）**：`policy/lint.sh` 的 `lint_prose_adhoc_compound_modifier`。逐文件统计以下后缀结尾的复合修饰语，仅报**在该文件中恰好出现一次**且不在 allowlist 内的：
-  `based|aware|driven|guided|centric|oriented|enabled|agnostic|informed|preserving|grounded|conditioned|specific|augmented|enhanced`
+- **机械层（builtin，非 regex pattern）**：`policy/lint.sh` 的 `lint_prose_adhoc_compound_modifier`。逐文件统计后缀复合修饰语，仅报**在该文件中恰好出现一次**、位于前置定语位置、且不在 allowlist / 豁免内的
+- **后缀分层——`-based` 默认不参与**。`X-based` 是 "based on X" 的压缩写法，是**构式不是造词**，可自由组合，两个年代都在大量使用：40 篇语料实测，pre-GPT 的 25 个 hapax 里 **22 个是 `-based`**，2026 的 83 个里 43 个是。含 `-based` 时两组差 4.05x，去掉后 16.27x。默认后缀集：
+  `aware|driven|guided|centric|oriented|enabled|agnostic|informed|preserving|grounded|conditioned|specific|augmented|enhanced`
+  `LINT_ADHOC_INCLUDE_BASED=1` 可折回——`concatenation-based` / `euclidean-based` 说明 `-based` 仍可能被造得生涩，只是造词不集中在那里
+  ⚠️ **16.27x 不可作为效应量引用**：pre-GPT 侧非 `-based` 的 hapax 只有 **3 个**（`document-specific` · `image-aware` · `report-specific`），分母过小、方差极大。可靠的只有方向
+- **句法过滤：仅前置定语**。`a model-agnostic estimator`（修饰后接名词）才让读者在句中解码；`the estimator is model-agnostic`（表语）时主语已解析完毕，成本低得多。实测：该过滤保留 95 个命中里的 87 个，分离度 3.26x → 3.17x 基本不变，**误报少 8%**
+- **机械豁免（两条，均为显式命名行为）**：① 复合词后紧跟缩略语定义 `Latency-Budget-Aware (LBA)`；② 各段首字母全大写 `Delay-Tolerant-Enabled`（句首大写只抬升第一段，不会被误吞）
+- **风险标记（不过滤，只分级）**：左项本身为复合结构（≥2 个连字符，`out-of-distribution-driven`）的命中附 `[multi-part left element]`。实测该形态分离度最高（3.50x）但绝对量极小（PRE 2 / POST 6），**当过滤器会漏掉九成命中，只能当权重**
 - **为什么必须是 builtin**：判据是**频次**，逐行正则无法表达。`lint_patterns` 只能判「这一行有没有」，判不了「全文出现几次」
 - **allowlist 是地板不是边界**：脚本内置的 26 个（`agent-based` · `data-driven` · `privacy-preserving` …）只挡最通用的。**某个 hapax 是不是本文领域的既有术语，是语义层的判断**，机械层只负责给候选
 - **语义层逐条问两件事**：① 这个词在本领域文献里已有吗？有 → 保留；② 没有的话，它在本文出现几次？只有一次 → 拆开或改写；反复出现 → 转 `PROSE.INVENTED_CONCEPT_LABEL` 走命名声明
@@ -81,6 +98,12 @@ lint_targets: "**/*.tex"
 3. **领域不均衡**——判官对自己熟悉领域的术语识别率明显更高
 
 **已知的自身误判实例**：本卡 Rationale 引用的 2026 语料样本中，`brokerage-oriented` 被列为一次性造词，但 *brokerage* 是社会网络分析的既有概念（Burt 的结构洞理论）。该判定**很可能是错的**，保留在此作为局限的证据。
+
+**放行必须举证。** 判定一个词是既有术语时，**必须同时说出它的领域先验出处**——文献、经典方法名、或该领域公认的标准搭配（`sharpness-aware minimisation` → Foret et al., SAM）。**说不出出处就不能放行。**
+
+这条把一个主观判断变成**带举证责任的判断**：读者可以核查那个出处，而不是只能相信一句断言。它不能消除不可复现性，但把不可复现的部分压缩到"举证是否成立"，那是可争论、可推翻的。
+
+**反事实测试**（判定时问自己）：把这个词从本文语境里抽出来，直接放进该领域顶会（NeurIPS / OSDI / S&P）的一篇论文里，**同行审稿人能否不停顿地读过去**？会停顿 → 不是既有术语。
 
 **因此判定方向必须保守**：不确定时**不报**。误报一个真实领域术语的代价（作者认定工具不懂本领域，整条规则被关掉）远高于漏报一个造词。
 
