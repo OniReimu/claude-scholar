@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: [PROSE.COMMA_OVERUSE, PROSE.HEDGING_DISCIPLINE, PROSE.RHYTHM_VARIANCE, PROSE.INFORMAL_VOCABULARY]
+conflicts_with: [PROSE.COMMA_OVERUSE, PROSE.HEDGING_DISCIPLINE, PROSE.INFORMAL_VOCABULARY, PROSE.RHYTHM_VARIANCE, PROSE.SEMANTIC_IDLING]
 constraint_type: guidance
 autofix: none
 lint_patterns:

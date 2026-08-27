@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {roadmap_allowance: 1}
-conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE]
+conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE, PROSE.SEMANTIC_IDLING]
 constraint_type: guardrail
 autofix: assisted
 lint_patterns:

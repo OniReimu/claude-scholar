@@ -31,6 +31,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.FRACTAL_SUMMARY` | 禁止逐层预告/回顾（"In this section we…"） |
 | `PROSE.INVENTED_CONCEPT_LABEL` | 禁止自造术语冒充既有概念 |
 | `PROSE.RESTATEMENT_DILUTION` | 同一命题一节内只说一次 |
+| `PROSE.SEMANTIC_IDLING` | 每句必须新增可证伪内容：零命题的元叙述句 / 理由复述结论的因果回环 |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
 | `PROSE.HEDGING_DISCIPLINE` | 动词强度匹配证据强度（双向：不 over-hedge 也不 over-claim） |
 | `PROSE.EM_DASH_RESTRICTION` | 禁止em-dash（零容忍） |
@@ -264,6 +265,27 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 **同一命题一节内只说一次** <!-- policy:PROSE.RESTATEMENT_DILUTION -->
 AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。删除测试：删掉后出现的那句，本段信息零损失即确认是复述，删掉定稿（不要合并改写）。跨节的重复主张不归这里，交 `claim-architecture-review` 的 **P2 relocation-map**——同一命题有多个 home 时由它定 canonical home（最小调用见下方转诊说明）。
+
+**每句必须新增可证伪的内容（"轱辘话"）** <!-- policy:PROSE.SEMANTIC_IDLING -->
+与上一条正好相反：那条是**同一个命题说了两遍**，这条是**一个命题都没有**。所以删除测试在这里不成立——空转句删掉后信息同样零损失，但原因不是"别处说过"，而是"这里从来没说过"，修法因此不是删后一句而是补事实。
+
+两种形态：
+- **A 零命题（元叙述空转）**：句子在说"我们在做分析 / 这很重要 / 这带来了理解"，却没有任何变量、数值、机制或结论。判据是**可移植性**——这句能不能原样搬进一篇完全不同的论文而不改一个词，能就是空转。
+  例：*To provide a comprehensive understanding of the underlying dynamics, we carefully examine the various factors that influence the overall behavior of the system, thereby gaining valuable insights.*（30 词，零具体对象）
+- **B 因果回环**：`because` / `since` / `which enables` 之后的解释项是被解释项的换词重述，理由和结论是同一件事。
+  例：*The model achieves low latency because the execution time is reduced, which effectively enables faster processing.*（low latency = reduced execution time = faster processing）
+
+**检查方法只有一个**：逐句写出这句断言了什么，**必须包含至少一个具体对象**（变量名/数值/模块名/数据集/机制）；写不出来即形态 A。含因果连接词的，分别写出解释项与被解释项，同一命题两种措辞即形态 B。
+
+**修法只有两条：具体化或删除。** 不要改写成更好听的空话。
+
+⚠️ **不要用指标代替判断**：不做嵌入余弦、不做 filler-token 占比、不做命题密度阈值。本仓库实测过这类代理量——结构性重复信号自评 16x，换 fresh 模型盲评后塌到 1.22x，组内离散度比组间差异还大。给判断套阈值，测的是仪器自己。
+
+**豁免**：定义句与形式化陈述；**下一句就落地兑现**的抽象铺垫（那是 topic sentence，判据是兑现距离——隔三句还在抽象层才违规）；Ethics / Threats to Validity / Broader Impact 的规定动作与 `\paragraph{}` 标题句；直接引语与被批评的对象文本。
+
+**报告已放行项**：每段报出被检查句数与放行数。只报违规，作者分不清"查过合格"和"没看到"。
+
+**转诊分流**：一段之内**多数句子**都判为形态 A 时，不要逐句报——整段转 `claim-architecture-review` 跑 **P1 逐段审计**（`spine.md` 不存在时先跑 P0）。逐句"具体化"一个本身没有内容的段落，产出的是更好听的空话；该判的是这段该不该存在（最小调用见下方转诊说明）。
 
 ### 8b. 删掉过程流水账（句级） <!-- policy:PAPER.OUTCOME_LOGIC -->
 

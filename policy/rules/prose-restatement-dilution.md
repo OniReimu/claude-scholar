@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: doc
 params: {}
-conflicts_with: [EXP.EXPERIMENT_ROLE, PAPER.CONCLUSION_SINGLE_PARAGRAPH, PROSE.ELEGANT_VARIATION, PROSE.RULE_OF_THREE]
+conflicts_with: [EXP.EXPERIMENT_ROLE, PAPER.CONCLUSION_SINGLE_PARAGRAPH, PROSE.ELEGANT_VARIATION, PROSE.RULE_OF_THREE, PROSE.SEMANTIC_IDLING]
 constraint_type: guardrail
 autofix: none
 ---

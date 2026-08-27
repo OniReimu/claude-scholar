@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.FRACTAL_SUMMARY, PROSE.RHYTHM_VARIANCE]
+conflicts_with: [PROSE.FRACTAL_SUMMARY, PROSE.RHYTHM_VARIANCE, PROSE.SEMANTIC_IDLING]
 constraint_type: guidance
 autofix: none
 ---

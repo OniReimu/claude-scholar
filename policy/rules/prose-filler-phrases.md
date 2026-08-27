@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: [PROSE.AI_LEXICON]
+conflicts_with: [PROSE.AI_LEXICON, PROSE.SEMANTIC_IDLING]
 constraint_type: guardrail
 autofix: safe
 lint_patterns:
