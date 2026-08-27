@@ -29,11 +29,12 @@ jobs:
   structural-validation:
     runs-on: ubuntu-latest
     steps:
+      # No `submodules: recursive` here. Four gitlinks under plugins/marketplaces/
+      # have no .gitmodules entries, so every `git submodule` operation exits 128
+      # and checkout fails before any step runs. validate.sh does not need the
+      # submodules: section 8c resolves a skill name through -L, which answers
+      # the same in a hydrated and an unhydrated tree.
       - uses: actions/checkout@v4
-        with:
-          # Three skills are symlinks into vendor submodules. Without this the
-          # runner validates a tree where those skills do not exist.
-          submodules: recursive
 
       - name: Policy engine structural validation
         run: |
