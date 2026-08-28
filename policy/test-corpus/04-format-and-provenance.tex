@@ -85,3 +85,19 @@ The measured latency is $11\;\mathrm{ms}$ at batch size 32 and $18\;\mathrm{ms}$
 % @EXPECT none
 The outer codebook quantizes each block to one of 256 centroids. The inner codebook encodes the residual at 4 bits per dimension.
 % @ENDCASE
+
+% The tier-1 remedy (comma + conjunction) must not read as a violation. It is a
+% syntactic change, not a punctuation swap: the conjunction carries the contrast.
+% Splitting this one instead yields `The point-estimate rule passes. Interval
+% equivalence does not.` -- 4 words plus 4 words, which is exactly the shape
+% PROSE.THEATRICAL_SPLIT names as a violation and tells the author to merge back
+% with but/yet/and. The two cards used to contradict each other here.
+% @CASE semicolon-tier1-comma-conjunction-clean
+% @EXPECT none
+The point-estimate rule passes, whereas interval equivalence does not.
+% @ENDCASE
+
+% @CASE semicolon-tier1-source-form-violation
+% @EXPECT PROSE.SEMICOLON_RESTRICTION
+The point-estimate rule passes; interval equivalence does not.
+% @ENDCASE

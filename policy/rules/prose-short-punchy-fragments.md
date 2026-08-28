@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.RHYTHM_VARIANCE]
+conflicts_with: [PROSE.RHYTHM_VARIANCE, PROSE.SEMICOLON_RESTRICTION]
 constraint_type: guidance
 autofix: none
 ---
