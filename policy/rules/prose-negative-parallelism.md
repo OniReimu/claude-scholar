@@ -19,6 +19,7 @@ lint_patterns:
     mode: match
   - pattern: "(?i)\\bnot just .{5,60}but\\b"
     mode: match
+coverage_note: "not only ... but also is deliberately not patterned — it is frequency-managed (at most twice per paper), so a single instance is not a violation. Count it by hand during self-review."
 lint_targets: "**/*.tex"
 ---
 
@@ -36,7 +37,7 @@ lint_targets: "**/*.tex"
 
 - **regex 搜索**: 匹配 "It's not ... it's" 和 "not just ... but" 模式。**契约式与非契约式都要匹配**——学术散文里缩写本身就被 `PROSE.INFORMAL_VOCABULARY` 排除，所以论文里这个句式几乎总是写成 "It is not X, it is Y"，只匹配 "It's" 等于在真实稿件上永远不触发
 - **检查范围**: `.tex` 文件正文区域
-- **注意**: "not only ... but also" 在学术写作中偶尔使用是可接受的，但每篇论文不超过 2 次
+- **注意**: "not only ... but also" **刻意不进 regex**——它是频次管理（每篇 ≤2 次可接受），单次命中不是违规，所以逐处报警只会制造噪音。数数归判断层
 
 ## Examples
 

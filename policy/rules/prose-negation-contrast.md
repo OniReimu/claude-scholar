@@ -22,6 +22,17 @@ lint_patterns:
     mode: match
   - pattern: "\\bneither\\b[^.!?]{1,60}\\bnor\\b"
     mode: match
+  # Reversed copular order: `is not A, but B`. The original single pattern was
+  # anchored on the byte sequence `, not `, which only exists in positive-first
+  # order — in the reversed form the comma sits before `but`, so the family's
+  # most common negative-first member was invisible to both this card and
+  # PROSE.NEGATIVE_PARALLELISM (whose patterns require a doubled pronoun or
+  # `not just/only`). The lookahead hands `not just/only/merely/simply` to that
+  # card. A concessive but-CLAUSE (`is not complete, but the gap is small`)
+  # also matches: the regex locates, the judgment layer clears it — same
+  # contract as tier B.
+  - pattern: "\\b(is|are|was|were|remains?|becomes?)\\s+not\\s+(?!just\\b|only\\b|merely\\b|simply\\b)[\\w-]+(\\s+[\\w-]+){0,3},\\s+but\\s+\\w"
+    mode: match
   - pattern: ",\\s+not\\s+\\w"
     mode: match
   # Tier B (guidance) — previously left to the judgment layer because legitimate
@@ -34,7 +45,7 @@ lint_patterns:
     mode: match
   - pattern: "\\binstead of\\b"
     mode: match
-coverage_note: "tier B (rather than / instead of) is located but not judged here — the exclusion may be load-bearing. Tier A (copular contrast, neither...nor) is zero-tolerance."
+coverage_note: "tier B (rather than / instead of) is located but not judged here — the exclusion may be load-bearing. Tier A (copular contrast both orders, neither...nor) is zero-tolerance. Not enumerable: the comma-free reversed form (is not A but B) and fronted Not A, but B — check negated copulas by hand."
 lint_targets: "**/*.tex"
 ---
 

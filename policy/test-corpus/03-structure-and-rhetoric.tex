@@ -240,3 +240,30 @@ Visible events are not yet evidence for action.
 % @EXPECT none
 The bound does not hold in the skewed regime.
 % @ENDCASE
+
+% Reversed copular order. The original pattern was anchored on `, not `, which
+% only occurs in positive-first order — `is not A, but B` puts the comma before
+% `but` and was invisible to this card AND to NEGATIVE_PARALLELISM (doubled
+% pronoun or not-just/only required there). Found by asking why pre-v1.25
+% manuscripts kept their reversed contrasts.
+
+% @CASE negation-tier-a-reversed-copular
+% @EXPECT PROSE.NEGATION_CONTRAST
+The gain is not statistical, but architectural.
+% @ENDCASE
+
+% `not only ... but also` is deliberately UNPATTERNED on both cards: the new
+% reversed-copular pattern's lookahead hands it off, and NEGATIVE_PARALLELISM
+% manages it by frequency (at most twice per paper — a single instance is not a
+% violation), declared in its coverage_note. This case pins the silence.
+% @CASE negation-not-only-unpatterned-by-design
+% @EXPECT none
+The proof is not only elegant, but also short.
+% @ENDCASE
+
+% Concessive but-CLAUSE: locates at the regex layer by design, judgment clears
+% it (the second half has its own subject and verb — a concession, not a foil).
+% @CASE negation-concessive-but-clause-locates-by-design
+% @EXPECT PROSE.NEGATION_CONTRAST
+The proof is not complete, but the gap is small.
+% @ENDCASE
