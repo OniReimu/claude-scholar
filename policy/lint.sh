@@ -694,7 +694,7 @@ lint_prose_semicolon_restriction() {
     while IFS=$'\t' read -r kind a b c; do
       case "$kind" in
         HIT)
-          report_finding "$severity" "$RULE_ID" "${file}:${a}: semicolon joins two clauses — split into two sentences — ${b}"
+          report_finding "$severity" "$RULE_ID" "${file}:${a}: semicolon joins two clauses — split, or comma + conjunction when the four tier-1 criteria hold (see card) — ${b}"
           ;;
         SKIP)
           # Silence is not cleanliness: say what was stripped, so the author can
