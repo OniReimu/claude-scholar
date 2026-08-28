@@ -597,6 +597,37 @@ for f in "${RULE_CARDS[@]}"; do
 done
 (( enf_bad == 0 )) && pass "enforcement agrees with lint_patterns and builtins"
 
+# ─── 9d. Declared Coverage Gaps Are Visible at the Point of Use ─────────────
+# Several cards deliberately leave part of their Requirement out of the regex —
+# usually because a pattern would flood. That decision is sound, but it was
+# recorded only in the card's Check section, which an executor working from lint
+# output never opens. Measured on one manuscript: 15 contrast constructions
+# reported where 38 existed, because the largest class was left to judgment and
+# the deliberateness was invisible at the point of use. A card that declares a
+# gap must also carry `coverage_note`, which lint prints under the rule header.
+section "9d. Declared Coverage Gaps Are Visible at the Point of Use"
+
+cov_bad=0
+for f in "${RULE_CARDS[@]}"; do
+  fm=$(get_fm "$f")
+  rid=$(echo "$fm" | awk '/^id: /{print $2; exit}')
+  enf=$(echo "$fm" | awk '/^enforcement: /{print $2; exit}')
+  [[ "$enf" == "lint_script" ]] || continue
+  # The card says, in prose, that part of the rule is out of regex scope.
+  if grep -qE 'regex 覆盖不到|刻意不进 regex|不做硬 regex|不做 regex|regex 无法' "$f"; then
+    if ! echo "$fm" | grep -q '^coverage_note:'; then
+      err "$rid: declares a regex coverage gap in prose but has no coverage_note — lint will report a partial count with no signal that it is partial"
+      cov_bad=1
+    fi
+  fi
+  # And the converse: a note that promises a gap the card never explains.
+  if echo "$fm" | grep -q '^coverage_note:' && ! grep -qE 'regex 覆盖不到|刻意不进 regex|不做硬 regex|不做 regex|regex 无法|tier B|档 B' "$f"; then
+    err "$rid: has coverage_note but the card body never says what is out of scope or why"
+    cov_bad=1
+  fi
+done
+(( cov_bad == 0 )) && pass "every declared coverage gap is surfaced by lint"
+
 section "10. Rule ID Registry Consistency"
 
 readme="$SCRIPT_DIR/README.md"

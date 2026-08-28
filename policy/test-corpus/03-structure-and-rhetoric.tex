@@ -196,3 +196,47 @@ The study asks three questions, restated here immediately above the heading that
 % @EXPECT none
 RQ1 is addressed next, and RQ2 follows in the subsection after it.
 % @ENDCASE
+
+% ── PROSE.NEGATION_CONTRAST: two tiers + the reverse guardrail ──────────────
+% Tier A (copular contrast, neither...nor) is zero-tolerance. Tier B
+% (rather than / instead of) is located by regex but tiered by judgment: the
+% exclusion may be load-bearing. Measured on one manuscript, `rather than` was
+% 17 of 38 instances and none of them were mechanically visible.
+% The guardrail cases matter most: a plain negative predicate with no positive
+% counterpart in the same sentence is normal prose, and 5 of 16 hits on that
+% manuscript were this shape. A rule that eats them gets switched off.
+
+% @CASE negation-tier-a-copular
+% @EXPECT PROSE.NEGATION_CONTRAST
+The estimator is efficient, not slow.
+% @ENDCASE
+
+% @CASE negation-tier-a-neither-nor
+% @EXPECT PROSE.NEGATION_CONTRAST
+The signal is neither stable nor reproducible across seeds.
+% @ENDCASE
+
+% @CASE negation-tier-b-rather-than
+% @EXPECT PROSE.NEGATION_CONTRAST
+The framework is modular rather than monolithic.
+% @ENDCASE
+
+% @CASE negation-tier-b-instead-of
+% @EXPECT PROSE.NEGATION_CONTRAST
+We use a fixed split instead of cross-validation.
+% @ENDCASE
+
+% @CASE negation-plain-negative-predicate-clean
+% @EXPECT none
+That difference is not an effect estimate.
+% @ENDCASE
+
+% @CASE negation-plain-negative-predicate-hedged-clean
+% @EXPECT none
+Visible events are not yet evidence for action.
+% @ENDCASE
+
+% @CASE negation-plain-negative-verb-clean
+% @EXPECT none
+The bound does not hold in the skewed regime.
+% @ENDCASE

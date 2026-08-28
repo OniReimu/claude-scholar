@@ -21,6 +21,7 @@ lint_patterns:
     mode: match
   - pattern: "\\bis (built|designed|meant) to (catch|hunt|chase|beat|kill|attack)\\b"
     mode: match
+coverage_note: "metaphorical verbs on abstract subjects (carries / delivers / buys / captures / embraces / speaks to) are deliberately not in regex — judge whether a literal verb loses information."
 lint_targets: "**/*.tex"
 ---
 

@@ -17,6 +17,7 @@ autofix: none
 lint_patterns:
   - pattern: ",\\s*(as|if|where|when|once|though|albeit|yet|so|thus|too)\\s+\\w+\\.\\s"
     mode: match
+coverage_note: "the pattern lists the common tails; open forms (, in principle. / , for now. / , where relevant.) are not enumerable by regex — check every sentence-final comma phrase that has no subject or verb."
 lint_targets: "**/*.tex"
 ---
 

@@ -15,18 +15,41 @@ conflicts_with: []
 constraint_type: guardrail
 autofix: none
 lint_patterns:
+  # Tier A (guardrail) — copular contrast, listed first and kept separate from
+  # the bare comma form so the finding carries the stronger reading: this is the
+  # `It's not X, it's Y` family PROSE.NEGATIVE_PARALLELISM also owns.
+  - pattern: "\\b(is|are|was|were|remains?|becomes?)\\s+[\\w-]+(\\s+[\\w-]+){0,2},\\s+not\\s+\\w"
+    mode: match
+  - pattern: "\\bneither\\b[^.!?]{1,60}\\bnor\\b"
+    mode: match
   - pattern: ",\\s+not\\s+\\w"
     mode: match
+  # Tier B (guidance) — previously left to the judgment layer because legitimate
+  # uses are common. Measured on one full manuscript, `rather than` alone was 17
+  # of 38 instances: the largest class, entirely invisible mechanically, while
+  # the card warned in prose against reflexively rewriting `, not Y` into exactly
+  # this form. Tiering resolves the precision objection — a tier-B hit is
+  # advisory. The regex LOCATES; the tier and the verdict are judgment.
+  - pattern: "\\brather than\\b"
+    mode: match
+  - pattern: "\\binstead of\\b"
+    mode: match
+coverage_note: "tier B (rather than / instead of) is located but not judged here — the exclusion may be load-bearing. Tier A (copular contrast, neither...nor) is zero-tolerance."
 lint_targets: "**/*.tex"
 ---
 
 ## Requirement
 
-避免用不必要的对比构造去陈述一个本可以直接正面说出的事实。三种同源句式都在范围内：
+避免用不必要的对比构造去陈述一个本可以直接正面说出的事实。**按句式分两档，强度不同**：
 
-- `X, not Y`（逗号否定）
-- `X rather than Y`
-- `X instead of Y`
+| 档 | 句式 | 强度 |
+|---|---|---|
+| **A — guardrail（零容忍）** | `X is/are A, not B` · `not A, but B` · `X is neither A nor B`（**系动词 + 表语对比**） | 强制改正面 |
+| **B — guidance（偶尔可用）** | `rather than` · `instead of`（**挂在动词/动名词上**） | 排除项本身承载主张时可用 |
+
+分档的理由：系动词型是 `PROSE.NEGATIVE_PARALLELISM` 的 `It is not X, it is Y` 近亲，属同一族假深刻构造；而 `rather than` 挂在动词上时表达的往往是方法学取舍（`we mark X as unavailable rather than guessing its timing`），那是另一回事。
+
+⚠️ **反向护栏：单纯的否定谓语不在禁令内。** 同句内没有正面对项的否定——`that difference is not an effect estimate` / `visible events are not yet evidence for action`——是正常陈述，不是对比构造。实测一份全稿的 16 处命中里有 **5 处**属此类。不划这条界会把正常否定谓语全铲掉。
 
 **默认改法：直接正面陈述 `X is A`，把对比整个去掉。** 不要把 `, not Y` 反射性地换成 `rather than Y` / `instead of Y`——那只是换件衣服的同一个对比，没有解决问题。
 
@@ -46,9 +69,10 @@ LLM 习惯用"否定一个对照项"来制造强调或深度感，即使那个�
 
 ## Check
 
-- **regex 搜索**: 匹配 `, not ` 后接词（最机械的形式）
-- **LLM 补充**: `rather than` / `instead of` 是同源构造，但合法用法太多，不做硬 regex；self-review 时逐句判断「排除项是否 load-bearing」
-- **改写优先级**: ① 删对比、只留正面 `X is A`；② 确认排除 Y 是实质主张时才保留，并在三种形式里选语义最自然的一种
+- **regex 搜索**: 五条 pattern 覆盖档 A 的系动词型与 `neither…nor`、任意逗号否定，以及档 B 的 `rather than` / `instead of`。**正则只定位，分档与判决归判断层**
+- **无正面对项的否定谓语不报**：`is not` / `are not` / `does not` 后面没有跟一个被对照的正面项时，不是本卡的对象。档 A 的 pattern 已经把这类排除在外（它要求 `is <表语>, not <X>` 的完整形状），审阅时不要手工补报
+- **改写优先级**: ① **正面陈述**——`only` / `alone` / 一个更准的正面形容词常常能把排除项吸收进去；② 排除项本身即主张时，降级用档 B 的 `rather than` 保留
+- **删排除项前必须确认它在别处有落点**。实测的两处删除分别核实于同段末句；排除项承载的是实证主张时，删掉等于丢一个 claim
 - **排除**: `, not only ... but also ...`（由 `PROSE.NEGATIVE_PARALLELISM` 限频管理，每篇≤2 次）
 - **检查范围**: `.tex` 文件正文区域
 

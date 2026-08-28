@@ -339,7 +339,7 @@ get_effective_threshold() {
 #       FIX_PATTERNS[] (entries: "find\treplace")
 RULE_ID="" RULE_SEVERITY="" RULE_LOCKED="" RULE_LAYER=""
 RULE_CHECK_KIND="" RULE_CONSTRAINT_TYPE="" RULE_AUTOFIX=""
-RULE_LINT_TARGETS=""
+RULE_LINT_TARGETS="" RULE_COVERAGE_NOTE=""
 declare -a PATTERNS=()
 declare -a FIX_PATTERNS=()
 
@@ -348,7 +348,7 @@ parse_rule() {
 
   RULE_ID="" RULE_SEVERITY="" RULE_LOCKED="" RULE_LAYER=""
   RULE_CHECK_KIND="" RULE_CONSTRAINT_TYPE="" RULE_AUTOFIX=""
-  RULE_LINT_TARGETS=""
+  RULE_LINT_TARGETS="" RULE_COVERAGE_NOTE=""
   PATTERNS=()
   FIX_PATTERNS=()
 
@@ -406,6 +406,7 @@ parse_rule() {
         "constraint_type: "*)  RULE_CONSTRAINT_TYPE="${line#constraint_type: }" ;;
         "autofix: "*)          RULE_AUTOFIX="${line#autofix: }" ;;
         "lint_targets: "*)     local t="${line#lint_targets: }"; RULE_LINT_TARGETS="${t//\"/}" ;;
+        "coverage_note: "*)    local c="${line#coverage_note: }"; RULE_COVERAGE_NOTE="${c//\"/}" ;;
         "lint_patterns:")      in_lp=true ;;
         "fix_patterns:")       in_fp=true ;;
       esac
@@ -1025,6 +1026,15 @@ for rule_file in "$RULES_DIR"/*.md; do
     $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (autofix: ${RULE_AUTOFIX}) ${#FIX_PATTERNS[@]} fix pattern(s) → ${RULE_LINT_TARGETS}"
   else
     $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) ${#PATTERNS[@]} pattern(s) → ${RULE_LINT_TARGETS}"
+  fi
+  # A rule whose Requirement covers more forms than its patterns do must say so
+  # HERE, not only in its Check section. An executor working from lint output
+  # never opens the card, so an undeclared narrowing makes the denominator look
+  # complete. Measured: one manuscript reported 15 contrast constructions where
+  # 38 existed, because the largest class was deliberately left to judgment and
+  # the deliberateness was invisible at the point of use.
+  if [[ -n "$RULE_COVERAGE_NOTE" ]]; then
+    $QUIET || echo -e "    ${DIM}partial coverage — ${RULE_COVERAGE_NOTE}${NC}"
   fi
 
   ((RULES_CHECKED++)) || true

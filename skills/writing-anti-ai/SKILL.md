@@ -47,7 +47,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
 | `PROSE.COPULA_DODGE` | 禁止"serves as"替代"is" |
 | `PROSE.NEGATIVE_PARALLELISM` | 禁止"It's not X, it's Y"假深刻 |
-| `PROSE.NEGATION_CONTRAST` | 禁止"X, not Y"逗号否定对比 |
+| `PROSE.NEGATION_CONTRAST` | 对比构造分两档：系动词型零容忍，`rather than`/`instead of` 视排除项是否承载主张 |
 | `PROSE.TRAILING_AFTERTHOUGHT` | 禁止句末逗号甩短片段（"..., as editable."） |
 | `PROSE.COMMA_OVERUSE` | 单句逗号≤3（≥4 触发） |
 | `PROSE.MIDSENTENCE_COLON` | 禁止句中解释性冒号（非小标题） |
@@ -114,7 +114,12 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - **段落长度异常 → 转诊，不要自己判**：只有一两句的段落（可以并进上下文的）、或明显超长的段落，是 `merge` / `split` 的问题——判它需要看相邻段落各自承载什么信息，那是 `claim-architecture-review` **P1 逐段审计**的 verdict 集合（`{keep, tighten, merge, move, split, delete, escalate}`），不是线编能定的。最小调用见下方转诊说明。
   ⚠️ **段长本身不是 AI 痕迹**：实测 40 篇语料，2019–2021 与 2025–2026 的段落长度中位数同为 **57 词**，均值 74 vs 71，CV 0.86 vs 0.80——**没有差别**。所以**不要按词数抓段落**，触发转诊的是「这段该不该独立存在」，不是它有多长。（句长分布是另一回事，那条有依据，见 §3 `PROSE.RHYTHM_VARIANCE`。）
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
-- Unnecessary contrast: "X, not Y" / "X rather than Y" / "X instead of Y" — default to plain positive "X is A"; keep the contrast only when ruling out Y carries real information (don't reflexively swap "not Y" → "rather than Y") <!-- policy:PROSE.NEGATION_CONTRAST -->
+- Unnecessary contrast <!-- policy:PROSE.NEGATION_CONTRAST -->：**按句式分两档**。
+  **档 A（零容忍）**：`X is/are A, not B` · `not A, but B` · `X is neither A nor B`——**系动词 + 表语对比**，是 `PROSE.NEGATIVE_PARALLELISM` 的 `It is not X, it is Y` 近亲，强制改正面。
+  **档 B（偶尔可用）**：`rather than` · `instead of` 挂在动词/动名词上时，往往表达方法学取舍（`we mark X as unavailable rather than guessing its timing`），排除项承载主张时保留。
+  修法顺序：① **正面陈述**（`only` / `alone` / 一个更准的正面形容词常能把排除项吸收进去）→ ② 排除项即主张时降级用档 B 保留。**删排除项前先确认它在别处有落点**——排除项承载实证主张时，删掉等于丢一个 claim。
+  ⚠️ **单纯的否定谓语不在禁令内**：`that difference is not an effect estimate` / `visible events are not yet evidence for action` 同句内没有正面对项，是正常陈述。实测一份全稿 16 处命中里 5 处属此类，铲掉它们会让作者关掉整条规则。
+  ⚠️ **lint 只定位不分档**：五条 pattern 现在覆盖两档全部形式（此前只有 `, not` 一条，实测一份全稿报 15 处而实际 38 处，`rather than` 17 处全部不可见）。报出来的每一条都要自己判档。
 - 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**。**跨节转诊**：本条只判本段/本节内的重复列举；若怀疑同一组对象在别节也列过，转 `claim-architecture-review`——`information-ledger.md` 以集合为 info-key，第二次列举在 `lookup-before-create` 时撞上（最小调用见下方转诊说明）
 - Em-dash (zero allowed — not even one): "X---Y---Z" parentheticals. **替换标点不算修法**——`X --- a 12.5$\times$ reduction` 改成 `X, a 12.5$\times$ reduction` 只换了标点，同位语仍然是尾巴，而本条存在的理由正是这种挂载方式。按尾巴性质选：完整命题→拆成新句；对前面名词的限定→关系从句 `, which ...`；真旁白→括号或删。判据是"原来挂着的内容是否已经进入某个语法主结构" <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - **正文段落禁止分号** <!-- policy:PROSE.SEMICOLON_RESTRICTION -->：修法**两级**，不是只有断句一条路。**① 句法改变**——从属化 `Because A, B` / 关系从句 `, which ...` / **逗号 + 连接词**（`whereas` / `while` / `but` / `and`）；**② 断句**，第二句首字母大写。

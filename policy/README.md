@@ -320,6 +320,8 @@ SoK 规则集合（语义规则）：
 
 **语料测试**（`policy/test-corpus/`，格式见该目录 README）：precision case 与 recall case 同等重要，甚至更重要——过度触发是本引擎的失效模式，一条把每个 threat-model 句子都报出来的规则会被作者关掉，代价远大于它带来的收益。新增或收紧任何 `lint_patterns` 时，**同时补一条会误命中的近似句**，把边界钉死。
 
+**口径声明（`coverage_note`）**：一条规则的 Requirement 常常比它的 `lint_patterns` 宽——通常是有意的，因为把开集做成正则会淹。问题不在窄，在**窄得没有信号**：按 lint 输出干活的人不会去翻卡的 Check 段，于是分母看起来是完整的。实测一份全稿报出 15 处对比构造而实际 38 处，最大的一类（`rather than`，17 处）恰恰是被刻意留给判断层的那一类。因此凡是在卡文里声明了 regex 覆盖不到的规则，必须带 `coverage_note`，由 lint 在规则头下面直接打印；`validate.sh` 的 **9d** 强制这条对应关系，双向检查（声明了却没写，或写了却没解释）。
+
 **引擎分歧**：`grep -P` 与 perl 不可互换。macOS 解析到 perl，Linux CI 解析到 GNU grep，因此只在一侧跑的测试看不到另一侧的缺陷。`LINT_ENGINE=ggrep|grep|perl` 强制指定，`test-corpus.sh --engine <name>` 用它在同一份语料上对比两个引擎。
 
 **转诊图**（`test-referrals.sh`）：一条转诊边 = 某条规则的 marker 管辖范围内，出现了显式转诊动词（转 / 归 / 交 / refer to）加一个反引号包住的真实 skill 名。仅仅**提到**另一个 skill 不算转诊。R2 的豁免必须带理由登记在脚本里；vendor submodule symlink skill 自动豁免（marker 不写进 vendor 树）。

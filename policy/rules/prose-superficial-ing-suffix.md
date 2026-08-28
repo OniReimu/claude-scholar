@@ -17,6 +17,7 @@ autofix: assisted
 lint_patterns:
   - pattern: ",\\s*(highlighting|underscoring|emphasizing|showcasing|reflecting|symbolizing|contributing to|fostering|cultivating|encompassing)\\s"
     mode: match
+coverage_note: "the open set (, enabling / ensuring / providing / allowing / offering) is deliberately not in regex — those often do carry a mechanism, and a pattern would flood. Judge them by the deletion test."
 lint_targets: "**/*.tex"
 ---
 
