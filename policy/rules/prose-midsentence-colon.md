@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: []
+conflicts_with: [PROSE.CAUSAL_CONNECTIVE]
 constraint_type: guardrail
 autofix: none
 lint_patterns:
@@ -23,6 +23,8 @@ lint_targets: "**/*.tex"
 ## Requirement
 
 禁止在正文句子中间使用冒号引出解释、定义或转折，如 `We make a key observation: the model collapses.`、`We define the threat model: an adversary controls...`。改写为完整句子，或用句号断开。
+
+**清理后必须复测连接词分布。** 本卡的修法把标点隐含的逻辑关系（"所以""即""因此"）赶到词汇层，而 `PROSE.CAUSAL_CONNECTIVE` 菜单里 `therefore` 是最安全的默认——跨多遍清理会累积出连接词单一化，逐处判都合理、只在总量上崩。动过一批之后，看一眼 lint 的 connective distribution 计数表，逐处追问"这是哪一种因果、答案是否真的全是同一种"。
 
 **唯一例外**：段落开头的小标题（`\paragraph{Setup.}`、`\textbf{Security:}`）和 bullet/`\item` 的内联标题（`\item \textbf{Term:} ...`）——这些是结构标记，不是句中冒号。
 

@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: [PROSE.COMMA_OVERUSE, PROSE.HEDGING_DISCIPLINE, PROSE.INFORMAL_VOCABULARY, PROSE.RHYTHM_VARIANCE, PROSE.SEMANTIC_IDLING, PROSE.SEMICOLON_RESTRICTION]
+conflicts_with: [PROSE.COMMA_OVERUSE, PROSE.EM_DASH_RESTRICTION, PROSE.HEDGING_DISCIPLINE, PROSE.INFORMAL_VOCABULARY, PROSE.MIDSENTENCE_COLON, PROSE.RHYTHM_VARIANCE, PROSE.SEMANTIC_IDLING, PROSE.SEMICOLON_RESTRICTION]
 constraint_type: guidance
 autofix: none
 lint_patterns:
@@ -33,6 +33,16 @@ lint_targets: "**/*.tex"
 **这条护栏是可执行的，不是提醒**：实测显示逐条裁决分不出年代——pre-GPT 论文里的 `so` 实例，按"能不能更精确"去判，应改率不低于当代 draft。所以判据不能是"能否改进"，只能是上面那三个子类。
 
 **也不要机械替换。** 把一篇里 40 个 `so` 全换成 `therefore`，只是把一种指纹换成另一种，并制造出新的均质化（见 `PROSE.RHYTHM_VARIANCE`）。
+
+**连接词单一化是跨 pass 累积出来的，上面那条护栏守不住它。** 三条标点清理规则（`PROSE.EM_DASH_RESTRICTION` / `PROSE.SEMICOLON_RESTRICTION` / `PROSE.MIDSENTENCE_COLON`）的修法都把标点隐含的关系（"所以""即""因此"）赶到词汇层，而本卡的菜单里 `therefore` 是最安全的默认——它排第一、定义最宽，学术散文里绝大多数因果都能算逻辑蕴含，于是"说不出是哪一种 = 没想清楚"这条判据在它身上失效：`therefore` 永远说得出。每一遍清理引入一两个，逐处判都合理，只在总量上崩——实测一份稿子三遍标点清理后 26 个正式连接词里 22 个是 `therefore`，每一处单看都过。
+
+**修法不是同义替换，按优先级：**
+
+1. **删**——因果已由上一句承担，或与 `However` / `Because` 双重标记（实测 10 处里 8 处走这条）；
+2. **从属化**——`Because A, B`，顺带少一个逗号；
+3. **按语义换**——只有当那个因果确实属于另一类时（经验后果换 `consequently`），不是为了凑分布硬塞 `hence`。
+
+**复核判据一句话：逐处追问这是哪一种因果，答案是否真的全是同一种？** 是——合规，全篇 `therefore` 占多数就是对的（全为逻辑蕴含的稿子本该如此）；不是——说明当初有几处没想清楚、退回了默认词。**不设占比阈值**：lint 打印一张 `therefore / thus / hence / consequently / accordingly` 计数表，只报分布不判违规，供这个追问对着真实数字进行。
 
 ### 只有三个子类触发改写，其余一律保留
 

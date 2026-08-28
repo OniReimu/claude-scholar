@@ -234,6 +234,8 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 ⚠️ **反向护栏**：**不要机械替换**，把全篇 `so` 统一换成 `therefore` 只是把一种指纹换成另一种，并造出新的均质化（撞 `PROSE.RHYTHM_VARIANCE`）。正式连接词必须按语义分布。
 
+⚠️ **连接词单一化是跨 pass 累积的，上面那条护栏守不住它。** 三条标点清理规则（em-dash / 分号 / 句中冒号）的修法都把标点隐含的关系赶到词汇层，而 `therefore` 是菜单里最安全的默认——每遍清理引入一两个，逐处判都合理，只在总量上崩（实测：三遍清理后 26 个正式连接词 22 个是 `therefore`）。**清完任何一批标点后，看 lint 的 connective distribution 计数表**（只报分布不判违规），逐处追问：**这是哪一种因果，答案是否真的全是同一种？** 全是同一种就合规（全为逻辑蕴含的稿子本该 `therefore` 占多数，不要硬塞 `hence`）；不是就说明有几处退回了默认词。修法优先级：**删**（因果已由上一句承担，或与 `However`/`Because` 双重标记——实测 10 处 8 处走这条）→ 从属化 → 按语义换。
+
 不在范围内：`so that`（目的从句，合法）· `so far`（习语性状语，归 `PROSE.INFORMAL_VOCABULARY` 第 1 类）· `so large` 式程度副词。
 
 **口语语域按五个具名类别查，不是按词表查** <!-- policy:PROSE.INFORMAL_VOCABULARY -->

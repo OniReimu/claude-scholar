@@ -1041,6 +1041,32 @@ for rule_file in "$RULES_DIR"/*.md; do
     $QUIET || echo -e "    ${DIM}partial coverage — ${RULE_COVERAGE_NOTE}${NC}"
   fi
 
+  # Connective-distribution table (report-only, never a finding). The
+  # punctuation-clearing rules (em-dash, semicolon, mid-sentence colon) push the
+  # relation the punctuation carried into the lexical layer, and `therefore` is
+  # the menu's safest answer — so monoculture accumulates ACROSS passes, one or
+  # two per pass, each locally reasonable. Measured: 22 of 26 formal connectives
+  # in one manuscript were `therefore` after three clearing passes, with every
+  # per-instance judgment individually defensible. A distribution that passes
+  # every per-instance check can still fail as a whole; only a whole-document
+  # count makes it visible. No threshold: an all-entailment paper is
+  # legitimately therefore-heavy — the table exists so the recheck question
+  # ("is this really all the same kind of causality?") is asked against real
+  # numbers instead of an impression.
+  if [[ "$RULE_ID" == "PROSE.CAUSAL_CONNECTIVE" ]] && ! $FIX_MODE; then
+    _cc_views=""
+    while IFS= read -r f; do
+      [[ -n "$f" ]] && _cc_views="$_cc_views $(lint_view "$f")"
+    done < <(find_target_files "*.tex" "$TARGET_DIR")
+    if [[ -n "${_cc_views// /}" ]]; then
+      _cc_counts=$(cat $_cc_views 2>/dev/null | perl -ne '
+        $c{lc $1}++ while /\b(therefore|thus|hence|consequently|accordingly)\b/gi;
+        END { printf "therefore %d · thus %d · hence %d · consequently %d · accordingly %d",
+              map { $c{$_}//0 } qw(therefore thus hence consequently accordingly) }')
+      $QUIET || echo -e "    ${DIM}connective distribution (report-only) — ${_cc_counts}${NC}"
+    fi
+  fi
+
   ((RULES_CHECKED++)) || true
 
   if $FIX_MODE; then

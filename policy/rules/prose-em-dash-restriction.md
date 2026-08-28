@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {max_per_paragraph: 0}
-conflicts_with: [PROSE.SEMICOLON_RESTRICTION]
+conflicts_with: [PROSE.CAUSAL_CONNECTIVE, PROSE.SEMICOLON_RESTRICTION]
 constraint_type: guardrail
 autofix: assisted
 lint_patterns:
@@ -37,6 +37,8 @@ lint_targets: "**/*.tex"
 **不推荐逗号插入语**：`X --- a 12.5$\times$ reduction` 改成 `X, a 12.5$\times$ reduction` 只换了标点，同位语仍然是尾巴。要么写成 `X. This is a 12.5$\times$ reduction ...`，要么并进主句。
 
 Em-dash 是强烈的 AI 写作信号。
+
+**清理后必须复测连接词分布。** 本卡的修法把标点隐含的逻辑关系（"所以""即""因此"）赶到词汇层，而 `PROSE.CAUSAL_CONNECTIVE` 菜单里 `therefore` 是最安全的默认——跨多遍清理会累积出连接词单一化，逐处判都合理、只在总量上崩。动过一批之后，看一眼 lint 的 connective distribution 计数表，逐处追问"这是哪一种因果、答案是否真的全是同一种"。
 
 ## Rationale
 
