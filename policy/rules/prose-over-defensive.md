@@ -9,11 +9,24 @@ phases: [writing-intro, writing-background, writing-methods, writing-experiments
 domains: [core]
 venues: [all]
 check_kind: llm_semantic
-enforcement: doc
+enforcement: lint_script
 params: {max_homes_per_caveat: 1}
-conflicts_with: [PROSE.SELF_UNDERMINING]
+conflicts_with: [PROSE.RHYTHM_VARIANCE, PROSE.SELF_UNDERMINING]
 constraint_type: guidance
 autofix: none
+lint_targets: "**/*.tex"
+coverage_note: "the pattern locates author-subject refusals only (We / Our X / The rule-procedure-...). Paper-specific product names (TRACT does not ...) and pronoun subjects (It does not ...) are not enumerable — check them by hand. A/B triage and the three keep classes are judgment; every hit is a candidate, not a verdict."
+lint_patterns:
+  # Sentence-layer locator for disclaimer-style negative predicates: an author
+  # or authored-artifact subject followed by a refusal predicate. Locate-only:
+  # the same shape carries A-class disclaimers (We do not select an optimal
+  # policy), keep-class methodological choices (Because ..., we do not use
+  # survival models) and B-class mathematical facts (The bound does not hold) —
+  # the subject list cannot split those, the predicate semantics can, and that
+  # is the judgment layer's call. Measured on one manuscript: 33 negative
+  # constructions, 16 A-class, at 1.7 per 1000 words.
+  - pattern: "\\b(?:[Ww]e|[Oo]ur (?:method|approach|analysis|framework|procedure|rule|diagnostic|comparison|bounds?)|The (?:rule|procedure|analysis|comparison|diagnostic|method|framework|bounds?))\\s+(?:do(?:es)? not|did not|cannot|neither\\b|reports? no|makes? no)"
+    mode: match
 ---
 
 ## Requirement
@@ -30,6 +43,42 @@ autofix: none
 
 > 第 1–4 条是**段落域**（一个段落内部的落点），第 5 条是**文档域**（Abstract/Intro 的先后顺序）。第 5 条只判"贡献之前有没有"，**不做跨节搬迁规划**——跨节冗余聚类与 canonical home 选择归 `claim-architecture-review`（它的 P2 pass 拥有 relocation-map）。本卡在 Abstract/Intro 内部给出"移到 Limitations 或删除"的建议，由掌握全局的人裁决。
 
+### 句子层：免责式否定谓语
+
+以上五条全是**位置与次数**的判据——一句免责句只出现一次、落点合法时，五条全放行。但十六句这样的句子叠起来，通篇是在报备。所以本卡另管**句子形状**本身：作者或本文产物做主语 + 拒绝某项主张做谓语。
+
+**先分诊，只有 A 类在射程内：**
+
+| 类 | 主语 / 性质 | 例 | 处置 |
+|---|---|---|---|
+| **A 免责式** | 主语是作者或本文产物，谓语是**拒绝某项主张** | `We do not select an optimal policy` · `TRACT does not count X as a benefit` | 在射程内 |
+| **B 事实性否定** | 定义、发现、数值结果 | `whose object cannot be recovered from reviewer text`（定义）· `neither is contained inside $[-10,10]$`（结果）· `Equalizing the available window does not restore the regular-year pattern`（发现） | 不在射程内 |
+
+实测一份全稿：33 处否定构造里只有 **16 处**属 A 类。不划这条界会把定义句和实验发现一起铲掉。
+
+**regex 覆盖不到的主语**：论文专属产物名（`TRACT does not ...`）与代词主语（`It does not ...`）无法枚举进 pattern——人工检查所有否定谓语的主语指代。pattern 只覆盖 `We / Our X / The rule|procedure|...` 这组可枚举形式，且**只定位不裁决**：同一形状同时承载 A 类免责、保留类方法取舍与 B 类数学事实（`The bound does not hold`），劈开它们靠谓语语义，那是判断层的活。
+
+**修法一步，不是删：把「我们不做 X」翻成「我们做的是 Y」**——这是 `PROSE.SELF_UNDERMINING` 三步阶梯的第三步（收缩主张到证据实际支持的范围）落到句子层，信息一字不减。实测（12 处）：
+
+| 免责式 | 正面式 |
+|---|---|
+| `It does not determine closure, workload, or policy benefit.` | `Closure, workload, and policy benefit are computed without it.` |
+| `We do not select an optimal policy or predict reviewer behavior.` | `The comparison is descriptive, and policy selection remains with the venue.` |
+| `The procedure neither repairs semantic outputs nor assigns fallback labels.` | `Malformed and indeterminate outputs pass through unchanged.` |
+| `We report no significance tests or causal coefficients.` | `We report weighted contrasts and resampling intervals only.` |
+
+副产品是真实的：多数正面式**信息量更大**——`policy selection remains with the venue` 说出了谁来选；`describe worst-case allocations at a fixed budget` 说出了这些界到底算什么。免责式只说了不是什么。
+
+**三类必须保留（反向护栏）：**
+
+1. **发现本身是否定命题**——结论就是「关联不支持因果」时，翻正面 = over-claim。例：`It does not show that the comments caused ratings to rise`；
+2. **带理由的方法学取舍**——`Because the administrative freeze is part of the process being studied, we do not use survival models that assume censoring is unrelated to that process.` 这是可核查的做法陈述，翻正面要凭空补出「我们用了什么」；
+3. **点名具体误读方向的边界**——当否定句是**唯一列出被排除项**的地方时，翻成 `The estimand is X` 会把名字全丢掉。
+
+**不得机械全翻。** 十六句全部改成 `X is Y only` / `Z remains outside` 会造出新的均质化（撞 `PROSE.RHYTHM_VARIANCE`）。实测 12 处用了六种不同结构：`are computed without` / `remains with` / `pass through unchanged` / `describe X` / `applies to X alone` / `fall outside it`。**优先沿用稿件已有句式。**
+
+⚠️ 单篇实测 1.7/千词**不足以当阈值**——没有语料基线就没有高低可言。当前只按逐条 A/B 分诊执行，不做密度判定。
+
 ## Rationale
 
 这是 **结构性**问题，不是词级问题，所以既有的 30 条 PROSE 规则一条都抓不到。`PROSE.HEDGING_DISCIPLINE` 管的是 hedge 词是否匹配证据；这条管的是**辩护放在哪里、放了几次**。一篇稿子可以逐句通过全部行文规则，读起来仍然通篇在道歉。
@@ -44,7 +93,8 @@ autofix: none
 
 ## Conflicts
 
-- `PROSE.SELF_UNDERMINING` 管词级措辞与责任范围（`unfortunately` / 把局部写成普遍）；本卡管辩护的**落点与次数**。同一句可同时触发，各报一次
+- `PROSE.SELF_UNDERMINING` 管词级措辞与责任范围（`unfortunately` / 把局部写成普遍）；本卡管辩护的**落点与次数**，以及免责句式的**形状**（句子层与那条的三步阶梯共用第三步）。同一句可同时触发，各报一次
+- `PROSE.RHYTHM_VARIANCE`：句子层修法禁止机械全翻——全部免责句统一翻成同一种正面结构，只是把报备指纹换成模板指纹
 - **`claim-architecture-review`（skill，非规则）** 拥有跨节冗余聚类与 canonical home 的搬迁规划（P2 relocation-map）。本卡第 5 条只在 Abstract/Intro 内部判"贡献之前是否出现 caveat"，给建议不做全局重排；两者顺序是 `claim-architecture-review`（结构编辑）先于 `writing-anti-ai`（线编）
 - `ETHICS.LIMITATIONS_SECTION_MANDATORY` 优先：把 caveat 从 Intro 移走的前提是 Limitations 已完整承担它，**不得因移动而削薄披露**
 

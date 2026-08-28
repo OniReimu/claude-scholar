@@ -64,7 +64,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词），上限规则不是目标值 |
 | `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
 | `PROSE.THEATRICAL_SPLIT` | 禁止"设预期—短促击碎"两拍式反驳 |
-| `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足 |
+| `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足；免责式否定谓语（We do not X）翻成正面（我们做的是 Y） |
 | `PAPER.OUTCOME_LOGIC` | 删句级过程流水账（we first tried…）；结构级重排归 claim-architecture-review |
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
@@ -194,6 +194,11 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 **文档域第 5 条：贡献未立先谈不足。** 扫 Abstract 与 Introduction，任何出现在**贡献陈述之前**的 caveat / 局限 / 排除声明都是违规——读者应当先拿到"这篇做成了什么"，再拿到边界。判定只看位置，不看措辞。
 处置**只允许"移"不允许"删"**，且移之前先确认 Limitations 已完整承担该条（`ETHICS.LIMITATIONS_SECTION_MANDATORY` 优先，不得因移动削薄披露）；那句也可能是上一轮 reviewer 要求前置的唯一答复。
 **分工**：本条只在 Abstract/Intro 内部判先后，**不做跨节搬迁规划**——那归 `claim-architecture-review` 的 P2 relocation-map，且它在本 skill 之前跑。
+
+**句子层：免责式否定谓语。** 以上判据全是位置与次数——一句免责句只出现一次、落点合法时全放行，但十六句叠起来通篇是在报备（实测一份全稿 1.7/千词）。所以还要按**句子形状**查：作者或本文产物做主语 + 拒绝某项主张做谓语（`We do not select an optimal policy` · `The rule does not judge private work`）。
+**先分诊，只有 A 类在射程内**：A 免责式（作者/产物主语 + 拒绝主张）在射程内；**B 事实性否定**（定义、发现、数值结果——`Equalizing the window does not restore the pattern`）不在。实测 33 处否定构造只有 16 处属 A，不划界会把定义和发现一起铲掉。
+**修法一步：把「我们不做 X」翻成「我们做的是 Y」**，信息一字不减，多数情况下正面式信息量更大（`policy selection remains with the venue` 说出了谁来选）。**三类必须保留**：发现本身是否定命题（翻正面 = over-claim）；带理由的方法学取舍（`Because ..., we do not use survival models`——翻正面要凭空编出用了什么）；否定句是唯一列出被排除项的地方。
+⚠️ **不得机械全翻**——全改成 `X is Y only` 是把报备指纹换成模板指纹（撞 `PROSE.RHYTHM_VARIANCE`）；实测 12 处用了六种结构。lint 的定位 pattern 只认 `We / Our X / The rule|procedure|...`，**论文专属产物名（`TRACT does not ...`）和代词主语要人工查**；`The bound does not hold` 这类数学事实会被定位，属 B 类放行。
 
 ### 7b. 不主动示弱，不递刀子 <!-- policy:PROSE.SELF_UNDERMINING -->
 删掉情绪副词与自贬措辞（`unfortunately` · `regrettably` · `admittedly` · `merely` · `falls short` · `lags behind` · `does not outperform` · `far from practical` · `遗憾的是` · `仅仅`）——判据是"删掉这个词，命题是否不变"，不变则删；同时回填不利句丢失的锚点（数据集/指标/幅度/表号），不得把一个局部结果（"on D recall is 3.1 points lower"）写成普遍能力判决（"our method is weaker at recall"）。每个不利结果按序走三步处置：**是否必须讨论 → 能否换目标解释 → 能否收缩主张到证据实际支持的范围**，三步全失败才写成平实的 limitation。**落点**：先按 §7 判本段/本节；若这条 caveat 在别节也出现过（同一限定的多个 home），那是跨节问题，转 `claim-architecture-review` 的 P2 relocation-map 定 canonical home（最小调用见下方转诊说明）。

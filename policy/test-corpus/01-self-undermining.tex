@@ -90,3 +90,53 @@ The evaluation covers English-only corpora; multilingual behaviour is untested.
 % @EXPECT PROSE.SELF_UNDERMINING
 遗憾的是，本文方法在长尾类别上仍明显落后于监督基线。
 % @ENDCASE
+
+% ── PROSE.OVER_DEFENSIVE sentence layer: disclaimer-style negative predicates ─
+% The card's five positional clauses pass a well-placed single disclaimer, so
+% the sentence SHAPE now has an owner. Locate-only: A/B triage and the three
+% keep classes are judgment. B-class factual negations must stay silent — 17 of
+% 33 negative constructions on the measured manuscript were B-class, and a rule
+% that eats definitions and findings gets switched off.
+
+% @CASE overdef-a-class-author-refusal
+% @EXPECT PROSE.OVER_DEFENSIVE
+We do not select an optimal policy or predict reviewer behavior.
+% @ENDCASE
+
+% @CASE overdef-a-class-report-no
+% @EXPECT PROSE.OVER_DEFENSIVE
+We report no significance tests or causal coefficients.
+% @ENDCASE
+
+% NEGATION_CONTRAST's neither/nor locator also fires — honestly: this IS a
+% neither/nor construction, and the two cards share the positive-flip remedy.
+% Both locate; judgment assigns the fix once.
+% @CASE overdef-a-class-artifact-subject
+% @EXPECT PROSE.OVER_DEFENSIVE, PROSE.NEGATION_CONTRAST
+The procedure neither repairs semantic outputs nor assigns fallback labels.
+% @ENDCASE
+
+% Keep class 2 locates by design: the regex cannot see the because-clause is a
+% checkable methodological reason; judgment keeps the sentence.
+% @CASE overdef-keep-class-methodological-locates-by-design
+% @EXPECT PROSE.OVER_DEFENSIVE
+Because the freeze is part of the process being studied, we do not use survival models.
+% @ENDCASE
+
+% @CASE overdef-b-class-finding-clean
+% @EXPECT none
+Equalizing the available window does not restore the regular-year pattern.
+% @ENDCASE
+
+% (uses the spec's definition example — a neither/nor numeric result would
+% cross-fire NEGATION_CONTRAST's locate layer and test the wrong card)
+% @CASE overdef-b-class-definition-clean
+% @EXPECT none
+The construct is defined over public actions whose object cannot be recovered from reviewer text.
+% @ENDCASE
+
+% Product names are not enumerable; declared in coverage_note, checked by hand.
+% @CASE overdef-product-name-not-enumerable-clean
+% @EXPECT none
+TRACT does not count the rating association as an expected policy benefit.
+% @ENDCASE

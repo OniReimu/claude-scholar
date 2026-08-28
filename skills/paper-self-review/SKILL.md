@@ -315,4 +315,4 @@ Use the quality checklist for final verification.
 The Paper Self-Review skill provides a systematic paper quality checking process, helping researchers identify and resolve issues before submission, improving paper quality and acceptance rates.
 
 <!-- policy:PROSE.OVER_DEFENSIVE -->
-在完整性检查之后，按节隔离扫一遍过度防御：同一 caveat 是否有多个落点，是否有段落以免责声明收尾。完整性检查是加法，这一条是减法，顺序不能反。
+在完整性检查之后，按节隔离扫一遍过度防御：同一 caveat 是否有多个落点，是否有段落以免责声明收尾；再按句子形状查免责式否定谓语（作者/产物主语 + 拒绝主张：`We do not select an optimal policy`）——A 类翻成正面「我们做的是 Y」，事实性否定（定义/发现/数值结果）与三类保留（发现即否定命题、带理由的方法取舍、唯一列出被排除项处）不动。完整性检查是加法，这一条是减法，顺序不能反。

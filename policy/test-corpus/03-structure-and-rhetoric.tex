@@ -236,8 +236,14 @@ That difference is not an effect estimate.
 Visible events are not yet evidence for action.
 % @ENDCASE
 
-% @CASE negation-plain-negative-verb-clean
-% @EXPECT none
+% NEGATION_CONTRAST stays silent here (the guardrail this case pins). But
+% OVER_DEFENSIVE's sentence-layer locator now fires: `The bound` is in its
+% subject list because the spec's own A-class example needs it (`the targeted
+% bounds do not estimate ...`), and no regex can split a refused claim from a
+% mathematical fact — the predicate semantics can, and that is judgment's call.
+% B-class clear, documented in that card.
+% @CASE negation-plain-negative-verb-locates-overdef-by-design
+% @EXPECT PROSE.OVER_DEFENSIVE
 The bound does not hold in the skewed regime.
 % @ENDCASE
 

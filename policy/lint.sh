@@ -1017,8 +1017,12 @@ for rule_file in "$RULES_DIR"/*.md; do
     continue
   fi
 
-  # Regex engine only handles regex rules with explicit machine patterns
-  [[ "$RULE_CHECK_KIND" == "regex" ]] || continue
+  # Run whatever machine patterns exist, regardless of check_kind. The old gate
+  # (`check_kind == regex`) silently skipped patterns on llm_* cards — a card
+  # adding a regex LOCATOR to a judgment rule (PROSE.OVER_DEFENSIVE's sentence
+  # layer) parsed clean, validated clean, and never executed. Presence of
+  # patterns is the intent signal; 9c already guarantees pattern-bearing cards
+  # say enforcement: lint_script.
   [[ ${#PATTERNS[@]} -gt 0 || ($FIX_MODE && ${#FIX_PATTERNS[@]} -gt 0) ]] || continue
   [[ -n "$RULE_LINT_TARGETS" ]] || continue
 

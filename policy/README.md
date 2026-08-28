@@ -224,7 +224,7 @@ SoK 规则集合（语义规则）：
 | PROSE.FILLER_PHRASES | prose-filler-phrases | domain | warn | false | lint_script | guardrail | safe |
 | PROSE.COLON_LIST_OVERUSE | prose-colon-list-overuse | domain | warn | false | lint_script | guardrail | none |
 | PROSE.RULE_OF_THREE | prose-rule-of-three | domain | warn | false | doc | guidance | none |
-| PROSE.OVER_DEFENSIVE | prose-over-defensive | domain | warn | false | doc | guidance | none |
+| PROSE.OVER_DEFENSIVE | prose-over-defensive | domain | warn | false | lint_script | guidance | none |
 | PROSE.SELF_UNDERMINING | prose-self-undermining | domain | warn | false | lint_script | guardrail | none |
 | PROSE.PROMOTIONAL_LANGUAGE | prose-promotional-language | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.FORMATTING_RESTRAINT | prose-formatting-restraint | domain | warn | false | doc | guidance | none |
