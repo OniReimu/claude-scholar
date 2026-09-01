@@ -143,9 +143,17 @@ self_review (在瘦身后的稿上检查违规 → 生成 violation report)
 rewrite (逐 section 改写，加载 style-guide + 30 条 PROSE rules)
   ↓ 人工审批
 self_review (再次检查)
-  ↓ 全部 pass？ → rebuttal / done
-  ↓ 仍有违规？ → rewrite (继续循环)
+  ↓ Step 10 closure 判决（PAPER.REVISION_CLOSURE）
+  ├ STOP_REVISING → rebuttal / done（允许带非根本 findings 收尾）
+  ├ ONE_BOUNDED_ROUND → rewrite (限定根因+节段, 一轮) → self_review 重新判决
+  │                      （同一根因不得第二次触发）
+  ├ REOPEN_SUBSTANTIVE_REVISION → rewrite (继续循环)
+  └ UNASSESSED → 阶段 blocked，等用户补齐稿件
 ```
+
+出口不再是「全部 pass？」这一数量口径：判决依据是实质根因，剩余的非根本 findings
+进方向性建议或投稿准备轴（页数、匿名化等走 Step 8），不构成再开一轮改写的理由。
+判决记录在 `self_review` 阶段的 note / `violation_report` 中，stage status 枚举不变。
 
 ### Rewrite Stage 工作方式
 
@@ -153,7 +161,7 @@ self_review (再次检查)
 2. 按优先级排序：结构问题 > 风格不符 > 规则违规 > 微调
 3. **必须加载 `policy/style-guide.md`**（整体风格浸入）
 4. 逐 section 改写，每次改写一个 section 后生成 diff
-5. 改写完成后请求人工审批（防止无限循环）
+5. 改写完成后请求人工审批（防止无限循环）——防循环的正式机制现在是 closure 判决的防循环条款（`PAPER.REVISION_CLOSURE`），人工审批是它之上的第二道闸
 6. 审批通过后回到 `self_review` 再次检查
 
 ### run.json 示例（polish 模式）

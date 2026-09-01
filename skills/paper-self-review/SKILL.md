@@ -286,6 +286,13 @@ Verify section count, numbering, page limits, anonymization, and limitations sec
 ### Step 9: Final Checklist
 Use the quality checklist for final verification.
 
+### Step 10: Closure 判决 <!-- policy:PAPER.REVISION_CLOSURE -->
+检查全部跑完后，对全稿输出一条判决，四档取其一：**STOP_REVISING**（无足以重启修订的实质根因，剩余 findings 进方向性建议或投稿准备轴）/ **ONE_BOUNDED_ROUND**（一个局部实质问题，点名根因 + 限定节段 + 限定一轮）/ **REOPEN_SUBSTANTIVE_REVISION**（claim 不成立、实验支撑缺口、结构性论证断裂）/ **UNASSESSED**（稿件缺节、含占位文本或截断，拒绝伪造整稿判决）。
+
+依据只能是实质根因，逐条问"这条不改，稿件的主张还成立吗"。findings 数量、"还能更好"、接收概率猜测都不构成理由，也不设任何数值阈值。**防循环条款**：同一根因不得第二次触发 ONE_BOUNDED_ROUND 或 REOPEN——上一轮限定改写没解决它，就按新证据判 REOPEN 或写进已知限制。
+
+输出为紧凑判决块（档位 / 1–2 句根因 / ≤3 条方向性建议 / 仅 ONE_BOUNDED_ROUND 附范围），不复述完整 violation report；判决写入 `self_review` 阶段的 note 或 violation report，供下一轮判决时回查。
+
 ## Best Practices
 
 ### Review Timing
