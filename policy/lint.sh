@@ -214,8 +214,8 @@ trap cleanup_views EXIT
 regex_match() {
   local pattern="$1" file="$2"
   case "$GREP_MODE" in
-    ggrep) $LINT_TIMEOUT ggrep -Pn "$pattern" "$file" 2>/dev/null; [[ $? -eq 124 ]] && echo "__LINT_TIMEOUT__:${file}"; true ;;
-    grep)  $LINT_TIMEOUT grep -Pn "$pattern" "$file" 2>/dev/null; [[ $? -eq 124 ]] && echo "__LINT_TIMEOUT__:${file}"; true ;;
+    ggrep) $LINT_TIMEOUT ggrep -HPn -e "$pattern" "$file" 2>/dev/null; [[ $? -eq 124 ]] && echo "__LINT_TIMEOUT__:${file}"; true ;;
+    grep)  $LINT_TIMEOUT grep -HPn -e "$pattern" "$file" 2>/dev/null; [[ $? -eq 124 ]] && echo "__LINT_TIMEOUT__:${file}"; true ;;
     perl)  LINT_PAT="$pattern" $LINT_TIMEOUT perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} print "$ARGV:$.: $_" if /$re/' "$file" 2>/dev/null; [[ $? -eq 124 ]] && echo "__LINT_TIMEOUT__:${file}"; true ;;
   esac
 }
@@ -224,8 +224,8 @@ regex_match() {
 regex_count() {
   local pattern="$1" file="$2"
   case "$GREP_MODE" in
-    ggrep) ($LINT_TIMEOUT ggrep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
-    grep)  ($LINT_TIMEOUT grep -oP "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
+    ggrep) ($LINT_TIMEOUT ggrep -oP -e "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
+    grep)  ($LINT_TIMEOUT grep -oP -e "$pattern" "$file" 2>/dev/null || true) | wc -l | tr -d ' ' ;;
     perl)  LINT_PAT="$pattern" $LINT_TIMEOUT perl -CSD -ne 'BEGIN{$p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} $c++ while /$re/g; END{print $c//0}' "$file" 2>/dev/null || echo 0 ;;
   esac
 }
@@ -234,8 +234,8 @@ regex_count() {
 regex_quiet() {
   local pattern="$1" file="$2"
   case "$GREP_MODE" in
-    ggrep) $LINT_TIMEOUT ggrep -Pq "$pattern" "$file" 2>/dev/null ;;
-    grep)  $LINT_TIMEOUT grep -Pq "$pattern" "$file" 2>/dev/null ;;
+    ggrep) $LINT_TIMEOUT ggrep -Pq -e "$pattern" "$file" 2>/dev/null ;;
+    grep)  $LINT_TIMEOUT grep -Pq -e "$pattern" "$file" 2>/dev/null ;;
     perl)  LINT_PAT="$pattern" $LINT_TIMEOUT perl -CSD -ne 'BEGIN{$f=1; $p=$ENV{LINT_PAT}; utf8::decode($p); $re=qr/$p/} $f=0 if /$re/; END{exit $f}' "$file" 2>/dev/null ;;
   esac
 }

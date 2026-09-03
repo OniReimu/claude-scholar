@@ -60,12 +60,15 @@ trap 'rm -rf "$WORK"' EXIT
       /^  \[[A-Z]/ { rule = $1; gsub(/[][]/, "", rule); next }
       /^    (WARN|ERROR)/ {
         if (rule in drop) next
-        # field 2 is <path>:<line>:  — path may contain no spaces by construction
+        # field 2 is <path>:<line>:… — path contains no spaces or colons by
+        # construction. Do NOT count segments from the right: GNU grep emits no
+        # space after the line number, so field 2 absorbs the start of the
+        # matched text, and a match containing a colon (`\\Cref{tab:ablation}`)
+        # shifts every right-anchored index. Count from the left instead.
         loc = $2
-        nf = split(loc, p, ":")
-        line = p[nf-1]
+        split(loc, p, ":")
         path = p[1]
-        for (i = 2; i <= nf-2; i++) path = path ":" p[i]
+        line = p[2]
         n2 = split(path, q, "/")
         print rule "\t" q[n2] "\t" line
       }
