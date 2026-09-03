@@ -27,6 +27,7 @@
 
 ## Recent News
 
+- **2026-09-03**: **Codex-native external peer-review handoff added** — introduced the `peer-review` routing skill for reviewer-side manuscript assessment. It invokes the separately installed [`more-than-peer-review`](https://github.com/DELONG-L/More-Than-Peer-Review-Skill) skill with Codex-native discovery and `$more-than-peer-review` invocation instead of duplicating the review workflow inside Claude Scholar.
 - **2026-06-03**: **Kimi Code CLI branch added with strong support from Kimi** — added the `kimi` branch as the Kimi Code CLI edition of Claude Scholar and thank the Kimi team for their strong support of this project.
 - **2026-05-14**: **`expression-skill` made the communication core, `planning-with-files` restored as the default persistence layer, and the Nature writing stack expanded** — made [`expression-skill`](./skills/expression-skill/README.md) the explicit conclusion-first discipline for reporting, planning, file operations, and multi-step technical work; reintroduced [`planning-with-files`](./skills/planning-with-files/SKILL.md) as the default on-disk planning and progress-tracking workflow for complex tasks; introduced [`nature-writing`](./skills/nature-writing/README.md) for section drafting and argument construction; refreshed [`nature-polishing`](./skills/nature-polishing/README.md) to the latest upstream article-pattern release; and kept [`nature-response`](./skills/nature-response/README.md) plus [`nature-data`](./skills/nature-data/README.md) in the journal-writing stack.
 - **2026-05-13**: **Evidence-gated research workflow and `Sources/Papers` routing tightened** — added a shared `research-contract.md` for Evidence Records, claim strength, and Claim Promotion Gates; connected research ideation, Zotero ingestion, literature synthesis, results reporting, writing, and rebuttal workflows to that contract; and clarified that project paper notes live under `Sources/Papers` before promoted claims move into `Knowledge` or `Writing`.
@@ -404,6 +405,7 @@ Quality assurance before submission.
 | Type | Name | One-line explanation |
 |---|---|---|
 | Skill | `paper-self-review` | Checks structure, logic, citations, figures, and compliance before submission. |
+| Skill | `peer-review` | Routes reviewer-side manuscript assessment to the separately installed [`more-than-peer-review`](https://github.com/DELONG-L/More-Than-Peer-Review-Skill) workflow. Invoke it explicitly with `$peer-review` when needed. |
 
 **How it works**
 - **Structure check**: inspect logical flow, section balance, and narrative coherence.
@@ -411,6 +413,7 @@ Quality assurance before submission.
 - **Citation audit**: verify reference accuracy and completeness.
 - **Figure quality**: inspect readability, captions, and accessibility.
 - **Compliance**: inspect page limits, formatting, and disclosure requirements.
+- **Reviewer-side boundary**: use `peer-review` for journal or conference review assignments. It hands the complete review to `more-than-peer-review` and does not reuse this author-side checklist.
 
 ### 6. Submission and Rebuttal
 

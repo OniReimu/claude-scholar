@@ -27,6 +27,7 @@
 
 ## 最新动态
 
+- **2026-09-03**：**新增 Codex 原生外部同行评审路由** — 新增 `peer-review` 路由 skill，用于审稿人侧稿件评审。它通过 Codex 原生的 skill 发现方式和 `$more-than-peer-review` 调用语法，将完整任务交给独立安装的 [`more-than-peer-review`](https://github.com/DELONG-L/More-Than-Peer-Review-Skill)，不在 Claude Scholar 内复制审稿流程。
 - **2026-06-03**: **新增 Kimi Code CLI 分支，并感谢 Kimi 对本项目的大力支持** — 已将 `kimi` 分支作为 Claude Scholar 的 Kimi Code CLI 版本纳入支持平台；感谢 Kimi 团队对本项目的持续支持与帮助。
 - **2026-05-14**: **将 `expression-skill` 提升为核心表达层，把 `planning-with-files` 恢复为默认持久规划层，并继续扩展 Nature 写作栈** — 把 [`expression-skill`](./skills/expression-skill/README.md) 明确为汇报、规划、文件操作和多步骤技术任务的结论先行表达纪律；将 [`planning-with-files`](./skills/planning-with-files/SKILL.md) 重新接回默认的落盘规划与进度跟踪工作流，用 `task_plan.md` / `notes.md` 管理复杂任务；引入用于章节起草与论证构建的 [`nature-writing`](./skills/nature-writing/README.md)；将 [`nature-polishing`](./skills/nature-polishing/README.md) 刷新到上游最新 article-pattern 版本；并继续保留 [`nature-response`](./skills/nature-response/README.md) 与 [`nature-data`](./skills/nature-data/README.md) 作为 journal-writing 栈的一部分。
 - **2026-05-13**: **证据门槛研究工作流与 `Sources/Papers` 路由完成收紧** — 新增共享的 `research-contract.md`，统一 Evidence Records、claim strength 和 Claim Promotion Gate；将研究构思、Zotero 导入、文献综合、结果报告、论文写作与 rebuttal 工作流接入同一证据契约；并明确项目论文源笔记先放在 `Sources/Papers`，通过证据门槛后再进入 `Knowledge` 或 `Writing`。
@@ -402,6 +403,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 | 类型 | 名字 | 一句话解释 |
 |---|---|---|
 | Skill | `paper-self-review` | 在投稿前系统检查结构、逻辑、引用、图表和合规性。 |
+| Skill | `peer-review` | 将审稿人侧稿件评审交给独立安装的 [`more-than-peer-review`](https://github.com/DELONG-L/More-Than-Peer-Review-Skill) 工作流；需要显式调用时使用 `$peer-review`。 |
 
 **工作方式**
 - **结构检查**：检查逻辑流、章节平衡和叙事连贯性。
@@ -409,6 +411,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 - **引用审计**：核对引用准确性与完整性。
 - **图表质量**：检查可读性、caption 和可访问性。
 - **合规性检查**：检查页数限制、格式与披露要求。
+- **审稿人侧边界**：期刊或会议审稿任务使用 `peer-review`，完整评审交给 `more-than-peer-review`，不复用这套作者自审清单。
 
 ### 6. 投稿与 Rebuttal
 

@@ -92,6 +92,9 @@ Use the matching Codex skill or agent when the task clearly fits:
 - Strict experiment analysis, statistics, or scientific figures -> `results-analysis`
 - Post-experiment reporting or retrospective summaries -> `results-report`
 - Paper drafting or academic writing -> `ml-paper-writing`
+- Assigned reviewer or authorized co-reviewer manuscript assessment -> `peer-review`,
+  which hands the complete task to the separately installed `more-than-peer-review`
+  skill
 - Reviewer response or rebuttal writing -> `review-response`
 - Bound research repo knowledge maintenance -> `obsidian-project-kb-core`
 

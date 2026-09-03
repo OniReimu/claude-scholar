@@ -27,6 +27,7 @@
 
 ## 最新ニュース
 
+- **2026-09-03**: **Codex ネイティブの外部ピアレビュールーティングを追加** — レビューア側の原稿評価を分類する `peer-review` skill を追加しました。Codex ネイティブの skill 検出と `$more-than-peer-review` 呼び出しにより、完全なレビューを別途インストールされた [`more-than-peer-review`](https://github.com/DELONG-L/More-Than-Peer-Review-Skill) に引き渡し、Claude Scholar 内に同じ処理を複製しません。
 - **2026-06-03**: **Kimi Code CLI ブランチを追加し、Kimi からの力強い支援に感謝** — `kimi` ブランチを Claude Scholar の Kimi Code CLI 版として追加しました。本プロジェクトへの Kimi チームの継続的で力強い支援に感謝します。
 - **2026-05-14**: **`expression-skill` を中核のコミュニケーション層に据え、`planning-with-files` を既定の永続 planning 層として戻し、Nature 執筆スタックも拡張** — [`expression-skill`](./skills/expression-skill/README.md) を、報告・計画・ファイル操作・多段の技術作業における結論先行の表現規律として明示しました。さらに [`planning-with-files`](./skills/planning-with-files/SKILL.md) を、複雑な作業で `task_plan.md` / `notes.md` を使う既定の on-disk planning / progress-tracking workflow として再導入しました。あわせて、章構成の起草と論証構築向けに [`nature-writing`](./skills/nature-writing/README.md) を導入し、[`nature-polishing`](./skills/nature-polishing/README.md) を上流の最新 article-pattern 版へ更新し、[`nature-response`](./skills/nature-response/README.md) と [`nature-data`](./skills/nature-data/README.md) も journal-writing スタックに維持しています。
 - **2026-05-13**: **根拠ゲート付き研究ワークフローと `Sources/Papers` ルーティングを整理** — Evidence Records、claim strength、Claim Promotion Gate を共有する `research-contract.md` を追加しました。研究アイデア出し、Zotero 取り込み、文献統合、結果レポート、論文執筆、rebuttal ワークフローを同じ根拠契約に接続し、プロジェクトの論文ソースノートはまず `Sources/Papers` に置き、根拠ゲートを通った主張だけを `Knowledge` や `Writing` へ進める方針を明確にしました。
@@ -402,6 +403,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 | 種類 | 名前 | 一行説明 |
 |---|---|---|
 | Skill | `paper-self-review` | 投稿前に構造、論理、引用、図表、順守項目を体系的に確認する |
+| Skill | `peer-review` | レビューア側の原稿評価を、別途インストールされた [`more-than-peer-review`](https://github.com/DELONG-L/More-Than-Peer-Review-Skill) ワークフローへ引き渡す。明示的に使う場合は `$peer-review` を呼び出す |
 
 **進め方**
 - **構造確認**：論理の流れ、章バランス、叙述の一貫性を確認する
@@ -409,6 +411,7 @@ cp /tmp/claude-scholar/AGENTS.zh-CN.md ~/.codex/AGENTS.zh-CN.md
 - **引用監査**：引用の正確さと完全性を点検する
 - **図表品質**：可読性、caption、アクセシビリティを確認する
 - **順守確認**：ページ制限、形式、開示要件を確認する
+- **レビューア側の境界**：学術誌や会議から依頼されたレビューには `peer-review` を使い、完全なレビューを `more-than-peer-review` に引き渡して、この著者向けセルフレビュー手順を流用しません。
 
 ### 6. 投稿と Rebuttal
 
