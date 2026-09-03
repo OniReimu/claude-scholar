@@ -9,6 +9,13 @@
 
 set -eo pipefail
 
+# Every counter bump is written `((X++)) || true`. Post-increment returns the
+# OLD value, so the first bump of a zero counter is an arithmetic command
+# evaluating to 0 -- which bash >= 4.4 treats as a failure under `set -e`.
+# On bash 3.2 (macOS) it does not, so the suite dies on the Linux runner at
+# the very first assertion, before the assertion can print anything, and
+# reports a bare exit 1. policy/test-referrals.sh already carries the guard.
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LINT="$SCRIPT_DIR/lint.sh"
 TEST_DIR=$(mktemp -d)
@@ -26,9 +33,9 @@ assert_exit() {
   local actual
   "$@" >/dev/null 2>&1 && actual=0 || actual=$?
   if [[ "$actual" == "$expected" ]]; then
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   else
-    ((FAIL++)); echo "  ✗ $desc (expected exit $expected, got $actual)"
+    ((FAIL++)) || true; echo "  ✗ $desc (expected exit $expected, got $actual)"
   fi
 }
 
@@ -38,27 +45,27 @@ assert_contains() {
   local output
   output=$("$@" 2>&1) || true
   if echo "$output" | grep -q "$pattern"; then
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   else
-    ((FAIL++)); echo "  ✗ $desc (pattern '$pattern' not found in output)"
+    ((FAIL++)) || true; echo "  ✗ $desc (pattern '$pattern' not found in output)"
   fi
 }
 
 assert_file_contains() {
   local desc="$1" file="$2" pattern="$3"
   if grep -q "$pattern" "$file" 2>/dev/null; then
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   else
-    ((FAIL++)); echo "  ✗ $desc (pattern '$pattern' not found in $file)"
+    ((FAIL++)) || true; echo "  ✗ $desc (pattern '$pattern' not found in $file)"
   fi
 }
 
 assert_file_not_contains() {
   local desc="$1" file="$2" pattern="$3"
   if ! grep -q "$pattern" "$file" 2>/dev/null; then
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   else
-    ((FAIL++)); echo "  ✗ $desc (pattern '$pattern' should NOT be in $file)"
+    ((FAIL++)) || true; echo "  ✗ $desc (pattern '$pattern' should NOT be in $file)"
   fi
 }
 
@@ -171,9 +178,9 @@ bash "$LINT" --fix --quiet "$TEST_DIR" >/dev/null 2>&1
 cp "$TEST_DIR/test.tex" "$TEST_DIR/after_first.tex"
 bash "$LINT" --fix --quiet "$TEST_DIR" >/dev/null 2>&1
 if diff -q "$TEST_DIR/test.tex" "$TEST_DIR/after_first.tex" >/dev/null 2>&1; then
-  ((PASS++)); echo "  ✓ fix is idempotent"
+  ((PASS++)) || true; echo "  ✓ fix is idempotent"
 else
-  ((FAIL++)); echo "  ✗ fix is NOT idempotent (second run changed file)"
+  ((FAIL++)) || true; echo "  ✗ fix is NOT idempotent (second run changed file)"
 fi
 
 echo "4.4 --constraint-type + --fix combination"
@@ -189,17 +196,17 @@ echo "5.1 guardrail rule count"
 EXPECTED_GUARDRAIL=30
 count=$(bash "$LINT" --constraint-type guardrail --quiet "$TEST_DIR" 2>&1 | grep "Rules checked:" | grep -o '[0-9]*')
 if [[ "$count" == "$EXPECTED_GUARDRAIL" ]]; then
-  ((PASS++)); echo "  ✓ guardrail rules: $count"
+  ((PASS++)) || true; echo "  ✓ guardrail rules: $count"
 else
-  ((FAIL++)); echo "  ✗ guardrail rules: expected $EXPECTED_GUARDRAIL, got $count"
+  ((FAIL++)) || true; echo "  ✗ guardrail rules: expected $EXPECTED_GUARDRAIL, got $count"
 fi
 
 echo "5.2 safe rule count"
 count=$(bash "$LINT" --autofix safe --quiet "$TEST_DIR" 2>&1 | grep "Rules checked:" | grep -o '[0-9]*')
 if [[ "$count" == "5" ]]; then
-  ((PASS++)); echo "  ✓ safe rules: $count"
+  ((PASS++)) || true; echo "  ✓ safe rules: $count"
 else
-  ((FAIL++)); echo "  ✗ safe rules: expected 5, got $count"
+  ((FAIL++)) || true; echo "  ✗ safe rules: expected 5, got $count"
 fi
 
 echo ""
@@ -218,9 +225,9 @@ assert_flags() {
   local desc="$1" content="$2"
   printf '%s\n' "$content" > "$PROV_DIR/case.tex"
   if prov_lint | grep -qE '(ERROR|WARN)'; then
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   else
-    ((FAIL++)); echo "  ✗ $desc (expected a finding, got none)"
+    ((FAIL++)) || true; echo "  ✗ $desc (expected a finding, got none)"
   fi
 }
 
@@ -229,10 +236,10 @@ assert_clean() {
   printf '%s\n' "$content" > "$PROV_DIR/case.tex"
   local out; out=$(prov_lint)
   if echo "$out" | grep -qE '(ERROR|WARN)'; then
-    ((FAIL++)); echo "  ✗ $desc (false positive)"
+    ((FAIL++)) || true; echo "  ✗ $desc (false positive)"
     echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
   else
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   fi
 }
 
@@ -265,14 +272,14 @@ printf '%s\n' 'As Golden G4, at $\tilde r=0$ the branch is inactive. C6 holds th
   'We evaluate the Llama-3.1-70B arm.' > "$PROV_DIR/case.tex"
 extract_out=$(bash "$SCRIPT_DIR/scripts/extract-undefined-identifiers.sh" "$PROV_DIR" 2>&1)
 if echo "$extract_out" | grep -q "C6"; then
-  ((PASS++)); echo "  ✓ extracts undefined claim-register label C6"
+  ((PASS++)) || true; echo "  ✓ extracts undefined claim-register label C6"
 else
-  ((FAIL++)); echo "  ✗ extracts undefined claim-register label C6"
+  ((FAIL++)) || true; echo "  ✗ extracts undefined claim-register label C6"
 fi
 if echo "$extract_out" | grep -qE '\bLlama'; then
-  ((FAIL++)); echo "  ✗ model identifier Llama-3.1-70B must be excluded"
+  ((FAIL++)) || true; echo "  ✗ model identifier Llama-3.1-70B must be excluded"
 else
-  ((PASS++)); echo "  ✓ model identifier excluded from candidates"
+  ((PASS++)) || true; echo "  ✓ model identifier excluded from candidates"
 fi
 rm -rf "$PROV_DIR"
 
@@ -289,9 +296,9 @@ inf_flags() {
   local desc="$1" content="$2"
   printf '%s\n' "$content" > "$INF_DIR/case.tex"
   if inf_lint | grep -qE '(ERROR|WARN)'; then
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   else
-    ((FAIL++)); echo "  ✗ $desc (expected a finding, got none)"
+    ((FAIL++)) || true; echo "  ✗ $desc (expected a finding, got none)"
   fi
 }
 inf_clean() {
@@ -299,9 +306,9 @@ inf_clean() {
   printf '%s\n' "$content" > "$INF_DIR/case.tex"
   local out; out=$(inf_lint)
   if echo "$out" | grep -qE '(ERROR|WARN)'; then
-    ((FAIL++)); echo "  ✗ $desc (false positive)"; echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
+    ((FAIL++)) || true; echo "  ✗ $desc (false positive)"; echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
   else
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   fi
 }
 
@@ -340,9 +347,9 @@ su_flags() {
   local desc="$1" content="$2"
   printf '%s\n' "$content" > "$SU_DIR/case.tex"
   if su_lint | grep -qE '(ERROR|WARN)'; then
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   else
-    ((FAIL++)); echo "  ✗ $desc (expected a finding, got none)"
+    ((FAIL++)) || true; echo "  ✗ $desc (expected a finding, got none)"
   fi
 }
 su_clean() {
@@ -350,9 +357,9 @@ su_clean() {
   printf '%s\n' "$content" > "$SU_DIR/case.tex"
   local out; out=$(su_lint)
   if echo "$out" | grep -qE '(ERROR|WARN)'; then
-    ((FAIL++)); echo "  ✗ $desc (false positive)"; echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
+    ((FAIL++)) || true; echo "  ✗ $desc (false positive)"; echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
   else
-    ((PASS++)); echo "  ✓ $desc"
+    ((PASS++)) || true; echo "  ✓ $desc"
   fi
 }
 
