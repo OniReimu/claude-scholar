@@ -382,7 +382,7 @@ claude-scholar/
 
 ## Feature Highlights
 
-### Skills (29 total)
+### Skills (49 total)
 
 **Writing & Academic:**
 - `ml-paper-writing` - Full paper writing guidance for top conferences/journals
@@ -423,6 +423,7 @@ claude-scholar/
 **Utilities:**
 - `uv-package-manager` - Modern Python package management
 - `planning-with-files` - Markdown-based planning
+- `lineage` - Opt-in experiment-lineage page for a research project: which lines are running, which stalled, which results the paper never reads
 - `kaggle-learner` - Learn from Kaggle solutions
 
 ### Commands (50+)

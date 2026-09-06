@@ -353,7 +353,7 @@ claude-scholar/
 
 ## 功能亮点
 
-### 技能（29 个）
+### 技能（49 个）
 
 **写作与学术：**
 - `ml-paper-writing` - 顶级会议/期刊的完整论文写作指导
@@ -394,6 +394,7 @@ claude-scholar/
 **工具：**
 - `uv-package-manager` - 现代 Python 包管理
 - `planning-with-files` - 基于 Markdown 的规划
+- `lineage` - 可选开启的实验脉络页面：哪些线在跑、哪些悄悄停了、哪些结果论文根本没读
 - `kaggle-learner` - 从 Kaggle 解决方案中学习
 
 ### 命令（50+）
