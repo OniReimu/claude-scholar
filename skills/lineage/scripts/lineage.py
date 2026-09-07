@@ -1654,7 +1654,10 @@ function render(d){
   app.innerHTML = "";
   var map = byId(d.nodes);
   var open = d.nodes.filter(function(n){ return n.lifecycle === "open"; });
-  var leaves = open.filter(function(n){ return n.is_leaf; });
+  /* open leaves, plus any open line that blocks submission: a blocker on a
+     parent covers every line under it, and must not be the one thing the
+     banner counts and the list never shows */
+  var leaves = open.filter(function(n){ return n.is_leaf || n.blocks; });
 
   /* masthead */
   var mast = el("div", "masthead");
@@ -1806,7 +1809,7 @@ function render(d){
   var sec = el("section");
   sec.id = "frontier";
   var head = el("div", "sec-head");
-  head.appendChild(el("h2", null, "Frontier · open leaves"));
+  head.appendChild(el("h2", null, "Frontier · what is open now"));
   head.appendChild(el("div", "tally",
     "<span><b>" + leaves.length + "</b> open lines, grouped by what they are doing</span>"));
   sec.appendChild(head);
@@ -1870,6 +1873,7 @@ function render(d){
         (n.blocks ? '<i class="blk" title="' + esc(n.blocks) + '"></i>' : '') + esc(n.name) +
         (n.job_detail && n.job_detail.length
            ? '<span class="leaf-sub">' + esc(n.job_detail.join(" · ")) + '</span>'
+           : !n.is_leaf ? '<span class="leaf-sub">covers every line under it</span>'
            : parent ? '<span class="leaf-sub">under ' + esc(parent) + '</span>' : '') +
       '</span>' +
       '<span class="cell' + (n.patterns.length ? '' : ' dim') + '" title="' +
