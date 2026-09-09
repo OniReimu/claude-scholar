@@ -289,7 +289,8 @@ def literal_prefix_re():
     # A leading directory is admitted only when it is the results directory. Any
     # directory at all also matched plt.savefig("figures/exp2.pdf") - an output the
     # generator writes, reported back as an input the paper is missing.
-    res = [re.escape(d) for d in (CONFIG.get("results") or "").replace(",", " ").split()]
+    res = [re.escape(d.strip("/")) for d in (CONFIG.get("results") or "").replace(",", " ").split()
+           if d.strip("/")]
     lead = r"(?:(?:[^\"']*/)?(?:%s)/)?" % "|".join(res) if res else ""
     return re.compile(r"""["']%s(%s)(?![A-Za-z0-9])[^"']*["']"""
                       % (lead, CONFIG.get("prefix") or DEFAULTS["prefix"]))
@@ -343,7 +344,7 @@ def expand_pattern(pat):
     if m:                               # v40-v50, exp1-exp3, exp1-3 - any stem, not just v
         lo, hi = int(m.group(2)), int(m.group(3))
         return {"%s%d" % (m.group(1), n) for n in range(lo, hi + 1)}, []
-    if re.fullmatch(r"[A-Za-z]+\d+[a-z]*-.+", pat):
+    if "*" not in pat and re.fullmatch(r"[A-Za-z]+\d+[a-z]*-.+", pat):
         return set(), []        # a range that did not parse - reported, not half-read
     base = _prefix_of(pat)
     if base:
