@@ -22,6 +22,7 @@ Design: rfc_lineage.md. Build order: plan_lineage.md.
 """
 
 import argparse
+import collections
 import datetime
 import glob
 import http.server
@@ -285,7 +286,7 @@ def parse_outline(path):
 
 def literal_prefix_re():
     """Built from the configured prefix shape, not hardcoded to this project's."""
-    return re.compile(r"""["'](%s)(?:_[A-Za-z0-9_*.{}-]*)?["']"""
+    return re.compile(r"""["'](?:[^"']*/)?(%s)(?![A-Za-z0-9])[^"']*["']"""
                       % (CONFIG.get("prefix") or DEFAULTS["prefix"]))
 VARIABLE_PREFIX = re.compile(r"""prefix\s*=\s*(?!["'])[A-Za-z_]""")
 DECLARED_OUTPUT = (
@@ -322,9 +323,10 @@ def expand_pattern(pat):
     if "/" in pat or pat.endswith((".pbs", ".py", ".md", ".tex", ".json")):
         base = _prefix_of(re.sub(r"^run_", "", os.path.basename(pat)))
         return ({base} if base else set()), [pat.replace("**", "").rstrip("/") or "."]
-    m = re.fullmatch(r"v(\d+)[a-z]*-v(\d+)[a-z]*", pat)
-    if m:
-        return {"v%d" % n for n in range(int(m.group(1)), int(m.group(2)) + 1)}, []
+    m = re.fullmatch(r"([A-Za-z]+)(\d+)[a-z]*-(?:\1)?(\d+)[a-z]*", pat)
+    if m:                               # v40-v50, exp1-exp3, exp1-3 - any stem, not just v
+        lo, hi = int(m.group(2)), int(m.group(3))
+        return {"%s%d" % (m.group(1), n) for n in range(lo, hi + 1)}, []
     base = _prefix_of(pat)
     if base:
         return {base}, []
@@ -691,7 +693,8 @@ def unsynced(remote, landed, running=None):
     return out
 
 
-GROUPS = ("running", "changed", "writeup", "stalled", "planned", "decision", "waiting")
+GROUPS = ("running", "changed", "writeup", "stalled", "planned",
+          "decision", "unmeasured", "waiting")
 MANUSCRIPT_EXT = (".tex", ".md", ".bib")
 
 
@@ -713,6 +716,8 @@ def group_of(n):
         return "planned"
     if n["signal"] == "live":
         return "changed"
+    if n["signal"] == "unknown":
+        return "unmeasured"
     if n["signal"] == "stalled":
         return "writeup" if _manuscript_only(n) else "stalled"
     return "waiting"
@@ -853,7 +858,7 @@ def classify_unlanded(scripted, landed, declared, training, running=None):
 
 
 def enrich(nodes, landed, named, running=None, incomplete=None,
-           prev_by_name=None, sched_ok=True):
+           prev_by_name=None, sched_ok=True, have_results=True, git_ok=True):
     """Attach evidence and activity to every node. Never infers absence from a
     failed lookup: a node with no pattern gets signal 'none', not 'stalled'."""
     for n in nodes:
@@ -870,10 +875,19 @@ def enrich(nodes, landed, named, running=None, incomplete=None,
         n["matched_prefixes"] = matched
         n["artifacts"] = sum(landed[u] for u in matched) if matched else 0
         n["consumed_by"] = sorted({g for u in matched for g in named.get(u, [])})
+        # Without a results scan nothing is known to be missing. Calling every declared
+        # prefix unlanded turned "we did not look" into PLANNED on every line.
         n["declared_unlanded"] = sorted(
-            b for b in prefixes if not any(_pfx_match(u, b) for u in landed))
+            b for b in prefixes if not any(_pfx_match(u, b) for u in landed)
+        ) if have_results else []
 
-        jobs = [j for b in prefixes for j in (running or {}).get(b, [])]
+        seen_jobs, jobs = set(), []      # same prefix rule the artifacts use, or a job
+        for key, js in (running or {}).items():   # named exp1trial hides from node [exp1]
+            if any(_pfx_match(key, b) for b in prefixes):
+                for j in js:
+                    if j["id"] not in seen_jobs:
+                        seen_jobs.add(j["id"])
+                        jobs.append(j)
         n["jobs"] = len(jobs)
         n["job_detail"] = []
         for j in jobs[:6]:
@@ -891,6 +905,8 @@ def enrich(nodes, landed, named, running=None, incomplete=None,
             signal, because = "live", "job"
         elif not prefixes and not paths:
             signal, because = "none", None
+        elif not git_ok:
+            signal, because = "unknown", None    # git is the only clock these lines have
         elif hrs is not None and hrs <= FRESH_HOURS:
             signal, because = "live", "commit"
         else:
@@ -991,7 +1007,8 @@ def collect(previous=None):
 
     if nodes:
         enrich(nodes, landed, named, running, incomplete, prev_by_name,
-               sched_clean or not cfg_clusters())
+               sched_clean or not cfg_clusters(),
+               have_results=have_results, git_ok=git_ok)
 
     landed_set, named_set = (set(landed), set(named)) if have_results else (set(), set())
     prefix_index = {}
@@ -1033,7 +1050,9 @@ def collect(previous=None):
         "open_leaves": len(leaves),
         "cashed": sum(1 for n in nodes if n["lifecycle"] == "cashed"),
         "falsified": sum(1 for n in nodes if n["lifecycle"] == "falsified"),
-        "unmatched": sum(1 for n in leaves if not n["patterns"]),
+        # a node written [—] declared its answer; only a node that said nothing is missing one
+        "unmatched": sum(1 for n in leaves
+                         if not n["patterns"] and not n.get("declared_pattern")),
         "live": sum(1 for n in leaves if n["signal"] == "live"),
         "stalled": sum(1 for n in leaves if n["signal"] == "stalled"),
         "no_signal": sum(1 for n in leaves if n["signal"] == "none"),
@@ -1078,6 +1097,7 @@ def collect(previous=None):
         "history": hist,
         "evidence": evidence,
         "have_results": have_results,
+        "have_generators": bool(cfg_globs("generators")),
         "prefixes": prefix_index,
         "buckets": buckets,
         "coverage": gaps,
@@ -1121,7 +1141,7 @@ def summarise(data, stream=sys.stdout):
         for e in b["elsewhere"]:
             print("    %s -> %s" % (e["prefix"], ",".join(e["to"])), file=stream)
     if c["unmatched"]:
-        print("  %d open leaves have no match pattern (they will read 'no signal' forever)"
+        print("  %d open leaves have no `[...]` at all (they will read 'no signal' forever)"
               % c["unmatched"], file=stream)
     fixable = [m for m in data["incomplete"] if m.get("kind") == "outline"]
     limits = [m for m in data["incomplete"] if m.get("kind") != "outline"]
@@ -1235,6 +1255,7 @@ results: %(results)s
 scripts: %(scripts)s
 generators: %(generators)s
 prefix: %(prefix)s
+scheduler: %(scheduler)s
 clusters: %(clusters)s
 -->
 
@@ -1242,8 +1263,8 @@ Structure only. **No state in this file** — no job ids, exit codes, scores or 
 Those are collected into lineage.json and rot if hand-kept.
 
 Indentation is derivation: a child forked from its parent. `[...]` is the match pattern
-the collector uses — a prefix, a `vNN-vMM` range, or a path. `>` is what the line would
-establish. `✓` cashed in, `✗` falsified; unmarked means open.
+the collector uses — a prefix, a range like `exp1-exp3`, or a path. `>` is what the line
+would establish. `✓` cashed in, `✗` falsified; unmarked means open.
 
 Every config key above is optional. Delete the ones that do not apply and the matching
 probe simply reports that it is not configured — it never pretends to have looked.
@@ -1274,10 +1295,11 @@ def init_outline(root=None):
 
     results = next((d for d in ("results", "outputs", "runs", "out", "artifacts")
                     if os.path.isdir(os.path.join(root, d))), "")
-    scripts = ""
+    scripts, scheduler = "", ""
     for g in ("run_*.pbs", "*.pbs", "*.sbatch", "scripts/*.sbatch", "jobs/*.sh"):
         if glob.glob(os.path.join(root, g)):
             scripts = g
+            scheduler = "slurm" if "sbatch" in g else "pbs"
             break
     generators = [g for g in ("paper/scripts/*.py", "paper_preprint_full/scripts/*.py",
                               "scripts/*.py", "figures/*.py", "analysis/*.py")
@@ -1289,9 +1311,10 @@ def init_outline(root=None):
         hits = [re.match(r"([a-z]+)(\d+)([a-z]*)", n) for n in names]
         hits = [h for h in hits if h]
         if names and len(hits) > len(names) * 0.3:
-            letters = max({h.group(1) for h in hits}, key=lambda x: (len(x), x))
+            stems = collections.Counter(h.group(1) for h in hits)
+            letters = max(stems, key=lambda x: (stems[x], len(x)))
             prefix = "%s\\d+[a-z]*" % letters
-            example = sorted({h.group(0) for h in hits})[0]
+            example = sorted({h.group(0) for h in hits if h.group(1) == letters})[0]
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:
@@ -1299,7 +1322,7 @@ def init_outline(root=None):
             "project": os.path.basename(root),
             "results": results, "scripts": scripts,
             "generators": ", ".join(generators),
-            "prefix": prefix, "clusters": "",
+            "prefix": prefix, "scheduler": scheduler or "none", "clusters": "",
             "example": "your first line of work",
             "exprefix": example or "—"})
     return path, True
@@ -1665,12 +1688,15 @@ function span(h){
 function ageText(n){
   if (n.carried_over) return "held over";
   if (n.kind === "decision") return n.written_at ? stamp(n.written_at) : "new";
-  if (n.signal === "none") return n.written_at ? stamp(n.written_at) : "new";
+  if (n.signal === "none" || n.signal === "unknown")
+    return n.written_at ? stamp(n.written_at) : "new";
   return n.last_activity ? stamp(n.last_activity) : "new";
 }
 function ageTitle(n){
   if (n.jobs) return n.jobs + " job(s) in the queue";
   if (n.carried_over) return "the scheduler could not be reached; this is the previous reading";
+  if (n.signal === "unknown")
+    return "git could not be read here, so this line has no clock";
   if (n.signal === "none")
     return n.written_at ? "written into the outline " + span(n.written_hours) +
                           ", untouched since"
@@ -1680,7 +1706,7 @@ function ageTitle(n){
 }
 function ageClass(n){
   if (n.carried_over) return "stalled-age";
-  if (n.signal === "none") return "dim";
+  if (n.signal === "none" || n.signal === "unknown") return "dim";
   return n.signal === "stall" || n.signal === "stalled" ? "stalled-age" : "";
 }
 function ageLabel(iso){
@@ -1755,7 +1781,11 @@ function render(d){
     ["warn", g.decision || 0, "awaiting your call","#g-decision"],
     ["mute", g.waiting || 0, "no experiment yet","#g-waiting"],
     ["mute", uncom,          "uncommitted",      "#uncommitted"]
-  ].filter(function(t, i){ return i === 1 || t[1] > 0; });
+  ].filter(function(t, i){
+    // the running tile is the one worth showing at zero - but only when a queue
+    // was actually read. With no scheduler configured, "0 running" is not a fact.
+    return (i === 1 && d.schedulers_ok !== false) || t[1] > 0;
+  });
 
   var sum = el("div", "summary");
   tiles.forEach(function(t){
@@ -1779,9 +1809,9 @@ function render(d){
   var dark = d.collectors.filter(function(c){ return c.ok === null; });
   if (dark.length) notes.push(dark.length + " probe" + (dark.length > 1 ? "s" : "") +
     " not wired: " + dark.map(function(c){ return c.name; }).join(", "));
-  if (d.counts.no_signal) notes.push(d.counts.no_signal + " of the " + d.counts.open_leaves +
-    " lines have no match pattern in " + esc(d.source) +
-    ", so their state is unverifiable — add one and they light up");
+  if (d.counts.unmatched) notes.push(d.counts.unmatched + " of the " + d.counts.open_leaves +
+    " lines carry no `[...]` in " + esc(d.source) +
+    " — add one and they light up");
   if (notes.length) app.appendChild(el("div", "chore", notes.join(" · ")));
 
 
@@ -1870,6 +1900,8 @@ function render(d){
     ["planned",  "PLANNED",          "a prefix is written down; nothing has landed under it yet"],
     ["decision", "AWAITING YOUR CALL", "these close by a judgement, not by an experiment — " +
                                        "each one is minutes of your attention, not GPU time"],
+    ["unmeasured", "CAN'T TELL YET", "git could not be read here, so nothing on these lines " +
+                                     "can be called moving or stalled"],
     ["waiting",  "NO EXPERIMENT YET", "nothing is attached yet — give one a `[prefix]` when you start the run"]
   ];
   function groupOf(n){ return n.group || "waiting"; }
@@ -1922,10 +1954,13 @@ function render(d){
       '</span>' +
       '<span class="cell' + (n.patterns.length ? '' : ' dim') + '" title="' +
         (n.patterns.length ? esc(n.patterns.join(" "))
-                           : "no match pattern in the outline — nothing for a probe to look at") +
-        '">' + (n.patterns.length ? esc(n.patterns.join(" ")) : "not tracked") + '</span>' +
+           : n.declared_pattern ? "you wrote [—]: this line leaves no version trace"
+           : "no `[...]` in the outline — nothing for a probe to look at") +
+        '">' + (n.patterns.length ? esc(n.patterns.join(" "))
+                : n.declared_pattern ? "no trace by design" : "not tracked") + '</span>' +
       '<span class="cell' + (n.artifacts ? '' : ' dim') + '">' +
-        (n.signal === "none" ? "—" : n.artifacts + " art") + '</span>' +
+        (n.signal === "none" || n.signal === "unknown" ? "—"
+                                                          : n.artifacts + " art") + '</span>' +
       '<span class="cell ' + ageClass(n) + '" title="' + esc(ageTitle(n)) + '">' +
         ageText(n) + '</span>' +
       '<span class="cell ' + (n.claim ? "target" : "target none") + '" title="' +
@@ -2142,14 +2177,14 @@ function render(d){
   }
 
   /* evidence */
-  if (d.evidence && d.have_results !== false){
+  if (d.evidence && d.have_results !== false && d.have_generators !== false){
     var es = el("section");
     var eh = el("div", "sec-head");
     eh.appendChild(el("h2", null, "Evidence · artifacts against claims"));
     eh.appendChild(el("div", "tally", "<span>" + d.counts.landed +
       " prefixes landed · " + d.counts.named + " named in generator code</span>"));
     es.appendChild(eh);
-    var ev3 = [["consumed", "read by the paper", "b-ok"],
+    var ev3 = [["consumed", "named in the paper's code", "b-ok"],
                ["landed_not_named", "status unknown", "b-warn"],
                ["named_not_landed", "missing", "b-bad"]];
     var tot = ev3.reduce(function(a, x){ return a + (d.evidence[x[0]] || []).length; }, 0);

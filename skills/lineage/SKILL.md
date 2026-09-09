@@ -47,12 +47,19 @@ Edit `docs/lineage.md`. Indentation is derivation — a child forked from its pa
   - Nothing reads the 44 cells yet `[v107xm]`
     > artifacts are synced and no generator names the prefix
   - Where v107xm lands in the paper `[—]` ✓ its own table; Table 6 stays
+- **Six columns have no cross-model number** `[v115bench]` → tab:benchmark_compare
+  > !blocks the table cannot ship with three of nine columns empty
 ```
 
 - `[...]` — the match pattern: a prefix (`v107xm`), a range (`v40-v50`), a path (`paper/**`),
-  a script (`run_x.pbs`), or `—` when the line leaves no trace. **Writing a prefix before the
+  a script (`run_x.pbs`), or `—` when the line leaves no trace. Backticks are the house style;
+  bare `[v107xm]` is read too. A range takes any stem — `v40-v50`, `exp1-exp3`, `exp1-3`. **Writing a prefix before the
   first file lands is how a line becomes PLANNED** rather than "no experiment yet".
 - `>` — one sentence: what this line would establish or overturn.
+- `> !blocks <reason>` — on its own `>` line under the node: this line stands between the paper
+  and submission. It goes to the top of the frontier in its own group, with a tile at the top of
+  the page. Written inline in the node's title instead, it is just words in the title and no
+  blocker is recorded. Closing the line clears it.
 - `✓` / `✗` on closing. `✗` is falsified — that is paper material, not debt. A child may close
   while its parent stays open.
 - Open a new node the moment a new line of work starts. A line nobody wrote down is invisible,
