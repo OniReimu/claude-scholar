@@ -138,10 +138,12 @@ def _split_body(body):
         body = body[: m.start()].strip()
 
     claim = None
-    if "→" in body:
-        body, claim = body.split("→", 1)
-        claim = claim.strip().strip("`").strip()
-        body = body.strip()
+    for arrow in ("→", "->"):          # people type both; losing one silently is worse
+        if arrow in body:              # than any ambiguity accepting it could cause
+            body, claim = body.split(arrow, 1)
+            claim = claim.strip().strip("`").strip()
+            body = body.strip()
+            break
 
     patterns, has_field = [], False
     m = re.search(r"`\[([^\]]*)\]`", body)
@@ -659,7 +661,16 @@ def unsynced(remote, landed, running=None):
     return out
 
 
-GROUPS = ("running", "changed", "stalled", "planned", "decision", "waiting")
+GROUPS = ("running", "changed", "writeup", "stalled", "planned", "decision", "waiting")
+MANUSCRIPT_EXT = (".tex", ".md", ".bib")
+
+
+def _manuscript_only(n):
+    """Every pattern on this line points at prose, not at a run. Nothing moving there
+    means nobody has written it down yet - a different thing from an experiment that
+    stopped, and the word 'stalled' was carrying both."""
+    pats = n.get("patterns") or []
+    return bool(pats) and all(p.endswith(MANUSCRIPT_EXT) for p in pats)
 
 
 def group_of(n):
@@ -673,7 +684,7 @@ def group_of(n):
     if n["signal"] == "live":
         return "changed"
     if n["signal"] == "stalled":
-        return "stalled"
+        return "writeup" if _manuscript_only(n) else "stalled"
     return "waiting"
 
 
@@ -983,7 +994,9 @@ def collect(previous=None):
     openn = [n for n in nodes if n["lifecycle"] == "open"]
     leaves = [n for n in openn if n["is_leaf"]]
     for n in nodes:
-        n["group"] = group_of(n) if (n["lifecycle"] == "open" and n["is_leaf"]) else None
+        # every open line, not only the leaves: since a blocking parent can appear in
+        # the frontier, one arriving there with no stage is a hole waiting to show
+        n["group"] = group_of(n) if n["lifecycle"] == "open" else None
     counts = {
         "nodes": len(nodes),
         "open": len(openn),
@@ -1822,11 +1835,12 @@ function render(d){
   var GROUPS = [
     ["running",  "RUNNING",          "a job is in the queue right now"],
     ["changed",  "RECENTLY CHANGED", "no job, but code moved in the last 48h"],
+    ["writeup",  "NOT WRITTEN UP YET", "these point at a manuscript file that has not been edited"],
     ["stalled",  "STALLED",          "it has a prefix and results, and nothing has moved"],
     ["planned",  "PLANNED",          "a prefix is written down; nothing has landed under it yet"],
     ["decision", "AWAITING YOUR CALL", "these close by a judgement, not by an experiment — " +
                                        "each one is minutes of your attention, not GPU time"],
-    ["waiting",  "NO EXPERIMENT YET", "an experiment would close these, and none is attached yet"]
+    ["waiting",  "NO EXPERIMENT YET", "nothing is attached yet — give one a `[prefix]` when you start the run"]
   ];
   function groupOf(n){ return n.group || "waiting"; }
   var rank = {}; GROUPS.forEach(function(g, i){ rank[g[0]] = i; });
