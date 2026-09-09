@@ -286,8 +286,13 @@ def parse_outline(path):
 
 def literal_prefix_re():
     """Built from the configured prefix shape, not hardcoded to this project's."""
-    return re.compile(r"""["'](?:[^"']*/)?(%s)(?![A-Za-z0-9])[^"']*["']"""
-                      % (CONFIG.get("prefix") or DEFAULTS["prefix"]))
+    # A leading directory is admitted only when it is the results directory. Any
+    # directory at all also matched plt.savefig("figures/exp2.pdf") - an output the
+    # generator writes, reported back as an input the paper is missing.
+    res = [re.escape(d) for d in (CONFIG.get("results") or "").replace(",", " ").split()]
+    lead = r"(?:(?:[^\"']*/)?(?:%s)/)?" % "|".join(res) if res else ""
+    return re.compile(r"""["']%s(%s)(?![A-Za-z0-9])[^"']*["']"""
+                      % (lead, CONFIG.get("prefix") or DEFAULTS["prefix"]))
 VARIABLE_PREFIX = re.compile(r"""prefix\s*=\s*(?!["'])[A-Za-z_]""")
 DECLARED_OUTPUT = (
     r'^\s*PREFIX="([^"$]+)"',
@@ -306,6 +311,17 @@ def _read(path):
 def _prefix_of(name):
     m = re.match("(%s)" % CONFIG.get("prefix") or DEFAULTS["prefix"], name)
     return m.group(1) if m else None
+
+
+def running_for(running, base):
+    """Every job whose queue key belongs to this prefix. Three call sites need this and
+    an exact lookup in any one of them lets the page call a line running and, three
+    sections later, say nothing ever came of it."""
+    out = []
+    for key, js in (running or {}).items():
+        if _pfx_match(key, base):
+            out += js
+    return out
 
 
 def _pfx_match(candidate, base):
@@ -327,6 +343,8 @@ def expand_pattern(pat):
     if m:                               # v40-v50, exp1-exp3, exp1-3 - any stem, not just v
         lo, hi = int(m.group(2)), int(m.group(3))
         return {"%s%d" % (m.group(1), n) for n in range(lo, hi + 1)}, []
+    if re.fullmatch(r"[A-Za-z]+\d+[a-z]*-.+", pat):
+        return set(), []        # a range that did not parse - reported, not half-read
     base = _prefix_of(pat)
     if base:
         return {base}, []
@@ -361,7 +379,7 @@ def scan_results():
 def scan_generators():
     named, incomplete, seen, lit = {}, [], 0, literal_prefix_re()
     if not cfg_globs("generators"):
-        return {}, [], "no generator globs configured - consumption not checked"
+        return {}, [], "no generator globs configured - consumption not checked", 0
     for pattern in cfg_globs("generators"):
         for path in sorted(glob.glob(os.path.join(ROOT, pattern))):
             seen += 1
@@ -378,7 +396,8 @@ def scan_generators():
                                    "why": "the prefix arrives in a variable"})
     return ({k: sorted(v) for k, v in named.items()}, incomplete,
             "%d scripts, %d prefixes named literally, %d unresolvable"
-            % (seen, len(named), len(incomplete)))
+            % (seen, len(named), len(incomplete)) if seen
+            else "generator globs match no files - consumption not checked", seen)
 
 
 def scan_scripts():
@@ -568,8 +587,8 @@ def scan_scheduler(cluster, timeout=20):
     jobs = jobs[-80:]
     running = [j for j in jobs if j["state"] in ("R", "Q", "H")]
     detail = "%d running, %d in recent history" % (len(running), len(jobs))
-    if unparsed:
-        detail += ", %d rows unparsed" % unparsed
+    if unparsed:                  # an unread row may be a running job; a partial read
+        return None, detail + ", %d rows unparsed" % unparsed   # cannot support "0 running"
     return jobs, detail
 
 
@@ -687,14 +706,14 @@ def unsynced(remote, landed, running=None):
         base = _prefix_of(name)
         local = sum(v for k, v in landed.items() if base and _pfx_match(k, base))
         if n > 0 and local == 0:
-            live = bool(base and (running or {}).get(base))
+            live = bool(base and running_for(running, base))
             out.append({"dir": name, "prefix": base or name, "remote": n,
                         "local": local, "in_flight": live})
     return out
 
 
 GROUPS = ("running", "changed", "writeup", "stalled", "planned",
-          "decision", "unmeasured", "waiting")
+          "decision", "unmeasured", "notrace", "waiting")
 MANUSCRIPT_EXT = (".tex", ".md", ".bib")
 
 
@@ -720,6 +739,8 @@ def group_of(n):
         return "unmeasured"
     if n["signal"] == "stalled":
         return "writeup" if _manuscript_only(n) else "stalled"
+    if n.get("declared_pattern"):
+        return "notrace"        # the outline said [—]; do not ask for a prefix back
     return "waiting"
 
 
@@ -846,10 +867,10 @@ def classify_unlanded(scripted, landed, declared, training, running=None):
         away = [d for d in decl if not d.startswith(p)]
         if away:
             out["elsewhere"].append({"prefix": p, "to": away})
-        elif (running or {}).get(p):
+        elif running_for(running, p):
             out["running"].append({"prefix": p, "to": [
                 "%s %s" % (j["cluster"], j["id"].split(".")[0])
-                for j in running[p][:3]]})
+                for j in running_for(running, p)[:3]]})
         elif p in training:
             out["training"].append({"prefix": p, "to": ["saves/unlearn (not local)"]})
         else:
@@ -873,7 +894,8 @@ def enrich(nodes, landed, named, running=None, incomplete=None,
             paths += pa
         matched = sorted(u for u in landed if any(_pfx_match(u, b) for b in prefixes))
         n["matched_prefixes"] = matched
-        n["artifacts"] = sum(landed[u] for u in matched) if matched else 0
+        n["artifacts"] = (sum(landed[u] for u in matched) if matched else 0) \
+            if have_results else None
         n["consumed_by"] = sorted({g for u in matched for g in named.get(u, [])})
         # Without a results scan nothing is known to be missing. Calling every declared
         # prefix unlanded turned "we did not look" into PLANNED on every line.
@@ -882,12 +904,12 @@ def enrich(nodes, landed, named, running=None, incomplete=None,
         ) if have_results else []
 
         seen_jobs, jobs = set(), []      # same prefix rule the artifacts use, or a job
-        for key, js in (running or {}).items():   # named exp1trial hides from node [exp1]
-            if any(_pfx_match(key, b) for b in prefixes):
-                for j in js:
-                    if j["id"] not in seen_jobs:
-                        seen_jobs.add(j["id"])
-                        jobs.append(j)
+        for b in prefixes:               # named exp1trial hides from node [exp1]
+            for j in running_for(running, b):
+                key = (j["cluster"], j["id"])     # ids are per-scheduler; two clusters share 42
+                if key not in seen_jobs:
+                    seen_jobs.add(key)
+                    jobs.append(j)
         n["jobs"] = len(jobs)
         n["job_detail"] = []
         for j in jobs[:6]:
@@ -971,11 +993,16 @@ def collect(previous=None):
     landed, mtimes = landed_pair if have_results else ({}, {})
 
     try:
-        named, gen_incomplete, detail = scan_generators()
-        collectors.append({"name": "generators", "ok": True, "detail": detail})
+        named, gen_incomplete, detail, gen_seen = scan_generators()
+        # "configured" is not "scanned": a glob that matches nothing must not let the
+        # evidence panel report that no script mentions anything.
+        gen_scanned = gen_seen > 0
+        collectors.append({"name": "generators", "detail": detail,
+                           "ok": True if gen_scanned
+                           else (None if not cfg_globs("generators") else False)})
         incomplete += gen_incomplete
     except Exception as exc:                                       # noqa: BLE001
-        named = {}
+        named, gen_scanned = {}, False
         collectors.append({"name": "generators", "ok": False, "detail": repr(exc)})
 
     try:
@@ -1097,7 +1124,7 @@ def collect(previous=None):
         "history": hist,
         "evidence": evidence,
         "have_results": have_results,
-        "have_generators": bool(cfg_globs("generators")),
+        "have_generators": gen_scanned,
         "prefixes": prefix_index,
         "buckets": buckets,
         "coverage": gaps,
@@ -1784,7 +1811,9 @@ function render(d){
   ].filter(function(t, i){
     // the running tile is the one worth showing at zero - but only when a queue
     // was actually read. With no scheduler configured, "0 running" is not a fact.
-    return (i === 1 && d.schedulers_ok !== false) || t[1] > 0;
+    // every configured queue must have answered: one cluster reporting none while
+    // another failed is not grounds for "0 lines running"
+    return (i === 1 && d.schedulers_clean === true) || t[1] > 0;
   });
 
   var sum = el("div", "summary");
@@ -1902,6 +1931,8 @@ function render(d){
                                        "each one is minutes of your attention, not GPU time"],
     ["unmeasured", "CAN'T TELL YET", "git could not be read here, so nothing on these lines " +
                                      "can be called moving or stalled"],
+    ["notrace",  "NO VERSION TRACE", "you wrote [—]: these close by writing or judgement, " +
+                                     "not by files landing"],
     ["waiting",  "NO EXPERIMENT YET", "nothing is attached yet — give one a `[prefix]` when you start the run"]
   ];
   function groupOf(n){ return n.group || "waiting"; }
@@ -1959,8 +1990,8 @@ function render(d){
         '">' + (n.patterns.length ? esc(n.patterns.join(" "))
                 : n.declared_pattern ? "no trace by design" : "not tracked") + '</span>' +
       '<span class="cell' + (n.artifacts ? '' : ' dim') + '">' +
-        (n.signal === "none" || n.signal === "unknown" ? "—"
-                                                          : n.artifacts + " art") + '</span>' +
+        (n.artifacts === null || n.artifacts === undefined ? "—"
+                                                           : n.artifacts + " art") + '</span>' +
       '<span class="cell ' + ageClass(n) + '" title="' + esc(ageTitle(n)) + '">' +
         ageText(n) + '</span>' +
       '<span class="cell ' + (n.claim ? "target" : "target none") + '" title="' +
