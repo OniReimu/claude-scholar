@@ -126,6 +126,15 @@ SECTIONS = {
 }
 
 
+def _heading_key(h):
+    """Match a heading on what it says, not on which dash the writer's keyboard made.
+    An em dash typed as a hyphen used to delete the whole section without a word."""
+    return re.sub(r"\s+", " ", re.sub(r"[—–-]+", "-", h.strip().lower()))
+
+
+SECTION_BY_KEY = {_heading_key(k): k for k in SECTIONS}
+
+
 # --------------------------------------------------------------------------- parse
 
 def _split_body(body):
@@ -146,7 +155,10 @@ def _split_body(body):
             break
 
     patterns, has_field = [], False
-    m = re.search(r"`\[([^\]]*)\]`", body)
+    # backticked first, then bare [...] — but never a markdown link [text](url).
+    # Reading a bare bracket wrongly surfaces as a reported bad pattern; ignoring
+    # one leaves the line untracked forever and says nothing.
+    m = re.search(r"`\[([^\]]*)\]`", body) or re.search(r"\[([^\]]*)\](?!\()", body)
     if m:
         has_field = True
         raw = m.group(1).strip()
@@ -165,6 +177,7 @@ def parse_outline(path):
     nodes, incomplete = [], []
     rel = os.path.relpath(path, ROOT)
     section = None
+    unknown, orphans = None, {}   # heading the tool does not read -> [line, bullets]
     stack = []          # (depth, node_id)
     prev_depth = -1
 
@@ -173,11 +186,17 @@ def parse_outline(path):
 
     for lineno, line in enumerate(lines, 1):
         if line.startswith("## "):
-            section = line[3:].strip()
+            raw = line[3:].strip()
+            section = SECTION_BY_KEY.get(_heading_key(raw))
+            unknown = None if section else raw
+            if unknown:
+                orphans.setdefault(unknown, [lineno, 0])
             stack, prev_depth = [], -1
             continue
 
         m = re.match(r"^( *)- (.+)$", line)
+        if m and unknown:
+            orphans[unknown][1] += 1
         if m and section in SECTIONS:
             indent = len(m.group(1))
             if indent % 2:
@@ -190,6 +209,10 @@ def parse_outline(path):
                                           % (prev_depth, depth)})
 
             name, patterns, has_field, claim, status, verdict, kind = _split_body(m.group(2))
+            if not patterns and not has_field:
+                incomplete.append({"kind": "outline", "where": "%s:%d" % (rel, lineno),
+                                   "why": "'%s' has no `[...]` — nothing for a probe to look "
+                                          "at, so it will read 'no signal' forever" % name[:40]})
             lifecycle = SECTIONS[section]
 
             if lifecycle == "open" and status and depth == 0:
@@ -235,6 +258,13 @@ def parse_outline(path):
                 nodes[-1]["blocks"] = b.group(1).strip() or "blocks submission"
                 continue
             nodes[-1]["intent"] = (nodes[-1]["intent"] + " " + add) if nodes[-1]["intent"] else add
+
+    for raw, (ln, count) in orphans.items():
+        if count:
+            incomplete.append({"kind": "outline", "where": "%s:%d" % (rel, ln),
+                               "why": "%d lines sit under '## %s', which is not a section the "
+                                      "tool reads — use %s" % (count, raw,
+                                      ", ".join("'%s'" % k for k in SECTIONS))})
 
     for n in nodes:
         if n["lifecycle"] != "open":
