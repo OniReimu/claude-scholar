@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: doc
 params: {}
-conflicts_with: [PROSE.INFORMAL_VOCABULARY, PROSE.ABSTRACT_AGENCY, PROSE.VAGUE_QUANTIFIERS, PROSE.HEDGING_DISCIPLINE, PROSE.ELEGANT_VARIATION, PROSE.RHYTHM_VARIANCE]
+conflicts_with: [PROSE.INFORMAL_VOCABULARY, PROSE.ABSTRACT_AGENCY, PROSE.VAGUE_QUANTIFIERS, PROSE.HEDGING_DISCIPLINE, PROSE.ELEGANT_VARIATION, PROSE.RHYTHM_VARIANCE, PROSE.CAUSAL_CONNECTIVE]
 constraint_type: guardrail
 autofix: none
 ---
@@ -53,6 +53,7 @@ autofix: none
 
 - `PRECISION-LOSS` — **伪装成简化的精确度损失**：`pay peers` 代 `route micropayments to peers`、`too heavy a one` 代 `a sanction set too high`。结果不口语，只是**更含糊**。**判据**：说出替换掉的那个指称对象；说得出来，就把它放回去。**这一类没有改前文本就不存在**——单看 `pay peers` 完全正常。
 - `CONVERSATIONAL-FRAMING` — **正式对象的对话式框架**：`the whole point is`、`we just`、`either way`、`so we also observe it directly`。按上下文裁决，其中部分是合法连接词。
+- `CONNECTIVE-DOWNGRADE` — **替换把正式因果连接词压成 `so`**：`therefore` / `hence` / `thus` / `consequently` → `, so`，或把 `Because A, B` 摊平成 `A, so B`。「写得简单直白一点」的指令天然往这个方向走，而单看结果毫无问题——`X, so Y` 是完全合法的句子，**只有对着改前文本才看得出这是一次降级**。这是本卡存在理由的典型例：语域是编辑动作的属性。判据是替换前那个词标记了哪一种因果（逻辑蕴含 / 就近承接 / 据此 / 经验后果），`so` 是否把它抹掉了；抹掉了就放回去。密度层面的兜底在 `PROSE.CAUSAL_CONNECTIVE`，但那要等全文扫描，而且到那时每一处单看都合理了。
 
 ### 排除（必须放行，每条都是实测假阳性）
 
@@ -159,4 +160,5 @@ replacement: Institutions hold levers
 - `PROSE.HEDGING_DISCIPLINE` 拥有校准 hedge 的存废，**优先级高于本规则**：不得以"语域"为由删除或强化一个校准过的 hedge
 - `PROSE.RHYTHM_VARIANCE` 要求句长有落差，而最省事的加落差方式是写短口语句——本规则是它的对向约束：**拉方差不得靠降语域**
 - `PROSE.ELEGANT_VARIATION` 要求术语全文一致；本规则的修复规则（复用稿件已有措辞）天然满足它
+- `PROSE.CAUSAL_CONNECTIVE` 拥有**已经在稿子里的** `so` 的密度与精度判定；本规则拥有 `CONNECTIVE-DOWNGRADE`——**这一次替换**是不是把正式连接词压低了。分工即时序：本规则在 pass 内当场拦，那条在全文层按密度兜底。同一处不重复计数
 - **非学术语域不适用**：博客/社交/newsletter 的语域刻意口语化，`writing-anti-ai` 已按语域分流；grant/fellowship 语域归 `grant-application-writing`

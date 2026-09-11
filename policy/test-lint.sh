@@ -373,6 +373,37 @@ su_clean "falls short of a theoretical limit" 'The bound falls short of the info
 su_clean "lags behind by N time steps" 'The estimator lags behind by two time steps under the causal constraint.'
 rm -rf "$SU_DIR"
 
+echo "=== 9. PROSE.CAUSAL_CONNECTIVE Density Line ==="
+# The card's blind eval found per-instance judgment has no discriminating power
+# and the whole effect lives in density; the executor therefore has to SEE a
+# rate. Report-only, so the corpus suite (which scores findings) cannot cover
+# it -- if this line silently stops printing, every `, so` scan quietly reverts
+# to the per-instance-only behaviour that reported zero on a 15x-baseline draft.
+CC_DIR=$(mktemp -d)
+{
+  echo "The map is monotone, so the bound tightens."
+  echo "Recall is stable, so we keep the schedule."
+  # Padding to clear the 200-word floor below which no rate is printed.
+  for i in $(seq 1 40); do
+    echo "We evaluate the estimator on the held out split and record the resulting accuracy."
+  done
+} > "$CC_DIR/d.tex"
+
+assert_contains "density line prints a per-1k rate" '/1k' \
+  bash "$LINT" "$CC_DIR"
+assert_contains "density line prints the pre-GPT baseline" 'pre-GPT' \
+  bash "$LINT" "$CC_DIR"
+assert_contains "density line counts the comma-so occurrences" '", so" 2' \
+  bash "$LINT" "$CC_DIR"
+
+# Under the word floor a rate would be noise, so it must say so rather than
+# print a number derived from a handful of words.
+CC_TINY=$(mktemp -d)
+echo 'The map is monotone, so the bound tightens.' > "$CC_TINY/t.tex"
+assert_contains "tiny input refuses to report a rate" 'corpus too small' \
+  bash "$LINT" "$CC_TINY"
+rm -rf "$CC_DIR" "$CC_TINY"
+
 echo ""
 echo "═══ Test Summary ═══"
 echo "  Passed: $PASS"

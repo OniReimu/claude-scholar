@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
 description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.4.2
+version: 1.5.0
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -68,7 +68,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PAPER.OUTCOME_LOGIC` | 删句级过程流水账（we first tried…）；结构级重排归 claim-architecture-review |
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
-| `PROSE.CAUSAL_CONNECTIVE` | 因果连接词按类型选，不默认用 `, so`；**只改三个可诊断子类**（设计选择伪装成推论 / 因果无证据支持 / 证明步骤），其余保留 |
+| `PROSE.CAUSAL_CONNECTIVE` | 因果连接词按类型选，不默认用 `, so`。**先读 lint 的密度行再逐条判**：三子类保留偏置只在基线密度下成立 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
 ## Overview
@@ -218,6 +218,18 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 ⚠️ **这不是 AI 痕迹检测**。42 条真实句子的盲评实测：任取一个 `, so`，无论出自 pre-GPT 论文还是当代 draft，"可改进"的比例都差不多（收紧判据后 pre-GPT 64% vs draft 29%，顺序还反转）。差别只在**有多少个**——本地 draft 抽样是基线的 15–25 倍。所以**判据不能是「能否改得更精确」**，否则会把 pre-GPT 水准的散文一起改掉。
 
+**扫描顺序：先跑 lint 看密度，再逐条判。** 本卡下 lint 打印两行 report-only 数据，第二行是关键：
+
+```
+causal register (report-only) — ", so" 47 = 3.76/1k · formal 26 = 2.08/1k · ratio 1:0.55
+                                [pre-GPT: ", so" 0.18-0.28/1k · formal ~2.2/1k · ratio 1:8-12]
+```
+
+- 比值落在 **1:8–12** 附近 → 下面的三子类保留偏置成立，逐条判，**报零 finding 是正确结果**；
+- 比值掉到个位数甚至倒挂 → **超出基线的那部分是真的**。这时该报告的是这个总量事实，不是逐条裁决后的零 finding。修法照走优先级阶梯、照样不机械替换，但**改多少由密度差决定，不由三子类决定**。
+
+⚠️ **不看密度就逐条扫描，必然报零。** 这是本条在真实稿件上反复漏报的机制：三子类判据是按基线密度校准的（pre-GPT 的 `so` 按同一判据也有 64% "应改"），所以它在任何密度下都会保留绝大多数——包括 15–25 倍基线的稿子。**唯一有判别力的量不在你看得见的地方，于是每一遍扫描都诚实地报告没问题。** 不设阈值也不设目标值（不写「降到 0.3/千词以下」），密度行只是让判断对着真实数字做。
+
 **只有三个子类触发改写，其余一律保留：**
 
 1. **设计选择伪装成推论**——`The adversary is adaptive, so we sample fresh randomness each round.` 这是动机不是推论 → `To defend against an adaptive adversary, we sample…`
@@ -235,6 +247,8 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 ⚠️ **反向护栏**：**不要机械替换**，把全篇 `so` 统一换成 `therefore` 只是把一种指纹换成另一种，并造出新的均质化（撞 `PROSE.RHYTHM_VARIANCE`）。正式连接词必须按语义分布。
 
 ⚠️ **连接词单一化是跨 pass 累积的，上面那条护栏守不住它。** 三条标点清理规则（em-dash / 分号 / 句中冒号）的修法都把标点隐含的关系赶到词汇层，而 `therefore` 是菜单里最安全的默认——每遍清理引入一两个，逐处判都合理，只在总量上崩（实测：三遍清理后 26 个正式连接词 22 个是 `therefore`）。**清完任何一批标点后，看 lint 的 connective distribution 计数表**（只报分布不判违规），逐处追问：**这是哪一种因果，答案是否真的全是同一种？** 全是同一种就合规（全为逻辑蕴含的稿子本该 `therefore` 占多数，不要硬塞 `hence`）；不是就说明有几处退回了默认词。修法优先级：**删**（因果已由上一句承担，或与 `However`/`Because` 双重标记——实测 10 处 8 处走这条）→ 从属化 → 按语义换。
+
+⚠️ **反方向还有一条累积路径：「写得简单直白一点」会制造 `, so`。** 上一条是标点清理把关系赶进 `therefore`，这一条是压缩 / de-jargon / 口语化的 pass 把 `therefore` 压成 `so`。它有个早得多的拦截点——**那是 diff 上的语域下降，归 `PROSE.REGISTER_PRESERVATION` 的 `CONNECTIVE-DOWNGRADE`**，在做替换的当场就可判；等它沉淀成全文密度再由本条发现，已经晚了几个 pass，而且那时每一处单看都合理。简化 pass 收尾先跑那条的替换测试。
 
 不在范围内：`so that`（目的从句，合法）· `so far`（习语性状语，归 `PROSE.INFORMAL_VOCABULARY` 第 1 类）· `so large` 式程度副词。
 
@@ -410,6 +424,7 @@ For comprehensive pattern lists, see:
 | a sanction set too high deters | too heavy a one drives off | 名词被代词顶替 + 短语动词顶替拉丁语源动词 |
 | permanently excluding a verifier | excluding a verifier for good | 口语惯用语 |
 | Institutional instruments impose a cost | Institutions hold levers | 谓语位置的比喻 |
+| The bound is monotone. Therefore any continuation tightens. | The bound is monotone, so any continuation tightens. | 连接词降级——`therefore` 标记的逻辑蕴含被抹平（`CONNECTIVE-DOWNGRADE`，密度层兜底在 `PROSE.CAUSAL_CONNECTIVE`） |
 
 注意前两行**根本不口语**，只是更含糊——词表永远抓不到它们。
 
@@ -482,6 +497,7 @@ For comprehensive pattern lists, see:
 > **register check 未通过之前，不得报告词数或压缩百分比。**
 > 实测教训：agent 在作者读到正文之前三次报告「968 → 728 words, −25%」作为成功指标，而那一版正文里有九处语域塌陷。**数字先于质量出现，就会替代质量成为验收标准。**
 > 顺序固定为：压缩 → 逐个改动 span 跑替换测试（见 Do NOT Over-Correct §1）→ 用稿件已有措辞修复 → **然后**才报数字。
+> **替换测试里点名查一项：`therefore` / `hence` / `thus` / `consequently` 有没有被压成 `, so`**（`CONNECTIVE-DOWNGRADE`）。它是简化指令最稳定的产物，而改后那句完全合法——只有对着改前文本才看得出来。漏在这里，它就要等到全文密度超基线十几倍时才会被发现。
 
 > **📏 输入尺度会静默削掉覆盖率。** 一段（~200 词）和一整个 `.tex`（1.2 万–6 万词）不是同一件事，但一遍读完再报告，两种情况读起来一样自信。**给整篇时不要一次通读就出结论**——按 section 逐个过，或者明说这一轮只覆盖了哪些规则、哪些部分。给一段或一节时不需要这条。
 

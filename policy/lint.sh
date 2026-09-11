@@ -1064,6 +1064,28 @@ for rule_file in "$RULES_DIR"/*.md; do
         END { printf "therefore %d · thus %d · hence %d · consequently %d · accordingly %d",
               map { $c{$_}//0 } qw(therefore thus hence consequently accordingly) }')
       $QUIET || echo -e "    ${DIM}connective distribution (report-only) — ${_cc_counts}${NC}"
+      # Density line. The card's own blind eval found per-instance judgment has
+      # NO discriminating power (pre-GPT 64% "should fix" vs draft 29% — the
+      # order reverses); the entire effect lives in how MANY there are. The
+      # distribution table above cannot show that: it counts five formal words,
+      # raw, and never counts `, so` at all. So the one number the rule argues
+      # from was the one number the executor could not see, and a draft at many
+      # times baseline read exactly like a draft at baseline. Rates are per
+      # 1000 words against the pre-GPT corpora the card records. Report-only,
+      # like the line above: no threshold, no finding — the keep-bias is
+      # calibrated for baseline-density prose, and this line is how you find
+      # out whether that is the prose you have.
+      _cc_rates=$(cat $_cc_views 2>/dev/null | perl -ne '
+        $w += () = /\b[A-Za-z][A-Za-z\x27-]*\b/g;
+        $s++ while /,\s+so\s+(?!that\b|far\b|as\b|long\b|much\b|many\b|called\b)[a-z]/g;
+        $f++ while /\b(?:therefore|thus|hence|consequently|accordingly)\b/gi;
+        END {
+          $w ||= 0; $s ||= 0; $f ||= 0;
+          if ($w < 200) { printf "corpus too small for a rate (%d words)", $w; exit }
+          printf "\", so\" %d = %.2f/1k · formal %d = %.2f/1k · ratio 1:%s   [pre-GPT: \", so\" 0.18-0.28/1k · formal ~2.2/1k · ratio 1:8-12]",
+                 $s, 1000*$s/$w, $f, 1000*$f/$w, ($s ? sprintf("%.1f", $f/$s) : "-");
+        }')
+      $QUIET || echo -e "    ${DIM}causal register (report-only) — ${_cc_rates}${NC}"
     fi
   fi
 

@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {}
-conflicts_with: [PROSE.COMMA_OVERUSE, PROSE.EM_DASH_RESTRICTION, PROSE.HEDGING_DISCIPLINE, PROSE.INFORMAL_VOCABULARY, PROSE.MIDSENTENCE_COLON, PROSE.RHYTHM_VARIANCE, PROSE.SEMANTIC_IDLING, PROSE.SEMICOLON_RESTRICTION]
+conflicts_with: [PROSE.COMMA_OVERUSE, PROSE.EM_DASH_RESTRICTION, PROSE.HEDGING_DISCIPLINE, PROSE.INFORMAL_VOCABULARY, PROSE.MIDSENTENCE_COLON, PROSE.REGISTER_PRESERVATION, PROSE.RHYTHM_VARIANCE, PROSE.SEMANTIC_IDLING, PROSE.SEMICOLON_RESTRICTION]
 constraint_type: guidance
 autofix: none
 lint_patterns:
@@ -36,6 +36,8 @@ lint_targets: "**/*.tex"
 
 **连接词单一化是跨 pass 累积出来的，上面那条护栏守不住它。** 三条标点清理规则（`PROSE.EM_DASH_RESTRICTION` / `PROSE.SEMICOLON_RESTRICTION` / `PROSE.MIDSENTENCE_COLON`）的修法都把标点隐含的关系（"所以""即""因此"）赶到词汇层，而本卡的菜单里 `therefore` 是最安全的默认——它排第一、定义最宽，学术散文里绝大多数因果都能算逻辑蕴含，于是"说不出是哪一种 = 没想清楚"这条判据在它身上失效：`therefore` 永远说得出。每一遍清理引入一两个，逐处判都合理，只在总量上崩——实测一份稿子三遍标点清理后 26 个正式连接词里 22 个是 `therefore`，每一处单看都过。
 
+**第二条累积路径，方向相反：「写得简单直白一点」会制造 `, so`。** 上一段是标点清理把关系赶进 `therefore`；这一条是压缩 / de-jargon / 口语化的 pass 把 `therefore` 压成 `so`。两条的形状一样——逐处合理，只在总量上崩——但这一条有个早得多的拦截点：**把 `therefore` 换成 `so` 是编辑动作上的语域下降，归 `PROSE.REGISTER_PRESERVATION` 的 diff 判定**。在 diff 上它是可判的（替换前后语域降级，且替换是本 pass 自己做的）；等它沉淀成全文密度再由本卡发现，已经晚了好几个 pass，而且那时每一处单看都合理。简化 pass 收尾先跑那条的替换测试，本卡的密度行是它漏网之后的第二道。
+
 **修法不是同义替换，按优先级：**
 
 1. **删**——因果已由上一句承担，或与 `However` / `Because` 双重标记（实测 10 处里 8 处走这条）；
@@ -53,6 +55,15 @@ lint_targets: "**/*.tex"
 3. **证明 / 推导步骤**——数学蕴含里 `hence` / `thus` 是本领域惯例，`so` 在此处是语域失配
 
 **其余全部保留。** 后果显而易见的 `so`、解释性的 `so`、`so it remains to show` 这类证明惯用语——都不动。
+
+**这条保留偏置有前提：它按基线密度校准。** 之所以「不要因为能改得更精确就改」，是因为 pre-GPT 语料的 `so` 按同一判据也有 64% 判「应改」——在 0.18–0.28/千词这个量级上，逐条改进等于把 pre-GPT 水准的散文一起改掉。**密度离基线很远时这个论证不成立**：本卡记录的本地 draft 抽样是 3.76/千词，约基线的 15–25 倍。那时「每一条单看都还行」与「全篇 `so` 过量」同时为真，而只按三子类扫描必然报零 finding——**这就是它在真实稿件上反复漏报的机制：唯一有判别力的量（密度）不在执行者看得见的地方。**
+
+所以扫描顺序是**先读密度，再逐条判**。lint 在本卡下打印 `causal register` 行：`, so` 与正式连接词各自的每千词率、两者比值，以及 pre-GPT 基线并排。
+
+- 比值在 1:8–12 附近 → 三子类保留偏置成立，照常执行，报零 finding 是正确结果；
+- 比值掉到个位数甚至倒挂 → **超出基线的那部分是真的**。此时该报告的是这个总量事实，不是逐条裁决后的零 finding。修法仍走优先级阶梯（删 → 从属化 → 按语义换），仍不机械替换，但**改写多少由密度差决定，不由三子类决定**。
+
+**仍不设阈值，也不设目标值。** 不写「降到 0.3/千词以下」——把观察量当指标会制造为凑比例而改内容的压力（同 `PROSE.SEMANTIC_IDLING` 拒绝压缩率目标的理由）。密度行只让两个追问对着真实数字进行：*这真的全是同一种因果吗*，以及*这篇是不是 `so` 过量*。
 
 ### 归入三类之后，再走三问
 
@@ -130,6 +141,7 @@ lint_targets: "**/*.tex"
 ## Check
 
 - **regex 定位**：`,\s+so\s+` 后接小写词，排除 `so that` / `so far` / `so as` / `so long` / `so much` / `so many` / `so called`；另抓句首 `So `（pre-GPT 语料中仅 0.01/千词，几乎总是口语残留）
+- **先看 `causal register` 密度行，再逐条判**：lint 在本卡下打印 `, so` 与正式连接词的每千词率、比值、pre-GPT 基线。逐条判别力实测为零、全部收益来自密度（见 Rationale），因此**只逐条扫描而不看密度，等于用一把量不出该量的尺**。两行都是 report-only，不判违规、不设阈值
 - **regex 只负责定位，不负责裁决**——命中后逐处走上面的三问。与 `PROSE.NEGATION_CONTRAST` 同形态：机械层给候选，语义层给结论
 - **不抓 `X, and so Y`**：与 `and so on` / `and so forth` 在正则上不可分，交语义层
 - **句首 `So` + 疑问词不归本卡**（`So what changes at scale?`）：那是设问句开场，归 `PROSE.RHETORICAL_SELF_ANSWER`，正则已排除
@@ -143,6 +155,7 @@ lint_targets: "**/*.tex"
 
 - `PROSE.HEDGING_DISCIPLINE` 拥有**因果主张与证据不匹配**的情形。本卡命中处若三问的第二问失败，判定权交那条：改法是降级动词或拆开陈述，**不是换连接词**
 - `PROSE.COMMA_OVERUSE` 与本卡在**从属化**这一修法上协同：`Because A, B` 比 `A, so B` 少一个逗号且因果更明确。先按本卡判类型，再看逗号数
+- `PROSE.REGISTER_PRESERVATION` 拥有**简化 pass 把正式连接词换成 `so`** 这个动作：那是 diff 上的语域下降，在编辑当场就可判，且判据是「替换前后」而非「这个词本身」。本卡管的是**已经在稿子里的** `so` 的密度与精度。分工即时序——那条在 pass 内拦，本卡在全文层兜底
 - `PROSE.RHYTHM_VARIANCE` 是本卡修法的约束：正式连接词必须**按语义分布**，不得把所有 `so` 统一换成同一个词——那会造出新的均质化指纹
 - `PROSE.INFORMAL_VOCABULARY` 拥有 `so far`（`LEXIS` 类习语性状语）与 `so large` 式程度副词；本卡只管作因果连接词的 `so`，三者不重叠
 - `PROSE.AI_LEXICON` 的句首连接词密度（`Moreover` / `Furthermore` / `Additionally` / `In addition` 全文 ≤4）是同族但不同家的问题：那条管**连接词堆砌**，本卡管**因果连接词的语域与精度**。修本卡时不得把密度转移到那一族去
