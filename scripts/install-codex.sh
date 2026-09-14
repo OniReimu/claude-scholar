@@ -51,30 +51,40 @@ echo ""
 info "Repository: $REPO_PATH"
 echo ""
 
-# --- Step 1: Create skills symlink ---
-SKILLS_TARGET="$HOME/.agents/skills/claude-scholar"
+# --- Step 1: Create skills symlinks ---
+# Two locations, because which one Codex actually reads is not something this
+# script can test from here:
+#   ~/.agents/skills   — the cross-agent convention this installer has always used
+#   ~/.codex/skills    — where Codex keeps its own skills, and where its built-in
+#                        ones live under .system/
+# `.system/` holds six skills each with their own SKILL.md one level down, so a
+# directory of skills is a shape Codex already recurses into; `claude-scholar/`
+# has the same shape. Linking both costs one symlink and removes the guess.
+SKILLS_TARGETS=("$HOME/.agents/skills/claude-scholar" "$HOME/.codex/skills/claude-scholar")
 
-info "Creating skills symlink..."
+info "Creating skills symlinks..."
 
-mkdir -p "$HOME/.agents/skills"
+for SKILLS_TARGET in "${SKILLS_TARGETS[@]}"; do
+  mkdir -p "$(dirname "$SKILLS_TARGET")"
 
-if [[ -L "$SKILLS_TARGET" ]]; then
-  EXISTING_TARGET="$(readlink "$SKILLS_TARGET")"
-  if [[ "$EXISTING_TARGET" == "$REPO_PATH/skills" ]]; then
-    ok "Symlink already exists and points to correct location."
+  if [[ -L "$SKILLS_TARGET" ]]; then
+    EXISTING_TARGET="$(readlink "$SKILLS_TARGET")"
+    if [[ "$EXISTING_TARGET" == "$REPO_PATH/skills" ]]; then
+      ok "Symlink already correct: $SKILLS_TARGET"
+    else
+      warn "Symlink exists but points to: $EXISTING_TARGET"
+      warn "Updating to: $REPO_PATH/skills"
+      rm "$SKILLS_TARGET"
+      ln -s "$REPO_PATH/skills" "$SKILLS_TARGET"
+      ok "Symlink updated: $SKILLS_TARGET"
+    fi
+  elif [[ -e "$SKILLS_TARGET" ]]; then
+    error "$SKILLS_TARGET exists but is not a symlink. Remove it manually and re-run."
   else
-    warn "Symlink exists but points to: $EXISTING_TARGET"
-    warn "Updating to: $REPO_PATH/skills"
-    rm "$SKILLS_TARGET"
     ln -s "$REPO_PATH/skills" "$SKILLS_TARGET"
-    ok "Symlink updated."
+    ok "Symlink created: $SKILLS_TARGET → $REPO_PATH/skills"
   fi
-elif [[ -e "$SKILLS_TARGET" ]]; then
-  error "$SKILLS_TARGET exists but is not a symlink. Remove it manually and re-run."
-else
-  ln -s "$REPO_PATH/skills" "$SKILLS_TARGET"
-  ok "Symlink created: $SKILLS_TARGET → $REPO_PATH/skills"
-fi
+done
 
 # --- Cleanup: remove legacy AGENTS.md if present ---
 AGENTS_LEGACY="$HOME/.codex/AGENTS.md"
@@ -89,8 +99,10 @@ echo "=========================================="
 echo "  Installation Complete"
 echo "=========================================="
 echo ""
-ok "Skills symlink: $SKILLS_TARGET"
-info "Codex will natively discover skills from the symlinked directory."
+for SKILLS_TARGET in "${SKILLS_TARGETS[@]}"; do
+  ok "Skills symlink: $SKILLS_TARGET"
+done
+info "Codex will natively discover skills from the symlinked directories."
 echo ""
 info "To verify, start a Codex session:"
 echo "  codex"
@@ -99,5 +111,7 @@ info "To update later, just pull the repo:"
 echo "  cd $REPO_PATH && git pull"
 echo ""
 info "To uninstall:"
-echo "  rm $SKILLS_TARGET"
+for SKILLS_TARGET in "${SKILLS_TARGETS[@]}"; do
+  echo "  rm $SKILLS_TARGET"
+done
 echo ""

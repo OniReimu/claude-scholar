@@ -34,30 +34,40 @@ Write-Host ""
 Write-Info "Repository: $RepoPath"
 Write-Host ""
 
-# --- Step 1: Create skills junction ---
-$SkillsTarget = "$HOME\.agents\skills\claude-scholar"
+# --- Step 1: Create skills junctions ---
+# Two locations, matching install-codex.sh: ~/.agents/skills is the cross-agent
+# convention this installer has always used, ~/.codex/skills is where Codex keeps
+# its own skills (its built-ins sit under .system/, one SKILL.md per subdirectory,
+# so a directory of skills is a shape it already recurses into). Linking both
+# costs one junction and removes the guess about which one is read.
+$SkillsTargets = @(
+    "$HOME\.agents\skills\claude-scholar",
+    "$HOME\.codex\skills\claude-scholar"
+)
 
-Write-Info "Creating skills junction..."
+Write-Info "Creating skills junctions..."
 
-$SkillsParent = "$HOME\.agents\skills"
-if (-not (Test-Path $SkillsParent)) {
-    New-Item -ItemType Directory -Path $SkillsParent -Force | Out-Null
-}
-
-if (Test-Path $SkillsTarget) {
-    $item = Get-Item $SkillsTarget -Force
-    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
-        Write-Warn "Junction already exists at $SkillsTarget"
-        Write-Info "Removing and recreating..."
-        Remove-Item $SkillsTarget -Force
-    } else {
-        Write-Err "$SkillsTarget exists but is not a junction. Remove it manually and re-run."
+foreach ($SkillsTarget in $SkillsTargets) {
+    $SkillsParent = Split-Path -Parent $SkillsTarget
+    if (-not (Test-Path $SkillsParent)) {
+        New-Item -ItemType Directory -Path $SkillsParent -Force | Out-Null
     }
-}
 
-# Create directory junction (works without admin on modern Windows)
-cmd /c mklink /J "$SkillsTarget" "$RepoPath\skills" | Out-Null
-Write-Ok "Junction created: $SkillsTarget -> $RepoPath\skills"
+    if (Test-Path $SkillsTarget) {
+        $item = Get-Item $SkillsTarget -Force
+        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+            Write-Warn "Junction already exists at $SkillsTarget"
+            Write-Info "Removing and recreating..."
+            Remove-Item $SkillsTarget -Force
+        } else {
+            Write-Err "$SkillsTarget exists but is not a junction. Remove it manually and re-run."
+        }
+    }
+
+    # Create directory junction (works without admin on modern Windows)
+    cmd /c mklink /J "$SkillsTarget" "$RepoPath\skills" | Out-Null
+    Write-Ok "Junction created: $SkillsTarget -> $RepoPath\skills"
+}
 
 # --- Cleanup: remove legacy AGENTS.md if present ---
 $AgentsLegacy = "$HOME\.codex\AGENTS.md"
@@ -75,7 +85,7 @@ Write-Host "=========================================="
 Write-Host "  Installation Complete"
 Write-Host "=========================================="
 Write-Host ""
-Write-Ok "Skills junction: $SkillsTarget"
+foreach ($SkillsTarget in $SkillsTargets) { Write-Ok "Skills junction: $SkillsTarget" }
 Write-Info "Codex will natively discover skills from the junction directory."
 Write-Host ""
 Write-Info "To verify, start a Codex session:"
@@ -85,5 +95,5 @@ Write-Info "To update later, just pull the repo:"
 Write-Host "  cd $RepoPath; git pull"
 Write-Host ""
 Write-Info "To uninstall:"
-Write-Host "  Remove-Item '$SkillsTarget' -Force"
+foreach ($SkillsTarget in $SkillsTargets) { Write-Host "  Remove-Item '$SkillsTarget' -Force" }
 Write-Host ""

@@ -599,7 +599,7 @@ git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 ```
 
 **What it does:**
-- Creates symlink: `~/.agents/skills/claude-scholar` → `skills/`
+- Creates symlinks: `~/.agents/skills/claude-scholar` and `~/.codex/skills/claude-scholar` → `skills/`
 - Detects and migrates legacy `~/.codex/AGENTS.md`
 - Updates via `git pull` — no re-install needed
 

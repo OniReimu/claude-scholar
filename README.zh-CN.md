@@ -570,7 +570,7 @@ git clone https://github.com/OniReimu/claude-scholar.git $HOME\claude-scholar
 ```
 
 **安装内容：**
-- 创建符号链接：`~/.agents/skills/claude-scholar` → `skills/`
+- 创建符号链接：`~/.agents/skills/claude-scholar` 与 `~/.codex/skills/claude-scholar` → `skills/`
 - 检测并迁移旧版 `~/.codex/AGENTS.md`
 - 通过 `git pull` 更新，无需重新安装
 

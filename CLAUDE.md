@@ -336,7 +336,7 @@ Claude Scholar supports two runtime environments:
 
 ### Codex (Native Skill Discovery)
 
-- **Installation**: `scripts/install-codex.sh` creates symlink to `~/.agents/skills/`
+- **Installation**: `scripts/install-codex.sh` creates symlinks to **both** `~/.agents/skills/claude-scholar` and `~/.codex/skills/claude-scholar` (same target: the repo's `skills/`). Two locations because which one Codex reads is not testable from the installer; Codex's own built-ins live under `~/.codex/skills/.system/` with one `SKILL.md` per subdirectory, so a directory of skills is a shape it already recurses into
 - **Hooks**: N/A (Codex does not support hooks)
 - **Skills**: 27 universal skills + 6 Claude Code-specific skills (marked `platform: claude-code`, serve as reference documentation)
 - **Commands**: N/A (Codex does not support slash commands; use skills directly)
@@ -347,7 +347,7 @@ Claude Scholar supports two runtime environments:
 | Claude Code | Codex | Notes |
 |------------|-------|-------|
 | `TodoWrite` | `plan` tool | Codex built-in planning tool |
-| `Skill` tool | Native skill discovery | Auto-discovered from `~/.agents/skills/` |
+| `Skill` tool | Native skill discovery | Auto-discovered from `~/.agents/skills/` and `~/.codex/skills/` |
 | `Task` subagent | `spawn_agent` | Codex natively supports sub-agents |
 | `Edit` / `Write` | `apply_patch` | File editing |
 | `Grep` / `Glob` | `rg` / `rg --files` | ripgrep |
