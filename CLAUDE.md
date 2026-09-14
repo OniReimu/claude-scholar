@@ -124,7 +124,7 @@ Key files:
 - **daily-paper-generator**: Daily paper generator for research tracking
 - **paper-figure-generator**: Academic paper figure generation (system overview, pipeline, architecture diagrams, etc., powered by AutoFigure-Edit, produces editable SVG). 论文概念图的默认选择
 
-### 📝 Paper Writing & Publication (8 skills)
+### 📝 Paper Writing & Publication (9 skills)
 
 - **ml-paper-writing**: ML/AI paper writing assistant
   - Conferences: NeurIPS, ICML, ICLR, ACL, AAAI, COLM
@@ -133,6 +133,7 @@ Key files:
 - **paper-self-review**: Paper self-review (multi-item quality checklist, including figure and math conformance)
 - **claim-architecture-review**: Post-draft structural edit — paragraph necessity / placement / cross-section redundancy + claim spine + narrative closure (subtractive, propose-only; owns the `architecture_review` stage; runs before paper-self-review and writing-anti-ai)
 - **review-response**: Systematic rebuttal writing
+- **peer-review**: Reviewer-side routing skill — classifies a reviewer assignment and hands off to the separately installed [`more-than-peer-review`](https://github.com/DELONG-L/More-Than-Peer-Review-Skill) (`/more-than-peer-review` in Claude Code, `$more-than-peer-review` in Codex). Carries **no** review logic of its own. **路由规则**: 用户在为某个 venue 审别人的稿子一律走本 skill；`paper-self-review`（自审）/ `review-response`（回复审稿意见）都是作者侧，不能替代
 - **post-acceptance**: Post-acceptance processing (presentations, posters, promotion)
 - **doc-coauthoring**: Document co-authoring workflow
 - **latex-conference-template-organizer**: LaTeX conference template organization
