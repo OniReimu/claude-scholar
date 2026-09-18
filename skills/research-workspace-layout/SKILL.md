@@ -58,7 +58,7 @@ Adoption is opt-in per project, by placing `PROJECT-WORKSPACE.md` at its root. N
 infer managed status from a directory being called `paper`, `experiment` or
 `research` — the contract forbids it explicitly.
 
-## Two collisions and a trap, whichever case you are in
+## Two collisions and a trap, in either case
 
 **`paper/` means two different things.** In the contract it is an *independent paper
 Git repository*. In most monorepos it is an ordinary directory holding `main.tex`.
@@ -169,20 +169,24 @@ Only the directory that is an actual Overleaf repository is a submodule. See
 
 ## Doing the migration
 
-The full procedure, including the ignore-policy change and its dry-run loop, is in
-[references/migration-playbook.md](references/migration-playbook.md). Two rules from
-it are load-bearing enough to state here:
+Follow [references/migration-playbook.md](references/migration-playbook.md) in the
+order it gives — the first step is the ignore policy, not the file moves. Two of its
+rules decide whether a mistake is recoverable, and the playbook gives the reasoning:
 
-**Leave nothing at the old path, and add no symlinks.** With eleven similarly-named
-cache directories in play, a missed reference that *silently resolves to a different
-one* can change a number in a paper. A missed reference that raises
-`FileNotFoundError` cannot. Loud failure is the safety property being bought.
+- **Leave nothing at the old path, and add no symlinks.** Loud failure is the safety
+  property being bought.
+- **Find self-locating path code before moving it.** Grep for `__file__` together
+  with `parent` first, not after.
 
-**Find the module that computes paths from its own location before moving it.** A
-constants module with `PROJECT_ROOT = Path(__file__).resolve().parent.parent` lands
-silently wrong the moment the package descends a level, taking every derived path
-with it and raising nothing. Grep for `__file__` and `parent` before the move, not
-after.
+## What is bundled
+
+| Path | Use |
+|---|---|
+| `assets/PROJECT-WORKSPACE.md`, `paper-workspace-link.yml`, `figure-manifest.yml`, `gitignore.starter` | copy, do not retype |
+| `assets/EXP-YYYY-NNN/` | the seven-file record; equally useful when retrofitting, where the first record is usually written for an experiment that already ran |
+| `references/migration-playbook.md` | the retrofit procedure, in order |
+| `references/overleaf-submodule.md` | attaching a manuscript repository, and its failure modes |
+| `scripts/validate_workspace.py` | the checker below |
 
 ## Verifying
 

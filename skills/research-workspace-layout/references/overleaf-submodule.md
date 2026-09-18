@@ -59,7 +59,7 @@ is what needs rethinking, because a generator is not manuscript content.
 
 ## Failure modes, in the order they bite
 
-### Detached HEAD hides how far behind you are
+### Detached HEAD hides how far behind the manuscript the parent is
 
 A submodule checked out on a detached HEAD reports one sha and nothing else. The
 parent can be pinned many commits behind the manuscript's real state — including
