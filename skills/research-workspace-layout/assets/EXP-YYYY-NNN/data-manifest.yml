@@ -1,0 +1,28 @@
+# Where this experiment's data lives. Raw payloads stay outside version control;
+# this file is the pointer.
+
+experiment_id: "EXP-YYYY-NNN"
+project_id: "<project-id>"
+
+inputs:
+  - name: "<input>"
+    kind: "generated | collected | external"
+    location: "<path or external identifier>"
+    note: >
+      Parameters that define it.
+
+outputs:
+  - name: "<raw run output>"
+    location: "experiments/EXP-YYYY-NNN/<dir>/"
+    version_controlled: false
+    retention: "<policy>"
+  - name: "<aggregated table>"
+    location: "experiments/EXP-YYYY-NNN/<dir>/<file>"
+    promoted_copy: "artifacts/paper/<name>/source.csv"
+    version_controlled: true
+
+storage_policy:
+  raw_root: "experiments/EXP-YYYY-NNN/"
+  version_controlled: false
+  reason: >
+    Only lightweight aggregates promoted into artifacts/paper/ enter git.

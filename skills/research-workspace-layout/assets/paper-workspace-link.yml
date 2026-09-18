@@ -1,0 +1,7 @@
+# Goes inside the paper repository, at the name declared as paper.link_file.
+# parent_contract is relative to THIS file: "../PROJECT-WORKSPACE.md" when the paper
+# repository sits at <project>/paper/, "../../PROJECT-WORKSPACE.md" when it sits at
+# <project>/paper/<version>/.
+workspace_kind: research-paper
+contract_version: 1
+parent_contract: "../PROJECT-WORKSPACE.md"

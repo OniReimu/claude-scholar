@@ -1,0 +1,16 @@
+# Provenance for every figure and table promoted into the manuscript.
+# Lives inside the paper repository when one is configured; otherwise inside the
+# experiment record that produced the artifacts.
+
+manifest_version: 1
+project_id: "<project-id>"
+code_revision: "<git-commit>"     # may be declared once here instead of per artifact
+
+artifacts:
+  - artifact_id: "fig-main-result"
+    paper_path: "figures/main-result.pdf"
+    experiment_id: "EXP-YYYY-NNN"
+    run_id: "run-0042"            # or data_snapshot when no executable run exists
+    source_data: "../artifacts/paper/main-result/source.csv"
+    generator: "../scripts/plot_main_result.py"
+    status: "approved"            # draft | approved

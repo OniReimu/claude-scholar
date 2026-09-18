@@ -1,0 +1,59 @@
+# Block by KIND, never by directory name.
+#
+# Blocking */scripts/ or */experiments/ keeps generators out of version control, and
+# then two contract fields become unsatisfiable: local.source_roots is defined as
+# version-controlled roots, and every promoted figure must cite its generator's
+# code_revision.
+
+# Regenerable outputs, any depth
+**/cache/
+**/cache_*/
+**/results/
+**/results_*/
+**/runs/
+**/checkpoints/
+**/log_files/
+**/analysis-output/
+
+# Environments and build trees
+**/.venv/**
+**/venv/**
+**/node_modules/**
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/target/
+*.pyc
+
+# data/ holds manifests and pointers only
+**/data/**
+!**/data/*.yml
+!**/data/*.yaml
+!**/data/*.md
+!**/data-manifest.yml
+
+# Serialized tensors, datasets, archives, binaries
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.pkl
+*.npy
+*.npz
+*.h5
+*.onnx
+*.bin
+*.so
+*.dylib
+*.zip
+*.tar
+*.tar.gz
+*.gz
+*.db
+
+# Secrets and local noise
+.env
+.DS_Store
+
+# Figure metadata records local absolute paths
+**/run.json

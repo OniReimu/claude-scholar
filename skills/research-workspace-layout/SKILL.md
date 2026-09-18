@@ -1,6 +1,6 @@
 ---
 name: research-workspace-layout
-description: This skill should be used when the user asks to "organise this project", "the directory is a mess", "apply the workspace contract", "adopt the research file structure", "where should this cache directory go", "add PROJECT-WORKSPACE.md", "link Overleaf as a submodule", "why does git say the submodule has untracked changes", or when a research repository has accumulated parallel copies of the same thing (cache_v2, cache_v2_now, cache_v2_now_rx) and needs a canonical layout. Do not use for LaTeX template organisation (latex-conference-template-organizer), experiment provenance narrative (lineage), or general git hygiene (git-workflow).
+description: This skill should be used when the user asks to "start a new paper project", "set up a repo for this paper", "scaffold a research project", "organise this project", "the directory is a mess", "apply the workspace contract", "adopt the research file structure", "where should this cache directory go", "add PROJECT-WORKSPACE.md", "link Overleaf as a submodule", "why does git say the submodule has untracked changes", or when a research repository has accumulated parallel copies of the same thing (cache_v2, cache_v2_now, cache_v2_now_rx) and needs a canonical layout. Covers both a project started from scratch and an existing one retrofitted. Do not use for LaTeX template organisation (latex-conference-template-organizer), experiment provenance narrative (lineage), or general git hygiene (git-workflow).
 version: 0.1.0
 tags: [Research, Workspace, Git, Overleaf, Reproducibility]
 ---
@@ -14,9 +14,25 @@ without the two git repositories corrupting each other's view of the world.
 The layout comes from the **project workspace contract** in
 [Research-Workflow-Skills](https://github.com/DELONG-L/Research-Workflow-Skills)
 (`research-workspace-governance`). That repository is the authoritative text for the
-contract's fields. This skill is about **adopting** it in a real repository that
-already has years of accumulation, which is a different problem from reading the
-spec.
+contract's fields. This skill is about **using** it: laying a new project out
+correctly on day one, and retrofitting one that was not.
+
+## Which of the two
+
+| Situation | Go to |
+|---|---|
+| A project that does not exist yet, or exists as an empty repository | [Starting a new project](#starting-a-new-project) below — minutes, no risk |
+| A project with existing code, data and history | [references/migration-playbook.md](references/migration-playbook.md) — order matters, and the first step is not the one people reach for |
+
+Read the rest of this file either way. The closed set, the two collisions and the
+relocation table apply to both; the difference is only whether anything has to move.
+
+Starting new is not a smaller version of retrofitting — it is the case where the
+expensive problems never form. `experiments/` never becomes a code tree, so the
+collision below never arises; the ignore policy is right before any generator is
+written, so `code_revision` is available from the first figure; and the first
+experiment record is opened at design time rather than reconstructed from directory
+timestamps afterwards. Every one of those is cheap now and costly later.
 
 ## The one idea
 
@@ -42,7 +58,7 @@ Adoption is opt-in per project, by placing `PROJECT-WORKSPACE.md` at its root. N
 infer managed status from a directory being called `paper`, `experiment` or
 `research` — the contract forbids it explicitly.
 
-## Before touching anything: two collisions and a trap
+## Two collisions and a trap, whichever case you are in
 
 **`paper/` means two different things.** In the contract it is an *independent paper
 Git repository*. In most monorepos it is an ordinary directory holding `main.tex`.
@@ -52,10 +68,11 @@ contract permits the manifest to live in "the manifest, experiment record, or
 project notes".
 
 **`experiments/` means two different things.** In the contract it is the root for
-`EXP-*` *records*. In most research repos it is the implementation code tree. Do not
-solve this by nesting records deeper (`experiments/records/EXP-*`) — that invents a
-directory the contract does not have, which is the habit being cured. Move the code
-to `src/` and let `experiments/` mean records.
+`EXP-*` *records*. In most research repos it is the implementation code tree. In a
+new project, put code in `src/` from the first commit and the collision never forms.
+In an existing one, move it there — and do **not** instead nest the records deeper
+(`experiments/records/EXP-*`), which invents a directory the contract does not have,
+the very habit being cured.
 
 **The trap: the ignore policy decides whether any of this is possible.** A repository
 that ignores `*/scripts/` or `*/experiments/` keeps its generators out of version
@@ -65,6 +82,45 @@ control, and then two contract fields are unimplementable: `local.source_roots` 
 directory name, that is the first thing to change — see
 [references/migration-playbook.md](references/migration-playbook.md), which also
 covers why the change must be dry-run before it is made.
+
+## Starting a new project
+
+Copy the templates in `assets/`, do not retype them.
+
+```sh
+SKILL=<path to this skill>
+mkdir -p <project>/{experiments,src,configs,scripts,data,artifacts/paper}
+cd <project>
+cp "$SKILL/assets/PROJECT-WORKSPACE.md" .
+touch task_plan.md notes.md
+cat "$SKILL/assets/gitignore.starter" >> .gitignore     # or the repository root's
+```
+
+Then, in order:
+
+1. **Fill the contract.** `project_id` must match the directory name — a mismatch is
+   an audit finding, and the id is what records and the optional extensions key on.
+   Declare only source roots that exist *and* are version-controlled; `assets/gitignore.starter`
+   already blocks by kind rather than by directory name, which is what keeps that
+   true.
+2. **Attach the manuscript repository, if it is a separate one.** Create the Overleaf
+   project first, then `git submodule add <url> paper`. Copy
+   `assets/paper-workspace-link.yml` to `paper/.research-workspace.yml` and
+   `assets/figure-manifest.yml` to `paper/figure-manifest.yml`, then switch the
+   contract's `paper: null` to the mapping shown in the template. If the manuscript
+   is an ordinary directory inside this repository, leave `paper: null` and keep
+   figure provenance in the experiment record instead.
+3. **Open the first record before running anything.** `cp -r assets/EXP-YYYY-NNN
+   experiments/EXP-2026-001` and fill `design.md`, `protocol.md` and
+   `analysis-plan.md` *first*. The value of the seven files is almost entirely in
+   the three written before the run: they are what makes `deviations.md` meaningful
+   later, and a plan reconstructed after the fact cannot be distinguished from the
+   result it was written to fit.
+4. **Append to `execution-log.md` as runs happen.** This is the one that gets
+   skipped, and the cost is paid in full later: which run directory belongs to which
+   planned phase is recorded nowhere else, and timestamps cannot recover it.
+5. **Run the validator** once the first record exists, and keep it in whatever check
+   the project already runs.
 
 ## Where an existing directory goes
 
