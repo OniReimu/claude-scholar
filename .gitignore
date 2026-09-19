@@ -63,3 +63,8 @@ temp/
 # `git submodule` call — including the one `git clone --recurse-submodules`
 # makes — died with "No url found for submodule path".
 plugins/marketplaces/
+
+# Claude Code 插件管理器的本地状态，含本机绝对路径，不进版本控制
+plugins/installed_plugins.json
+plugins/known_marketplaces.json
+plugins/install-counts-cache.json

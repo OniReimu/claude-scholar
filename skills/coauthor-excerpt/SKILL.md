@@ -1,5 +1,5 @@
 ---
-name: Co-author Excerpt
+name: coauthor-excerpt
 description: This skill should be used when the user asks to "compile just this section separately", "make a standalone single-column PDF of the evaluation section", "I only want to see this part, not the whole paper", "put all the files this fragment needs in one folder", "make the prose fragmented / bullet points so colleagues stop saying it reads like AI", or complains that a separately compiled section "is full of ?? references". Produces a standalone excerpt PDF of one paper section for co-author review, sharing sources with the main document.
 version: 0.1.0
 tags: [latex, review, collaboration, writing]

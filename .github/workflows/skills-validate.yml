@@ -1,0 +1,39 @@
+name: skills-validate
+
+# Static checks for what the repository publishes: skill frontmatter, bundled-file
+# references, and local paths or credential-shaped strings in tracked files.
+#
+# Added 2026-09-19. scripts/validate-skills.sh had existed for a while but no
+# workflow called it, so nothing ran on push. The first run of the replacement found
+# a SKILL.md whose frontmatter was not valid YAML and a contributor's home directory
+# committed across three files.
+
+on:
+  push:
+    paths:
+      - 'skills/**'
+      - 'agents/**'
+      - 'commands/**'
+      - 'scripts/validate_skills.py'
+      - '.github/workflows/skills-validate.yml'
+  pull_request:
+    paths:
+      - 'skills/**'
+      - 'agents/**'
+      - 'commands/**'
+      - 'scripts/validate_skills.py'
+      - '.github/workflows/skills-validate.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pyyaml
+      - run: python scripts/validate_skills.py

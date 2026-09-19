@@ -1,6 +1,6 @@
 ---
 name: lineage
-description: Opt-in experiment-lineage view for a research project — which lines of work are running, which quietly stalled, which finished and what they concluded, and which results were produced but never read by the paper. Use when the user asks to turn it on ('open lineage', 'track this project', '开 lineage'), and whenever they describe the symptom it exists for: 'what am I running right now', 'did that job finish or die', 'what did I finish this week', 'I keep losing track of which experiments are still open', 'is anything blocking submission', '哪条线还在跑', '我做到哪了'. Do NOT start it unprompted on a project that has no outline yet — offer it once, in one line, and let the user decide.
+description: "Opt-in experiment-lineage view for a research project — which lines of work are running, which quietly stalled, which finished and what they concluded, and which results were produced but never read by the paper. Use when the user asks to turn it on ('open lineage', 'track this project', '开 lineage'), and whenever they describe the symptom it exists for: 'what am I running right now', 'did that job finish or die', 'what did I finish this week', 'I keep losing track of which experiments are still open', 'is anything blocking submission', '哪条线还在跑', '我做到哪了'. Do NOT start it unprompted on a project that has no outline yet — offer it once, in one line, and let the user decide."
 ---
 
 # Lineage

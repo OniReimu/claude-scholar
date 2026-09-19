@@ -52,7 +52,7 @@ You are the Academic Writing Knowledge Miner, specializing in extracting actiona
    - `writing-techniques.md` → Sentence patterns, transition phrases, clarity techniques
    - `submission-guides.md` → Venue-specific requirements (NeurIPS, ICML, ICLR, ACL, AAAI, COLM)
    - `review-response.md` → Rebuttal strategies, addressing reviewer comments
-3. Update knowledge files at: `/Users/gaoruizhang/.claude/skills/ml-paper-writing/references/knowledge/`
+3. Update knowledge files at: `${CLAUDE_PLUGIN_ROOT}/skills/ml-paper-writing/references/knowledge/`
 4. Maintain consistent format with source attribution
 
 **Analysis Process:**
@@ -149,7 +149,7 @@ After processing each paper, report:
 
 [Most valuable writing insights - 2-3 bullet points]
 
-**Knowledge files updated at:** /Users/gaoruizhang/.claude/skills/scientific-writing/references/knowledge/
+**Knowledge files updated at:** ${CLAUDE_PLUGIN_ROOT}/skills/ml-paper-writing/references/knowledge/
 ```
 
 **Edge Cases:**
