@@ -10,6 +10,7 @@
 
 ## News
 
+- **2026-09-21 (v1.32.3)**: `PROSE.RHYTHM_VARIANCE` 把方差当约束而不是目标。凑到 sd ≥ 10 最省力的办法是塞一句 6–8 词短话，这现在被点名为本卡最常见的违规：短句只能是可核对的主张或显式锚定的转折，且要过删除测试；拉宽分布只能重新切分已有信息。
 - **2026-09-21 (v1.32.2)**: `PROSE.FRACTAL_SUMMARY` 的回翻距离改以冷进本节的审稿人为参照，而不是刚读完上一节的人；顶层 section 唯一的路线图只要说清各部分做什么，就保留。`PROSE.RESTATEMENT_DILUTION` 不再把展开当成复述。
 - **2026-09-19 (v1.32.1)**: skill 校验终于在 CI 里跑起来了——`validate-skills.sh` 一直存在，却没有任何 workflow 调用它。替换版第一次跑就抓到一个 frontmatter 不是合法 YAML 的 `SKILL.md`，以及一位贡献者的 home 目录被提交在三个文件里。
 - **2026-09-19 (v1.32.0)**: `research-workspace-layout` —— 把 [research-workspace 契约](https://github.com/DELONG-L/Research-Workflow-Skills) 落地到已有仓库，外加把 Overleaf 挂成 submodule 的全部踩坑。它把拓扑当作**闭集**：会长出十一个并列的 cache 目录，不是因为有人决定要十一个，而是没有任何地方规定第十二个必须去哪。

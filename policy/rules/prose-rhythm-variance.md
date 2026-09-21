@@ -14,6 +14,10 @@ params: {min_stdev_words: 10, max_band_share: 0.55}
 conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE, PROSE.CAUSAL_CONNECTIVE, PROSE.OVER_DEFENSIVE, PROSE.REGISTER_PRESERVATION, PROSE.SEMICOLON_RESTRICTION, PROSE.SHORT_PUNCHY_FRAGMENTS, PROSE.THEATRICAL_SPLIT]
 constraint_type: guidance
 autofix: none
+lint_patterns:
+  - pattern: "(?<=[.!?] )(?!(?:This|That|These|Those|Such|Only|Both|Neither|Here|There|Hence|Thus|Therefore|However|Yet|Instead|Consequently|Further|Finally|First|Second|Third|Then|Now|In|For|As|So|But|And|Where|When|While|Because|Since|We|Our|It|They|Its|Their|The same|The resulting|The former|The latter|The exception|Table|Figure|Section|Appendix|Algorithm)\\b)[A-Z][^.!?\\n]{8,50}[.!?](?= [A-Z]|$)"
+    mode: match
+lint_targets: "**/*.tex"
 ---
 
 ## Requirement
@@ -22,7 +26,29 @@ autofix: none
 
 均质化本身就是 AI 痕迹。执行 `PROSE.SENTENCE_LENGTH`（单句 ≤35 词）时**不得**把所有句子压到同一长度带——那条规则是上限，不是目标值。
 
-⚠️ **落差必须由逻辑关系挣来，不能靠丢一句短话制造。** 为拉开标准差而插入的 6–8 词断言（"Reading remains the unexamined role."）如果没有任何连接词、也不带指代前文的词（resulting / that / this），读者判断不了它是收上文还是起下文——句子本身在承担一个推理步骤，却没把这一步说出来。判据：把这句短话删掉，前后两句是否仍然接得上？接得上，说明它是填充；接不上，说明它藏着一个未陈述的关系，把那个关系写进相邻的长句（"..., **yet** the representation itself ..."）而不是留一句孤立的短话。反例来源：ATHENA abstract，Saber 2026-09-21 指出。
+### 落差只能在现有信息里重新分配，不能靠新增句子制造
+
+标准差是**约束**，不是**目标**。最省力的达标法——往段里丢一句 6–8 词的短话——正是本卡最常见的违规形态，而且逐句读每句都合格，只有整段读才暴露。
+
+**合规短句只有两种来源：**
+
+1. **承载可核对主张的断言**：有具体对象或数字（"Training deepens the coupling." / "The average increases from 37.65 to 39.28." / "Yahoo is the exception."）。
+2. **带显式锚的枢纽句**：用连接词或指代词把自己钉在上下文里（"The *resulting* decision is asymmetric." / "*These* percentages are effective interpolation weights." / "*The same* experiments expose limits."）。
+
+不属于这两类的 ≤10 词句子是**孤句**（orphan）：它通常在承担一个推理步骤——收上文、起下文、或标出一个转折——却没把这一步说出来。读者判断不了它接哪边。
+
+**判据（删除测试）**：把这句短话删掉，前后两句是否仍然接得上？
+- 接得上 → 它是填充，删。
+- 接不上 → 它藏着一个未陈述的关系。**把那个关系写进相邻的长句**（`..., yet the representation itself ...` / `..., whereas a post-hoc oracle ...` / `..., so the deployed head ...`），不要留一句孤立的短话。
+
+**拉开落差的合法手段**（按优先级）：
+1. 把被拆碎的从句合并回一个长句——拉高端。
+2. 把已有长句里的核心主张切出来成短句，**原有连接词随主张一起走**——拉低端。
+3. 二者同做。只做一半是把峰移位而不是展宽。
+
+**禁止**：为拉方差而写新句子。方差来自把同一批信息按论点复杂度重新切分，不来自加信息。
+
+⚠️ 反例（ATHENA abstract，Saber 2026-09-21 指出）："Prior work ... through an adapted reader. **Reading remains the unexamined role.** The representation the backbone consumes is taken out of storage unchanged, ..." 中间那句是为拉 sd 插的，无连接词、无指代，读者分不清承上启下。它藏的关系是"前人调了 reader、没质疑 reader 拿到的东西"，正确写法是把这层关系放进下一句："That work adapts how a stored representation is read, **yet** the representation itself is taken out of storage unchanged, ..."
 
 ## Rationale
 
@@ -42,6 +68,10 @@ autofix: none
   2. 整节是否找不到任何 <12 词的句子
   3. 整节是否找不到任何 >32 词的句子
   4. 改写指令是否只含长度上限而无落差要求
+- **孤句扫描（regex，部分覆盖）**：frontmatter 的 lint 模式抓「同一行内、前面有句末标点、≤ ~50 字符、不以锚定词开头」的句子。它只能看到没被硬换行劈开的短句，且会误报纯数据句（"Sample counts are 65, 56, and 277."）——数据句自动合规。命中后按删除测试人工判，不要按命中数报。段首句不在扫描范围内（模式要求同行前面有句末标点），因为段首的主题句是合法短句。
+- **LLM 检查追加**：
+  5. 每个 ≤10 词句是否属于两类合规来源之一；不属于则跑删除测试
+  6. 本轮新增的句子里有没有 ≤10 词且无锚的——**新增短句是最高风险信号**：原稿没有、改稿有，几乎一定是为方差写的
 - **排除**: 参考文献、表格单元格、算法伪代码、caption
 
 参考脚本（按需调整剥离规则）:
@@ -88,6 +118,24 @@ has been absorbed, a post-hoc edit acts on the retained dynamics as well.
 ```
 
 句长 11 / 12 / 11 / 15 / 15 词，全部落在同一带，节拍器感。
+
+
+### Fail（孤句：方差达标，关系丢失）
+
+```latex
+Prior work on cross-model memory transfer uses that separation to reuse a
+learned memory across frozen backbones through an adapted reader. Reading
+remains the unexamined role. The representation the backbone consumes is taken
+out of storage unchanged, and no work has asked whether it must be.
+```
+
+句长 22 / 5 / 21，sd 达标。但中间句无连接词、无指代：删掉它，前后仍接得上（填充），可它明明想说"前人调了怎么读、没问读什么"。修法是把这层关系写进相邻句，不是保留孤句：
+
+```latex
+... through an adapted reader. That work adapts how a stored representation is
+read, yet the representation itself is taken out of storage unchanged, and no
+work has asked whether it must be.
+```
 
 ## Conflicts
 

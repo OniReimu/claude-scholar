@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-09-21 (v1.32.3)**: `PROSE.RHYTHM_VARIANCE` treats variance as a constraint, not a target. The cheapest way to reach sd ≥ 10, dropping in a 6–8 word sentence, is now the card's most common violation: a short sentence must be a checkable claim or an anchored pivot and must pass the deletion test, and the distribution may be widened only by re-splitting existing information.
 - **2026-09-21 (v1.32.2)**: `PROSE.FRACTAL_SUMMARY` now measures the turn-back distance from a reviewer who enters a section cold, not from someone who just finished the previous one, so a top-level section's only roadmap stays when it says what the parts do. `PROSE.RESTATEMENT_DILUTION` stops treating an expansion as a restatement.
 - **2026-09-19 (v1.32.1)**: Skill validation now runs in CI, which it never had — `validate-skills.sh` existed but no workflow called it. Its first run found a `SKILL.md` whose frontmatter was not valid YAML and a contributor's home directory committed across three files.
 - **2026-09-19 (v1.32.0)**: `research-workspace-layout` — adopting the [research-workspace contract](https://github.com/DELONG-L/Research-Workflow-Skills) in a repository, and every way attaching Overleaf as a submodule goes wrong. It treats the topology as a **closed set**: eleven parallel cache directories appear not because anyone chose eleven, but because nothing said where the twelfth would have to go.

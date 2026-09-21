@@ -147,7 +147,8 @@ Mix sentence lengths. End paragraphs differently.
 **⚠️ 均质化本身就是 AI 痕迹。** 逐句读全部合格、但句长压在同一区间的散文，读者一眼认出是机器写的。执行 `PROSE.SENTENCE_LENGTH`（≤35 词）时不要把所有句子拉到同一长度——那是上限不是目标值。目标是句长标准差 ≥10 词，15–30 词区间占比 ≤55%。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
 
 **Check**:
-- Three consecutive sentences same length? Break one.
+- Three consecutive sentences same length? Re-split the same information: merge fragments into one long sentence, or cut the core claim out of a long one and keep its connective. **Never add a sentence to lower the sd.**
+- Every sentence ≤10 words you added this pass: does it carry a checkable claim, or an explicit anchor (connective / this / these / the same)? Neither → it is an orphan hiding a relation; write the relation into the neighbouring sentence and delete it (deletion test, see card).
 - Paragraph ends with punchy one-liner? Vary it.
 - 整节找不到 <12 词的句子？或找不到 >32 词的句子？→ 分布已被压平，双向修复（合并被拆碎的从句 + 把关键论断压短）
 - Sentence with ≥4 commas? Split it or use semicolons—comma-chained clauses read as AI meandering. <!-- policy:PROSE.COMMA_OVERUSE -->
