@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-09-21 (v1.32.2)**: `PROSE.FRACTAL_SUMMARY` now measures the turn-back distance from a reviewer who enters a section cold, not from someone who just finished the previous one, so a top-level section's only roadmap stays when it says what the parts do. `PROSE.RESTATEMENT_DILUTION` stops treating an expansion as a restatement.
 - **2026-09-19 (v1.32.1)**: Skill validation now runs in CI, which it never had — `validate-skills.sh` existed but no workflow called it. Its first run found a `SKILL.md` whose frontmatter was not valid YAML and a contributor's home directory committed across three files.
 - **2026-09-19 (v1.32.0)**: `research-workspace-layout` — adopting the [research-workspace contract](https://github.com/DELONG-L/Research-Workflow-Skills) in a repository, and every way attaching Overleaf as a submodule goes wrong. It treats the topology as a **closed set**: eleven parallel cache directories appear not because anyone chose eleven, but because nothing said where the twelfth would have to go.
 - **2026-09-14 (v1.31.0)**: `peer-review` — a routing skill for the one review Claude Scholar had no skill for: reviewing someone else's submission for a venue. It carries no review logic, handing off to the separately installed [More Than Peer Review](https://github.com/DELONG-L/More-Than-Peer-Review-Skill) **before the manuscript is opened**, so no criticism formed on this side crosses over.

@@ -46,6 +46,8 @@ autofix: none
 
 **节级检查**：读 subsection 的首句和末句，若二者可互换而不影响该节，删末句。
 
+⚠️ **"分开"与"各做什么"不是同一命题。** `X separates construction from selection` 说的是两件事被分开；`the model first learns how to construct ..., then learns when to ...` 说的是分开后的每一半学什么。第二句是对第一句的**展开**，删除测试有损失，不是复述。实测一次误删（2026-09-21）就是把这两句当成了同一命题的两种说法。判命题相同时，问"删掉第二句，读者还知道每一半的内容吗"，而不是"两句是不是围绕同一个名词"。
+
 **检查范围**：`.tex` 正文。Abstract 与 Conclusion 对全文主张的复述是**结构性要求**，不计入本卡。
 
 **边界**：本卡管段内与节内。跨节的重复主张（同一 claim 在 Introduction、Method、Discussion 各出现一次）属结构问题，交 `claim-architecture-review` 处理，不在本卡范围。

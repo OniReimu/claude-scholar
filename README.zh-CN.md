@@ -10,6 +10,7 @@
 
 ## News
 
+- **2026-09-21 (v1.32.2)**: `PROSE.FRACTAL_SUMMARY` 的回翻距离改以冷进本节的审稿人为参照，而不是刚读完上一节的人；顶层 section 唯一的路线图只要说清各部分做什么，就保留。`PROSE.RESTATEMENT_DILUTION` 不再把展开当成复述。
 - **2026-09-19 (v1.32.1)**: skill 校验终于在 CI 里跑起来了——`validate-skills.sh` 一直存在，却没有任何 workflow 调用它。替换版第一次跑就抓到一个 frontmatter 不是合法 YAML 的 `SKILL.md`，以及一位贡献者的 home 目录被提交在三个文件里。
 - **2026-09-19 (v1.32.0)**: `research-workspace-layout` —— 把 [research-workspace 契约](https://github.com/DELONG-L/Research-Workflow-Skills) 落地到已有仓库，外加把 Overleaf 挂成 submodule 的全部踩坑。它把拓扑当作**闭集**：会长出十一个并列的 cache 目录，不是因为有人决定要十一个，而是没有任何地方规定第十二个必须去哪。
 - **2026-09-14 (v1.31.0)**: `peer-review` —— 补上 Claude Scholar 唯一没有 skill 的那种评审：为某个 venue 审别人的稿子。它自身不带任何评审逻辑，在**打开稿件之前**就转交给单独安装的 [More Than Peer Review](https://github.com/DELONG-L/More-Than-Peer-Review-Skill)，所以本侧不会有任何已成形的批评越界过去。
