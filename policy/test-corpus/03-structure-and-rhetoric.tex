@@ -53,9 +53,10 @@ The bottleneck is memory bandwidth at every batch size we measured.
 % @ENDCASE
 
 % @CASE rhetorical-self-answer
-% Two rules fire on one sentence and both are correct: the question-then-answer
-% shape, and the "X, not Y" contrast inside the answer. Declared, not suppressed.
-% @EXPECT PROSE.RHETORICAL_SELF_ANSWER, PROSE.NEGATION_CONTRAST
+% Three rules fire and all are correct: the question-then-answer shape, the
+% "X, not Y" contrast inside the answer, and the answer itself, a verbless
+% fragment with no anchor, as a rhythm orphan. Declared, not suppressed.
+% @EXPECT PROSE.RHETORICAL_SELF_ANSWER, PROSE.NEGATION_CONTRAST, PROSE.RHYTHM_VARIANCE
 So what changes at scale? The optimiser, not the architecture.
 % @ENDCASE
 

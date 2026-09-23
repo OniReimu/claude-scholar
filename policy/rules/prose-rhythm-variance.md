@@ -15,7 +15,7 @@ conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE, PROSE.CAUSAL_CONNECTIVE, PROSE.OVE
 constraint_type: guidance
 autofix: none
 lint_patterns:
-  - pattern: "(?<=[.!?] )(?!(?:This|That|These|Those|Such|Only|Both|Neither|Here|There|Hence|Thus|Therefore|However|Yet|Instead|Consequently|Further|Finally|First|Second|Third|Then|Now|In|For|As|So|But|And|Where|When|While|Because|Since|We|Our|It|They|Its|Their|The same|The resulting|The former|The latter|The exception|Table|Figure|Section|Appendix|Algorithm)\\b)[A-Z][^.!?\\n]{8,50}[.!?](?= [A-Z]|$)"
+  - pattern: "(?<=[.!?] )(?!(?:This|That|These|Those|Such|Only|Both|Neither|Here|There|Hence|Thus|Therefore|However|Yet|Instead|Consequently|Further|Finally|First|Second|Third|Then|Now|In|For|As|So|But|And|Where|When|While|Because|Since|We|Our|It|They|Its|Their|The same|The resulting|The former|The latter|The exception|Table|Figure|Section|Appendix|Algorithm)\\b|[A-Z][A-Za-z]*-?\\d)(?![^.!?\\n]*\\b(?:this|that|these|those|such)\\b)[A-Z][^.!?\\n]{8,50}[.!?](?= [A-Z]|$)"
     mode: match
 lint_targets: "**/*.tex"
 ---
@@ -68,7 +68,7 @@ lint_targets: "**/*.tex"
   2. 整节是否找不到任何 <12 词的句子
   3. 整节是否找不到任何 >32 词的句子
   4. 改写指令是否只含长度上限而无落差要求
-- **孤句扫描（regex，部分覆盖）**：frontmatter 的 lint 模式抓「同一行内、前面有句末标点、≤ ~50 字符、不以锚定词开头」的句子。它只能看到没被硬换行劈开的短句，且会误报纯数据句（"Sample counts are 65, 56, and 277."）——数据句自动合规。命中后按删除测试人工判，不要按命中数报。段首句不在扫描范围内（模式要求同行前面有句末标点），因为段首的主题句是合法短句。
+- **孤句扫描（regex，部分覆盖）**：frontmatter 的 lint 模式抓「同一行内、前面有句末标点、≤ ~50 字符、不以锚定词开头」的句子。它只能看到没被硬换行劈开的短句，且会误报纯数据句（"Sample counts are 65, 56, and 277."）——数据句自动合规。命中后按删除测试人工判，不要按命中数报。两类显式锚被排除在命中之外：句中任意位置的指示词（`this / that / these / those / such`，"Downstream kernels assume that layout." 靠 `that layout` 钉在上一句），以及以已定义标签开头的句子（`RQ2 asks …`、`C1 holds …`，标签本身就指回它的定义）。代价是 `that` 作补语从句引导词时也会被放过，这里宁可漏判。段首句不在扫描范围内（模式要求同行前面有句末标点），因为段首的主题句是合法短句。
 - **LLM 检查追加**：
   5. 每个 ≤10 词句是否属于两类合规来源之一；不属于则跑删除测试
   6. 本轮新增的句子里有没有 ≤10 词且无锚的——**新增短句是最高风险信号**：原稿没有、改稿有，几乎一定是为方差写的

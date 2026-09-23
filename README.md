@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-09-24 (v1.33.1)**: The orphan-sentence regex added in v1.32.3 no longer flags short sentences anchored by a demonstrative ("assume that layout") or opened by a defined label ("RQ2 asks …"). The policy CI is green again.
 - **2026-09-24 (v1.33.0)**: New rule `PAPER.DEFINE_BEFORE_USE`: in reading order, a term must be defined or glossed at or before its first use. A definition three sections later does not count, and a section pointer is not a gloss. `claim-architecture-review` now catches this in its P1 sweep, because line edits see one paragraph and cannot notice a definition that sits sections away.
 - **2026-09-21 (v1.32.3)**: `PROSE.RHYTHM_VARIANCE` treats variance as a constraint, not a target. The cheapest way to reach sd ≥ 10, dropping in a 6–8 word sentence, is now the card's most common violation: a short sentence must be a checkable claim or an anchored pivot and must pass the deletion test, and the distribution may be widened only by re-splitting existing information.
 - **2026-09-21 (v1.32.2)**: `PROSE.FRACTAL_SUMMARY` now measures the turn-back distance from a reviewer who enters a section cold, not from someone who just finished the previous one, so a top-level section's only roadmap stays when it says what the parts do. `PROSE.RESTATEMENT_DILUTION` stops treating an expansion as a restatement.
