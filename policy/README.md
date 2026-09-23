@@ -197,6 +197,7 @@ SoK 规则集合（语义规则）：
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc | guidance | none |
 | PAPER.OUTCOME_LOGIC | paper-outcome-logic | core | warn | false | doc | guidance | none |
 | PAPER.REVISION_CLOSURE | paper-revision-closure | core | warn | false | doc | guidance | none |
+| PAPER.DEFINE_BEFORE_USE | paper-define-before-use | core | warn | false | doc | guidance | none |
 | CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script | guidance | none |
 | CITE.CLAIM_SUPPORT_REQUIRED | cite-claim-support-required | core | warn | false | lint_script | guidance | none |
 | EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc | guidance | none |
@@ -254,7 +255,7 @@ SoK 规则集合（语义规则）：
 | PROSE.ANAPHORA_ABUSE | prose-anaphora-abuse | domain | warn | false | doc | guidance | none |
 | PROSE.GERUND_FRAGMENT_LITANY | prose-gerund-fragment-litany | domain | warn | false | doc | guidance | none |
 | PROSE.SHORT_PUNCHY_FRAGMENTS | prose-short-punchy-fragments | domain | warn | false | doc | guidance | none |
-| PROSE.RHYTHM_VARIANCE | prose-rhythm-variance | domain | warn | false | doc | guidance | none |
+| PROSE.RHYTHM_VARIANCE | prose-rhythm-variance | domain | warn | false | lint_script | guidance | none |
 | PROSE.ANNOUNCEMENT_SENTENCE | prose-announcement-sentence | domain | warn | false | doc | guidance | none |
 | PROSE.THEATRICAL_SPLIT | prose-theatrical-split | domain | warn | false | doc | guidance | none |
 | PROSE.UNICODE_ARROWS | prose-unicode-arrows | domain | warn | false | lint_script | guardrail | safe |

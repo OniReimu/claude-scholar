@@ -44,6 +44,7 @@ proposition; if found, append the new location to `other-homes` instead of creat
 | `first-home` | section + paragraph locator where it first appears |
 | `other-homes` | additional locators carrying the same proposition (the redundancy) |
 | `unique?` | `true` if first-home is the only home |
+| `first-use` | `def:<term>` rows only — the first locator, in reading order, that depends on the term's meaning. When it precedes `first-home`, the row is a forward use; `first-home: PENDING` at the end of P1 means undefined |
 
 ## `paragraph-audit.md` (final artifact — per-paragraph table)
 
@@ -76,6 +77,10 @@ Rules: `delete` legal only when `unique_info=false` AND `required_caveat=false`;
 - Homes: §4 ¶3 (full), §5 ¶1 (re-explained), Appendix B (re-explained)
 - Canonical home: §4 ¶3 (protocol)
 - Collapse plan: §5 ¶1 → one forward reference ("per the protocol in §4"); Appendix B → keep only the extra numeric detail, drop the re-explanation.
+
+## Forward uses and undefined terms (from P1)
+- `cascade-drift`: first use §1 ¶3, defined §4 ¶2 → one-clause gloss at §1 ¶3 ("the error each stage inherits from the stage before it"); definition stays in §4.
+- `C6`: used §3–§6 (9×), never defined → define at first use in §3 ¶1, or replace the label with the claim it names.
 ```
 
 ## `progress.md` (working state — resumability)

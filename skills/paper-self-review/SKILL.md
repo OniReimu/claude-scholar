@@ -79,6 +79,7 @@ Check writing clarity and readability:
 - Are empty intensifiers removed? <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
 - Are em-dashes fully eliminated (zero allowed — split into sentences, relative clauses, commas, or parentheses)? <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Is technical terminology used appropriately?
+- Reading in order, is every paper-specific term (coined term, method or component name, RQ/claim label, narrowed common word, symbol) defined or glossed **at or before its first use**? A definition that exists only sections later does not count, and neither does a section pointer ("X (§4)"). This is a cross-section defect, so the fix plan comes from `claim-architecture-review` P1 on the sections where the term first appears. <!-- policy:PAPER.DEFINE_BEFORE_USE -->
 - Are sentence structures clear?
 - Is paragraph organization logical?
 
