@@ -72,7 +72,8 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `PROSE.ABBREVIATION_FIRST_USE` | 缩写首次展开 |
 | `PROSE.VAGUE_QUANTIFIERS` | 禁止模糊量词 |
 | `PROSE.SENTENCE_LENGTH` | 单句≤35词（上限，非目标值；须配合 `PROSE.RHYTHM_VARIANCE`） |
-| `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词） |
+| `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词，诊断不是验收） |
+| `PROSE.CLAUSE_CHAIN` | 一句只挂一层从属结构，从句链拆开、只拆不并 |
 | `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
 | `PROSE.THEATRICAL_SPLIT` | 禁止两拍式戏剧反驳 |
 | `PROSE.PARAGRAPH_TOPIC_SENTENCE` | 首句为topic sentence |
@@ -1295,7 +1296,9 @@ These small changes accumulate into significantly clearer prose:
 
 #### Sentence Rhythm (anti-uniformity)
 
-`PROSE.SENTENCE_LENGTH` 的 35 词是**上限**，不是配额。把每句都写到 20–25 词会得到一份逐句合格、整体像机器的稿子，因为句长均质本身就是 AI 痕迹。写作时按论点复杂度决定句长：简单断言 8–12 词，多条件的技术陈述 35–45 词，目标是整节标准差 ≥10 词。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
+`PROSE.SENTENCE_LENGTH` 的 35 词是**上限**，不是配额。把每句都写到 20–25 词会得到一份逐句合格、整体像机器的稿子，因为句长均质本身就是 AI 痕迹。写作时按论点复杂度决定句长：简单断言写短，多条件的技术陈述写长。整节标准差 ≥10 词是**诊断**，不是要凑的数：不要为了拉方差并句，并出来的长句会重新长出从句链。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
+
+一句只挂一层从属结构：关系从句、句中插入语、第二个并列谓语叠了两个以上，就拆成各说一件事的句子，新句给具体主语（❌ "… both properties, which tells whether more paths will pay and, without labels, sets a budget …" ✅ "… both properties. The estimates predict whether more paths will pay, and without labels they set a budget …"）。 <!-- policy:PROSE.CLAUSE_CHAIN -->
 
 写短句时守两条：句子要给出可检验的主张而不是预告后文（❌ "The difficulty is structural." ✅ "One shared vector field serves every trajectory."）<!-- policy:PROSE.ANNOUNCEMENT_SENTENCE -->；反驳要与铺垫合并成一句并由证据承担，不要拆成"设预期—短促击碎"两拍（❌ "One might expect X. It does not." ✅ "One might expect X, but 35× wider never lifts ρ⊥ past 0.2."）<!-- policy:PROSE.THEATRICAL_SPLIT -->
 

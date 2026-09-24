@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_style
 enforcement: lint_script
 params: {min_stdev_words: 10, max_band_share: 0.55}
-conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE, PROSE.CAUSAL_CONNECTIVE, PROSE.OVER_DEFENSIVE, PROSE.REGISTER_PRESERVATION, PROSE.SEMICOLON_RESTRICTION, PROSE.SHORT_PUNCHY_FRAGMENTS, PROSE.THEATRICAL_SPLIT]
+conflicts_with: [PROSE.ANNOUNCEMENT_SENTENCE, PROSE.CAUSAL_CONNECTIVE, PROSE.CLAUSE_CHAIN, PROSE.OVER_DEFENSIVE, PROSE.REGISTER_PRESERVATION, PROSE.SEMICOLON_RESTRICTION, PROSE.SHORT_PUNCHY_FRAGMENTS, PROSE.THEATRICAL_SPLIT]
 constraint_type: guidance
 autofix: none
 lint_patterns:
@@ -41,12 +41,16 @@ lint_targets: "**/*.tex"
 - 接得上 → 它是填充，删。
 - 接不上 → 它藏着一个未陈述的关系。**把那个关系写进相邻的长句**（`..., yet the representation itself ...` / `..., whereas a post-hoc oracle ...` / `..., so the deployed head ...`），不要留一句孤立的短话。
 
-**拉开落差的合法手段**（按优先级）：
-1. 把被拆碎的从句合并回一个长句——拉高端。
-2. 把已有长句里的核心主张切出来成短句，**原有连接词随主张一起走**——拉低端。
-3. 二者同做。只做一半是把峰移位而不是展宽。
+**默认不动句长**。作者原稿的句长分布就是作者要的节奏；sd 和 15–30 词带占比是**诊断**，不是验收线。本卡在一次编辑 pass 里只要求两件事：
 
-**禁止**：为拉方差而写新句子。方差来自把同一批信息按论点复杂度重新切分，不来自加信息。
+1. **孤句**：处理上面定义的无锚短句（删除测试 → 删，或把关系写进相邻句）。
+2. **从句链**：一句叠了两层以上从属结构的，按 `PROSE.CLAUSE_CHAIN` 拆成各说一件事的句子，**原有连接词随主张一起走**。这会顺带把长句里的核心主张切出来，是拉低端的唯一合法手段。
+
+**合并只允许一种情形**：同一个主张被机械地劈在两句里（前句没有谓语，或后句只是前句的宾语补足），合并后仍只挂一层从属结构、且 ≤35 词。**不得为了拉高端或把 sd 推过 10 而并句**。
+
+⚠️ 反例（R²D² abstract+intro，Saber 2026-09-24）：一轮拆链后段落 sd 从 7.8 掉到 5.9，于是把相邻短句并成 36–44 词的长句把 sd 推回 11.1。作者反馈"改之前节奏更好，你现在句子太长了"，并指出节奏检查本意只是那种"莫名其妙一个特别短、和上下文都没连接"的句子。并出来的长句又重新长出了从句链（见 `PROSE.CLAUSE_CHAIN` 第三个 Fail 例）。
+
+**禁止**：为拉方差而写新句子，或为拉方差而并句。方差低于阈值时，如果段里没有孤句、没有从句链，就接受它。
 
 ⚠️ 反例（ATHENA abstract，Saber 2026-09-21 指出）："Prior work ... through an adapted reader. **Reading remains the unexamined role.** The representation the backbone consumes is taken out of storage unchanged, ..." 中间那句是为拉 sd 插的，无连接词、无指代，读者分不清承上启下。它藏的关系是"前人调了 reader、没质疑 reader 拿到的东西"，正确写法是把这层关系放进下一句："That work adapts how a stored representation is read, **yet** the representation itself is taken out of storage unchanged, ..."
 
@@ -56,7 +60,7 @@ lint_targets: "**/*.tex"
 
 这是最难自查的 AI 痕迹之一，因为**逐句读每一句都合格**，只有在分布层面才暴露。实测对照：一篇经三轮数学审查的稿件，被机械拆句改写后的 Introduction 为 sd=6.3、零个 >35 词句、69% 落在 15–30 词带；同一稿件未被拆句改写的 Method 节为 sd=18.0。读者报告前者"AI 味明显更重"。
 
-修复方向是双向的：把被拆碎的从句合并回长句，同时把关键论断压成短句。只做其中一半会把峰移位而不是展宽。
+这条诊断的正确用法是**找原因**，不是**调数值**：窄峰通常来自一次机械的"每句一个意思、≤N 词"改写，修法是撤回那次改写或只处理其中的孤句与从句链。把句子并长去凑 sd 是把一种指纹换成另一种（从句链）。
 
 ## Check
 
@@ -140,3 +144,5 @@ work has asked whether it must be.
 ## Conflicts
 
 与 `PROSE.ANNOUNCEMENT_SENTENCE` / `PROSE.THEATRICAL_SPLIT` / `PROSE.SHORT_PUNCHY_FRAGMENTS` 的张力裁决线：**本卡要求短句存在，那三条约束短句的内容。** 合规短句 = 承载可核对主张的短句（"Training deepens the coupling."）。修本卡时新增的短句必须直接过那三条的门槛——如果为了拉开句长落差而写出预告句或两拍式反驳，等于把一个违规换成另一个。
+
+与 `PROSE.CLAUSE_CHAIN` 的裁决线：**拆链优先，方差让步。** 拆从句链会增加短句、可能压低 sd；这是可以接受的代价，不得为补回方差去并别处的句子。

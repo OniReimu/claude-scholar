@@ -61,7 +61,8 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.ANAPHORA_ABUSE` | 禁止同一句首重复3+次 |
 | `PROSE.GERUND_FRAGMENT_LITANY` | 禁止分词片段堆叠 |
 | `PROSE.SHORT_PUNCHY_FRAGMENTS` | 禁止极短句独立成段 |
-| `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词），上限规则不是目标值 |
+| `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词），上限规则不是目标值；sd 是诊断不是验收，只修孤句与从句链，不得为方差并句 |
+| `PROSE.CLAUSE_CHAIN` | 一句只挂一层从属结构；关系从句+插入语+并列谓语的链拆成各说一件事的句子，只拆不并 |
 | `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
 | `PROSE.THEATRICAL_SPLIT` | 禁止"设预期—短促击碎"两拍式反驳 |
 | `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足；免责式否定谓语（We do not X）翻成正面（我们做的是 Y） |
@@ -144,14 +145,23 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 ### 3. Vary Rhythm
 Mix sentence lengths. End paragraphs differently.
 
-**⚠️ 均质化本身就是 AI 痕迹。** 逐句读全部合格、但句长压在同一区间的散文，读者一眼认出是机器写的。执行 `PROSE.SENTENCE_LENGTH`（≤35 词）时不要把所有句子拉到同一长度——那是上限不是目标值。目标是句长标准差 ≥10 词，15–30 词区间占比 ≤55%。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
+**⚠️ 均质化本身就是 AI 痕迹。** 逐句读全部合格、但句长压在同一区间的散文，读者一眼认出是机器写的。执行 `PROSE.SENTENCE_LENGTH`（≤35 词）时不要把所有句子拉到同一长度——那是上限不是目标值。句长标准差 ≥10 词、15–30 词区间占比 ≤55% 是**诊断**：数值偏低时去找原因（通常是一次机械拆句改写），**不是去调数值**。作者原稿的句长就是作者要的节奏，默认不动。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
+
+**一次 pass 里节奏只修两样东西**：① 无锚孤句；② 从句链（下一条）。其余句子的长短一律保留。
 
 **Check**:
-- Three consecutive sentences same length? Re-split the same information: merge fragments into one long sentence, or cut the core claim out of a long one and keep its connective. **Never add a sentence to lower the sd.**
+- Three consecutive sentences same length? Look for the cause (a clause chain, or a mechanical split pass) before touching anything. The only licensed re-cut is to cut the core claim out of a clause-chain sentence and keep its connective. **Never add a sentence to lower the sd, and never merge sentences to raise it.**
 - Every sentence ≤10 words you added this pass: does it carry a checkable claim, or an explicit anchor (connective / this / these / the same)? Neither → it is an orphan hiding a relation; write the relation into the neighbouring sentence and delete it (deletion test, see card).
 - Paragraph ends with punchy one-liner? Vary it.
-- 整节找不到 <12 词的句子？或找不到 >32 词的句子？→ 分布已被压平，双向修复（合并被拆碎的从句 + 把关键论断压短）
+- 整节找不到 <12 词的句子？或找不到 >32 词的句子？→ 分布已被压平，这是**诊断信号**：检查是不是有过一次机械拆句 pass（有就撤回它），或长句里藏着从句链（有就拆）。**不要为了造出 >32 词的句子去并句**——实测并出来的 36–44 词长句会重新长出从句链，作者判定"句子太长、改之前节奏更好"（R²D²，2026-09-24）
 - Sentence with ≥4 commas? Split it or use semicolons—comma-chained clauses read as AI meandering. <!-- policy:PROSE.COMMA_OVERUSE -->
+
+**从句链：一句只挂一层从属结构** <!-- policy:PROSE.CLAUSE_CHAIN -->
+关系从句（`, which ...`）、句中插入语（`and, without X, ...`）、第二个并列谓语（`... and sets ...`）、句末分词尾巴——一句里叠了 ≥2 个，就拆成各说一件事的句子，新句给**具体主语或锚**（`The estimates ...` / `thus` / `the same`），不要用裸 `It` / `This` 指代一整个小句。`which` 的先行词是整个前句时最难读，优先拆。这类句子常常只有 2–3 个逗号、≤35 词，逗号规则和长度规则都抓不到，只能读出来。
+- ❌ `Four sampled paths per question suffice to estimate both properties, which tells in advance whether more paths will pay and, without ground-truth answers, sets a budget that keeps 98\% ...`
+- ✅ `Four sampled paths per question suffice to estimate both properties. The estimates predict whether more paths will pay, and without ground-truth answers they set a budget that keeps 98\% ...`
+- **只拆不并**：拆完 sd 下降是可接受的代价（`PROSE.RHYTHM_VARIANCE` 让步）；**不得**为补回方差把别的句子并长——并出来的句子会重新长出从句链。
+- 不拆：无逗号的限定性从句（`a budget that keeps ...`）、给符号下定义的 `where $p$ is ...`、数学条件 `whenever ...`。
 
 **短句的两道门槛**（短句本身没问题，这两种短句有问题）：
 - **预告而非主张**："The difficulty is structural." / "This can be made precise." → 删除测试：删掉后信息是否零损失？是则改写成承载内容的句子 <!-- policy:PROSE.ANNOUNCEMENT_SENTENCE -->

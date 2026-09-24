@@ -261,6 +261,7 @@ SoK 规则集合（语义规则）：
 | PROSE.UNICODE_ARROWS | prose-unicode-arrows | domain | warn | false | lint_script | guardrail | safe |
 | PROSE.TRAILING_AFTERTHOUGHT | prose-trailing-afterthought | domain | warn | false | lint_script | guardrail | none |
 | PROSE.COMMA_OVERUSE | prose-comma-overuse | domain | warn | false | lint_script | guardrail | none |
+| PROSE.CLAUSE_CHAIN | prose-clause-chain | domain | warn | false | doc | guidance | none |
 | PROSE.MIDSENTENCE_COLON | prose-midsentence-colon | domain | warn | false | lint_script | guardrail | none |
 | PROSE.NEGATION_CONTRAST | prose-negation-contrast | domain | warn | false | lint_script | guardrail | none |
 | PROSE.CAUSAL_CONNECTIVE | prose-causal-connective | domain | warn | false | lint_script | guidance | none |
