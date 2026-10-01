@@ -10,6 +10,7 @@
 
 ## News
 
+- **2026-10-02 (v1.34.0)**: self-review 新增三项检查，针对写得像项目记录的论文。`PROSE.DEVELOPER_VOICE` 用重实现测试判断，把讲 pipeline、脚本、数据处理过程的句子改写成讲研究对象的句子，被过滤掉的样本必须写成纳入标准并给出数量。`SUBMIT.AVAILABILITY_COMMITMENT` 把每一句"接收后公开""按请求提供"变成问作者的问题。`PAPER.LIMITATION_NECESSITY` 只保留限定发现的 limitation，删掉解释作者没做更多的那些，并取消了至少三条的配额。
 - **2026-09-24 (v1.33.2)**: 新规则 `PROSE.CLAUSE_CHAIN`：一句只挂一层从属结构。关系从句、插入语、第二个并列谓语叠在一起的句子（"…, which tells … and, without labels, sets …"）拆成各说一件事的句子，新句以具体主语或锚开头。这类句子常常只有两三个逗号、不到 35 词，逗号规则和长度规则都抓不到。`PROSE.RHYTHM_VARIANCE` 改为把句长方差当作诊断：一次编辑只修孤句和从句链，作者原有的句长不动；不再允许为拉方差而并句，因为并出来的句子会重新长出从句链、读起来太长。
 - **2026-09-24 (v1.33.1)**: v1.32.3 新加的孤句 regex 不再误报两类有锚的短句：带指示词的（"assume that layout"）和以已定义标签开头的（"RQ2 asks …"）。policy CI 恢复通过。
 - **2026-09-24 (v1.33.0)**: 新规则 `PAPER.DEFINE_BEFORE_USE`：按阅读顺序，术语在首次使用时或之前必须有定义或 gloss。三节之后才出现的定义不算，章节指针也不算 gloss。`claim-architecture-review` 在 P1 逐节扫描时抓这一项，因为逐段润色只看得到一段，发现不了隔着几节的定义。

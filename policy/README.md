@@ -198,6 +198,7 @@ SoK 规则集合（语义规则）：
 | PAPER.OUTCOME_LOGIC | paper-outcome-logic | core | warn | false | doc | guidance | none |
 | PAPER.REVISION_CLOSURE | paper-revision-closure | core | warn | false | doc | guidance | none |
 | PAPER.DEFINE_BEFORE_USE | paper-define-before-use | core | warn | false | doc | guidance | none |
+| PAPER.LIMITATION_NECESSITY | paper-limitation-necessity | core | warn | false | doc | guardrail | none |
 | CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script | guidance | none |
 | CITE.CLAIM_SUPPORT_REQUIRED | cite-claim-support-required | core | warn | false | lint_script | guidance | none |
 | EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc | guidance | none |
@@ -231,6 +232,7 @@ SoK 规则集合（语义规则）：
 | PROSE.PROMOTIONAL_LANGUAGE | prose-promotional-language | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.FORMATTING_RESTRAINT | prose-formatting-restraint | domain | warn | false | doc | guidance | none |
 | PROSE.NO_INTERNAL_PROVENANCE | prose-no-internal-provenance | core | error | false | lint_script | guardrail | assisted |
+| PROSE.DEVELOPER_VOICE | prose-developer-voice | core | warn | false | lint_script | guardrail | none |
 | PROSE.TENSE_CONSISTENCY | prose-tense-consistency | domain | warn | false | doc | guidance | none |
 | PROSE.ABBREVIATION_FIRST_USE | prose-abbreviation-first-use | domain | warn | false | doc | guidance | none |
 | PROSE.VAGUE_QUANTIFIERS | prose-vague-quantifiers | domain | warn | false | lint_script | guardrail | assisted |
@@ -277,6 +279,7 @@ SoK 规则集合（语义规则）：
 | ETHICS.LIMITATIONS_SECTION_MANDATORY | ethics-limitations-section-mandatory | venue | error | false | doc | guidance | none |
 | ANON.DOUBLE_BLIND_ANONYMIZATION | anon-double-blind-anonymization | venue | error | true | doc | guidance | none |
 | SUBMIT.PAGE_LIMIT_STRICT | submit-page-limit-strict | venue | error | false | doc | guidance | none |
+| SUBMIT.AVAILABILITY_COMMITMENT | submit-availability-commitment | core | warn | false | lint_script | guardrail | none |
 | BIBTEX.CONSISTENT_CITATION_KEY_FORMAT | bibtex-consistent-citation-key-format | venue | warn | false | lint_script | guardrail | none |
 
 ---

@@ -68,6 +68,7 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `PROSE.PROMOTIONAL_LANGUAGE` | 禁止推销性/情绪化用词 |
 | `PROSE.FORMATTING_RESTRAINT` | 格式克制（不滥用bold/list/texttt） |
 | `PROSE.NO_INTERNAL_PROVENANCE` | 正文/caption/表格禁内部工作痕迹（7 类：脚本名·元话语·placeholder·数据路径·schema 列名·内部 fixture 名·修订叙事），provenance 归 ledger 与 artifact |
+| `PROSE.DEVELOPER_VOICE` | 句子描述研究对象，不记录项目开发过程（重实现测试；工具当主语、工程动词、数据处理流水账、操作步骤式 caption 改写成对象语言） |
 | `PROSE.TENSE_CONSISTENCY` | 各章节时态一致 |
 | `PROSE.ABBREVIATION_FIRST_USE` | 缩写首次展开 |
 | `PROSE.VAGUE_QUANTIFIERS` | 禁止模糊量词 |
@@ -98,7 +99,9 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 | `SUBMIT.SECTION_NUMBERING_CONSISTENCY` | Section编号一致 |
 | `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
+| `SUBMIT.AVAILABILITY_COMMITMENT` | 代码/数据的延期或按请求承诺须现在兑现、作者确认，或删掉 |
 | `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
+| `PAPER.LIMITATION_NECESSITY` | 每条 limitation 须是发现的边界，不是作者的边界或对假想质疑的回应；不设条数下限 |
 | `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
 
 ## SoK Profile Addendum
@@ -263,6 +266,8 @@ If genuinely uncertain about framing or major claims:
 1. Draft what you can confidently
 2. Flag specific uncertainties: "I framed X as the main contribution—let me know if you'd prefer to emphasize Y instead"
 3. Continue with the draft rather than blocking
+
+**Write about the research object, not the project** <!-- policy:PROSE.DEVELOPER_VOICE -->. Drafting from a repository is where developer voice comes from: the pipeline, the scripts, and the stages are what is in context, so the draft narrates what the code did. Before each sentence of Method, Setup, Results, or a caption, name the object it is about (a quantity, a sample, a step of the method, a finding) and make that the subject. Apply the reimplementation test: would the sentence still be true for a reader who reimplements the method from the paper with different code? `The pipeline calls GPT-4o and dumps the scores` fails it; `Each response is graded by GPT-4o against the reference answer` passes. Every filtering step is written as an inclusion criterion with the number of samples it removes. The card's rewrite table maps each mechanical verb to the relation it establishes.
 
 **Questions to include with the draft** (not before):
 - "I emphasized X as the main contribution—adjust if needed"
@@ -1138,8 +1143,9 @@ Opens with 1-2 paragraphs introducing what aspects need deeper analysis and why,
 ...
 
 \subsubsection{Limitations}
-Honestly report what does NOT work and why.
-Explain why limitations do not undermine core claims.
+State where each result stops holding: the assumption, scale, language,
+or setting it was measured under. Each item names the result it bounds.
+No resource excuses, no rebuttals of critiques nobody raised.
 ...
 
 \subsubsection{Real-World Applicability}
@@ -1152,6 +1158,8 @@ Explain why limitations do not undermine core claims.
 - Compare against baseline methods' complexity in a mini table or inline comparison
 - Use exact variable names from `Table~\ref{tab:notation}` — never introduce ad-hoc symbols
 - If full analysis is lengthy, provide summary bounds in main text and defer proofs to Appendix with `\ref`
+
+**Limitations are the boundaries of the findings, not of the effort** <!-- policy:PAPER.LIMITATION_NECESSITY -->: an item that names no result it bounds ("due to limited compute we could not…", "one might argue…; however…") is either rewritten as the boundary it hides or cut. There is no minimum count, and no genuine boundary is dropped.
 
 **What belongs here:** Security analysis, complexity analysis, limitations, real-world applicability, failure mode analysis, scalability discussion.
 
@@ -1184,14 +1192,15 @@ Guidelines:
 
 **Post-Conclusion Declarations** (unnumbered, after Conclusion, before References):
 
-Place the following as needed (check venue requirements):
+Place the following as needed (check venue requirements). Every availability promise is checked with the author first <!-- policy:SUBMIT.AVAILABILITY_COMMITMENT -->:
 
 ```latex
 \section*{Ethics Considerations}
 [If applicable: IRB approval, data privacy, potential misuse, dual-use concerns]
 
 \section*{Open Science Statement}
-[Code/data availability, reproducibility artifacts, anonymized repo link]
+[Code/data availability in the present tense with an anonymized link. A deferred or on-request
+ promise ("upon acceptance", "available on request") goes in only if the author has confirmed it]
 
 \section*{Use of Generative AI Tools}
 [Disclosure of LLM usage in writing/coding, per venue policy. E.g., ICLR requires this.]

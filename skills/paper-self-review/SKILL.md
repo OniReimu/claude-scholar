@@ -68,6 +68,7 @@ Evaluate the quality and effectiveness of figures and tables:
 - Do comparison tables stay within the 3–4 dimension budget, single-column first, with an explicit reason for anything wider? <!-- policy:TABLE.DIMENSION_BUDGET -->
 - For any full-width (`table*`) table, does `\resizebox` only shrink (in-table font ≤ body font) — not enlarge a sparse table? If it would enlarge, demote to single-column or add metrics/columns. <!-- policy:TABLE.FULLWIDTH_FONT_DENSITY -->
 - Are prose, **captions, table cells, notation tables and appendices** free of internal provenance — script names, DPI notes, placeholder markers, draft meta-text, **result paths (`\path{experiments/results/...}`), data schema identifiers (`\texttt{empirical\_rate}`), internal fixture names ("As Golden G4"), and revision narrative ("the old bound is retracted", "superseded by", "renamed to avoid collision with")**? Eight of eleven leaks in the sweep that motivated this check sat outside body prose. Run `bash policy/lint.sh --rule PROSE.NO_INTERNAL_PROVENANCE <dir>` for P1–P5, then `bash policy/scripts/extract-undefined-identifiers.sh <dir>` and confirm every identifier is defined somewhere the reader can find it. <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
+- Does every caption say what the figure shows (the quantity, the encoding, the sample) rather than how it was computed or plotted? "We compute X for each run, average over seeds, and plot it" is developer voice; "Mean X over five seeds; shaded bands are 95% CIs" is a caption. <!-- policy:PROSE.DEVELOPER_VOICE -->
 - Do figures/tables support the text narrative?
 - Are figures/tables clear and readable?
 - Do formats comply with journal/conference requirements?
@@ -79,6 +80,7 @@ Check writing clarity and readability:
 - Are empty intensifiers removed? <!-- policy:PROSE.INTENSIFIERS_ELIMINATION -->
 - Are em-dashes fully eliminated (zero allowed — split into sentences, relative clauses, commas, or parentheses)? <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - Is technical terminology used appropriately?
+- **Developer voice** — does every sentence describe the research object rather than the project? Run `bash policy/lint.sh --rule PROSE.DEVELOPER_VOICE <dir>` for the lexical part (dump the scores, spin up, the pipeline calls, the scoring script discards), then read Method, Setup, Results, Discussion, captions and appendices sentence by sentence, because data-processing narrative in ordinary verbs is invisible to the pattern. Test each sentence: would it still hold for a reader who reimplements the method with different code? For each failure, report the class (D1–D7 in the card) and the object-language rewrite; tools and processes leave the subject position, and mechanical verbs become the relation they establish. Every drop / filter / exclude step must come back as an inclusion criterion with the number of samples it removes. Systems papers whose system is the object, algorithm descriptions, experimental protocol and compute facts are exempt. <!-- policy:PROSE.DEVELOPER_VOICE -->
 - Reading in order, is every paper-specific term (coined term, method or component name, RQ/claim label, narrowed common word, symbol) defined or glossed **at or before its first use**? A definition that exists only sections later does not count, and neither does a section pointer ("X (§4)"). This is a cross-section defect, so the fix plan comes from `claim-architecture-review` P1 on the sections where the term first appears. <!-- policy:PAPER.DEFINE_BEFORE_USE -->
 - Are sentence structures clear?
 - Is paragraph organization logical?
@@ -134,6 +136,8 @@ Check submission requirements:
 - Does the paper meet the page limit? <!-- policy:SUBMIT.PAGE_LIMIT_STRICT -->
 - Is double-blind anonymization correct? <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION -->
 - Is there a Limitations section? <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
+- Is every Limitations item a boundary of a finding? List the result each item bounds. An item that names none explains the authors' effort ("due to limited compute we could not …") or answers a critique nobody raised ("one might argue …; however …"): rewrite it as the boundary it hides, or cut it, unless it is the only visible answer to a real reviewer comment. There is no minimum count. Check the reverse too: a result measured only at one scale, language or data type but stated generally is a missing boundary. <!-- policy:PAPER.LIMITATION_NECESSITY -->
+- Is every availability promise confirmed? Run `bash policy/lint.sh --rule SUBMIT.AVAILABILITY_COMMITMENT <dir>`, add implicit promises the pattern misses (a maintained leaderboard, a forthcoming version), and **ask the author** about each one: release now with an anonymized link in the present tense, state a confirmed plan concretely and check it against the venue's current CFP, or cut it. Record the author's answer per item; an unanswered promise blocks submission. <!-- policy:SUBMIT.AVAILABILITY_COMMITMENT -->
 - 补 Limitations 与任何不利结果时，按「是否必须讨论 → 能否换目标解释 → 能否收缩主张到证据实际支持的范围」三步处置逐条过，并删掉情绪副词、回填数据集/指标/幅度/表号锚点；披露量由 `ETHICS.LIMITATIONS_SECTION_MANDATORY` 决定且优先，本条只约束措辞与放置，不减内容。 <!-- policy:PROSE.SELF_UNDERMINING -->
 
 ### 9. SoK Scope Checks (When SoK profile is active)
@@ -177,6 +181,7 @@ Paper Quality Checklist:
 - [ ] Table headers include direction indicators (↑/↓) <!-- policy:TABLE.DIRECTION_INDICATORS -->
 - [ ] Tables resizebox-fit to column width unless naturally fitting <!-- policy:TABLE.RESIZEBOX_COLUMN_FIT -->
 - [ ] Comparison tables within 3–4 dimension budget, single-column first <!-- policy:TABLE.DIMENSION_BUDGET -->
+- [ ] No developer voice: every sentence and caption passes the reimplementation test; filtering steps stated as inclusion criteria with counts <!-- policy:PROSE.DEVELOPER_VOICE -->
 - [ ] No internal provenance anywhere rendered — prose, captions, table cells, appendices (scripts, result paths, schema column names, internal fixture names, revision narrative, placeholders, meta-text); `policy/lint.sh --rule PROSE.NO_INTERNAL_PROVENANCE` is clean <!-- policy:PROSE.NO_INTERNAL_PROVENANCE -->
 - [ ] Symbols consistent throughout paper <!-- policy:LATEX.NOTATION_CONSISTENCY -->
 - [ ] For crypto-oriented security papers, core mechanism is presented as a structured Construction (Primitives/Parameters + named procedures) <!-- policy:PROSE.CRYPTO_CONSTRUCTION_TEMPLATE -->
@@ -201,6 +206,8 @@ Paper Quality Checklist:
 - [ ] Page limit met <!-- policy:SUBMIT.PAGE_LIMIT_STRICT -->
 - [ ] Double-blind anonymization correct <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION -->
 - [ ] Limitations section present <!-- policy:ETHICS.LIMITATIONS_SECTION_MANDATORY -->
+- [ ] Every Limitations item names the result it bounds; effort excuses and rebuttals of imagined critiques rewritten or cut; no minimum count <!-- policy:PAPER.LIMITATION_NECESSITY -->
+- [ ] Every availability promise (upon acceptance / on request / will be released / full version) confirmed by the author, or replaced by a present-tense anonymized link, or cut <!-- policy:SUBMIT.AVAILABILITY_COMMITMENT -->
 - [ ] Limitations/unfavourable results went through the three-step disposition, with emotive adverbs removed and anchors kept — disclosure unchanged <!-- policy:PROSE.SELF_UNDERMINING -->
 ```
 

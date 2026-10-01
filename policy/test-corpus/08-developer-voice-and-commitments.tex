@@ -1,0 +1,149 @@
+% Corpus: PROSE.DEVELOPER_VOICE and SUBMIT.AVAILABILITY_COMMITMENT.
+%
+% Both regex layers only LOCATE. Developer voice is decided by the
+% reimplementation test, and a located commitment is a question to the author.
+% The precision cases below carry the weight: object-language rewrites,
+% algorithm descriptions, systems whose components are the object, cited tools,
+% and protocol-side uses of "request" and "release" must stay silent.
+
+% ── PROSE.DEVELOPER_VOICE: located ──────────────────────────────────────────
+
+% @CASE devvoice-tool-as-subject-and-dump
+% @EXPECT PROSE.DEVELOPER_VOICE
+The pipeline then calls GPT-4o to grade each response and dumps the scores to disk.
+% @ENDCASE
+
+% @CASE devvoice-harness-feeds
+% @EXPECT PROSE.DEVELOPER_VOICE
+Our harness feeds each prompt to the model three times at temperature 0.7.
+% @ENDCASE
+
+% @CASE devvoice-named-processing-script
+% @EXPECT PROSE.DEVELOPER_VOICE
+The scoring script discards responses without a final answer.
+% @ENDCASE
+
+% @CASE devvoice-harness-loads
+% @EXPECT PROSE.DEVELOPER_VOICE
+For this baseline the harness loads no parametric adapter.
+% @ENDCASE
+
+% @CASE devvoice-systems-object-fires-at-regex-layer-by-design
+% In a pipeline-parallelism paper the pipeline IS the research object, and the
+% reimplementation test keeps this sentence. The pattern cannot know that.
+% @EXPECT PROSE.DEVELOPER_VOICE
+In the interleaved schedule, the pipeline runs two microbatches per stage before the first backward pass.
+% @ENDCASE
+
+% ── PROSE.DEVELOPER_VOICE: regex-blind, judgment layer only ─────────────────
+
+% @CASE devvoice-data-processing-narrative-invisible-to-regex
+% @EXPECT PROSE.DEVELOPER_VOICE
+% @XFAIL Data-processing narrative in ordinary verbs (parse, deduplicate, drop) has no lexical signature that separates it from protocol prose. The inclusion criterion it hides is the judgment layer's to surface.
+We parse the outputs, deduplicate them by hash, and drop rows where the extractor returned no answer.
+% @ENDCASE
+
+% @CASE devvoice-procedural-caption-invisible-to-regex
+% @EXPECT PROSE.DEVELOPER_VOICE
+% @XFAIL A caption written as procedure uses the same verbs as a method description. Only the reader knows it is a caption.
+We compute the refusal rate for each run, average it over seeds, and plot it against model size.
+% @ENDCASE
+
+% ── PROSE.DEVELOPER_VOICE: precision (must stay silent) ─────────────────────
+
+% @CASE devvoice-object-language-rewrite-clean
+% @EXPECT none
+Each response is graded by GPT-4o against the reference answer.
+% @ENDCASE
+
+% @CASE devvoice-inclusion-criterion-clean
+% @EXPECT none
+Responses without a parsable final answer are excluded (312 of 6,000).
+% @ENDCASE
+
+% @CASE devvoice-algorithm-description-clean
+% @EXPECT none
+The algorithm first computes the gradient of the loss with respect to each candidate token.
+% @ENDCASE
+
+% @CASE devvoice-systems-component-clean
+% @EXPECT none
+The KV cache stores the keys and values of every previous token.
+% @ENDCASE
+
+% @CASE devvoice-cited-tool-clean
+% @EXPECT none
+We use the LM Evaluation Harness for all multiple-choice benchmarks.
+% @ENDCASE
+
+% @CASE devvoice-memory-dump-noun-clean
+% @EXPECT none
+A memory dump of the enclave reveals the sealing key.
+% @ENDCASE
+
+% @CASE devvoice-hardcoded-secret-security-object-clean
+% @EXPECT none
+The scanner also flags hardcoded secrets in the skill manifest.
+% @ENDCASE
+
+% @CASE devvoice-artifact-contents-clean
+% @EXPECT none
+The repository contains the protocol implementation, evaluation scripts, and plotting scripts.
+% @ENDCASE
+
+% @CASE devvoice-availability-of-training-code-clean
+% @EXPECT none
+Training code and configuration files are available at \url{https://anonymous.4open.science/r/abcd}.
+% @ENDCASE
+
+% ── SUBMIT.AVAILABILITY_COMMITMENT: located ─────────────────────────────────
+
+% @CASE commitment-upon-acceptance
+% @EXPECT SUBMIT.AVAILABILITY_COMMITMENT
+Our code will be released upon acceptance.
+% @ENDCASE
+
+% @CASE commitment-on-request-from-authors
+% @EXPECT SUBMIT.AVAILABILITY_COMMITMENT
+The annotated dataset is available from the corresponding author on reasonable request.
+% @ENDCASE
+
+% @CASE commitment-we-will-open-source
+% @EXPECT SUBMIT.AVAILABILITY_COMMITMENT
+We will open-source the benchmark together with the evaluation prompts.
+% @ENDCASE
+
+% @CASE commitment-extended-version
+% @EXPECT SUBMIT.AVAILABILITY_COMMITMENT
+Full proofs of both lemmas are deferred to the extended version.
+% @ENDCASE
+
+% ── SUBMIT.AVAILABILITY_COMMITMENT: regex-blind ─────────────────────────────
+
+% @CASE commitment-maintenance-promise-invisible-to-regex
+% @EXPECT SUBMIT.AVAILABILITY_COMMITMENT
+% @XFAIL A promise of ongoing maintenance has no fixed phrasing. It is a commitment all the same and is the judgment layer's to catch.
+A public leaderboard tracks new submissions and is updated monthly.
+% @ENDCASE
+
+% ── SUBMIT.AVAILABILITY_COMMITMENT: precision (must stay silent) ────────────
+
+% @CASE commitment-present-tense-link-clean
+% @EXPECT none
+Code, prompts, and model transcripts are available at \url{https://anonymous.4open.science/r/abcd}.
+% @ENDCASE
+
+% @CASE commitment-protocol-request-clean
+% @EXPECT none
+The server returns the encrypted share upon request from an authenticated client.
+% @ENDCASE
+
+% @CASE commitment-protocol-release-clean
+% @EXPECT none
+The decryption key will be released to the client after the third round.
+% @ENDCASE
+
+% @CASE commitment-future-work-direction-clean
+% @EXPECT none
+Future work could test whether the effect holds for models above 70B parameters.
+% @ENDCASE

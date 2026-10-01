@@ -58,6 +58,7 @@ One row per paragraph, appended section-by-section.
 | `unique_info` | `true` \| `false` (false = its information has another home; cross-check the ledger) |
 | `backs_lead` | `true` \| `false` (true = the claim it `supports` has `lead ≠ none`; `false` ⇒ candidate for `tighten` / `move:appendix`, never a licence to `delete`) |
 | `required_caveat` | `true` \| `false` (true = threat-model boundary / scope condition / overclaim defense / venue-mandated Limitation — load-bearing, not deletable) |
+| `lim_class` | Limitations items only: `A` (bounds a named finding) \| `B` (explains the authors' effort) \| `C` (answers a critique nobody raised). Only `A` sets `required_caveat=true` |
 | `canonical_home` | where this information should live (may differ from `loc`) |
 | `verdict` | `keep` \| `tighten` \| `merge` \| `move:<section>` \| `move:appendix` \| `split` \| `delete` \| `escalate` |
 | `confidence` | `high` \| `medium` \| `low` (low ⇒ verdict must be `escalate`, never `delete`) |

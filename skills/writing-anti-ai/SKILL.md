@@ -19,7 +19,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
 > 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
-> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（32 条禁止模式）。
+> 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（35 条禁止模式）。
 > **本表是执行清单，不是索引** <!-- policy-table:checklist -->——表里每一条 `enforcement: doc` 的规则
 > 都必须在正文有对应的执行块（`validate.sh` 9b 节机器检查），否则它没有任何东西会执行它。
 
@@ -67,6 +67,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.THEATRICAL_SPLIT` | 禁止"设预期—短促击碎"两拍式反驳 |
 | `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足；免责式否定谓语（We do not X）翻成正面（我们做的是 Y） |
 | `PAPER.OUTCOME_LOGIC` | 删句级过程流水账（we first tried…）；结构级重排归 claim-architecture-review |
+| `PROSE.DEVELOPER_VOICE` | 开发者语态改写成研究对象语言：重实现测试，工具不做主语，机械动词换成它建立的科学关系，drop/filter 写成纳入标准加样本量，caption 只说图里是什么 |
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
 | `PROSE.CAUSAL_CONNECTIVE` | 因果连接词按类型选，不默认用 `, so`。**先读 lint 的密度行再逐条判**：三子类保留偏置只在基线密度下成立 |
@@ -361,6 +362,37 @@ in an earlier version of this work / in our preliminary implementation
 - 与 §7b 的分工：`we first tried X, which did not work` 可能同时触发两条——**§7b 管这个不利结果怎么措辞**（别写成自贬），**本条管这段时间顺序该不该出现**。两条各报一次，不合并。
 
 **结构级不归本 skill**：Method 按实现史排序、Results 按跑的时间排序、只为交代"我们也试过"而存在的整段——这些要重排章节，归 `claim-architecture-review` 的 **P3 narrative closure**——它判 spine 是否闭环、以及这个 spine 是不是最强证据指向的那个命题（最小调用见下方转诊说明）。规则卡里那半条**重定义问题、重排贡献的授权**同样是写作/结构层的事，线编不执行。
+
+### 8c. 开发者语态 → 研究对象语言 <!-- policy:PROSE.DEVELOPER_VOICE -->
+
+论文描述研究对象，不记录项目开发过程。这一节不只是删词：每处命中都要**改写**，把句子交还给它真正在讨论的对象。
+
+**先跑定位器，再逐句读。** `policy/lint.sh --rule PROSE.DEVELOPER_VOICE` 只抓得到工程俚语（dump the scores、spin up、kick off）和工具当主语（the pipeline calls、our harness feeds、the scoring script discards）。用普通动词写成的数据处理流水账和操作步骤式 caption 它看不见，必须逐句读。范围是 Method、Setup、Results、Discussion、全部 caption、表格注释和附录。
+
+**判据：重实现测试。** 一个读者只拿着论文、用完全不同的代码重新实现，这句话对新的实现是否仍然成立？只对"我们这份代码、这次运行"成立的，就是 developer voice。对研究对象做的实验操作（fine-tune 三个 epoch、每个样本采样五次）是协议，保留；代码做的机械操作（调用、写盘、解析、缓存、按阶段传递）不进正文。
+
+**改写四步：**
+1. 找对象：这句真正在讨论的量、样本、方法步骤或发现。
+2. 让对象做主语，工具和流程退出主语位置。
+3. 把机械动词换成它建立的关系：compute → 定义或公式；filter/drop → 纳入标准加受影响的样本量；aggregate → 统计量；"call a model to grade" → 测量工具与测量对象；plot → 图里显示的量。
+4. 对象层什么都不剩就删；复现需要的细节写成协议事实放进实验设置或附录。
+
+```
+✗ The pipeline then calls GPT-4o to grade each response and dumps the scores to disk.
+✓ Each response is graded by GPT-4o against the reference answer.
+
+✗ We parse the outputs, deduplicate by hash, and drop rows where the extractor returned NaN.
+✓ Duplicate responses are merged, leaving 6,000. Responses without a parsable final answer are excluded (312, 5.2%), leaving 5,688 for analysis.
+
+✗ \caption{We compute the refusal rate for each run, average over seeds, and plot it.}
+✓ \caption{Mean refusal rate over five seeds; shaded bands are 95% CIs.}
+```
+
+第二组是最常见、也最危险的形态：被 drop 掉的样本是一条纳入标准，它影响多少样本、会不会在条件间有偏，改写后都必须写明，不能藏在一个动词里。
+
+**放行（不要"修"）：** 系统论文里系统本身就是研究对象（"the scheduler dispatches requests to idle workers"）；算法的过程性描述（"the algorithm first computes …"）；实验协议、超参、种子、计算资源；引用使用的外部工具（"We use the LM Evaluation Harness"）；artifact 可得性声明。
+
+**与 §8b 和 provenance 卡的分工：** `PROSE.NO_INTERNAL_PROVENANCE` 判路径、文件名、snake_case 标识符能不能出现，§8b 判运行与调试的时间顺序该不该出现；本节负责删掉之后这句话怎么用对象语言重写。同一句可以三条都报。代码标识符换成概念名或符号后，在首次使用处定义（`PAPER.DEFINE_BEFORE_USE`）。
 
 ### 9. Claim–Evidence Calibration（动词对证据） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
 

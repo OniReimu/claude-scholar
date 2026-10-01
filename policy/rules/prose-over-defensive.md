@@ -11,7 +11,7 @@ venues: [all]
 check_kind: llm_semantic
 enforcement: lint_script
 params: {max_homes_per_caveat: 1}
-conflicts_with: [PROSE.RHYTHM_VARIANCE, PROSE.SELF_UNDERMINING]
+conflicts_with: [PROSE.RHYTHM_VARIANCE, PROSE.SELF_UNDERMINING, PAPER.LIMITATION_NECESSITY]
 constraint_type: guidance
 autofix: none
 lint_targets: "**/*.tex"

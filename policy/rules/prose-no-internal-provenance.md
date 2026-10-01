@@ -11,7 +11,7 @@ venues: [all]
 check_kind: regex
 enforcement: lint_script
 params: {drafting_severity: warn}
-conflicts_with: [EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE, EXP.RESULTS_STATUS_DECLARATION_REQUIRED]
+conflicts_with: [EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE, EXP.RESULTS_STATUS_DECLARATION_REQUIRED, PROSE.DEVELOPER_VOICE]
 constraint_type: guardrail
 autofix: assisted
 lint_targets: "**/*.tex"
@@ -146,4 +146,5 @@ placeholder numbers pending the final run. [CLAIM NOT VERIFIED]}
 ## Conflicts
 
 - `EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` / `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` **要求**在 caption 与小节声明里披露结果状态（simulated / projected / 非实跑）。那是科学 claim，不是工作痕迹——**两条 EXP 规则优先**，检测器必须放行其要求的披露文本
+- `PROSE.DEVELOPER_VOICE` 管没有特殊 token 的工程语态（"the pipeline calls the judge and stores its verdict"）。本条判路径、schema、fixture 能不能出现；那条判句子的主语与谓语是否落在研究对象上，并给出删掉之后的对象层改写
 - `ANON.DOUBLE_BLIND_ANONYMIZATION` 管匿名性。一个会去匿名化的仓库 URL 是它的问题，不是本条的问题；本条只关心路径/schema/fixture/修订叙事是否泄漏

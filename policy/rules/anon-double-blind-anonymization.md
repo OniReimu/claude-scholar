@@ -11,7 +11,7 @@ venues: [neurips, icml, iclr, acl, aaai, colm]
 check_kind: manual
 enforcement: doc
 params: {}
-conflicts_with: []
+conflicts_with: [SUBMIT.AVAILABILITY_COMMITMENT]
 constraint_type: guidance
 autofix: none
 ---
