@@ -58,6 +58,7 @@ One row per paragraph, appended section-by-section.
 | `unique_info` | `true` \| `false` (false = its information has another home; cross-check the ledger) |
 | `backs_lead` | `true` \| `false` (true = the claim it `supports` has `lead ≠ none`; `false` ⇒ candidate for `tighten` / `move:appendix`, never a licence to `delete`) |
 | `required_caveat` | `true` \| `false` (true = threat-model boundary / scope condition / overclaim defense / venue-mandated Limitation — load-bearing, not deletable) |
+| `method_role` | Method section only: `problem-setup` \| `novel-mechanism` \| `standard-component` \| `instantiation` \| `evaluation-leak`. `instantiation` and `evaluation-leak` take a `move` with a named destination; a `novel-mechanism` row notes which of *what it does / why this design / where it sits in the data flow* is missing |
 | `lim_class` | Limitations items only: `A` (bounds a named finding) \| `B` (explains the authors' effort) \| `C` (answers a critique nobody raised). Only `A` sets `required_caveat=true` |
 | `canonical_home` | where this information should live (may differ from `loc`) |
 | `verdict` | `keep` \| `tighten` \| `merge` \| `move:<section>` \| `move:appendix` \| `split` \| `delete` \| `escalate` |
@@ -79,10 +80,37 @@ Rules: `delete` legal only when `unique_info=false` AND `required_caveat=false`;
 - Canonical home: §4 ¶3 (protocol)
 - Collapse plan: §5 ¶1 → one forward reference ("per the protocol in §4"); Appendix B → keep only the extra numeric detail, drop the re-explanation.
 
+## Method allocation (from the M-pass)
+- Word share by role: novel-mechanism 18% · standard-component 41% · instantiation 33% · problem-setup 8% (exemplar range for novel-mechanism: 35–60%)
+- §4 ¶5 (novel-mechanism): states what the gate does; missing why a mean aggregator fails here → add one design-reason sentence.
+- §4 ¶2–¶3 (standard-component): FedAvg local training in three paragraphs → one sentence + citation.
+- §4 ¶6 (instantiation): λ = 0.1, ResNet-18, SGD settings → move to §5.1 Experimental Settings (Implementation Details paragraph).
+
 ## Forward uses and undefined terms (from P1)
 - `cascade-drift`: first use §1 ¶3, defined §4 ¶2 → one-clause gloss at §1 ¶3 ("the error each stage inherits from the stage before it"); definition stays in §4.
 - `C6`: used §3–§6 (9×), never defined → define at first use in §3 ¶1, or replace the label with the claim it names.
 ```
+
+## `exemplars.md` (working state, optional — from P0b)
+
+```markdown
+# Exemplars — <problem class>, <venue set>
+| # | Paper (verified) | Venue, year | ID | Source |
+|---|---|---|---|---|
+| E1 | <title> | ICLR 2025 | arXiv:2xxx.xxxxx / DOI | LaTeX |
+
+## Script profile (method_profile.py, same flags as the draft)
+| | words | share | display_eq | ladder | bare_trans | numeric/100w | where | cites |
+| E1 | … |
+| Draft | … |
+| Range (E1–En) | min–max per column |
+
+## Judgment columns
+| | novel-mechanism share | values in Method? | symbol style | design reason stated? |
+| E1 | 45% | none (all in §5.1) | data-flow role | yes |
+```
+
+Fewer than 3 verified exemplars → write that line and no range; the M-pass falls back to the rule-card defaults.
 
 ## `progress.md` (working state — resumability)
 

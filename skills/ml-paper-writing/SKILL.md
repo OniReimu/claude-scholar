@@ -79,7 +79,9 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `PROSE.THEATRICAL_SPLIT` | 禁止两拍式戏剧反驳 |
 | `PROSE.PARAGRAPH_TOPIC_SENTENCE` | 首句为topic sentence |
 | `PROSE.SUBSECTION_COMPLETENESS` | subsection≥2段 |
-| `PROSE.EQUATION_EXPLANATION` | 公式三步解释 |
+| `PROSE.EQUATION_EXPLANATION` | 公式放进数据流里讲：引入句说作用，新符号交代从哪来、起什么作用，公式链写出推理关系 |
+| `PAPER.METHOD_INSTANTIATION_SEPARATION` | Method 写机制（符号与设计理由），实验取值、backbone、实现选择放 Setup；搬家不删 |
+| `PAPER.METHOD_NOVELTY_WEIGHT` | Method 篇幅跟着创新走：新机制写清做什么、为什么这样设计、接在数据流哪里，标准组件一句话加引用 |
 | `PROSE.INFORMAL_VOCABULARY` | 口语语域五类分类表 |
 | `PROSE.IDIOM_COLLISION` | 技术短语与常用习语同形 |
 | `PROSE.REGISTER_PRESERVATION` | 简化/压缩不得降语域（判 diff） |
@@ -490,7 +492,7 @@ See `references/knowledge/README.md` for complete knowledge base documentation.
 |---------|-------------------|-----------------|
 | Abstract | Yes | "Framed contribution as X—adjust if needed" |
 | Introduction | Yes | "Emphasized problem Y—correct if wrong" |
-| Methods | Yes | "Included details A, B, C—add missing pieces" |
+| Methods | Draft only | "Framed X as the novel mechanism and moved values to Setup—check the design reasons; they are yours to state" |
 | Experiments | Yes | "Highlighted results 1, 2, 3—reorder if needed" |
 | Related Work | Yes | "Cited papers X, Y, Z—add any I missed" |
 
@@ -780,6 +782,7 @@ Best practices for the notation table:
 
 **Guidelines:**
 - All notation in subsequent sections MUST match `Table~\ref{tab:notation}` — never introduce a symbol without defining it in the notation table first
+- The notation table is a lookup, not an explanation: at a symbol's first use in the text, still say where it comes from and what it does there <!-- policy:PROSE.EQUATION_EXPLANATION -->
 - Use `\begin{equation}...\end{equation}` for display equations; do not use raw `$$...$$` or `\[...\]` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 - Inline equations can use `$...$`
 - In math mode, if a variable-like token has more than 3 letters, write it with `\text{}` (e.g., `\text{score}`, `\text{total_loss}`), not italic math identifiers <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
@@ -799,11 +802,16 @@ Best practices for the notation table:
 
 **Step 7: Write Methods / Our Approach (→ §4)**
 
-Enable reimplementation:
-- Conceptual outline or pseudocode
-- All hyperparameters listed
-- Architectural details sufficient for reproduction
-- Present final design decisions; ablations go in §5 Experiments
+Method presents the **mechanism**, and the reproduction detail goes where it does not bury it. <!-- policy:PAPER.METHOD_INSTANTIATION_SEPARATION --> <!-- policy:PAPER.METHOD_NOVELTY_WEIGHT -->
+- **Problem setup that points at the difficulty.** Inputs, outputs and objective, plus the property of the problem that makes the standard approach fail, so the novel mechanism arrives as the answer to it.
+- **The novel mechanism gets the space.** For each new design state what it does, **why this design** (why the standard alternative fails here), and where it sits in the data flow (where its input comes from, where its output goes). This is the part a reviewer reads for.
+- **Standard components in one sentence and a citation**, expanded only where the paper departs from the standard, and then with the reason.
+- **Symbols, not values.** Hyperparameters appear as symbols with what they trade off. Their values, the backbones, optimiser settings, prompts and hardware go in the `Implementation Details` paragraph of the Experiments section's first subsection (`\subsection{Experimental Settings}`, Step 9); exhaustive lists go in the appendix. Test: changing it changes what the method is, or only how this experiment ran? Definitional constants and values derived by the analysis stay.
+- **No results in Method.** Final design decisions only; ablations and numbers go in §5 Experiments.
+
+Every moved detail must still have a home, so reproducibility is kept. "Is Method complete enough to reproduce?" is the wrong question to revise against: asked over several rounds, it piles detail into Method until the contribution disappears. Ask instead whether every detail has a home.
+
+**Equations in the data flow** <!-- policy:PROSE.EQUATION_EXPLANATION -->: introduce each key equation by what it computes and why the method needs it here; for each new symbol, say where it comes from and what it does in this equation (a where-clause that would still be true pasted under another paper's equation says nothing); between consecutive displayed equations, state the operation that gets from one to the next. Do not write one sentence per equation.
 
 **Algorithm / Pseudocode** (if your method involves a non-trivial procedure):
 

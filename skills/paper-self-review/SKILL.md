@@ -29,7 +29,7 @@ A systematic paper quality checking tool that helps researchers conduct comprehe
 Check whether all sections of the paper are complete and conform to academic standards:
 - Does the Abstract include problem, method, results, and contributions?
 - Does the Introduction clearly articulate research motivation and background?
-- Is the Method detailed enough to be reproducible?
+- Does every reproduction detail have a home (the Setup subsection that opens the Experiments section, the appendix, or the artifact), and does Method itself present the mechanism: for each novel design, what it does, why this design, and where it sits in the data flow? Do **not** answer a reproducibility gap by adding detail to Method; that buries the contribution. Concrete values, backbones and implementation choices in Method, or a novel mechanism outweighed by standard components, go to `claim-architecture-review` P1 (M-pass on the Method section). <!-- policy:PAPER.METHOD_INSTANTIATION_SEPARATION --> <!-- policy:PAPER.METHOD_NOVELTY_WEIGHT -->
 - Do the Results sufficiently support the conclusions?
 - Does the Discussion address limitations and future work?
 
@@ -162,7 +162,9 @@ Use this checklist for systematic paper self-review:
 Paper Quality Checklist:
 - [ ] Abstract includes problem, method, results, contributions
 - [ ] Introduction clearly states research motivation
-- [ ] Method is reproducible
+- [ ] Reproduction detail all has a home (Setup / appendix / artifact); Method holds mechanism and design reasons, no experimental values or results <!-- policy:PAPER.METHOD_INSTANTIATION_SEPARATION -->
+- [ ] Novel mechanism identifiable from Method's topic sentences and overview caption; it states why this design <!-- policy:PAPER.METHOD_NOVELTY_WEIGHT -->
+- [ ] Key equations introduced by role; new symbols placed in the data flow (paste test); equation chains state their reasoning <!-- policy:PROSE.EQUATION_EXPLANATION -->
 - [ ] Results support conclusions
 - [ ] Discussion addresses limitations
 - [ ] All figures/tables have captions + labels (no in-figure title text) <!-- policy:FIG.NO_IN_FIGURE_TITLE -->
@@ -316,7 +318,7 @@ Use the quality checklist for final verification.
 ### Common Issues
 - Abstract too brief or too verbose
 - Introduction lacks clear research question statement
-- Method lacks sufficient detail for reproduction
+- Reproduction detail missing from Setup / appendix, or piled into Method where it buries the mechanism
 - Results lack statistical significance tests
 - Discussion doesn't address research limitations
 - Figures/tables lack clear captions/labels, or contain in-figure title text <!-- policy:FIG.NO_IN_FIGURE_TITLE -->

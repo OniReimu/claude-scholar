@@ -68,6 +68,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足；免责式否定谓语（We do not X）翻成正面（我们做的是 Y） |
 | `PAPER.OUTCOME_LOGIC` | 删句级过程流水账（we first tried…）；结构级重排归 claim-architecture-review |
 | `PROSE.DEVELOPER_VOICE` | 开发者语态改写成研究对象语言：重实现测试，工具不做主语，机械动词换成它建立的科学关系，drop/filter 写成纳入标准加样本量，caption 只说图里是什么 |
+| `PROSE.EQUATION_EXPLANATION` | 公式放进数据流里讲：引入句说作用，新符号交代从哪来、起什么作用（粘贴测试），公式链每步写出推理关系，不要"每个符号一条 where" |
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
 | `PROSE.CAUSAL_CONNECTIVE` | 因果连接词按类型选，不默认用 `, so`。**先读 lint 的密度行再逐条判**：三子类保留偏置只在基线密度下成立 |
@@ -393,6 +394,27 @@ in an earlier version of this work / in our preliminary implementation
 **放行（不要"修"）：** 系统论文里系统本身就是研究对象（"the scheduler dispatches requests to idle workers"）；算法的过程性描述（"the algorithm first computes …"）；实验协议、超参、种子、计算资源；引用使用的外部工具（"We use the LM Evaluation Harness"）；artifact 可得性声明。
 
 **与 §8b 和 provenance 卡的分工：** `PROSE.NO_INTERNAL_PROVENANCE` 判路径、文件名、snake_case 标识符能不能出现，§8b 判运行与调试的时间顺序该不该出现；本节负责删掉之后这句话怎么用对象语言重写。同一句可以三条都报。代码标识符换成概念名或符号后，在首次使用处定义（`PAPER.DEFINE_BEFORE_USE`）。
+
+### 8d. 公式与符号：放进数据流里讲 <!-- policy:PROSE.EQUATION_EXPLANATION -->
+
+Method 和 System Model 里最常见的 AI 写法：每个公式配一条 where 子句，逐个符号对一个名词短语；推导写成一串等式，每行配一句话。单看每个公式都"定义完整"，连起来却读不出数据怎么流动。
+
+**先拿画像，再逐条读。** `uv run skills/claim-architecture-review/scripts/method_profile.py <paper> --show` 列出 Method 节的全部 where 子句原文、"一句话配一行公式"的步数（`ladder_steps`）和只有 then/thus 的过渡数（`bare_transitions`）。这些是定位用的代理量，判断逐条做。
+
+**三条改写规则：**
+
+1. **引入句说作用，不说"下面是定义"。** "The loss is defined as follows:" → "To decide how much each retained sample should resist forgetting, the objective weights the penalty by the influence score $s_i$ from Eq.~(3):"
+2. **新符号交代数据流位置。** 每个首次出现的符号写两件事：它从哪来（输入、上游哪步的输出、哪个式子），在这里起什么作用（加权、约束、控制什么）。**粘贴测试**：这条解释原样贴到别的论文同形公式下面还成立吗？成立就是干巴巴的对应关系，要重写。已解释过的符号不再解释。
+   ```
+   ✗ where L_task is the task loss, L_forget is the forgetting loss, and λ is a hyperparameter.
+   ✓ where the task loss is evaluated only on the retained set D_r, so that utility is anchored
+     to data the model keeps, and λ sets how far the optimiser may trade that utility for forgetting.
+   ```
+3. **公式链每一步写出推理关系。** 相邻展示公式之间要说明做了什么操作：代入哪个式子、用了哪个引理或不等式、因为哪个量非负。"Then we have" / "Thus" / "We obtain" 单独出现不算。每句话只是把下一个公式念一遍的，合并成一段推导，把关键步骤的理由写出来。
+
+**不要做过头：** 辅助性公式（一个求和展开、一个记号缩写）不需要三步解释；不要为了"解释完整"给已经解释过的符号再配一条 where；notation table 是查找表，不能代替正文首次使用处的数据流交代，但也不要把整张表在正文里重抄一遍。
+
+**Method 里的取值和篇幅不归本节，转诊**：线编时如果看到 Method 段里写着具体取值（$\lambda=0.1$、backbone、优化器设置）、混进了结果数字，或者新机制只有一句话而标准组件铺了几段，这些都要看 Setup（Experiments 章节的第一个子章节）和整个 Method 的分配才能定，转 `claim-architecture-review` 的 **P1 M-pass**（`spine.md` 在就只对 Method 节跑 P1，不在就先跑 P0）。线编不要自己把数值删掉，那会丢复现信息。 <!-- policy:PAPER.METHOD_INSTANTIATION_SEPARATION --> <!-- policy:PAPER.METHOD_NOVELTY_WEIGHT -->
 
 ### 9. Claim–Evidence Calibration（动词对证据） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
 

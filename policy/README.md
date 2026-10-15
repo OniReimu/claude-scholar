@@ -199,6 +199,8 @@ SoK 规则集合（语义规则）：
 | PAPER.REVISION_CLOSURE | paper-revision-closure | core | warn | false | doc | guidance | none |
 | PAPER.DEFINE_BEFORE_USE | paper-define-before-use | core | warn | false | doc | guidance | none |
 | PAPER.LIMITATION_NECESSITY | paper-limitation-necessity | core | warn | false | doc | guardrail | none |
+| PAPER.METHOD_INSTANTIATION_SEPARATION | paper-method-instantiation-separation | core | warn | false | doc | guardrail | none |
+| PAPER.METHOD_NOVELTY_WEIGHT | paper-method-novelty-weight | core | warn | false | doc | guidance | none |
 | CITE.VERIFY_VIA_API | cite-verify-via-api | core | error | true | lint_script | guidance | none |
 | CITE.CLAIM_SUPPORT_REQUIRED | cite-claim-support-required | core | warn | false | lint_script | guidance | none |
 | EXP.ERROR_BARS_REQUIRED | exp-error-bars-required | core | error | false | doc | guidance | none |
