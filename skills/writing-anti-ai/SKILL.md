@@ -414,7 +414,7 @@ Method 和 System Model 里最常见的 AI 写法：每个公式配一条 where 
 
 **不要做过头：** 辅助性公式（一个求和展开、一个记号缩写）不需要三步解释；不要为了"解释完整"给已经解释过的符号再配一条 where；notation table 是查找表，不能代替正文首次使用处的数据流交代，但也不要把整张表在正文里重抄一遍。
 
-**Method 里的取值和篇幅不归本节，转诊**：线编时如果看到 Method 段里写着具体取值（$\lambda=0.1$、backbone、优化器设置）、混进了结果数字，或者新机制只有一句话而标准组件铺了几段，这些都要看 Setup（Experiments 章节的第一个子章节）和整个 Method 的分配才能定，转 `claim-architecture-review` 的 **P1 M-pass**（`spine.md` 在就只对 Method 节跑 P1，不在就先跑 P0）。线编不要自己把数值删掉，那会丢复现信息。 <!-- policy:PAPER.METHOD_INSTANTIATION_SEPARATION --> <!-- policy:PAPER.METHOD_NOVELTY_WEIGHT -->
+**Method 里的取值和篇幅不归本节，转诊**：线编时如果看到 Method 段里写着具体取值（$\lambda=0.1$、backbone、优化器设置）、混进了结果数字，或者新机制只有一句话而标准组件铺了几段，这些都要看 Setup（Experiments 章节里报告结果之前的设置部分，通常是第一个子章节）和整个 Method 的分配才能定，转 `claim-architecture-review` 的 **P1 M-pass**（`spine.md` 在就只对 Method 节跑 P1，不在就先跑 P0）。线编不要自己把数值删掉，那会丢复现信息。 <!-- policy:PAPER.METHOD_INSTANTIATION_SEPARATION --> <!-- policy:PAPER.METHOD_NOVELTY_WEIGHT -->
 
 ### 9. Claim–Evidence Calibration（动词对证据） <!-- policy:PROSE.HEDGING_DISCIPLINE -->
 

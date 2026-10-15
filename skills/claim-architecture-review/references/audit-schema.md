@@ -52,16 +52,18 @@ One row per paragraph, appended section-by-section.
 
 | Field | Values |
 |---|---|
-| `loc` | section + paragraph locator (e.g. `§4 ¶3`) |
+| `loc` | section + paragraph locator plus file and line (e.g. `§4 ¶3 · sections/design.tex:88`); paragraph counts drift under run-in headings and `\looseness`, the line does not |
+| `evidence` | a short verbatim quote that grounds the verdict (≤ 20 words) |
 | `role` | `claim` \| `evidence` \| `interpretation` \| `method-setup` \| `positioning` \| `scope-limitation` \| `navigation` |
 | `supports` | which `paper_claim` (C1..) or `section_obligation` it serves |
 | `unique_info` | `true` \| `false` (false = its information has another home; cross-check the ledger) |
 | `backs_lead` | `true` \| `false` (true = the claim it `supports` has `lead ≠ none`; `false` ⇒ candidate for `tighten` / `move:appendix`, never a licence to `delete`) |
 | `required_caveat` | `true` \| `false` (true = threat-model boundary / scope condition / overclaim defense / venue-mandated Limitation — load-bearing, not deletable) |
-| `method_role` | Method section only: `problem-setup` \| `novel-mechanism` \| `standard-component` \| `instantiation` \| `evaluation-leak`. `instantiation` and `evaluation-leak` take a `move` with a named destination; a `novel-mechanism` row notes which of *what it does / why this design / where it sits in the data flow* is missing |
+| `method_role` | Method only (one or more sections): `problem-setup` \| `novel-mechanism` \| `standard-component` \| `instantiation` \| `evaluation-leak` \| `running-example` \| `formal-result` \| `navigation`. `instantiation` and `evaluation-leak` take a `move` with a named destination; a `novel-mechanism` row names the claim it backs and notes which of *what it does / why this design / where it sits in the data flow* is missing |
+| `embedded` | Method only, optional: a sentence of another role inside the paragraph, e.g. `instantiation: "0.2 × mean column norm" → §6.1` |
 | `lim_class` | Limitations items only: `A` (bounds a named finding) \| `B` (explains the authors' effort) \| `C` (answers a critique nobody raised). Only `A` sets `required_caveat=true` |
 | `canonical_home` | where this information should live (may differ from `loc`) |
-| `verdict` | `keep` \| `tighten` \| `merge` \| `move:<section>` \| `move:appendix` \| `split` \| `delete` \| `escalate` |
+| `verdict` | `keep` \| `tighten` \| `merge` \| `move:<section>` \| `move:appendix` \| `split` \| `delete` \| `escalate`; additive, proposed only: `gloss` \| `add-reason` \| `add-value:<section>` |
 | `confidence` | `high` \| `medium` \| `low` (low ⇒ verdict must be `escalate`, never `delete`) |
 
 Rules: `delete` legal only when `unique_info=false` AND `required_caveat=false`; every `move`/`merge`/`delete` names the surviving `canonical_home`. `backs_lead=false` alone never authorises `delete` — it caps the paragraph at `tighten` / `move:appendix`, and `required_caveat=true` overrides it entirely.
@@ -85,6 +87,7 @@ Rules: `delete` legal only when `unique_info=false` AND `required_caveat=false`;
 - §4 ¶5 (novel-mechanism): states what the gate does; missing why a mean aggregator fails here → add one design-reason sentence.
 - §4 ¶2–¶3 (standard-component): FedAvg local training in three paragraphs → one sentence + citation.
 - §4 ¶6 (instantiation): λ = 0.1, ResNet-18, SGD settings → move to §5.1 Experimental Settings (Implementation Details paragraph).
+- Unvalued parameters (check 5): τ, T_min, γ_drop have no value in §5.1, the appendix or any table → add-value:§5.1, values `<TODO>`.
 
 ## Forward uses and undefined terms (from P1)
 - `cascade-drift`: first use §1 ¶3, defined §4 ¶2 → one-clause gloss at §1 ¶3 ("the error each stage inherits from the stage before it"); definition stays in §4.
@@ -95,12 +98,15 @@ Rules: `delete` legal only when `unique_info=false` AND `required_caveat=false`;
 
 ```markdown
 # Exemplars — <problem class>, <venue set>
+Relaxations: <none | window → 5 years | class → "<parent class>" | venue → next tier>
 | # | Paper (verified) | Venue, year | ID | Source |
 |---|---|---|---|---|
-| E1 | <title> | ICLR 2025 | arXiv:2xxx.xxxxx / DOI | LaTeX |
+| E1 | <title> | ICLR 2025 | arXiv:2xxx.xxxxx / DOI | LaTeX · venue via OpenReview decision |
 
-## Script profile (method_profile.py, same flags as the draft)
-| | words | share | display_eq | ladder | bare_trans | numeric/100w | where | cites |
+Dropped: <title> — <reason: venue unverifiable / out of scope / pre-acceptance source>
+
+## Script profile (method_profile.py; same flags apart from section selection)
+| | method sections | words | share | words/para | display_eq | ladder | bare_trans | numeric/100w | where | cites | unvalued |
 | E1 | … |
 | Draft | … |
 | Range (E1–En) | min–max per column |

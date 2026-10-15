@@ -27,6 +27,11 @@ Method 的篇幅跟着创新走。每一段先确定它的角色：
 | `standard-component` | 沿用的已有技术 | 一句话加引用。只在本文偏离标准做法的地方展开，并说明偏离的理由 |
 | `instantiation` | 实验取值、backbone、实现选择 | 搬到 Setup（`PAPER.METHOD_INSTANTIATION_SEPARATION`） |
 | `evaluation-leak` | 结果、消融、数据集与 baseline 描述 | 搬回 Results / Setup |
+| `formal-result` | 本身就是主张的定理或不可能性结论 | 放在它所论证的机制之前：它往往就是新机制的设计理由。放在 Method 末尾，跳读测试过不了 |
+| `running-example` | 贯穿的例子 | 标明是例子；里面的取值不算实例化 |
+| `navigation` | 本节路线图、小结 | 一两句；不复述机制 |
+
+Method 可以跨多节：形式化一节、算法一节，各自撑一个主张时，两节合起来按一个 Method 审，每个 `novel-mechanism` 标明它撑的是哪个主张。一段里夹着一句别的角色（机制段里的一个阈值），段落保留主角色，那一句另记为 `embedded`。
 
 **违规形态：**
 - 新机制只有一句话，而标准组件或实现细节占了好几段。
@@ -49,7 +54,7 @@ Method 的篇幅跟着创新走。每一段先确定它的角色：
 - **前置**：`claim-architecture-review` 的 `spine.md` 已列出各主张及其 `lead`；新机制就是撑起 `lead ≠ none` 主张的那部分设计。
 - **画像**：`uv run skills/claim-architecture-review/scripts/method_profile.py <paper>` 给出 Method 的总词数、段数、占正文比例和引用数。有范文画像（`architecture-review/exemplars.md`）时，对照范文的篇幅分配。没有范文时**不设固定阈值**，按下面的 LLM 判断执行。
 - **LLM 检查**：
-  1. 每段标 `method_role`，统计各角色所占的词数比例。
+  1. 每段标 `method_role`，统计各角色所占的词数比例。比篇幅时按**组件**汇总（一个命名机制或 run-in heading 下的全部段落），不逐段比：段落切得碎的稿子逐段比只是噪声。同一个标准检查在几个组件里重复出现，也算标准组件挤占篇幅。
   2. `novel-mechanism` 段是否写了"做什么 / 为什么这样设计 / 接在数据流哪里"三件事？缺哪件，指出来。
   3. 跳读测试：只读各段首句和概览图 caption，能否说出哪一步是新的、为什么需要？
   4. `problem-setup` 是否点出了新机制要解决的难点？

@@ -18,7 +18,7 @@ autofix: none
 
 ## Requirement
 
-Method 讲**机制**：方法里的量用符号表示，设计选择写明理由。**实例化**放在 Setup。本卡说的 Setup 指 **Experiments 章节的第一个子章节**（仓库模板里是 `\subsection{Experimental Settings}`，实现细节写在其中的 `Implementation Details.` 段），不是独立的一节。Experiments 从第二个子章节起报告实验现象与结果，下文的 Results 指这些子章节。实例化包括：实验实际用的取值（$\lambda=0.1$、$k=5$、学习率、batch size、epoch、层数）、作为 backbone 的具体模型、prompt 模板、硬件与运行时间。穷尽列表放附录，代码交给 artifact。
+Method 讲**机制**：方法里的量用符号表示，设计选择写明理由。**实例化**放在 Setup。本卡说的 Setup 指 **Experiments 章节里、第一个报告结果的子章节之前的部分**，不是独立的一节。通常就是第一个子章节（仓库模板里是 `\subsection{Experimental Settings}`，实现细节写在其中的 `Implementation Details.` 段）；也可能是开头连续几个子章节（Setup、Baselines、Tasks、Attacks），或章节开头的导语。从第一个报告结果的子章节起是 Results。搬家目的地写子章节标题。实例化包括：实验实际用的取值（$\lambda=0.1$、$k=5$、学习率、batch size、epoch、层数）、作为 backbone 的具体模型、prompt 模板、硬件与运行时间。穷尽列表放附录，代码交给 artifact。
 
 Method 里出现的是符号，必要时说明它在权衡什么（"$\lambda$ sets how far utility may be traded for forgetting"）。Setup 给出它的取值；如果做过敏感性分析，也写取值范围和结论出处。
 
@@ -30,6 +30,8 @@ Method 里出现的是符号，必要时说明它在权衡什么（"$\lambda$ se
 2. **分析推导出来的值**：$k=\lceil\log n\rceil$ 来自 Theorem 2，推导属于方法。符号式定义（$k=2f+1$）同理。
 3. **取值本身就是贡献或被主张的性质**："works with a single sample per prompt" 是主张，不是调参。
 4. **问题或威胁模型的参数**：作为符号留在 Method（隐私预算 $\varepsilon$）；实验中取的具体值（$\varepsilon \in \{1, 4, 8\}$）进 Setup。
+5. **举例用的取值**：明确标为 running example 的段落里，数值是用来演示机制的，不是这次实验的设置（"for example, with $n=7$ agents and $f=2$ …"）。例子要标明是例子。
+6. **部署指导**：给部署者的推荐取值范围（"$W_{\max}$ between 60 s and 300 s suits interactive workloads"）是方法的使用建议，不是实验设置。一句话可以留下，展开的指导移到附录。
 
 **实验内容不属于 Method**：结果数字与消融结论搬到 Experiments 后面的结果子章节，数据集统计与 baseline 描述搬到 Setup（`EXP.ABLATION_IN_RESULTS`）。
 
@@ -45,7 +47,7 @@ Method 写的是一个对任何合理实例都成立的方法，Setup 写的是�
 
 - **画像**：`uv run skills/claim-architecture-review/scripts/method_profile.py <paper> --show` 列出 Method 节里右侧是纯数值的赋值（`k = 2f+1` 这类符号式定义不计），以及 Setup 节的对应计数。有范文画像（`architecture-review/exemplars.md`）时，与范文的区间对照。
 - **LLM 逐条判**：Method 里每一个具体取值、具体模型名、实现选择，按判据归类为"方法定义 / 推导值 / 主张 / 问题参数 / 实例化"。实例化的给出目标位置（Setup 的哪一段，或附录），并确认目标位置存在。
-- **反向检查**：Setup 里是否缺了 Method 用到的符号的取值？搬家后每个符号都要有值。
+- **反向检查（无条件执行，不论有没有搬家）**：Method 用到的每个参数，在 Setup、附录或表格里都要有取值，或者明确说明是自由参数。脚本输出的 `unvalued_params` 列出候选（希腊字母参数和多字母下标符号，找不到 `= 取值` 的），逐个读确认。缺值的补到 Setup，数值由作者填，审查不代填。敏感性分析写着 "varies from its default"、默认值却哪里都没给，是最常见的形态。
 - **实验内容泄漏**：Method 里是否出现结果数字、消融结论、数据集或 baseline 描述？
 - **结构执行**：`claim-architecture-review` 的 M-pass（P1 跑到 Method 节时）给每段标 `method_role`，`instantiation` 和 `evaluation-leak` 段在 relocation-map 里给出搬家计划。
 
