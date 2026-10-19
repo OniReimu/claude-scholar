@@ -17,6 +17,7 @@
 | **ml-paper-writing** | Writing or editing academic papers for NeurIPS/ICML/ICLR/ACL/AAAI/COLM/Nature/Science/Cell/PNAS |
 | **claim-architecture-review** | Post-draft structural edit: should-this-paragraph-exist, move/merge/cut, cross-section redundancy, claim spine + story closure (before line-level polish) |
 | **writing-anti-ai** | Removing AI writing patterns, improving natural voice, bilingual (EN/CN) |
+| **writing-anti-ai-loop** | Rewriting a whole paper chapter by chapter until the style score stops rising |
 | **paper-self-review** | Quality assurance before submission, multi-item checklist (figures + math conformance) |
 | **review-response** | Writing rebuttals, responding to reviewer comments |
 | **post-acceptance** | Creating presentations, posters, promotion content after paper acceptance |

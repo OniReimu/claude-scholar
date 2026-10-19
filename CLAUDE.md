@@ -131,6 +131,7 @@ Key files:
   - Conferences: NeurIPS, ICML, ICLR, ACL, AAAI, COLM
   - Journals: Nature, Science, Cell, PNAS
 - **writing-anti-ai**: Remove AI writing patterns, bilingual support (EN/CN)
+- **writing-anti-ai-loop**: Whole paper, one subagent per chapter per round, until the style score stops rising (p2g style service optional)
 - **paper-self-review**: Paper self-review (multi-item quality checklist, including figure and math conformance)
 - **claim-architecture-review**: Post-draft structural edit — paragraph necessity / placement / cross-section redundancy + claim spine + narrative closure (subtractive, propose-only; owns the `architecture_review` stage; runs before paper-self-review and writing-anti-ai)
 - **review-response**: Systematic rebuttal writing

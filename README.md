@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-10-20 (v1.37.0)**: New `writing-anti-ai-loop` rewrites a whole LaTeX paper chapter by chapter until its style stops improving. Each round sends one fresh subagent per chapter: the full `writing-anti-ai` in round 1, only the six principles after that. After each round the orchestrator reverts over-reaching edits, runs `scripts/fidelity.py` (citation keys, labels, references, formulas, numbers against the original), and scores the paper with a p2g style service (`P2G_STYLE_URL`). It stops when the score within the human range rises by less than a point, reaches 80, or after four rounds; without a service it runs two fixed rounds. Subagents never see a score. On two papers it went from 57 to 75 and from 48 to 75 (73 and 72 within the human range); on the second paper the argument score stayed at 100 and the framing score rose from 50 to 65. On a third paper held at its 18-page limit, where no chapter may grow, it gained only 2 points (46 to 48) and stopped after round 2, which had pushed the paper to 19 pages. The card's "only one pass" now reads "one pass per call".
 - **2026-10-20 (v1.36.1)**: Principle 5 now says which form a condition takes instead of how often. Delete a tag if the claim survives without it; keep a prepositional phrase for a concrete value, object or named setting that governs one result (`at 4 requests/s`, `with eight fields`); write a state or event as a clause (`when the catalog changes between requests`), not as `under churn`; and state a setting shared by several sentences once at their head. Opening sentence after sentence with `When` is the same fault as tagging each with `under`. On a second paper the chapter-by-chapter rewrite went from 48 to 72 once gains from word rates outside the pre-ChatGPT range are discounted.
 - **2026-10-20 (v1.36.0)**: `writing-anti-ai` now starts from six explaining-register principles, and they outrank every other prose rule: let the authors act, unpack noun stacks and ambiguous possessives into specific relations, keep modality true to the evidence and state how adjacent sentences relate, state purposes as verbs, write real conditions as checkable clauses (once per section when they hold throughout) and delete decorative ones, and keep a contrast only when the alternative is real. The skill applies them first and the anti-AI rules after, then stops. `PROSE.NEGATION_CONTRAST` tier B now keeps `rather than` / `instead of` only for a concrete default, a named and cited position, or something the paper tests, and a tested contrast must stay, with its result in the same place. Measured on 280 arXiv papers; on one blind rewrite the style score went from 33 to 71, against 56 without the sixth principle. On a second paper, rewritten chapter by chapter with dedicated principle passes, it went from 57 to 75 with every citation, number and formula kept.
 - **2026-10-16 (v1.35.1)**: Fixes from running the Method audit on two real manuscripts. The audit now checks on every run that each Method parameter has a value somewhere; the script lists the candidates, and on both drafts the parameters it lists had no default anywhere in the paper. Setup now means everything in Experiments before the first results subsection. A Method can span several sections. Exemplar search gets a relaxation order and publisher-specific venue checks.
@@ -144,6 +145,7 @@ Systematic paper writing from template to final draft:
 - **Citation Verification** (`citation-verification`): Multi-layer validation (Format → API → Information → Content) → prevents hallucinations
 - **Systematic Writing**: Narrative framing → 5-sentence abstract formula → section-by-section drafting with feedback cycles
 - **Anti-AI Processing** (`writing-anti-ai`): Remove inflated symbolism, promotional language, vague attributions → add human voice and rhythm → bilingual support (EN/CN)
+- **Whole-paper rewrite loop** (`writing-anti-ai-loop`): one subagent per chapter per round → revert over-reaching edits → check citations, labels, formulas and numbers → score with a p2g style service and stop when the score within the human range stops rising
 
 **Venues**: NeurIPS, ICML, ICLR, ACL, AAAI, COLM, Nature, Science, Cell, PNAS
 
@@ -313,6 +315,7 @@ claude-scholar/
 │   │
 │   ├── citation-verification/    # Multi-layer citation validation
 │   ├── writing-anti-ai/         # Remove AI patterns: symbolism, promotional language
+│   ├── writing-anti-ai-loop/    # Whole paper, chapter by chapter, until the style score stops rising
 │   │   └── references/
 │   │       ├── patterns-english.md    # English AI patterns to remove
 │   │       └── patterns-chinese.md     # Chinese AI patterns to remove
@@ -401,6 +404,7 @@ claude-scholar/
 **Writing & Academic:**
 - `ml-paper-writing` - Full paper writing guidance for top conferences/journals
 - `writing-anti-ai` - Remove AI writing patterns (bilingual support)
+- `writing-anti-ai-loop` - Rewrite a whole paper chapter by chapter until the style score stops rising
 - `doc-coauthoring` - Structured document collaboration workflow
 - `latex-conference-template-organizer` - LaTeX template management
 - `daily-paper-generator` - Automated daily paper generation for research tracking

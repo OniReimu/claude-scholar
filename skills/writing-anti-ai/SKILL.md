@@ -37,7 +37,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条，并在回复里写明；
 3. lint 兜底，然后停手。
 
-实测再改第二、三轮也不会更好（evidence.md E8）。**本 skill 不提供、也不使用任何词频表。**按统计词频去改写，就是对检测器做 reward hacking。
+实测整篇重跑第二、三轮也不会更好（evidence.md E8）。整篇论文要多轮，用 `writing-anti-ai-loop`：逐章、第 2 轮起只按六原则、每轮核保真（E9）。**本 skill 不提供、也不使用任何词频表。**按统计词频去改写，就是对检测器做 reward hacking。
 
 ## Policy Rules
 
