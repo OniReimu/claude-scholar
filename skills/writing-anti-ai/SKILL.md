@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
-description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.5.0
+description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Six explaining-register principles (policy PROSE.EXPLAINING_REGISTER) run first and outrank every other rule here. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
+version: 1.6.0
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -15,6 +15,30 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 > **MANDATORY**: 编辑前必须先读 `policy/style-guide.md`。去除 AI 痕迹的目标不只是"不像 AI"，更是要回归作者真实的写作风格。style-guide 定义了那个风格。
 
+## ⚠️ 最高优先级：解释式语域六原则 <!-- policy:PROSE.EXPLAINING_REGISTER -->
+
+> **这六条排在本 skill 所有规则之前。**和下面任何一条规则冲突时，按这六条执行。权威定义和实测见 `policy/rules/prose-explaining-register.md`。
+
+正文要写成作者在向读者解释，不要写成一串结论摘要：
+
+1. **主语按句子在做的事来选**：作者的决定写成 `we` 加理由；贡献用 `This paper` 或 `we`；流程用被动句；定义和性质用 `X is Y`；名词作主语只用于它字面上真的在做的事（`the network consists of`）。要改的只有一类：名词作主语，配的却是它做不到的动作（结果「揭示」、框架「保证」、设计「承载」），改成 `we find …`、被动句或 `is`。被动句和系动词句不要改成 we。
+2. **拆开藏着关系的名词串**：用从句或表示具体关系的介词短语，写清从哪到哪、在什么上训练、属于谁。拆完要比原来更具体：`cross-model transfer` 要拆成「从 source 转到 target」，`transfer across models` 把方向丢了，不算拆开。领域术语不拆。一段里有多个实体时，「它的 X」要写出所属者。
+3. **情态和证据一致**：可能性、成立条件、后文要给的内容，都如实写出来。证据不需要的地方不加 hedge。相邻两句是原因和结果、论断和例子、结果和限定时，把关系写出来或合成一句；结果的含义论文在同一节已经给出，就紧挨着结果说。不许补论文没有的解释。
+4. **目的用动词说**：`To test X, we …`，不要写成 `for X evaluation`。
+5. **条件和范围要写成读者能核对的条件，不要压成短语标签**：附在论断上的工作点、负载、预算、「每一个」、「在各种设置下」，先问删掉以后论断还成立吗。成立就删；不成立就写成带具体取值的条件从句或单独一句，同一个条件一段里只交代一次；一节的结果大多在同一设置下时，在节首交代一次，之后只写偏离。这一条不是让你换介词。
+6. **对照只在对手真实存在时才保留**（`PROSE.NEGATION_CONTRAST` 档 B）：
+   - ① 读者原本会默认采用的具体做法；
+   - ② 在原处点名并引用的真实主张；
+   - ③ 本文检验过的可能，这一种**必须保留，并在同一处给出结果**。
+   - 三条都不满足，只留正面陈述。把一种对照句式换成另一种不算修改。
+
+**执行顺序固定：**
+1. 先按六原则改一遍；
+2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条，并在回复里写明；
+3. lint 兜底，然后停手。
+
+实测再改第二、三轮也不会更好（evidence.md E8）。**本 skill 不提供、也不使用任何词频表。**按统计词频去改写，就是对检测器做 reward hacking。
+
 ## Policy Rules
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
@@ -25,6 +49,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 | Rule ID | 摘要 |
 |---------|------|
+| `PROSE.EXPLAINING_REGISTER` | **最高优先级**：解释式语域六原则，先于本表其他规则执行，冲突时以它为准 |
 | `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
 | `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
 | `PROSE.AI_LEXICON` | AI 高频词表（tier-1 零容忍 + tier-2 密度阈值） |
@@ -47,7 +72,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
 | `PROSE.COPULA_DODGE` | 禁止"serves as"替代"is" |
 | `PROSE.NEGATIVE_PARALLELISM` | 禁止"It's not X, it's Y"假深刻 |
-| `PROSE.NEGATION_CONTRAST` | 对比构造分两档：系动词型零容忍，`rather than`/`instead of` 视排除项是否承载主张 |
+| `PROSE.NEGATION_CONTRAST` | 对比构造分两档：系动词型零容忍；`rather than`/`instead of` 只在排除项是 ①具体默认做法 ②点名引用的主张 ③本文检验过（必须保留并就地给结果）时保留 |
 | `PROSE.TRAILING_AFTERTHOUGHT` | 禁止句末逗号甩短片段（"..., as editable."） |
 | `PROSE.COMMA_OVERUSE` | 单句逗号≤3（≥4 触发） |
 | `PROSE.MIDSENTENCE_COLON` | 禁止句中解释性冒号（非小标题） |
@@ -119,8 +144,12 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
 - Unnecessary contrast <!-- policy:PROSE.NEGATION_CONTRAST -->：**按句式分两档**。
   **档 A（零容忍）**：`X is/are A, not B` · `not A, but B` · `X is neither A nor B`——**系动词 + 表语对比**，是 `PROSE.NEGATIVE_PARALLELISM` 的 `It is not X, it is Y` 近亲，强制改正面。
-  **档 B（偶尔可用）**：`rather than` · `instead of` 挂在动词/动名词上时，往往表达方法学取舍（`we mark X as unavailable rather than guessing its timing`），排除项承载主张时保留。
-  修法顺序：① **正面陈述**（`only` / `alone` / 一个更准的正面形容词常能把排除项吸收进去）→ ② 排除项即主张时降级用档 B 保留。**删排除项前先确认它在别处有落点**——排除项承载实证主张时，删掉等于丢一个 claim。
+  **档 B（按三条判据，即六原则第 6 条）**：`rather than` · `instead of` 只在以下三种情况保留——
+  - ① 排除项是读者原本会默认采用的具体做法（`we mark X as unavailable rather than guessing its timing`）；
+  - ② 排除项是在原处点名并引用的真实主张；
+  - ③ 排除项是本文检验过的可能，这种**必须保留，并在同一处给出结果**（同一句、紧接的一句，或者指向某个表或图）。
+
+  三条都不满足，就是假想对手，改成正面陈述（`only` / `alone` / 一个更准的正面形容词常能把排除项吸收进去）。不许把一种对照句式换成另一种（`rather than` ↔ `instead of` ↔ `whereas` ↔ `unlike`）。**删排除项前先确认它不属于 ③**：属于 ③ 而删掉，等于丢掉一个比较性论断。
   ⚠️ **单纯的否定谓语不在禁令内**：`that difference is not an effect estimate` / `visible events are not yet evidence for action` 同句内没有正面对项，是正常陈述。实测一份全稿 16 处命中里 5 处属此类，铲掉它们会让作者关掉整条规则。
   ⚠️ **lint 只定位不分档**：五条 pattern 现在覆盖两档全部形式（此前只有 `, not` 一条，实测一份全稿报 15 处而实际 38 处，`rather than` 17 处全部不可见）。报出来的每一条都要自己判档。
 - 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**。**跨节转诊**：本条只判本段/本节内的重复列举；若怀疑同一组对象在别节也列过，转 `claim-architecture-review`——`information-ledger.md` 以集合为 info-key，第二次列举在 `lookup-before-create` 时撞上（最小调用见下方转诊说明）
@@ -547,6 +576,8 @@ For comprehensive pattern lists, see:
 > ⚠️ 上述比例来自社交语域的小样本，**学术长文没有被测过**。当作 hypothesis 用，不要当作保证；用户真的关心结果时让他自己在目标检测器上复测，并把结果记回 `references/evidence.md`。
 
 ## Workflow (工作流程)
+
+> **Order inside this skill — six principles first.** 先按 `PROSE.EXPLAINING_REGISTER` 的六原则改一遍，再按本 skill 的其余规则改一遍，然后停手（见顶部「最高优先级」一节）。
 
 > **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
 

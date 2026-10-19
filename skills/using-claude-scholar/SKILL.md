@@ -87,6 +87,7 @@ You are equipped with **Claude Scholar**, a comprehensive skill system for acade
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
 | `PROSE.RELATED_WORK_EVOLUTION` | Related Work按脉络组织 |
 | `PROSE.COPULA_DODGE` | 禁止"serves as"替代"is" |
+| `PROSE.EXPLAINING_REGISTER` | **最高优先级**：解释式语域六原则（作者出场、拆名词串、情态写真、目的用动词、范围按需、对照须真实），先于其他 PROSE 规则 |
 | `PROSE.NEGATIVE_PARALLELISM` | 禁止"It's not X, it's Y"假深刻 |
 | `PROSE.SUPERFICIAL_ING_SUFFIX` | 禁止句末-ing浮浅分析 |
 | `PROSE.DESPITE_DISMISSAL` | 禁止"Despite challenges"公式化dismissal |

@@ -14,6 +14,8 @@ policy/style-guide.md (整体性写作风格) ≡ policy/rules/ (单条可判定
 
 **`style-guide.md` 和 `rules/` 是同级权威，二者缺一不可。**
 
+**PROSE 规则内部的优先级：`PROSE.EXPLAINING_REGISTER`（解释式语域六原则）最高。**它和其他 PROSE 卡或 skill 规则冲突时，按它执行；执行顺序也是它在前。
+
 区分标准：
 - **`style-guide.md`** — 整体性写作风格身份：偏好动词、句式模板、段落组织、叙事逻辑。写作时整体浸入，无法拆成单条 pass/fail
 - **`rules/`** — 单条可判定的规则（1 rule = 1 file）：每条有明确的 pass/fail 判定标准，可用 regex 或 LLM 逐条检查
@@ -248,6 +250,7 @@ SoK 规则集合（语义规则）：
 | PROSE.ELEGANT_VARIATION | prose-elegant-variation | domain | warn | false | doc | guidance | none |
 | PROSE.RELATED_WORK_EVOLUTION | prose-related-work-evolution | domain | warn | false | doc | guidance | none |
 | PROSE.COPULA_DODGE | prose-copula-dodge | domain | warn | false | lint_script | guardrail | safe |
+| PROSE.EXPLAINING_REGISTER | prose-explaining-register | core | warn | true | doc | guidance | none |
 | PROSE.NEGATIVE_PARALLELISM | prose-negative-parallelism | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.SUPERFICIAL_ING_SUFFIX | prose-superficial-ing-suffix | domain | warn | false | lint_script | guardrail | assisted |
 | PROSE.DESPITE_DISMISSAL | prose-despite-dismissal | domain | warn | false | lint_script | guardrail | none |

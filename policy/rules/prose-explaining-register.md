@@ -1,0 +1,141 @@
+---
+id: PROSE.EXPLAINING_REGISTER
+slug: prose-explaining-register
+severity: warn
+locked: true
+layer: core
+artifacts: [text]
+phases: [writing-intro, writing-background, writing-system-model, writing-methods, writing-experiments, writing-conclusion, self-review, revision, camera-ready]
+domains: [core]
+venues: [all]
+check_kind: llm_style
+enforcement: doc
+params: {}
+conflicts_with: []
+constraint_type: guidance
+autofix: none
+---
+
+## Requirement
+
+**最高优先级。**在所有 PROSE 规则和 `writing-anti-ai` 的规则里，本卡排第一：其他规则和这六条冲突时，按这六条执行。
+
+正文要写成**作者在向读者解释**（解释式语域），不要写成一串结论摘要（摘要式语域）。逐句按六条原则检查：
+
+1. **主语按句子在做的事来选，让作者出场。**ChatGPT 之前的论文在句子主语上有固定的分工，按下表选：
+
+   | 句子在做什么 | 主语怎么写 | 例子 |
+   |---|---|---|
+   | 作者的决定、选择、设计取舍 | `we`，并写出理由 | `We freeze the table so that …` |
+   | 本文的贡献 | `This paper` 或 `we` 都可以（style-guide §4.3） | `This paper proposes …` |
+   | 流程、计算、实验操作 | 被动句（style-guide §4.2） | `The hash is computed over …` |
+   | 定义、性质、状态 | 系动词 `X is Y` | `The reader is a gated projection.` |
+   | 一个东西字面上真的在做的事 | 名词作主语 | `The network consists of …`、`The model predicts …` |
+
+   **要改的只有一类：名词作主语，配的却是它做不到的动作。**模块、方法、结果、数据不能自己「揭示」「确立」「保证」「承载」「保留」什么，这些动作是作者做的，或者是作者从结果中得出的判断。改法是：作者的判断用 `we` 写出（`we find …`、`we take this to mean …`），流程改成被动句，性质改成 `X is Y`。**不要把被动句、系动词句机械地改成 `we`**，它们本来就是人写论文的特征。
+2. **拆开藏着关系的名词串。**几个名词和修饰语堆在中心词前面时，用从句或表示具体关系的介词短语写清楚谁对谁做了什么：从哪到哪、在什么上训练、属于谁。拆开后关系必须**比原来更具体**。如果拆完只剩「两者有关」或「范围很广」，就等于没拆。例如 `cross-model transfer` 应拆成「把 memory 从 source model 转到 target model」，写出方向；拆成 `transfer across models` 方向就丢了。领域通用术语（`hash head`、`memory table`、`language model`）不拆。**所有格回指同理**：一段里同时出现好几个实体（比如解释器、控制器、cell）时，「它的 X」「其 X」让读者去猜所属者，要写出所属者是谁（`the latency tail of the interpreter`）。只有一个可能的所属者时保留。
+3. **情态和证据一致。**哪些是可能的，在什么条件下成立，后文会给出什么，都要如实写出来，不要把每句话都写成没有条件的断言。证据不需要的地方不加 hedge，见 `PROSE.HEDGING_DISCIPLINE`。**句子之间的关系也要写出来**：连着几句只报数字，哪句是原因、哪句是例子、哪句是限定、这个数说明了什么，都留给读者自己补，这就是摘要式语域。相邻两句是原因和结果、论断和例子、结果和它的限定时，用从句或连接词把关系写出来，或者合成一句。一个结果的含义论文在同一节已经说出来了，就紧挨着结果写（`This means …`、`so …`）。只写论文已经给出、或者由相邻两句直接推出的关系，**不许补论文没有的解释**。
+4. **目的用动词说。**为了达到某个目的而做某件事时，把目的写成作者的动作（`To test X, we …`），不要压缩成一个名词（`for X evaluation`）。
+5. **条件和范围要写成读者能核对的条件，不要压成短语标签。**附在论断上的每一个条件、范围或量化短语，比如某个工作点、某种负载、某个预算、某个集合里的每一个、某几种设置，都按两类处理：
+   - **它是这句话成立的条件**：写成读者能核对的条件，给出具体取值。通常用一个独立的条件从句（`When the arrival rate reaches 2 intents/s, …`），或者单独一句交代设置。同一个条件在一段里只交代一次，后面直接说结果，不要每句都再挂一遍。
+   - **它只是装饰**（泛泛的「在各种设置下」「在多个维度上」，或者对论断没有限定作用的「每一个」「全部」）：删掉。
+   - 判断方法：删掉这个短语，论断还成立吗？成立，就是装饰；不成立，就是条件，要写清楚。
+   - **一节里一直成立的条件，在节首交代一次**：一节或一小节的结果大多在同一个设置下（同一个工作点、同一个预算、同一张表的规模），就在节首写一次这个设置，后面只在偏离它时写出条件，不要每段再挂一遍。
+   - **压缩成短语的条件，是这次测量里最明显的语域差异之一**：2025 年以后的论文把条件、范围和归属压进介词短语、量化词和所有格，ChatGPT 之前的论文更多把条件写成从句、把归属写成完整的名词短语。本条只要求把条件写清楚，**不是换掉某几个介词**。
+6. **对照只在对手真实存在时才保留。**判据见 `PROSE.NEGATION_CONTRAST` 档 B，排除项必须满足下面三条之一：
+   - ① 排除的是读者原本会默认采用的具体做法；
+   - ② 排除的是有人主张或在用的做法，并在原处点名、引用；
+   - ③ 排除的是本文实验检验过的可能。**这一种必须保留对照，并在同一处给出结果**：同一句、紧接的一句，或者明确指向某个表或图。
+   - 三条都不满足，就只留正面陈述。把一种对照句式换成另一种，不算按本条修改。
+
+**顺序：先按六条原则改一遍，再按 anti-AI 规则改一遍，然后停手。**实测改第二轮、第三轮都不会再提高，见 Rationale。
+
+## Rationale
+
+这六条来自一次对比测量：280 篇 arXiv 论文，覆盖 7 个领域，每个领域 ChatGPT 之前 20 篇、2025 年以后 20 篇，用 spaCy 做句法分析。下面每项差异在 7 个领域里方向都一致：
+
+- **主语分工变了**（每份论文取前 3,000 词统计主语，7 个领域方向都一致）：`we` 作主语 ×0.76，被动句 ×0.75，系动词作主干 ×0.71；名词作主语配主动动词则是 ×1.39，增量集中在把结论归给事物的动词上（「揭示」「确立」「承载」「保留」一类）。按全文统计，作者作主语少了约 40%；
+- 名词串多了约 22%，名词化多了约 20%，表示所属和来源的结构少了约三分之一；
+- 情态和助动词少了约 1/3；「这说明」「这意味着」一类把结果和含义连起来的句子，每千词从 0.39 降到 0.23；
+- 目的不定式少了约 30%；
+- 范围介词明显增多；
+- 「与另一项对照」的句式翻倍（每千词 1.00 → 2.06），多出来的几乎都是给解释句配一个假想对手。
+
+这些差异指向同一件事：AI 时代的论文把「谁、为什么、在什么条件下、相对什么」都压进了名词和限定语，读起来像结论清单。人写的论文则把推理一步步说出来。六条原则针对的就是这些被压缩掉的东西。它们首先是**为读者服务的写作要求**：作者出场能交代设计理由，情态写真能防止 overclaim，目的写成动作能立住论证。
+
+**本卡刻意不给词表。**统计差异只用来验证，不用来改写。按词频去增删单词，是对检测器做 reward hacking，读者一眼就能看出来。验证时，要看分数和句法层面的变化（作者作主语、名词串、情态、目的从句）是否一起动。只有分数动、句法不动，说明只是换了词。
+
+**实测**（一篇 2026 年 arXiv 论文 2608.17050 的 Introduction、Background 和 Methods 三节，约 2,500 词；每组由一个看不到检测器的全新子代理改写一次；用 p2g 文风分衡量，ChatGPT 之前的论文落在 82–96）：
+
+- 原文：33；
+- 只做通用润色：33；
+- 只按前 5 条：39；
+- 5 条 + anti-AI：56；
+- **6 条 + anti-AI：71**；
+- 5 条 + anti-AI 再改两轮：54 / 54，不再提高。
+
+内容保真全部通过，只有一处例外：6 条版本把一个属于第 ③ 种情况的对比删掉了。这就是第 6 条第 ③ 种情况要写成「必须保留」的原因。详见 `skills/writing-anti-ai/references/evidence.md` E8。
+
+## Check
+
+- 逐句读，不能靠 regex 判定。每条原则在每一句上只问一个问题：
+  1. 这个设计或步骤是谁做的？为什么？
+  2. 这串名词（或这个「它的 X」）背后藏着什么关系、属于谁？拆开以后更具体了吗？
+  3. 这个断言的条件和证据强度写出来了吗？它和上一句是什么关系，写出来了吗？
+  4. 目的写成作者的动作了吗？
+  5. 这个条件或范围标签，是论断成立的条件吗？是，就写成可核对的条件；不是，就删掉。
+  6. 这个对手属于 ①、②、③ 哪一种？
+- **先改原则这一遍，再跑 anti-AI 规则**，最后用 `policy/lint.sh` 兜底。anti-AI 规则如果要撤回原则带来的改动（把 we 改回无主句、把拆开的名词串重新堆起来、删掉有证据支持的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条规则，并在回复里写明。
+- **只改一遍。**不要为了让某个分数上涨而反复改写。
+
+## Conflicts
+
+- **`policy/style-guide.md` §4.2、§4.3**：两者一致。第 1 条的主语分工表就是按这两节和测量结果写的。
+- **`PROSE.ABSTRACT_AGENCY`**：第 1 条把它推广到所有「名词作主语配主动动词」的句子，并给出改成哪种主语的规则。
+- **`PROSE.COPULA_DODGE`**：方向相同，性质和定义都用 `is`。
+- **`PROSE.RESTATEMENT_DILUTION`**：去重时，保留写出「谁做的」的那一句。
+- **`PROSE.NEGATION_CONTRAST`**：档 B 的判据就是第 6 条。档 A 照旧零容忍。
+- **`PROSE.INTENSIFIERS_ELIMINATION`**：表示证据强度的程度词（如 `substantially`，附近有数字或结果）按第 3 条处理，不当空洞强调词删除。
+
+## Examples
+
+### Pass
+
+```latex
+% 1 主语分工：决定用 we，流程用被动，性质用 is，字面动作用名词
+We freeze the memory table so that any gain on the target must come from the reader.
+The hash is computed over canonicalized $n$-grams.
+The reader is a gated projection of the retrieved vector.
+The network consists of two branches.
+
+% 2 拆开名词串，写出方向
+We transfer the frozen memory from the source model to the target model.
+
+% 3 情态与证据一致
+Under a shared tokenizer, this scheme suffices. Section~\ref{sec:canon} shows what breaks without it.
+
+% 4 目的写成动作
+To test whether the table is portable, we remove the source backbone.
+
+% 6③ 对照保留，结果就在同一处
+Swapping in a stronger reader closes most of the gap, while changing the source backbone does not (Table~\ref{tab:qa}).
+```
+
+### Fail
+
+```latex
+% 1 名词主语配了它做不到的动作
+The framework ensures portability by design.            % → We design X so that …
+The results reveal that the reader is the bottleneck.   % → We find that … / From Table~\ref{…}, the reader is …
+% 1 反向错误：把正常的被动句和系动词句机械改成 we
+We compute the hash over canonicalized $n$-grams.        % 原句 "The hash is computed over …" 本来就合格
+% 2 名词串藏关系，或拆完更含糊
+The cross-model frozen-memory transfer evaluation ...    % → 写出谁转到谁、测什么
+We evaluate transfer across models.                      % → 方向丢了
+% 4 目的压成名词
+For portability evaluation, the backbone is removed.     % → To test whether ..., we remove ...
+% 6 假想对手（没人主张、没检验）
+The failures stem from annotation noise rather than reasoning errors.  % → 只留正面陈述，或给出检验
+% 6 换句式不算修改
+... instead of reasoning errors.                          % → 同一个对照，换了件衣服
+```

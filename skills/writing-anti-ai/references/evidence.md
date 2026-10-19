@@ -109,6 +109,38 @@
 - **观察（待跟踪）**: 两个版本的 eval-0 都往改写里加了原文没有的机制细节（implicit regularization / flat minima）——Related Work 压缩语境下可接受，但这是 fabrication-adjacent 倾向，下轮 eval 应加断言盯住
 - `expiry`: 换模型或改 skill 后需重跑
 
+### E8 — 解释式语域六原则（2026-10-19，一手）
+
+- `claim`: AI 时代论文和人写论文的文风差异，根子在语域，而不是个别词。先按六条原则改，再按 anti-AI 改，能把文风推向人写的方向；只做通用润色不能
+- `source`: 一手实验（p2g 仓库 `spike-runs/1019-calib/style_roots/`、`rewrite/`）
+- `date`: 2026-10-19
+- `instrument`:
+  - 句法：spaCy en_core_web_sm 3.8；
+  - 文风：p2g 文风分，由虚词 logistic 模型加 lint 措辞标记组成，按 ChatGPT 之前 95% 的论文 ≥ 80 锚定，人写论文落在 82–96；
+  - 改写：每一步都是看不到检测器、看不到词表的全新子代理（claude-opus-5-5）
+- `register`: 学术长文。测量用 280 篇 arXiv 论文，覆盖 7 个领域，ChatGPT 之前和 2025 年以后各 140 篇；改写用一篇论文（arXiv 2608.17050）的 Introduction、Background 和 Methods 三节，约 2,500 词
+- `n`: 测量 280 篇；改写每种做法 n=1
+- `verdict`: `supported`（方向性证据）
+- **测量结果**（7 个领域方向一致）：
+  - 作者作主语 −40%（全文）；主语分工（前 3,000 词）：`we` ×0.76，被动 ×0.75，系动词主干 ×0.71，名词主语配主动动词 ×1.39（集中在把结论归给事物的动词），7/7 领域同向；
+  - 名词串 +22%，名词化 +20%；
+  - 情态和助动词约 −1/3，被动 −26%；
+  - 目的不定式 −30%；
+  - 范围介词增多；
+  - 对照句式合计翻倍（每千词 1.00 → 2.06），其中 `rather than` ×7.3，`instead of` ×0.5；
+  - 带解释词的 `rather than` 句从每百万词 26 升到 233，而带解释词的句子占比只从 12.6% 升到 14.1%。
+- **改写结果**（文风分）：
+  - 原文 33；
+  - 通用润色 33；
+  - 5 条原则 39；
+  - 5 条 + anti-AI 56；
+  - 5 条 + anti-AI 再改两轮 54 / 54；
+  - **6 条 + anti-AI 71**；
+  - 再单独执行一次第 2 条 70：名词串拆得更开了，但拆的时候换上了范围介词，收益抵消了，所以第 2 条要求拆完更具体。
+- **内容保真**：引用、ref、公式、数字都不变，只删了 (1)(2)(3) 列表编号。唯一的问题是 6 条版本删掉了一个属于 ③ 的比较论断（readers 和 backbone identity 的对比），所以第 6 条第 ③ 种写成「必须保留并就地给结果」。
+- **局限**：只有一篇论文，每种做法只改了一次，单点有几分的波动。56 和 71 之间的差距大于这个波动。
+- `expiry`: 换改写模型，或者在第二篇论文上复测时方向不一致，就降级
+
 ## 本 skill 新增规则的验证状态
 
 | Rule ID | 来源 | 验证状态 | 下一步 |
@@ -118,6 +150,7 @@
 | `PROSE.INVENTED_CONCEPT_LABEL` | 外部 tells.md「invented concept labels」 | **eval-passed (n=1, E7)**——正反例都判对（删 supervision paradox、留 CPCL） | 需要一次审稿人反馈作为证据（review 里出现"检索不到这个概念"即为 supported） |
 | `PROSE.RESTATEMENT_DILUTION` | 外部 tells.md「one-point dilution」 | **eval-passed (n=1, E7)** | 用删除测试在已接收论文上做对照：作者自己的 pre-GPT 论文复述率应显著低于 AI draft |
 | `HEDGING_DISCIPLINE` 双向化 + Over-Correct 护栏 | academic-humanizer (E5) | **eval-passed (n=1, E7)**——护栏是 39:37 delta 的一半来源 | 真实 rebuttal/Discussion 上验证 |
+| `PROSE.EXPLAINING_REGISTER`（六原则） | 一手测量 + 盲改写 (E8) | **supported（n=1 篇改写）**——文风 33 → 71，句法同向 | 第二篇论文复测；查 ③ 型对照是否保留 |
 | Interleave protocol 比例阈值 | 外部 anti-ai 包 (E2) | **仍未实测**（学术长文语域） | 用户真实底稿 + 目标检测器复测 |
 
 ## 加新条目的规矩
