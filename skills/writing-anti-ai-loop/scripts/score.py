@@ -45,7 +45,7 @@ def main() -> int:
         body["base_files"] = tex_files(Path(args[args.index("--base") + 1]))
     req = urllib.request.Request(url, json.dumps(body).encode(), headers)
     try:
-        with urllib.request.urlopen(req, timeout=300) as r:
+        with urllib.request.urlopen(req, timeout=900) as r:
             print(r.read().decode())
     except urllib.error.HTTPError as e:
         print(f"{e.code}: {e.read().decode()[:300]}", file=sys.stderr)
