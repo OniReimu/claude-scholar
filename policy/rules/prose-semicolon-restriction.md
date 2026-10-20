@@ -19,7 +19,15 @@ lint_targets: "**/*.tex"
 
 ## Requirement
 
-正文段落中禁止分号。修法**两级**，按语义关系选，不是只有断句一条路：
+正文段落（含脚注）中一律禁止中英文分号。
+
+**适用范围与优先级**：正文段落（含脚注、列表中的散文和直接引语）一律执行。锁、六原则和保真都不能豁免；保留命题并改成合规结构，不再逐条判断是否放行。
+
+**仅非散文内容豁免**：数学、代码（含 `\texttt{...}`、`\verb`）、`\;` 细空格、URL、时间、引用键；结构标题中的冒号也豁免，含段首 `\textbf{...}` / `\paragraph{...}` run-in 小标题，冒号可在标题中间，例如 `\textbf{TV-1: Static extraction scope. }`。普通句中的加粗文字不是标题，标题中的分号也不因此豁免。
+
+**排除范围**：caption 和表格（`table`、`tabular` 及其变体，包括 `\input` 进来的表格文件）不计候选、不计违规，只在报告中给「已排除」计数。表格按实际环境识别，不因文件在 `tables/` 目录就跳过其中的正文。
+
+修法**两级**，按语义关系选，不是只有断句一条路：
 
 **① 句法改变**——把两个子句真正接成一句。可用 `PROSE.CAUSAL_CONNECTIVE` 已有的阶梯（**从属化** `Because A, B` / **关系从句** `, which ...`），以及**逗号 + 连接词**（`whereas` / `while` / `but` / `and`）。准入判据见 Check，四条同时成立才用。
 
@@ -35,6 +43,8 @@ after:   ... the momentum buffer amplifies rather than averages out. With
 **`;` → 裸逗号是禁止的，`;` → 逗号 + 连接词不是。** 前者是 comma splice，本身不合语法，且只换了标点；后者引入了一个承载语义的连接词，是句法改变。本卡此前的措辞（"不是把分号换成逗号"）没有区分这两者，读起来像"一律只能断句"——那是错的，见 Rationale 末段。
 
 ## Rationale
+
+作者 2026-10-21 定为硬规则，用来取代逐条判断；MSR 一稿因为逐条判断加上锁，违规句一路存活了 11 组。
 
 分号把两个完整命题压进一个句子，读者要在一口气里处理两个主谓结构。学术散文的默认单位是句子；能用分号连的地方，几乎总能用句号断开，而断开之后每一句都可以被单独引用、单独质疑。
 
@@ -53,19 +63,9 @@ The point-estimate rule passes.  Interval equivalence does not.
 
 ## Check
 
-builtin（`lint_prose_semicolon_restriction`），不是纯 pattern。原因是纯正则会在数学记号上误报：`p(y \mid x; \theta)` 这类条件记号在 ML 论文里很常见，实测公开语料中**分号总数的 7–16% 位于行内数学内部**。builtin 先剥掉这些再判。
+用 `skills/writing-anti-ai-loop/scripts/guardrails.py` 扫描完整正文并展开静态 input/include。非豁免的正文分号全部记「违规」，没有「待判」。列表末尾分号和直接引语中的分号照常违规。
 
-剥除顺序：
-
-1. `\;`（LaTeX 细空格宏）——它不是标点；
-2. 行内数学 `$...$`；
-3. `algorithm` / `algorithmic` / `lstlisting` / `verbatim` / `tikzpicture` / `equation` / `align` 环境整块。
-
-**豁免**：
-
-- **列表项**（`itemize` / `enumerate` / `description` 内部）。以分号结尾的列表项不是"段落中间的分号"，是列表的分隔约定；
-- `.bib` 文件与引用键；
-- 直接引语、reviewer comment 原文、被批评的对象文本。
+原有 lint builtin 仅作辅助定位，不能代替此范围检查。
 
 **用 ① 的四条准入判据**（同时成立才用，否则走 ②）：
 
@@ -80,7 +80,7 @@ builtin（`lint_prose_semicolon_restriction`），不是纯 pattern。原因是�
 
 ⚠️ **连接词必须按语义分布，不得统一。** 全篇统一成 `while` 只是把分号指纹换成 `while` 指纹，并制造新的均质化（撞 `PROSE.RHYTHM_VARIANCE`）。实测那 7 处回接的分布是 `whereas`×2 / `while`×2 / `but`×2 / `and`×1。**优先沿用稿件已有的同型句式**（style-guide 的 Do NOT Over-Correct §1），不要自造。
 
-**报告已放行项**：报出每份文件被剥掉的数学分号数与列表分号数。只报违规，作者分不清"查过合格"与"没看到"。
+**报告计数**：逐文件报告违规与明确的非散文豁免计数；caption / table 只给「已排除」计数，不进入候选和违规。
 
 ## Examples
 

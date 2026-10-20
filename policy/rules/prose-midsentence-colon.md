@@ -22,25 +22,27 @@ lint_targets: "**/*.tex"
 
 ## Requirement
 
-禁止在正文句子中间使用冒号引出解释、定义或转折，如 `We make a key observation: the model collapses.`、`We define the threat model: an adversary controls...`。改写为完整句子，或用句号断开。
+正文段落（含脚注）里的句中冒号一律禁止，含中英文冒号，不限于解释、定义或转折。改写为完整句子，或用句号断开。
+
+**适用范围与优先级**：正文段落（含脚注、列表中的散文和直接引语）一律执行。锁、六原则和保真都不能豁免；保留命题并改成合规结构，不再逐条判断是否放行。
+
+**仅非散文内容豁免**：数学、代码（含 `\texttt{...}`、`\verb`）、`\;` 细空格、URL、时间、引用键；结构标题中的冒号也豁免，含段首 `\textbf{...}` / `\paragraph{...}` run-in 小标题，冒号可在标题中间，例如 `\textbf{TV-1: Static extraction scope. }`。普通句中的加粗文字不是标题，标题中的分号也不因此豁免。
+
+**排除范围**：caption 和表格（`table`、`tabular` 及其变体，包括 `\input` 进来的表格文件）不计候选、不计违规，只在报告中给「已排除」计数。表格按实际环境识别，不因文件在 `tables/` 目录就跳过其中的正文。
 
 **清理后必须复测连接词分布。** 本卡的修法把标点隐含的逻辑关系（"所以""即""因此"）赶到词汇层，而 `PROSE.CAUSAL_CONNECTIVE` 菜单里 `therefore` 是最安全的默认——跨多遍清理会累积出连接词单一化，逐处判都合理、只在总量上崩。动过一批之后，看一眼 lint 的 connective distribution 计数表，逐处追问"这是哪一种因果、答案是否真的全是同一种"。
 
-**唯一例外**：段落开头的小标题（`\paragraph{Setup.}`、`\textbf{Security:}`）和 bullet/`\item` 的内联标题（`\item \textbf{Term:} ...`）——这些是结构标记，不是句中冒号。
-
-注意本规则比 `PROSE.COLON_LIST_OVERUSE` 更宽：后者只抓「冒号 + 编号列表」，本规则抓**任意句中解释性冒号**，并撤销对 definition-style 冒号（`We define X: ...`）的豁免。
+本规则比 `PROSE.COLON_LIST_OVERUSE` 更宽，禁止范围内的所有句中冒号。
 
 ## Rationale
 
-句中冒号引出解释是 AI 写作的典型句法——先抛一个宽泛主句，再用冒号补一个"重点"。人类正式写作更倾向把这层关系写进句子语法（用 that 从句、where、新句子），而不是靠冒号制造停顿。作者个人风格里，句中冒号（非小标题）一律视为待改写。
+作者 2026-10-21 定为硬规则，用来取代逐条判断；MSR 一稿因为逐条判断加上锁，违规句一路存活了 11 组。
 
 ## Check
 
-- **regex 搜索**: 匹配「小写词（≥3 字母）+ 冒号 + 空格 + 小写字母」，即句中解释性冒号
-- **排除**（regex 已自然规避）: `\textbf{X:}` / `\paragraph{X:}` 等以 `}` 结尾的标题冒号（冒号后非「空格+小写」）
-- **排除**: `\section`/`\subsection` 标题、`url`/`http:` 协议、时间 `12:30`、`\item` 内联标题
-- **同时检查**: `references/patterns-english.md` 13b 节不应再把 definition-style 冒号列为 acceptable
-- **检查范围**: `.tex` 文件正文区域
+- 用 `skills/writing-anti-ai-loop/scripts/guardrails.py` 扫描摘要到参考文献前的正文，展开静态 input/include，保留文件与行号。
+- 非豁免的正文冒号全部记「违规」，没有「待判」；caption / table 只报「已排除」计数。
+- 原有 lint regex 仅作定位，不能代替完整枚举；大写字母、数字或宏之前的冒号同样违规。
 
 ## Examples
 
