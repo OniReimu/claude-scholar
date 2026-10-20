@@ -89,12 +89,13 @@ python3 scripts/fidelity.py <out>/orig <out>/work
 ```
 
 - 退出码 1：引用键或 `\label` 出现或消失、`\ref` 指向原文没有的标签，或者出现了 `NOT IN ORIGINAL` 的数字或公式。逐项处理：新事实改回原文；只是把原文里的值说明白了（例如原文 `$W\in\{1,2,5,10\}$`，改写写出 `$W=10$`），在 `LOG.md` 里写明理由后保留。
-- 丢失的数字只报告，不算失败：重复出现的值换成回指可以接受，丢掉一个结果不行。逐个回原文确认。
+- 丢失的数字只报告，不算失败：重复出现的值换成回指可以接受，丢掉一个结果不行。逐个回原文确认。按六原则第 5 条，正文里不再逐个报的计数，必须在论文的某张表或某张图里找得到；找不到就改回。
 
 ### 4. 编译和打分
 
 - 有 `latexmk` 时编译 `work/` 的一份临时拷贝。未定义的引用和 ref 必须是 0，页数变化记进 `LOG.md`。
-- `python3 scripts/score.py <out>/work --main main.tex`，返回 `style`、`style_within_human_range`、`wording_per_1k` 和 `words`。
+- `python3 scripts/score.py <out>/work --main main.tex --base <上一轮快照>`（第 1 轮用 `<out>/orig`），返回 `style`、`style_within_human_range`、`wording_per_1k`、`words` 和 `gain_top3_share`。
+- `gain_top3_share` 是这一轮虚词变化里，变得最多的 3 个词占的比例。服务只给这个比例，不说是哪几个词。按写法改的轮次，变化分散在很多词上（六原则在 6g、edge、anti_nso 上都在 0.32–0.35）；只换几个词的轮次，变化集中在少数几个词上（anti_nso 一轮按词表换词是 0.77）。
 - `cp -R <out>/work <out>/r<N>`，并在 `LOG.md` 里记一行：轮次、两个分数、保真结果、回退了几处。
 
 ### 5. 停不停
@@ -106,13 +107,15 @@ python3 scripts/fidelity.py <out>/orig <out>/work
 - 已经跑满 4 轮（含第 1 轮）：停。
 - 有页数上限而这一轮超了页：这一轮作废，按「没涨」处理。词数不变也可能超页，因为断行和浮动体的位置会变（anti_nso 第 2 轮词数少了 12 个，从 18 页变成 19 页）。
 - `style` 涨了而 `style_within_human_range` 没涨：说明改写把某些词推到了人写论文之外（例如每句都用 `When` 开头），按「没涨」处理，并在 `LOG.md` 里记下。
+- `gain_top3_share` 超过 0.5：这一轮是在换词，不是在改写法，涨的分不算，按「没涨」处理，并在 `LOG.md` 里记下。服务返回 `null`（变化太小没法判断）时不适用这一条。
 
 停下以后，采用 `style_within_human_range` 最高的一轮，分数相同时取更早的一轮，因为改得更少。如果最好的不是最后一轮，把那一轮的快照拷回 `work/`。
 
 ## 不要做
 
 - **不把分数、分数的变化或检测器的任何信息告诉子代理。**子代理只读规则卡。
-- 不为了涨分把正文里的数字挪进表格，也不删正文里的结果。两个时代正文的数字密度一样（`PROSE.EXPLAINING_REGISTER` Rationale）。
+- **不根据检测器去写规则。**哪些词被计分、各占多少，不能成为新规则的来源。规则只能从「作者在为读者做什么」出发；新规则先在没参与制定它的论文上验证，并看 `gain_top3_share`。
+- 不为了涨分把正文里的数字挪进表格，也不删正文里的结果。两个时代正文的数字密度一样（`PROSE.EXPLAINING_REGISTER` Rationale）。第 5 条只允许一种情况：表或图里已经有的逐个计数，正文不再反复报。
 - 不在子代理之外自己逐句改写来追分。主代理只做回退和保真修补。
 - 不碰原稿，不 push 到 Git 或 Overleaf，除非作者明确批准。要推到 Overleaf，建议把改写放进 `rewrite/sections/` 再加一个 `main-rewrite.tex`，主稿不动。
 
