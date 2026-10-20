@@ -61,12 +61,11 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 - [来源：writing-anti-ai-loop §并行改写；有作者要求时填 {length_source}] {length_rule}
 - [来源：writing-anti-ai-loop §不要做] 只按规则和读者任务改，不按词频改。
 - [来源：PROSE.EXPLAINING_REGISTER、PROSE.NEGATION_CONTRAST、PROSE.MIDSENTENCE_COLON、PROSE.SEMICOLON_RESTRICTION、PROSE.EM_DASH_RESTRICTION] 命题保真始终有效，锁、六原则和保真都不能豁免正文冒号与分号硬禁令。不能兼得时报告具体冲突，不删论断、不报通过。rather than / instead of 按三判据逐条给依据，不能因入锁就保留。
-回复：
-1. 简述改了哪些段落。
-2. 每段标「已改 / 已满足 / 缺依据或受约束」，注明对应的六原则。不设改句配额，不按虚词数报完成。
-3. 条件、强度、范围和关系有改动的，逐条给原句、新句和原文依据。
-4. 三判据对照逐条给判定和依据；原文事实问题只报告。
-风险项和依据不能为凑字数省略。
+回复（400 字以内）：
+1. 改了大约几处；
+2. 没改的段落，每段一句：它按哪条原则已经合格。改了的段落不用报，看 diff；
+3. 条件、强度、范围和关系有改动的，逐条给出原句和新句；
+4. rather than / instead of 按三判据的判定，以及原文里看到的事实问题（只报告，不改）。
 ```
 
 - `{round_rule}`，第 1 轮：`再读 {CS}/skills/writing-anti-ai/SKILL.md，按它的执行顺序改：先六原则，再 anti-AI 规则，然后停手。`
