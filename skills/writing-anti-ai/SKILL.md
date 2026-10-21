@@ -22,7 +22,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 正文要写成作者在向读者解释，不要写成一串结论摘要：
 
 1. **主语按句子在做的事来选**：作者的决定写成 `we` 加理由；贡献用 `This paper` 或 `we`；流程可用被动句，正常的算法主动句也可保留；定义和性质用 `X is Y`；名词作主语只用于它字面上真的在做的事（`the network consists of`）。按动作归属是否准确、是否隐藏作者选择来判断，不按动词机械换主语或语态；被动句和系动词句不要机械改成 we。（来源：v1.38.1，nso 实验 077207a 分析）
-2. **拆开藏着关系的名词串**：用从句或表示具体关系的介词短语，写清从哪到哪、在什么上训练、属于谁。拆完要比原来更具体：`cross-model transfer` 要拆成「从 source 转到 target」，`transfer across models` 把方向丢了，不算拆开。领域术语不拆。一段里有多个实体时，「它的 X」要写出所属者。
+2. **拆开藏着关系的名词串**：按规则卡第 2 条还原前置修饰串、嵌套所属和名词化中的命题，再按是否减少读者推断决定展开或保留。领域术语只豁免本体，术语外的临时修饰串仍查；解释不唯一就报告。
 3. **情态和证据一致**：可能性、成立条件、后文要给的内容，都如实写出来。证据不需要的地方不加 hedge。相邻两句是原因和结果、论断和例子、结果和限定时，把关系写出来或合成一句；结果的含义论文在同一节已经给出，就紧挨着结果说。不许补论文没有的解释。
 4. **目的用动词说**：`To test X, we …`，不要写成 `for X evaluation`。须说清已有依据的具体用途或取舍，重复小节标题不算解释改善，目的已明确就不再加。（来源：v1.38.1，nso 实验 077207a 分析）
 5. **条件和范围要写成读者能核对的条件，不要压成短语标签**：先问删掉以后论断还成立吗，成立就删。真条件按性质选写法：一个具体取值、对象或已命名的设置，只管一个结果，用介词短语就够（`at 4 requests/s`、`with eight fields`）；一种状态或一件事，要有主语和动词才说得清，写成从句（`when the catalog changes between requests`），不要压成 `under churn` 这类标签；几句话共用一组设置，在段首交代一次，后面直接报结果，设置变了再标。连着几句都用 `When` 开头也是毛病。这一条不是让你换介词。
@@ -33,9 +33,9 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
    - 三条都不满足，只留正面陈述。把一种对照句式换成另一种不算修改。
 
 **执行顺序固定：**
-1. 先按六原则改一遍；
+1. 先按 `policy/rules/prose-explaining-register.md`「六原则的共同操作」逐段执行六原则，不以某一条合格放行整段；
 2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条，并在回复里写明；正文冒号和分号禁令不能跳过，须保留命题并改成合规结构；
-3. **最终关系复核**：第二个 pass 后只比较改动过的段落，读改后完整段落：原有原因、对照、限定是否仍明确？新增主语或目的句是否真的减少读者推断？发现关系变弱就保义修复，不能只核数字、事实和禁用形式。（来源：v1.38.1，nso 实验 077207a 分析）
+3. **最终关系复核**：第二个 pass 后按共同操作第 5 步比较改动段落，并复核决定保留的疑点，读完整段落：原有原因、对照、限定是否仍明确？新增主语或目的句是否真的减少读者推断？同时做**反向压缩检查**：是否把原有谓语改成名词化、把明确所属者改成代词、把原因或容差来源改成前置修饰语？若让读者多推断一步，就保义修复；句子更短、禁用形式更少不是保留理由。（来源：v1.38.2，nso 实验 077207a 分析）
 4. lint 兜底，然后停手。
 
 ⚠️ **反例：事实还在，比较关系却被拆没。** 示意场景：原句用 `whereas` 对照两种验证方法各自接受和拒绝的数量。改稿拆成两句，只保留两组数字，删掉 `whereas`，让读者自己补比较关系。拆句可以，比较须保留，可沿用 `whereas` 或明确接回对照。来源：v1.38.1，nso 实验 077207a 分析。
@@ -579,7 +579,7 @@ For comprehensive pattern lists, see:
 
 ## Workflow (工作流程)
 
-> **Order inside this skill — six principles first.** 先按 `PROSE.EXPLAINING_REGISTER` 的六原则改一遍，再按本 skill 的其余规则改一遍，只复核改动段落的原因、对照、限定及新增主语／目的是否减少推断，然后停手（见顶部「最高优先级」一节；来源：v1.38.1，nso 实验 077207a 分析）。
+> **Order inside this skill — six principles first.** 按顶部「执行顺序」调用 `PROSE.EXPLAINING_REGISTER` 的共同操作，再执行其余规则，完成最终关系复核（含保留疑点和反向压缩）后停手。（来源：v1.38.2，nso 实验 077207a 分析）
 
 > **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
 

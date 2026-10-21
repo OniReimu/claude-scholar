@@ -20,13 +20,13 @@ autofix: none
 
 **动词强度必须匹配证据强度，双向执行。**
 
-**方向 1 — 不 under-claim（hedge 过度）。** Hedging 词（may, might, could, possibly, potentially）仅用于：
+**方向 1 — 不 under-claim（hedge 过度）。** 先区分已观察结果、能力或可能性、超出观察的推论，再核对证据覆盖的范围；不能只凭情态词判弱化。表示不确定性的 hedge 用于：
 
-1. **真正不确定的推测**: 尚无实验证据的假设
+1. **真正不确定的推测**: 证据尚不能确定的解释或假设
 2. **泛化声明**: 超出实验范围的推论
 3. **未来方向**: 可能的后续工作
 
-**已有实验证据支撑的结论禁止 hedge。** 实验结果用确定性语言陈述。
+**已观察结果按实验范围直接陈述；超出观察的推论按证据使用情态。** 能力或可能性也按实际证据表达，不能把所有 `can` / `may` 都视为弱化；不为统一文风给确定事实加 hedge。保真保护命题，不保护语法外壳：换主语或增删情态本身不足以判失真，须指出行动者、对象、量化、条件、因果或证据强度实际发生了什么变化。（来源：v1.38.2，nso 实验 077207a 分析）
 
 **方向 2 — 不 over-claim（动词强于证据）。** 实证工作 *shows* / *provides evidence* / *improves ... by N*；它不 *prove* / *demonstrate* / *establish* / *confirm* / *guarantee* 普适真理。检查点：
 
@@ -47,7 +47,7 @@ AI 生成文本两个方向都常见：默认语气倾向 demonstrate/significan
 - **提取 `.tex` 正文的正确方法**：见 `policy/references/tex-prose-extraction.md`。手搓扫描器的四个典型错误（`split('%')` 在 `$95\%$` 处截断、剔数学时 `$` 奇数配对吞掉整段、逐行扫描漏掉被硬换行劈开的短语、两遍大小写策略不一致）都会产生**假的「已清零」结论**
 
 - **LLM 检查（方向 1）**:
-  1. Results section 中是否对有数据支撑的结论使用了 may/might/could
+  1. 先判本句是在报告观察、陈述能力或可能性，还是作范围外推论；观察是否按实验范围直接陈述，情态是否与实际证据相符，而非只查有没有 can/may/might/could
   2. Conclusion 中对已完成工作的总结是否过度 hedge
   3. Method section 中对设计选择是否不必要地用了 potentially/possibly
 - **LLM 检查（方向 2）**:
