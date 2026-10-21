@@ -45,7 +45,7 @@ lint_patterns:
     mode: match
   - pattern: "\\binstead of\\b"
     mode: match
-coverage_note: "tier B (rather than / instead of) is located but not judged here — keep it only under (a) concrete default, (b) named and cited holder, or (c) tested here with the result at the same place (PROSE.EXPLAINING_REGISTER principle 6). Tier A (copular contrast both orders, neither...nor) is zero-tolerance. Not enumerable: the comma-free reversed form (is not A but B) and fronted Not A, but B — check negated copulas by hand."
+coverage_note: "tier B (rather than / instead of) is located but not judged here — preserve necessary definition/threat/guarantee boundaries on their stated basis; otherwise keep it only under (a) concrete default, (b) named and cited holder, or (c) tested here with the result at the same place (PROSE.EXPLAINING_REGISTER principle 6). Tier A (copular contrast both orders, neither...nor) is zero-tolerance. Not enumerable: the comma-free reversed form (is not A but B) and fronted Not A, but B — check negated copulas by hand."
 lint_targets: "**/*.tex"
 ---
 
@@ -56,7 +56,7 @@ lint_targets: "**/*.tex"
 | 档 | 句式 | 强度 |
 |---|---|---|
 | **A — guardrail（零容忍）** | `X is/are A, not B` · `not A, but B` · `X is neither A nor B`（**系动词 + 表语对比**） | 强制改正面 |
-| **B — guidance（按三条判据）** | `rather than` · `instead of`（**挂在动词/动名词上**） | 排除项满足 ①②③ 之一才保留，③ 必须保留 |
+| **B — guidance（按三条判据）** | `rather than` · `instead of`（**挂在动词/动名词上**） | 必要定义／范围区分按其依据保留；其余须满足 ①②③ 之一，③ 必须保留 |
 
 分档的理由：系动词型是 `PROSE.NEGATIVE_PARALLELISM` 的 `It is not X, it is Y` 近亲，属同一族假深刻构造；而 `rather than` 挂在动词上时表达的往往是方法学取舍（`we mark X as unavailable rather than guessing its timing`），那是另一回事。
 
@@ -64,17 +64,17 @@ lint_targets: "**/*.tex"
 
 **默认改法：直接正面陈述 `X is A`，把对比整个去掉。** 不要把 `, not Y` 反射性地换成 `rather than Y` / `instead of Y`——那只是换件衣服的同一个对比，没有解决问题。
 
-**档 B 的判据（= `PROSE.EXPLAINING_REGISTER` 第 6 条，最高优先级）：对照只在对手真实存在时保留。**排除项必须满足下面三条之一：
+**档 B 的判据（= `PROSE.EXPLAINING_REGISTER` 第 6 条，最高优先级）：先核必要定义／范围区分；其余对照只在对手真实存在时保留。**其余排除项必须满足下面三条之一：
 
 | | 排除项是什么 | 怎么处理 |
 |---|---|---|
-| **①** | 读者原本会默认采用的具体做法（`we take the median instead of the mean`、Engram 默认的 raw token IDs） | 保留 |
+| **①** | 读者原本会默认采用的具体做法（自拟例：`we use the shaded plot instead of the exposed plot`，须有默认做法依据） | 保留 |
 | **②** | 有人主张或正在使用的做法，**在原处点名并引用**（`Unlike RETRO~\cite{…}, we …`） | 保留；没有引用就补上，补不上就按「三条都不满足」处理 |
 | **③** | 本文实验检验过的可能（`the gain comes from the data, not the architecture`，有消融支撑） | **必须保留，并在同一处给出结果**：同一句、紧接的一句，或者明确指向某个表或图。不许删掉排除项，只留正面陈述，那样等于丢掉一个比较性论断 |
 
-三条都不满足，排除项就是假想对手：删掉对照，只留正面陈述。两边都有实际内容时，也可以拆成两句，各说一边。
+三条都不满足且不是定义或范围的必要区分时，删除无依据的对照。留下的正面解释仍须有依据，不能把删掉对照当作因果已成立。两边都有实际内容时，也可以拆成两句，各说一边。
 
-安全 / 威胁模型里的划界（`the adversary controls the client, not the server`）属于 ③ 的一种：划界是威胁模型的一部分，必须保留，并紧跟它的依据。
+定义、威胁模型及保证边界的必要区分另按定义或范围依据保留，不属于实验判据 ③，也不需要虚构实验。自拟例：`The attacker can alter sensor readings. The controller is trusted.` 保留两边的边界。档 A 仍改为合规结构，不删边界命题。
 
 **换句式不算修改。**把 `, not Y`、`rather than Y`、`instead of Y`、`whereas`、`unlike` 互相替换，只是给同一个对照换了件衣服。
 
@@ -90,40 +90,43 @@ LLM 习惯用"否定一个对照项"来制造强调或深度感，即使那个�
 - `rather than` 从 0.10 升到 0.75（×7.3），用到它的论文从 36% 升到 85%；
 - `instead of` 反而从 0.23 降到 0.11，`on the other hand` 从 0.16 降到 0.04。
 
-带解释和归因词（suggest、stem from、merely……）的 `rather than` 句，从每百万词 26 句升到 233 句；而带解释词的句子本身只从 12.6% 升到 14.1%。也就是说，多出来的不是解释，而是**给每个解释配上的假想对手**。人写的论文用对照，主要是说明「换掉了哪个具体的默认做法」，或者点名引用一个真实存在的对手。Pre-LLM 学术写作默认直接正面陈述，对比是稀缺的、用在刀刃上的工具。把 `, not Y` 反射性改成 `rather than Y` 不是去 AI 味，只是换一种 AI 味——作者偏好是**能正面说就正面说，对比只留给真正需要 highlight 的地方**。
+年代分组频率提示可以检查哪些表达，不证明每次对照都是虚构，也不证明作者身份或表达质量。作者偏好直接正面说明，但有解释作用、定义依据或实验证据的区分不能被这一偏好删掉。
 
 ## Check
 
 - **regex 搜索**: 五条 pattern 覆盖档 A 的系动词型与 `neither…nor`、任意逗号否定，以及档 B 的 `rather than` / `instead of`。**正则只定位，分档与判决归判断层**
 - **无正面对项的否定谓语不报**：`is not` / `are not` / `does not` 后面没有跟一个被对照的正面项时，不是本卡的对象。档 A 的 pattern 已经把这类排除在外（它要求 `is <表语>, not <X>` 的完整形状），审阅时不要手工补报
-- **档 B 逐条判 ①②③**: 三条都不满足 → **正面陈述**（`only` / `alone` / 一个更准的正面形容词常能把排除项吸收进去）；属于 ③ → 保留，并在同一处给结果；属于 ② → 确认原处有引用
+- **档 B 逐条判 ①②③，并查必要划界**：定义和范围按其依据保留；其余无依据对照可删，但正面因果也须有依据。`only` / `alone` 不能凭空增加排他性。属于 ③ 保留并同处给结果；属于 ② 确认原处有引用
 - **删排除项前必须确认它在别处有落点**。实测的两处删除分别核实于同段末句；排除项承载的是实证主张时，删掉等于丢一个 claim
 - **排除**: `, not only ... but also ...`（由 `PROSE.NEGATIVE_PARALLELISM` 限频管理，每篇≤2 次）
 - **检查范围**: `.tex` 文件正文区域
 
 ## Examples
 
+以下例句均自拟。Pass 仅指所示检查；判断前须确认这里给出的前提。
+
 ### Pass
 
 ```latex
-% 默认：直接正面陈述，无对比
-The improvement comes from the larger training set.
+% 前提：实验改变盖子且保持材料一致；保留实证对照及结果落点。
+Water loss decreases with the lid fitted, whereas changing the tray material
+has no detectable effect (Table~\ref{tab:tray}).
 
-% ③ 保留，结果在同一处
-Our ablation shows the gain comes from the data, not the architecture (Table~\ref{tab:abl}).
+% 前提：平均数是现有默认做法，正文说明异常测量的影响。
+We report the median instead of the mean because isolated spikes distort the mean.
 
-% ① 具体默认做法
-We take the median instead of the mean, because two runs diverge.
+% 前提：这是明示的模型定义，无须冒充实验。
+The attacker can alter sensor readings. The controller is trusted.
 ```
 
-### Fail
+### Fail / pending
 
 ```latex
-The method is efficient, not slow.               % → The method is efficient.
-The framework is modular rather than monolithic. % → The framework is modular.
-The failures stem from annotation noise rather than reasoning errors.
-% 假想对手：没人主张、正文也没检验 → 只留正面，或在同一处给出排除 reasoning errors 的检验
-Readers drive performance.  % 原文 "readers, rather than backbone identity, drive performance" 是 ③（实验换过 backbone）
-% → 删掉排除项丢了比较性论断；应保留并给结果
-% 把 ", not Y" 反射性换成 "rather than Y" 只是换衣服，不是去对比
+% 若没有具体误解或比较任务，这只是空洞对比。
+The procedure is simple, not complicated.
+
+% 两种原因均未检验：暂不能改成仅保留前半句，须报告归因缺口。
+The drift stems from heat rather than vibration.
 ```
+
+不需要改：有明确用途的原对照已经准确、自然时保留。不把换用 `whereas` 或增加从句当作改善。

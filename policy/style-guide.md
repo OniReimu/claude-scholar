@@ -16,7 +16,7 @@
 - 技术精确：用数据和公式说话，不用修辞
 - 格式克制：不滥用 bold/italic/列表
 - 逻辑显式：过渡词清晰标记逻辑关系
-- 结构连贯：段落和章节按读者任务组织，下列模板只是一种可用的组织方式（来源：v1.38.1，nso 实验 077207a 分析）
+- 结构连贯：段落和章节按读者任务组织，下列模板只是一种可用的组织方式
 
 ---
 
@@ -41,11 +41,13 @@
 
 ## 3. 标准学术短语模板
 
+所有模板和例句用于学习解释过程，不是固定句架、禁词表或频率配额。按上下文判断用途；已清楚可保留，依据不足则报告。作者偏好另列合规结果，不作为已验证的表达质量权重。下列占位例均为自拟。
+
 ### 3.1 Background（背景）
 
 ```
 X currently relies on A, which holds only when B.
-Deployments of X are constrained by A: every additional B costs C.
+Deployments of X are constrained by A because each additional B costs C.
 ```
 
 > **注意**：背景句从一个可验证的具体事实开篇，不从趋势断言开篇。`Recently, ... has attracted significant attention` / `With the rapid development of X, ...` / `In recent years, ...` 属于 `PROSE.AI_LEXICON` 的 formulaic openers 零容忍条款，写出来即违规。
@@ -75,7 +77,7 @@ To tackle this challenge, we design ...
 ### 3.5 Contribution Signals（贡献信号）
 
 ```
-The main contributions are summarized as follows:
+This paper makes the following contributions.
 This paper presents ...
 We provide ...
 ```
@@ -127,7 +129,7 @@ The system is evaluated through simulations.
 
 ### 5.1 Introduction 段落组织
 
-以下模板只是一种可用的组织方式，按论证和读者任务调整，不要求每段同形。范例用于学习解释过程——问题怎样引出原因、证据怎样限定结论——而不是复制句架。（来源：v1.38.1，nso 实验 077207a 分析）
+以下模板只是一种可用的组织方式，按论证和读者任务调整，不要求每段同形。范例用于学习解释过程——问题怎样引出原因、证据怎样限定结论——而不是复制句架。
 
 | 段落 | 内容 |
 |------|------|
@@ -192,7 +194,7 @@ communication budget.
 ### 6.2 Contribution Section 格式
 
 ```latex
-The main contributions are summarized as follows:
+This paper makes the following contributions.
 \begin{enumerate}
   \item We formulate ...
   \item We propose ...

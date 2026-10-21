@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
 description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Six explaining-register principles (policy PROSE.EXPLAINING_REGISTER) run first; they cannot exempt body colons or semicolons from the author’s hard bans. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.6.0
+version: 1.7.0
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -17,28 +17,30 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 ## ⚠️ 最高优先级：解释式语域六原则 <!-- policy:PROSE.EXPLAINING_REGISTER -->
 
-> **先执行六原则，但正文冒号和分号硬禁令不能被六原则、锁或保真豁免。**其余规则冲突时，按这六条执行。权威定义和实测见 `policy/rules/prose-explaining-register.md`。六原则保护作者、关系、条件、情态和真实对照，不保护禁用句式；命题要换成合规结构，句中冒号、正文分号、em-dash 和档 A 对照仍须清理。MSR 同时要求禁标点与逐字锁，造成冲突（evidence.md E12）。
+> **先执行六原则，但正文冒号和分号硬禁令不能被六原则、锁或保真豁免。**其余规则冲突时，按这六条执行。权威定义和实测见 `policy/rules/prose-explaining-register.md`。六原则保护作者、关系、条件、情态和真实对照，不保护禁用句式；命题要换成合规结构，句中冒号、正文分号、em-dash 和档 A 对照仍须清理。逐字锁若与禁标点冲突，应保留命题并报告冲突。
+
+目标是在保留技术命题和必要披露的前提下，让目标读者准确、顺畅地理解已有内容。六原则用于发现和修复具体表达障碍，不按主语、语态、从句、情态词或连接词的数量判定质量。每个拟修改项应说明原文位置、具体理解障碍、稿内依据和解决标准；按章节职责与必要上下文判断，已清楚的表达可保留，依据缺失或解释不唯一时报告。验收看表达清楚、关系连贯、信息适量、用语准确自然；保真和作者偏好合规单独核查。
 
 正文要写成作者在向读者解释，不要写成一串结论摘要：
 
-1. **主语按句子在做的事来选**：作者的决定写成 `we` 加理由；贡献用 `This paper` 或 `we`；流程可用被动句，正常的算法主动句也可保留；定义和性质用 `X is Y`；名词作主语只用于它字面上真的在做的事（`the network consists of`）。按动作归属是否准确、是否隐藏作者选择来判断，不按动词机械换主语或语态；被动句和系动词句不要机械改成 we。（来源：v1.38.1，nso 实验 077207a 分析）
+1. **主语按句子在做的事来选**：先核动作归属；作者决定可用 `we`，理由仅在稿内有依据且本处需要时补出；贡献用 `This paper` 或 `we`；流程可用被动句，正常的算法主动句也可保留；定义和性质用 `X is Y`；名词作主语只用于它字面上真的在做的事（`the network consists of`）。按动作归属是否准确、是否隐藏作者选择来判断，不按动词机械换主语或语态；被动句和系动词句不要机械改成 we。
 2. **拆开藏着关系的名词串**：按规则卡第 2 条还原前置修饰串、嵌套所属和名词化中的命题，再按是否减少读者推断决定展开或保留。领域术语只豁免本体，术语外的临时修饰串仍查；解释不唯一就报告。
-3. **情态和证据一致**：可能性、成立条件、后文要给的内容，都如实写出来。证据不需要的地方不加 hedge。相邻两句是原因和结果、论断和例子、结果和限定时，把关系写出来或合成一句；结果的含义论文在同一节已经给出，就紧挨着结果说。不许补论文没有的解释。
-4. **目的用动词说**：`To test X, we …`，不要写成 `for X evaluation`。须说清已有依据的具体用途或取舍，重复小节标题不算解释改善，目的已明确就不再加。（来源：v1.38.1，nso 实验 077207a 分析）
-5. **条件和范围要写成读者能核对的条件，不要压成短语标签**：先问删掉以后论断还成立吗，成立就删。真条件按性质选写法：一个具体取值、对象或已命名的设置，只管一个结果，用介词短语就够（`at 4 requests/s`、`with eight fields`）；一种状态或一件事，要有主语和动词才说得清，写成从句（`when the catalog changes between requests`），不要压成 `under churn` 这类标签；几句话共用一组设置，在段首交代一次，后面直接报结果，设置变了再标。连着几句都用 `When` 开头也是毛病。这一条不是让你换介词。
+3. **情态和证据一致**：可能性、成立条件、后文要给的内容，都如实写出来。证据不需要的地方不加 hedge。关系有依据但尚未表达清楚时，选择连接、合句或调整句序；已明确的两句可保留。不许补论文没有的解释。
+4. **步骤用途按需说明**：说明有依据且影响本处理解的具体用途或取舍；`To test X, we …` 只是一种写法。标题或上下文已说明用途时，不重复补目的句。
+5. **条件和范围要写成读者能核对的条件，不要压成短语标签**：先问删除是否改变范围、证据覆盖、计数单位或本处理解所需的信息；命题仍真不足以证明可删。真条件按性质选写法：一个具体取值、对象或已命名的设置，只管一个结果，用介词短语就够（`at 4 requests/s`、`with eight fields`）；一种状态或一件事，要有主语和动词才说得清，写成从句（`when the catalog changes between requests`），未定义的标签应展开，前文已定义则可保留；几句话共用一组设置，在段首交代一次，后面直接报结果，设置变了再标。连着几句都用 `When` 开头也是毛病。这一条不是让你换介词。
 6. **对照只在对手真实存在时才保留**（`PROSE.NEGATION_CONTRAST` 档 B）：
    - ① 读者原本会默认采用的具体做法；
    - ② 在原处点名并引用的真实主张；
    - ③ 本文检验过的可能，这一种**必须保留，并在同一处给出结果**。
-   - 三条都不满足，只留正面陈述。把一种对照句式换成另一种不算修改。
+   - 定义、威胁模型及保证边界的必要区分按其依据保留，不冒充实验。无依据的对照可删，但正面解释仍须有依据，不能借删对照确认因果。
 
 **执行顺序固定：**
 1. 先按 `policy/rules/prose-explaining-register.md`「六原则的共同操作」逐段执行六原则，不以某一条合格放行整段；
 2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条，并在回复里写明；正文冒号和分号禁令不能跳过，须保留命题并改成合规结构；
-3. **最终关系复核**：第二个 pass 后按共同操作第 5 步比较改动段落，并复核决定保留的疑点，读完整段落：原有原因、对照、限定是否仍明确？新增主语或目的句是否真的减少读者推断？同时做**反向压缩检查**：是否把原有谓语改成名词化、把明确所属者改成代词、把原因或容差来源改成前置修饰语？若让读者多推断一步，就保义修复；句子更短、禁用形式更少不是保留理由。（来源：v1.38.2，nso 实验 077207a 分析）
+3. **最终关系复核**：第二个 pass 后按共同操作第 5 步比较改动段落，并复核决定保留的疑点，读完整段落：原有原因、对照、限定是否仍明确？新增主语或目的句是否真的减少读者推断？同时做**反向压缩检查**：是否把原有谓语改成名词化、把明确所属者改成代词、把原因或容差来源改成前置修饰语？若让读者多推断一步，就保义修复；句子更短、禁用形式更少不是保留理由。
 4. lint 兜底，然后停手。
 
-⚠️ **反例：事实还在，比较关系却被拆没。** 示意场景：原句用 `whereas` 对照两种验证方法各自接受和拒绝的数量。改稿拆成两句，只保留两组数字，删掉 `whereas`，让读者自己补比较关系。拆句可以，比较须保留，可沿用 `whereas` 或明确接回对照。来源：v1.38.1，nso 实验 077207a 分析。
+⚠️ **反例：事实还在，比较关系却被拆没。** 示意场景：原句用 `whereas` 对照两种验证方法各自接受和拒绝的数量。改稿拆成两句，只保留两组数字，删掉 `whereas`，让读者自己补比较关系。拆句可以，比较须保留，可沿用 `whereas` 或明确接回对照。
 
 章节粒度按 `writing-anti-ai-loop`「准备／章节功能与粒度」：摘要只留理解核心发现必需的细节，结论不复演实验；减少重复前逐项确认同一事实仍在正文或表图中（E12）。
 
@@ -60,7 +62,7 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 | `PROSE.AI_LEXICON` | AI 高频词表（tier-1 零容忍 + tier-2 密度阈值） |
 | `PROSE.FRACTAL_SUMMARY` | 禁止逐层预告/回顾（"In this section we…"） |
 | `PROSE.INVENTED_CONCEPT_LABEL` | 禁止自造术语冒充既有概念 |
-| `PROSE.RESTATEMENT_DILUTION` | 同一命题一节内只说一次 |
+| `PROSE.RESTATEMENT_DILUTION` | 删除无作用的复述，保留必要展开、衔接与局部证据 |
 | `PROSE.SEMANTIC_IDLING` | 每句必须新增可证伪内容：零命题的元叙述句 / 理由复述结论的因果回环 |
 | `PROSE.INTENSIFIERS_ELIMINATION` | 删除空洞强调词 |
 | `PROSE.HEDGING_DISCIPLINE` | 动词强度匹配证据强度（双向：不 over-hedge 也不 over-claim） |
@@ -205,7 +207,7 @@ Mix sentence lengths. End paragraphs differently.
 关系从句（`, which ...`）、句中插入语（`and, without X, ...`）、第二个并列谓语（`... and sets ...`）、句末分词尾巴——一句里出现 ≥2 个只标候选，按指代、嵌套、主干距离和理解负担判断；并列谓语不等于嵌套，确实难读才拆，新句给**具体主语或锚**（`The estimates ...` / `thus` / `the same`），不要用裸 `It` / `This` 指代一整个小句。`which` 的先行词是整个前句时最难读，优先拆。这类句子常常只有 2–3 个逗号、≤35 词，逗号规则和长度规则都抓不到，只能读出来。
 - ❌ `Four sampled paths per question suffice to estimate both properties, which tells in advance whether more paths will pay and, without ground-truth answers, sets a budget that keeps 98\% ...`
 - ✅ `Four sampled paths per question suffice to estimate both properties. The estimates predict whether more paths will pay, and without ground-truth answers they set a budget that keeps 98\% ...`
-- **拆合按关系判断**：允许「事实 + 原因／条件／用途／限定」合句，不限于残句修复；读者能一次解析主干及限定就可保留。拆完 sd 下降可以接受，**不得**为补回方差把别的句子并长。（来源：v1.38.1，nso 实验 077207a 分析）
+- **拆合按关系判断**：允许「事实 + 原因／条件／用途／限定」合句，不限于残句修复；读者能一次解析主干及限定就可保留。拆完 sd 下降可以接受，**不得**为补回方差把别的句子并长。
 - 不拆：无逗号的限定性从句（`a budget that keeps ...`）、给符号下定义的 `where $p$ is ...`、数学条件 `whenever ...`。
 
 **短句的两道门槛**（短句本身没问题，这两种短句有问题）：
@@ -270,7 +272,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 - **句首连接词密度**：`Moreover,` / `Furthermore,` / `Additionally,` / `In addition,` 全文合计 ≤4。超出说明逻辑靠连接词粘贴而非论证顺序承载；修法是重排句序，不是换个同义连接词。
 
 **因果连接词要选，不能默认用 `so`** <!-- policy:PROSE.CAUSAL_CONNECTIVE -->
-逐处判断关系是否准确、连接是否必要、相邻句是否机械重复同一句架。关系已经清楚且表达准确，就保留；需要改时按下面的语义判据选结构。语料只用于举例验证，不能用历史频率差决定改多少，也不能成为增删配额。（来源：v1.38.1，nso 实验 077207a 分析）
+逐处判断关系是否准确、连接是否必要、相邻句是否机械重复同一句架。关系已经清楚且表达准确，就保留；需要改时按下面的语义判据选结构。语料只用于举例验证，不能用历史频率差决定改多少，也不能成为增删配额。
 
 lint 的密度与分布数据只作定位提示，不据此判违规或要求换词；改动量由具体关系问题决定。
 
@@ -342,7 +344,7 @@ lint 的密度与分布数据只作定位提示，不据此判违规或要求换
 **不要给现象起名** <!-- policy:PROSE.INVENTED_CONCEPT_LABEL -->
 "the supervision paradox" / "workload creep" 这类标签只在两种情况下允许：有文献出处并引用，或是本文明确的命名贡献（显式声明 + 定义 + 全文一致）。两者都不满足就用普通语言描述现象。审稿人会去检索你造的"既有概念"。
 
-**同一命题一节内只说一次** <!-- policy:PROSE.RESTATEMENT_DILUTION -->
+**删除无作用的复述，保留必要展开、衔接与局部证据** <!-- policy:PROSE.RESTATEMENT_DILUTION -->
 AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。删除测试：删掉后出现的那句，本段信息零损失即确认是复述，删掉定稿（不要合并改写）。跨节的重复主张不归这里，交 `claim-architecture-review` 的 **P2 relocation-map**——同一命题有多个 home 时由它定 canonical home（最小调用见下方转诊说明）。
 
 **每句必须新增可证伪的内容（"轱辘话"）** <!-- policy:PROSE.SEMANTIC_IDLING -->
@@ -579,7 +581,7 @@ For comprehensive pattern lists, see:
 
 ## Workflow (工作流程)
 
-> **Order inside this skill — six principles first.** 按顶部「执行顺序」调用 `PROSE.EXPLAINING_REGISTER` 的共同操作，再执行其余规则，完成最终关系复核（含保留疑点和反向压缩）后停手。（来源：v1.38.2，nso 实验 077207a 分析）
+> **Order inside this skill — six principles first.** 按顶部「执行顺序」调用 `PROSE.EXPLAINING_REGISTER` 的共同操作，再执行其余规则，完成最终关系复核（含保留疑点和反向压缩）后停手。
 
 > **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
 
@@ -623,22 +625,9 @@ For comprehensive pattern lists, see:
 4. **维持语调** - 匹配预期的语气（正式、随意、技术）
 5. **注入灵魂** - 添加个性和观点
 
-## Quick Scoring (快速评分)
+## Expression Acceptance（表达验收）
 
-Rate the text 1-10 on each dimension (总分 50):
-
-| Dimension | Question | 问题 | Score |
-|-----------|----------|------|-------|
-| **Directness** | Direct statements or announcements? | 直接陈述还是绕圈宣告？ | /10 |
-| **Rhythm** | Varied or metronomic? | 节奏变化还是机械重复？ | /10 |
-| **Trust** | Respects reader intelligence? | 尊重读者智慧吗？ | /10 |
-| **Authenticity** | Sounds human? | 听起来像真人吗？ | /10 |
-| **Density** | Anything cuttable? | 有可删减的内容吗？ | /10 |
-
-**Standard**:
-- 45-50: Excellent, AI patterns removed
-- 35-44: Good, room for improvement
-- Below 35: Needs revision
+按 `PROSE.EXPLAINING_REGISTER` 的四维度及五步共同操作验收。若需数值，报告表达验收通过率，固定评估单元并注明已完成数、覆盖率、重大问题及待核项。标点等作者偏好单独报告；改写保真单独验收。没有完整证据记录就不报分，不以“像真人”或词率替代质量，不沿用旧 80 分门槛。例句的适用前提与保留／待核对照见六原则卡 Examples。
 
 ## Examples (示例)
 

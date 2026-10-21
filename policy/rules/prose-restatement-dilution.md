@@ -18,13 +18,13 @@ autofix: none
 
 ## Requirement
 
-一个命题在同一节内只陈述一次，放在证据最强的位置。禁止：
+删除同节内没有说明作用的复述；必要的定义、推理展开、衔接和总结可保留。以下情况需要结合上下文判断：
 
 - 段首 topic sentence 与段末句是同一命题的两种说法；
 - subsection 收尾句把该 subsection 首句换词重说；
 - Abstract / Introduction / Conclusion 之外出现"迷你摘要"段落。
 
-重复出现时保留信息量最大的那一处（通常是紧挨证据的那一处），删掉其余，不做合并改写。
+重复出现时判断每处的职责，按需要删除、合并或回指。不能仅因别处已有同一事实就删除本处理解必需的分母、实例或限定。
 
 ## Rationale
 
@@ -42,9 +42,9 @@ autofix: none
 
 1. 列出本段每句陈述的命题；
 2. 找出命题相同、措辞不同的句对；
-3. 删掉后出现的那一句，重读本段——信息零损失即确认违规，删除定稿。
+3. 试删或合并后重读完整段落，核查范围、证据覆盖、计数单位、推理衔接和本处理解所需信息；均无损失且无说明作用才删除。
 
-**节级检查**：读 subsection 的首句和末句，若二者可互换而不影响该节，删末句。
+**节级检查**：读 subsection 的首句和末句，若无新增说明或必要收束作用且删除不增加理解负担，可删末句。
 
 ⚠️ **"分开"与"各做什么"不是同一命题。** `X separates construction from selection` 说的是两件事被分开；`the model first learns how to construct ..., then learns when to ...` 说的是分开后的每一半学什么。第二句是对第一句的**展开**，删除测试有损失，不是复述。实测一次误删（2026-09-21）就是把这两句当成了同一命题的两种说法。判命题相同时，问"删掉第二句，读者还知道每一半的内容吗"，而不是"两句是不是围绕同一个名词"。
 
@@ -54,23 +54,25 @@ autofix: none
 
 ## Examples
 
+以下例句自拟，判断依赖段落用途，不以命题重复次数定罪。
+
 ### Pass
 
 ```latex
-Folding removes the per-step R1CS extraction, which accounts for 92.9\% of
-single-step cost. The folded prover therefore runs 14.6$\times$ faster at
-$n=64$, and the speedup grows linearly with the number of steps.
+The covered tray loses less water because its lid restricts evaporation.
+The uncovered tray provides the reference measurement for this comparison.
 ```
+
+两句分别说明原因与参照；删第二句会丢比较对象，不因同谈一个实验就删。
 
 ### Fail
 
 ```latex
-Folding provides a substantial efficiency benefit by removing redundant work.
-Specifically, it removes the per-step R1CS extraction, which accounts for
-92.9\% of single-step cost, yielding a 14.6$\times$ speedup at $n=64$.
-Overall, these results demonstrate that folding substantially improves
-efficiency by eliminating redundant per-step work.
+The covered tray loses less water because its lid restricts evaporation.
+This reduction in water loss demonstrates that less water leaves the covered tray.
 ```
+
+若后句没有衔接或收束职责，它只是同义重复；可删后句，重读本段确认原因和参照仍明确。不能把此例变成“总删末句”。
 
 ## Conflicts
 
