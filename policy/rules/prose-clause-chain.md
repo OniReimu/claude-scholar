@@ -18,7 +18,7 @@ autofix: none
 
 ## Requirement
 
-一句话只挂一层从属结构。当一句里叠了两层以上的从属单位——关系从句（`, which ...` / `, where ...`）、插入语（`and, without X, ...`）、并列谓语（`... and sets ...`）、分词尾巴（`, reducing ...`）——就把它拆成几句，**每句只说一件事**，新起的句子用锚（`The estimates ...` / `This bound ...` / `thus` / `the same`）接回上一句。
+从属单位的数量只用于定位候选，不是硬拆依据。当一句里出现多个关系从句（`, which ...` / `, where ...`）、插入语（`and, without X, ...`）、并列谓语（`... and sets ...`）或分词尾巴（`, reducing ...`）时，检查指代、嵌套、主语到主干谓语的距离和理解负担；并列谓语不等于多一层嵌套。读者难以一次解析时才拆，新句用锚（`The estimates ...` / `This bound ...` / `thus` / `the same`）接回上一句，保留原有关系。明确允许「事实 + 原因／条件／用途／限定」合成一句，能一次读清主干及限定就保留。（来源：v1.38.1，nso 实验 077207a 分析）
 
 拆链只拆**从属关系**，不改**句长分布**：拆完后不得为了补回长度或句长方差把别的句子并长（见 `PROSE.RHYTHM_VARIANCE`）。
 
@@ -34,13 +34,13 @@ autofix: none
 
 > Four sampled paths per question suffice to estimate both properties. The estimates predict whether more paths will pay, and without ground-truth answers they set a budget that keeps 98\% of the accuracy of 32 paths with eight paths on average.
 
-同一轮里还暴露了反方向的失效：为把句长标准差拉回 ≥10，把相邻短句并成 36–44 词的长句，作者的反馈是"改之前节奏更好，句子太长了"。所以本卡只做拆，不做并。
+同一轮里还暴露了反方向的失效：为把句长标准差拉回 ≥10，把相邻短句并成 36–44 词的长句，作者的反馈是"改之前节奏更好，句子太长了"。所以不得为方差并句；为写清已有关系合句，仍按理解负担判断。
 
 `which` 的先行词不是一个名词、而是前面整个小句时（"suffice to estimate both properties, which tells ..."），这条链尤其难读：`which` 指的是"四条路径就够"这件事，读者要回头重新解析。这种句式同时触发 `PROSE.ABSTRACT_AGENCY`（一个事实在"告诉"什么），拆句时给新句一个具体主语（`The estimates`）。
 
 ## Check
 
-- **LLM 检查**（逐句）：数一句里的从属单位——关系从句、句中插入语、第二个并列谓语、句末分词/介词尾巴。≥2 个即候选。
+- **LLM 检查**（逐句）：数一句里的从属单位——关系从句、句中插入语、第二个并列谓语、句末分词/介词尾巴。≥2 个只标候选；`params.max_subordinate_units` 只用于定位，最终按指代、嵌套、主干距离和理解负担判断。
 - **优先查三种形状**：
   1. `X, which V1 ... and V2 ...`——关系从句后再接并列谓语；
   2. `..., and, <插入语>, V ...`——并列连词后紧跟插入语；
@@ -106,4 +106,4 @@ each path is right and discards that information.
 
 ## Conflicts
 
-与 `PROSE.RHYTHM_VARIANCE`：拆链会增加短句、可能压低句长方差。裁决：**拆链优先，方差让步**。只允许在方差卡规定的一种情形下合并（同一主张被拆在两句里、合并后仍只有一层从属），不得为方差重新制造从句链。
+与 `PROSE.RHYTHM_VARIANCE`：拆链会增加短句、可能压低句长方差。裁决：**理解负担优先，方差让步**。事实及其原因、条件、用途或限定可以合句，不能为方差重新制造难以解析的从句链；超过 35 词只触发复查。

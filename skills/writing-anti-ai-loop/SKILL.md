@@ -1,6 +1,6 @@
 ---
 name: writing-anti-ai-loop
-description: This skill should be used when the user wants a whole LaTeX paper rewritten chapter by chapter with writing-anti-ai until its style stops improving — "逐章改写到文风分不涨", "rewrite the paper chapter by chapter until the score stops rising", "iterate the anti-AI rewrite over the whole manuscript", "把整篇论文按 anti-AI 改几轮". One subagent per chapter per round; the first round runs the full writing-anti-ai skill, later rounds focus on its six explaining-register principles, with each subagent naming the paragraphs it left unchanged and why, and hard-rule checks every round; after every round the orchestrator reverts over-reaching edits, checks fidelity, lock provenance and zero-tolerance candidates across the body, and scores the paper with a p2g style service (P2G_STYLE_URL) when one is configured, stopping when the score within the human range stops rising. Without a service it runs two fixed rounds. Works on a copy; the original manuscript is never edited. For one paragraph or one section, use writing-anti-ai directly.
+description: This skill should be used when the user wants a whole LaTeX paper rewritten chapter by chapter with writing-anti-ai until its style stops improving — "逐章改写到文风分不涨", "rewrite the paper chapter by chapter until the score stops rising", "iterate the anti-AI rewrite over the whole manuscript", "把整篇论文按 anti-AI 改几轮". One subagent per chapter per round; the first round runs the full writing-anti-ai skill, later rounds focus on its six explaining-register principles, with each subagent naming the paragraphs it left unchanged and why, and hard-rule checks every round; after every round the orchestrator reviews paragraph relations, repairs local failures before reverting, checks proposition fidelity, lock provenance and zero-tolerance candidates across the body, and scores the paper with a p2g style service (P2G_STYLE_URL) when one is configured, stopping when the score within the human range stops rising, with one targeted diagnostic round allowed after a flat first round if blind reading still identifies a specific, fidelity-preserving improvement. Without a service it runs two fixed rounds. Works on a copy; the original manuscript is never edited. For one paragraph or one section, use writing-anti-ai directly.
 version: 1.0.0
 author: OniReimu
 license: MIT
@@ -16,7 +16,7 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 ## 前提
 
 - **打分服务（可选）**：环境变量 `P2G_STYLE_URL`（p2g 文风分服务的 `/api/style` 地址），需要时加 `P2G_STYLE_TOKEN`。
-  - 配了：每轮打分，按分数决定停不停。
+  - 配了：每轮打分，按「停不停」判断；首轮无增益时的定点诊断例外见该节。
   - 没配：固定跑两轮（第 1 轮完整 skill，第 2 轮六原则专项），然后停。6g 和 edge 两篇的涨幅大部分出在前两轮。
 - **稿件会离开本机。**打分时整篇 `.tex` 会上传到这个服务。服务声明不保存文件，但这仍然是把未发表稿件交给第三方，**开跑前告诉作者并得到同意**。
 - 有 `latexmk` 时每轮编译一次；没有就跳过这一步，并在最终报告里写明。
@@ -35,8 +35,11 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
    - 单文件论文：每个 `\section` 一段，子代理改 `chapters/` 里的段落文件。
    - 每轮子代理改完，先 `python3 scripts/split.py join <out>/chapters <out>/work/main.tex` 拼回去，再做后面的检查。拼回的文件保持原稿的版式。
    - 附录照常算章。不到 150 词的节可以和相邻的节合给同一个子代理。
+   - **派发前确认结构**：主代理先确认论证主线和跨节重复。仅发现段落必要性、位置或跨节分配问题时，调用 `claim-architecture-review` 做定点审查，记录保留、搬移或去重的落点后再派逐章改写；已有 `spine.md` 就复用，没有则只补理解该问题必需的主线。只处理已定位的问题，不扩大成重写论文或改贡献。（来源：v1.38.1，nso 实验 077207a 分析）
    - **章节功能与粒度**：每章先写一句读者任务。摘要交代问题、方法、规模、核心发现和贡献，只留理解发现必需的数字、条件和边界，不逐项展开原因、区间和次级计数。结论交代确立了什么、边界与下一步，不复演实验。方法和结果讲步骤、证据与关系；讨论讲行动者和适用条件。
    - 减少重复细节前，逐项记录同一事实在正文或表图中的准确位置。唯一结果、必要限定和核心发现不能删。长度和数字量只作诊断，不按范例设配额。MSR 摘要从 333 词、18 个数字缩到 167 词、6 个数字，结论从 216 缩到 108 词；分数略降，却更符合作者要求（E12）。
+   - **段落任务**：改前只列有问题的段落，每段一句「读者缺什么关系—已有来源在哪里—准备怎样重组」，来源定位到全文已有段落或表图；找不到依据就报告缺口，不编原因。这个记录用于定位任务，不要求每段都写成同一种形状。（来源：v1.38.1，nso 实验 077207a 分析）
+   - **全文篇幅分配**：记录作者批准的全文页数或篇幅及其来源，先找可删的重复，再给解释不足的段落分配空间。章节增长可由别处删重复抵消，由主代理协调各章，不能删事实补预算，也不能自行放宽全文上限。每轮仍编译验收。（来源：v1.38.1，nso 实验 077207a 分析）
 3. **基线**：`python3 scripts/score.py <out>/orig --main main.tex`，记进 `LOG.md`。
 
 ## 每一轮
@@ -45,7 +48,7 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 
 每章一个全新子代理（Agent tool，`general-purpose`），**在同一条消息里一起派出去**。子代理之间不共享上下文，每轮都是新的子代理。
 
-- **第 1 轮**：完整执行 `writing-anti-ai`，先按六原则改，再按 anti-AI 规则改，然后停手。
+- **第 1 轮**：完整执行 `writing-anti-ai`，先按六原则改，再按 anti-AI 规则改，复核改动段落的关系后停手。
 - **第 2 轮起**：以六原则（`$CS/policy/rules/prose-explaining-register.md`）为改写主任务，不重跑完整润色。逐段核对作者、关系、目的、条件、强度和真实对照是否清楚。关系藏在句序或名词串里时，可调句序、拆合句、重组段落；单句合格不等于整段讲清。已讲清的段落可不动。硬约束和新增改动每轮复核。已测稿件支持这个方向，不足以推断所有稿件重复完整 skill 都无益（E8、E9）。
 
 子代理提示词模板（把 `{}` 换掉）。每条任务级硬约束都带规则 ID 或作者指令的可定位来源；工作范围约束注明本 skill 的小节。发出前核对实际 prompt 与模板的差异，新增条款缺来源就不发送。不从一次回退推导新的句式禁令或保留令，也不要求一组自然语言句子用同一种写法；术语和标签可以一致。MSR 的自加保留条款和整组统一写法分别冻结了违规对照、造成七句同框架（E12）。
@@ -56,37 +59,40 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 {round_rule}
 硬约束：
 - [来源：writing-anti-ai-loop §准备、§并行改写] 只用 Edit 改 {file}。不建任何文件，不改其他文件，不跑会写文件的命令。
-- [来源：writing-anti-ai-loop §核保真] 不增删事实、数字、引用、公式、\label 和 \ref 的目标。figure / table 环境、caption、公式、代码、\cite 键都不动。自定义宏（例如只在某个版本出现的 \extonly{…}）的调用和包住的范围都不动。重复数字可减少提及，但要记录同一论断仍保留的准确位置，不能只凭数字字符串还在。caption / table 不在本次标点检查范围，只报已排除计数；其他受保护正文若违规，只报告冲突，不据此放行。
+- [来源：writing-anti-ai-loop §核保真] 保真以命题为单位，不增删事实；数字可减少重复提及，不改引用、公式、\label 和 \ref 的目标。figure / table 环境、caption、公式、代码、\cite 键都不动。自定义宏（例如只在某个版本出现的 \extonly{…}）的调用和包住的范围都不动。区分事实消失、必要限定消失与同一事实少重复一次；记录同一论断在正文或表图中的准确落点，不能只凭数字字符串还在，也不能仅因本章不再精确报数就回退。坏结果、分母、范围和安全含义仍须显著、准确保留。caption / table 不在本次标点检查范围，只报已排除计数；其他受保护正文若违规，只报告冲突，不据此放行。
 - [来源：PROSE.EXPLAINING_REGISTER、PROSE.HEDGING_DISCIPLINE] 不改变论断的强度、条件和范围。只用整篇论文已明确给出的解释、原因和关系；跨句或跨节移用要注明来源。同一关系换结构不算新增事实，推测不能当已写明的原因。原意不清时报告。
 - [来源：writing-anti-ai-loop §并行改写；有作者要求时填 {length_source}] {length_rule}
 - [来源：writing-anti-ai-loop §不要做] 只按规则和读者任务改，不按词频改。
 - [来源：PROSE.EXPLAINING_REGISTER、PROSE.NEGATION_CONTRAST、PROSE.MIDSENTENCE_COLON、PROSE.SEMICOLON_RESTRICTION、PROSE.EM_DASH_RESTRICTION] 命题保真始终有效，锁、六原则和保真都不能豁免正文冒号与分号硬禁令。不能兼得时报告具体冲突，不删论断、不报通过。rather than / instead of 按三判据逐条给依据，不能因入锁就保留。
-回复（400 字以内）：
+改前任务（来源：writing-anti-ai-loop §准备，v1.38.1，nso 实验 077207a 分析）：
+只列有问题的段落，每段一句「读者缺什么关系—已有来源在哪里—准备怎样重组」。
+回复（简述改动量和保留理由，尽量在 400 字以内；语义风险报告不受此上限限制）：
 1. 改了大约几处；
-2. 没改的段落，每段一句：它按哪条原则已经合格。改了的段落不用报，看 diff；
-3. 条件、强度、范围和关系有改动的，逐条给出原句和新句；
+2. 没改的段落，每段一句具体解释链，例如「本段先给共享设置，再说明该条件为何使恢复失败」。不能只写「P3 明确」等原则编号。改了的段落看 diff 和完整段落，不重复列台账；
+3. 条件、强度、范围和关系有改动的，逐条给出原句和新句；去重注明命题保留的准确落点，语义风险不能为了字数省略；
 4. rather than / instead of 按三判据的判定，以及原文里看到的事实问题（只报告，不改）。
 ```
 
-- `{round_rule}`，第 1 轮：`再读 {CS}/skills/writing-anti-ai/SKILL.md，按它的执行顺序改：先六原则，再 anti-AI 规则，然后停手。`
+- `{round_rule}`，第 1 轮：`再读 {CS}/skills/writing-anti-ai/SKILL.md，按它的执行顺序改：先六原则，再 anti-AI 规则，只复核改动段落的关系，然后停手。`
 - `{round_rule}`，第 2 轮起：`以六原则为主任务，逐段过 Check 的六个问题，必要时重组段落。不重跑完整润色；硬约束和新增改动每轮复核。`
 - 第 2 轮起，只锁有回退记录的原句。`locks.json` 用对象数组，每条必填 `sentence`（原句）、`orig`（相对台账或绝对路径）、`rollback_round`（正整数）、`rollback_reason`、`proposition`（含条件和强度）。`python3 scripts/guardrails.py locks <out>/locks.json` 核对原句逐字存在于 orig，输出原文哈希和位置；可填 `orig_sha256` 固定基线，变了就拒绝。旧式字符串数组、缺字段或找不到原句都拒绝。
 - 机器只能验证原文来源，不能凭五个字段证明真实回退。主代理另核对该轮 diff / 回退记录确实恢复了原句，记录证据位置；未经这一步不得派发。不要给旧数组补个来源标签就算重建完成。
 - 原句含零容忍候选时标「只锁命题」，不能要求逐字保留；换成合规结构。其余锁默认不动，若阻碍六原则重组，改写者给保义候选和理由，主代理只审保真。MSR 把 r4 的冒号新句误锁为原句，真正原句也可能带违规形式（E12）。
 - 作者批准的事实修复单列语义基线、批准来源；后续保真对照批准版本，orig 不动，不冒充回退原句。
 - `{abstract_note}`，摘要那一章：`，并且只改 abstract 环境`；其他章为空。
-- `{length_rule}`，默认：`这一章的篇幅变化控制在 ±15% 以内。`稿件卡在页数上限时：`这一章不能变长，词数不超过原文；可以缩短。`改写全文通常会变长（edge 一篇多了约 12%，多出一页），所以有页数上限时一定用后一种，并且每轮编译核对页数。
+- `{length_rule}`：`按准备阶段分配给本章的解释与去重任务调整篇幅，以作者批准的全文页数或篇幅验收；章节增长可以由别处删重复抵消，不能删事实。`填入具体全文上限、作者来源及本章分配；未提供上限时沿用当前已批准要求，无可确认要求则报告篇幅变化，不自设逐章上限。每轮编译核对页数，词数不能代替版面验收。（来源：v1.38.1，nso 实验 077207a 分析）
 
 ### 2. 审改动
 
 主代理负责，不交给子代理。
 
-1. 看子代理列的没改段落和理由：理由站不住的，下一轮交回改写。MSR 的子代理每章只修 2–5 处，没说其余段落为什么不用改；单独强调虚词也没有额外收益（E12）。逐条看第 3、4 项。改变了论断强度或范围的、加了原文没有的内容的，**改回原句**，并记进 `LOG.md`。
+1. 看改前的问题定位和改后没改段落的理由：保留理由须指出具体解释链，不能只贴原则编号；理由站不住时重新定位问题。逐条看回复第 3、4 项。以命题核对强度、范围及新增内容；语法挂靠错误等局部失败，先给一次不增事实、不弱化限定的保义修复机会，仍失败再回退，并在 `LOG.md` 记录修复或回退理由。无依据的新事实不得保留。（来源：v1.38.1，nso 实验 077207a 分析）
 2. 逐章读本轮的 diff（`git diff --no-index --word-diff <上一轮> <out>/work`）。重点看：
    - 条件和范围：原来不限定的论断被加了条件，或者反过来；
    - 新出现的因果和推论；
    - 数字换成回指（「this rate」）以后，读者还能不能找到原值。
-3. 子代理报告的原文事实问题不在这里修，收进最终报告交给作者。
+3. **最终关系复核**：首轮在第二个 pass 后，后续轮在改写完成后，只对改动过的段落做前后比较，并读改后完整段落。原有原因、对照、限定是否仍明确？新增主语或目的句是否真的减少读者推断？只换语态或重复标题不算改善。反例见 `writing-anti-ai`「执行顺序」：示意改稿把两种验证方法间的 `whereas` 拆没了，数字仍在，比较关系却变弱，不能只凭数字齐全验收。回退或保义修补后，对受影响段落再做此检查，不扩成全文长台账。（来源：v1.38.1，nso 实验 077207a 分析）
+4. 子代理报告的原文事实问题不在这里修，收进最终报告交给作者。
 
 ### 3. 核保真
 
@@ -95,7 +101,7 @@ python3 scripts/fidelity.py <out>/orig <out>/work
 ```
 
 - 退出码 1：引用键或 `\label` 出现或消失、`\ref` 指向原文没有的标签，或者出现了 `NOT IN ORIGINAL` 的数字或公式。逐项处理：新事实改回原文；只是把原文里的值说明白了（例如原文 `$W\in\{1,2,5,10\}$`，改写写出 `$W=10$`），在 `LOG.md` 里写明理由后保留。
-- 丢失的数字只报告，不算失败：重复出现的值换成回指可以接受，丢掉一个结果不行。逐个回原文确认。按六原则第 5 条，正文里不再逐个报的计数，必须在论文的某张表或某张图里找得到；找不到就改回。
+- 丢失的数字只报告，不自动算失败。逐项区分「事实消失」「必要限定消失」「同一事实少重复一次」：前两种必须修复，后一种可接受。同一论断已在正文或表图中准确保留，不能仅因本章不再精确报数就回退；记录其对象、分母、条件、强度及落点，不只比数字字符串。坏结果、范围和安全含义仍须显著、准确保留，不能用含糊回指掩盖。局部挂靠等错误先按「审改动」保义修复一次，失败再退。（来源：v1.38.1，nso 实验 077207a 分析）
 
 ### 4. 核规则
 
@@ -122,27 +128,27 @@ python3 scripts/guardrails.py <out>/work/main.tex --json <out>/rules-rN.json
 - 有 `latexmk` 时编译 `work/` 的一份临时拷贝。未定义的引用和 ref 必须是 0，记录正文终页、参考文献起页和总页数，不只记总页数。有页数要求时按编译验收；临时放开要记作者来源，标「内容候选，版面未通过」，不能称可投稿完成版。
 - 有 PDF 时查段末一两词的悬浮行、溢出和浮动体。先尝试不改文字的排版修复；改文字就重跑保真和规则。不删目的、情态、条件或精确限定来省一行。MSR 后补发现 12 个悬浮行，删 engineering 和 over time 又须回退（E12）。
 - `python3 scripts/score.py <out>/work --main main.tex --base <上一轮快照>`（第 1 轮用 `<out>/orig`），返回 `style`、`style_within_human_range`、`wording_per_1k`、`words` 和 `gain_top3_share`。
-- `gain_top3_share` 是这一轮虚词变化里，变得最多的 3 个词占的比例。服务只给这个比例，不说是哪几个词。按写法改的轮次，变化分散在很多词上（六原则在 6g、edge、anti_nso 上都在 0.32–0.35）；只换几个词的轮次，变化集中在少数几个词上（anti_nso 一轮按词表换词是 0.77）。
+- `gain_top3_share` 是这一轮虚词变化里，变得最多的 3 个词占的比例；服务不返回具体词项。超过 0.5 时按「停不停」将涨分作废，按「没涨」处理；服务返回 `null` 时不适用。低集中度或 `null` 不能证明改写有效，写作质量仍由改动段落的关系复核和盲读判断，不能据此分配改动量。（来源：v1.38.1，nso 实验 077207a 分析）
 - `cp -R <out>/work <out>/r<N>`，并在 `LOG.md` 里记一行：轮次、两个分数、保真结果、回退了几处。
 
 ### 6. 停不停
 
-停止判据只看 `style_within_human_range`。`style` 只用来展示。
+常规分数停止判据看 `style_within_human_range`，`style` 只用来展示；分数不能替代规则、保真和可读性验收。首轮无增益的定点诊断例外见下。（来源：v1.38.1，nso 实验 077207a 分析）
 
 - 达到 80：停。
-- 比此前最好的一轮涨不到 1 分：停。
+- 比此前最好的一轮涨不到 1 分：默认停。仅第一轮无增益时，若不看分数与版本标签的盲读仍能定位明确、可保真的段落问题，允许一次定点诊断轮；事先在 `LOG.md` 写明段落、已有来源和改写假设（怎样重组能减少哪一步推断），只派这些段落。没有具体问题就停，不能为了继续尝试而造问题；诊断轮后结束，不再次触发例外，也计入总轮数。（来源：v1.38.1，nso 实验 077207a 分析）
 - 已经跑满 4 轮（含第 1 轮）：停。
 - 有页数上限而这一轮超了页：这一轮作废，按「没涨」处理。词数不变也可能超页，因为断行和浮动体的位置会变（anti_nso 第 2 轮词数少了 12 个，从 18 页变成 19 页）。
 - `style` 涨了而 `style_within_human_range` 没涨：说明改写把某些词推到了人写论文之外（例如每句都用 `When` 开头），按「没涨」处理，并在 `LOG.md` 里记下。
-- `gain_top3_share` 超过 0.5：这一轮是在换词，不是在改写法，涨的分不算，按「没涨」处理，并在 `LOG.md` 里记下。服务返回 `null`（变化太小没法判断）时不适用这一条。例外：这一轮重点执行的是第 5 条最后一款（规则本身点名了措辞，依据是同类句子的人写用法，见 evidence E11），集中度必然高，不用 0.5 判；改为核对被点名的词是否大多落在人写范围内、没有被点名的词是否基本没动，并在 `LOG.md` 里记下。
+- `gain_top3_share` 超过 0.5：这一轮是在换词，不是在改写法，涨的分不算，按「没涨」处理，并在 `LOG.md` 里记下。服务返回 `null`（变化太小没法判断）时不适用这一条。低集中度或 `null` 不能证明改写有效，写作质量仍靠改动段落的关系复核和盲读判断；不查词项、不设增删配额。（来源：v1.38.1，nso 实验 077207a 分析）
 
-停下以后，只在保真、规则和当前页数要求都通过的快照中，选 `style_within_human_range` 最高的一轮；同分取更早的一轮。未配置服务时取最近的合格轮。复制回 `work/` 后重新核规则；没有合格快照时交付未通过项，不称完成。未能编译时写明版面未验收，有页数要求就不能称合格。
+停下以后，只在保真、规则、改动段落关系复核和当前页数要求都通过的快照中，选 `style_within_human_range` 最高的一轮；同分取更早的一轮。未配置服务时取最近的合格轮。复制回 `work/` 后重新核规则；没有合格快照时交付未通过项，不称完成。未能编译时写明版面未验收，有页数要求就不能称合格。
 
 ## 不要做
 
 - **不把分数、分数的变化或检测器的任何信息告诉子代理。**子代理只读规则卡。
-- **不根据检测器去写规则。**哪些词被计分、各占多少，不能成为新规则的来源。规则只能从「作者在为读者做什么」出发；新规则先在没参与制定它的论文上验证，并看 `gain_top3_share`。
-- 不为了涨分把正文里的数字挪进表格，也不删正文里的结果。两个时代正文的数字密度一样（`PROSE.EXPLAINING_REGISTER` Rationale）。第 5 条只允许一种情况：表或图里已经有的逐个计数，正文不再反复报。
+- **不根据检测器去写规则。**哪些词被计分、各占多少，不能成为新规则的来源。规则只能从「作者在为读者做什么」出发；新规则先在没参与制定它的论文上验证解释是否更清楚；`gain_top3_share` 超过 0.5 时涨分作废，按「没涨」处理并记入 `LOG.md`；`null` 不适用作废规则。低集中度或 `null` 不能认证质量，仍须复核改动段落的关系并盲读判断。
+- 不为了涨分把正文里的数字挪进表格，也不删正文里的结果。两个时代正文的数字密度一样（`PROSE.EXPLAINING_REGISTER` Rationale）。第 5 条允许减少在正文或表图中已有准确落点的同一命题的重复提及，不允许丢结果或必要限定。
 - 不发送无规则或作者来源的硬约束，不给自然语言句组规定统一句式。
 - 不在子代理之外自己逐句改写来追分。主代理只做回退和保真修补。
 - 不碰原稿，不 push 到 Git 或 Overleaf，除非作者明确批准。要推到 Overleaf，建议把改写放进 `rewrite/sections/` 再加一个 `main-rewrite.tex`，主稿不动。
@@ -152,7 +158,7 @@ python3 scripts/guardrails.py <out>/work/main.tex --json <out>/rules-rN.json
 最终报告给作者：
 
 - 最终版的位置（`<out>/work`）；
-- 每轮分数表：两个分数各一列，基线也列进去；
+- 分别报告规则验收、可读性结论和文风分，不互相替代；可读性注明改动段落的关系改善或退化，盲读未做就写未验。每轮分数表仍将两个分数各列一列，基线也列进去。（来源：v1.38.1，nso 实验 077207a 分析）
 - 保真结果，以及保留下来的每一处 `NOT IN ORIGINAL` 的理由；
 - 回退了哪些改动；
 - 子代理报告的原文问题，原样列出，作者自己决定改不改；

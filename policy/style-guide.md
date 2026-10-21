@@ -16,7 +16,7 @@
 - 技术精确：用数据和公式说话，不用修辞
 - 格式克制：不滥用 bold/italic/列表
 - 逻辑显式：过渡词清晰标记逻辑关系
-- 结构一致：段落和章节遵循固定模板
+- 结构连贯：段落和章节按读者任务组织，下列模板只是一种可用的组织方式（来源：v1.38.1，nso 实验 077207a 分析）
 
 ---
 
@@ -127,23 +127,25 @@ The system is evaluated through simulations.
 
 ### 5.1 Introduction 段落组织
 
+以下模板只是一种可用的组织方式，按论证和读者任务调整，不要求每段同形。范例用于学习解释过程——问题怎样引出原因、证据怎样限定结论——而不是复制句架。（来源：v1.38.1，nso 实验 077207a 分析）
+
 | 段落 | 内容 |
 |------|------|
 | 第一段 | Technology trend → Importance → Application |
 | 第二段 | Existing work → Limitation |
 | 第三段 | Paper contribution introduction |
 
-**开篇句要求**：三段的**形状**不变，但第一段第一句必须携带具体的张力或 gap，不能是泛化的趋势陈述。"Technology trend" 是这一句要达到的**效果**，不是它的写法——写法是给出一个可验证的结构性事实，让趋势由这个事实自己带出来（例："Tabular deep learning discards feature-type metadata."）。泛化开场白（`With the rapid development of X, ...` / `X has attracted significant attention` / `In recent years, ...`）被 `PROSE.AI_LEXICON` 的 formulaic openers 条款零容忍禁止，同时它也无法为第二段的 Limitation 提供落点。
+**开篇句要求**：段数与形状可按论证调整，但第一段第一句必须携带具体的张力或 gap，不能是泛化的趋势陈述。"Technology trend" 是这一句要达到的**效果**，不是它的写法——写法是给出一个可验证的结构性事实，让趋势由这个事实自己带出来（例："Tabular deep learning discards feature-type metadata."）。泛化开场白（`With the rapid development of X, ...` / `X has attracted significant attention` / `In recent years, ...`）被 `PROSE.AI_LEXICON` 的 formulaic openers 条款零容忍禁止，同时它也无法为第二段的 Limitation 提供落点。
 
 ### 5.2 五步叙事逻辑
 
-所有论文遵循：
+一种可用的叙事顺序：
 
 ```
 Background → Problem → Gap → Method → Evaluation
 ```
 
-段落级模板：
+段落级可用模板（不是每段的固定形状）：
 
 ```
 Existing ... → However ... → To address this issue ... → In this paper, we ... → Results demonstrate ...
@@ -151,7 +153,7 @@ Existing ... → However ... → To address this issue ... → In this paper, we
 
 ### 5.3 Canonical Paragraph Template
 
-五步：现有工作 → gap → 本文动作 → 具体做法 → 证据。
+一种可用的五步组织：现有工作 → gap → 本文动作 → 具体做法 → 证据。
 
 ```
 Existing X-based schemes assume A and therefore treat B as fixed.

@@ -18,7 +18,7 @@ lint_patterns:
   # Upper-bounded repetition. `{35,}` is greedy and unbounded, so on a long line
   # with no sentence punctuation the engine expands to the end of the line and
   # backtracks from every start position. A 35-60 word window is enough to
-  # detect the violation: a 200-word sentence still matches on its final window.
+  # locate a review candidate: a 200-word sentence still matches on its final window.
   #
   # A word is any run of characters in which `.`/`!`/`?` appear only INSIDE the
   # token: `[.!?](?!\s|$)`. The previous form used `[^.!?\s]+`, which treated
@@ -37,18 +37,18 @@ lint_targets: "**/*.tex"
 
 ## Requirement
 
-单句不超过 **35 词**。典型句长区间为 25-35 词。超过时**拆成多个短句**。
+单句超过 **35 词**时触发复查，**不是硬拆线**。按指代是否清楚、从句是否嵌套、主语到主干谓语的距离和理解负担判断，读者能一次解析主干及必要限定就可保留。允许把「事实 + 原因／条件／用途／限定」合成一句，不限于修复语法残句；拆合都应让关系更清楚，不追求特定句长。（来源：v1.38.1，nso 实验 077207a 分析）
 
 不要用分号连接两个独立子句来"缩短"句子——分号不产生新句子，只是把同一个长句换个标点，而 `PROSE.SEMICOLON_RESTRICTION` 禁止这个构造。本卡此前把它列为合法修法，那是错的。
 
 ## Rationale
 
-过长的句子降低可读性，增加理解负担。Pre-GPT 时期的论文典型句长为 25-35 词，这是工程类学术写作的自然节奏。
+句长可以提示理解负担，但不能代替阅读判断。复杂的指代、嵌套和过远的主干关系需要修，事实及其必要解释则可以放在同一句里。
 
 ## Check
 
-- **regex（逐行）**: 匹配「≥36 个不含句读的 token 连排 + 终止标点」的行内长句。**已知局限**：grep 逐行匹配，硬换行（每 80 列断行）的 `.tex` 中跨行长句不会被抓到——regex 层只保证零误报的部分召回，软换行文件（一段一行，Overleaf 默认）召回完整
-- **完整检查**: 用 `prose-rhythm-variance.md` 附带的 Python 脚本剥离公式/命令后按句统计，超 35 词逐句标记；`params.max_words` 是该语义检查的阈值（regex 的 35 硬编码在 pattern 中，profile 覆盖 `max_words` 只影响语义检查）
+- **regex（逐行）**: 匹配「≥36 个不含句读的 token 连排 + 终止标点」的行内复查候选，不直接判违规。**已知局限**：grep 逐行匹配，硬换行（每 80 列断行）的 `.tex` 中跨行长句不会被抓到；软换行文件（一段一行，Overleaf 默认）仍须人工判断理解负担
+- **完整检查**: 用 `prose-rhythm-variance.md` 附带的 Python 脚本剥离公式/命令后按句统计，超 35 词逐句标记复查；`params.max_words` 是复查阈值（regex 的 35 硬编码在 pattern 中，profile 覆盖 `max_words` 只影响语义检查）。最终按指代、嵌套、主干距离和理解负担决定是否拆句
 - **排除**: LaTeX 命令 token 不计入词数（如 `\cite{}`、`\ref{}`）；公式环境内的内容
 
 ## Examples
@@ -62,6 +62,8 @@ model utility on the remaining data.
 ```
 
 ### Fail
+
+下面的问题在于目标、保留条件和实现手段层层挂靠，读者需要回溯关系，不是单因超过 35 词。
 
 ```latex
 The proposed method formulates the machine unlearning problem as a

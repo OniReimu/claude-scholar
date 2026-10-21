@@ -21,10 +21,10 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 正文要写成作者在向读者解释，不要写成一串结论摘要：
 
-1. **主语按句子在做的事来选**：作者的决定写成 `we` 加理由；贡献用 `This paper` 或 `we`；流程用被动句；定义和性质用 `X is Y`；名词作主语只用于它字面上真的在做的事（`the network consists of`）。要改的只有一类：名词作主语，配的却是它做不到的动作（结果「揭示」、框架「保证」、设计「承载」），改成 `we find …`、被动句或 `is`。被动句和系动词句不要改成 we。
+1. **主语按句子在做的事来选**：作者的决定写成 `we` 加理由；贡献用 `This paper` 或 `we`；流程可用被动句，正常的算法主动句也可保留；定义和性质用 `X is Y`；名词作主语只用于它字面上真的在做的事（`the network consists of`）。按动作归属是否准确、是否隐藏作者选择来判断，不按动词机械换主语或语态；被动句和系动词句不要机械改成 we。（来源：v1.38.1，nso 实验 077207a 分析）
 2. **拆开藏着关系的名词串**：用从句或表示具体关系的介词短语，写清从哪到哪、在什么上训练、属于谁。拆完要比原来更具体：`cross-model transfer` 要拆成「从 source 转到 target」，`transfer across models` 把方向丢了，不算拆开。领域术语不拆。一段里有多个实体时，「它的 X」要写出所属者。
 3. **情态和证据一致**：可能性、成立条件、后文要给的内容，都如实写出来。证据不需要的地方不加 hedge。相邻两句是原因和结果、论断和例子、结果和限定时，把关系写出来或合成一句；结果的含义论文在同一节已经给出，就紧挨着结果说。不许补论文没有的解释。
-4. **目的用动词说**：`To test X, we …`，不要写成 `for X evaluation`。
+4. **目的用动词说**：`To test X, we …`，不要写成 `for X evaluation`。须说清已有依据的具体用途或取舍，重复小节标题不算解释改善，目的已明确就不再加。（来源：v1.38.1，nso 实验 077207a 分析）
 5. **条件和范围要写成读者能核对的条件，不要压成短语标签**：先问删掉以后论断还成立吗，成立就删。真条件按性质选写法：一个具体取值、对象或已命名的设置，只管一个结果，用介词短语就够（`at 4 requests/s`、`with eight fields`）；一种状态或一件事，要有主语和动词才说得清，写成从句（`when the catalog changes between requests`），不要压成 `under churn` 这类标签；几句话共用一组设置，在段首交代一次，后面直接报结果，设置变了再标。连着几句都用 `When` 开头也是毛病。这一条不是让你换介词。
 6. **对照只在对手真实存在时才保留**（`PROSE.NEGATION_CONTRAST` 档 B）：
    - ① 读者原本会默认采用的具体做法；
@@ -35,7 +35,10 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 **执行顺序固定：**
 1. 先按六原则改一遍；
 2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条，并在回复里写明；正文冒号和分号禁令不能跳过，须保留命题并改成合规结构；
-3. lint 兜底，然后停手。
+3. **最终关系复核**：第二个 pass 后只比较改动过的段落，读改后完整段落：原有原因、对照、限定是否仍明确？新增主语或目的句是否真的减少读者推断？发现关系变弱就保义修复，不能只核数字、事实和禁用形式。（来源：v1.38.1，nso 实验 077207a 分析）
+4. lint 兜底，然后停手。
+
+⚠️ **反例：事实还在，比较关系却被拆没。** 示意场景：原句用 `whereas` 对照两种验证方法各自接受和拒绝的数量。改稿拆成两句，只保留两组数字，删掉 `whereas`，让读者自己补比较关系。拆句可以，比较须保留，可沿用 `whereas` 或明确接回对照。来源：v1.38.1，nso 实验 077207a 分析。
 
 章节粒度按 `writing-anti-ai-loop`「准备／章节功能与粒度」：摘要只留理解核心发现必需的细节，结论不复演实验；减少重复前逐项确认同一事实仍在正文或表图中（E12）。
 
@@ -88,8 +91,8 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 | `PROSE.ANAPHORA_ABUSE` | 禁止同一句首重复3+次 |
 | `PROSE.GERUND_FRAGMENT_LITANY` | 禁止分词片段堆叠 |
 | `PROSE.SHORT_PUNCHY_FRAGMENTS` | 禁止极短句独立成段 |
-| `PROSE.RHYTHM_VARIANCE` | 句长必须有落差（sd≥10 词），上限规则不是目标值；sd 是诊断不是验收，只修孤句与从句链，不得为方差并句 |
-| `PROSE.CLAUSE_CHAIN` | 一句只挂一层从属结构；关系从句+插入语+并列谓语的链拆成各说一件事的句子，只拆不并 |
+| `PROSE.RHYTHM_VARIANCE` | 句长分布只作诊断；按理解负担拆合，允许事实带上原因、条件、用途或限定，不得为方差并句 |
+| `PROSE.CLAUSE_CHAIN` | 从属单位数量只定位；按指代、嵌套、主干距离和理解负担判断，拆合均须保留关系 |
 | `PROSE.ANNOUNCEMENT_SENTENCE` | 短句要承载主张，不做预告标签 |
 | `PROSE.THEATRICAL_SPLIT` | 禁止"设预期—短促击碎"两拍式反驳 |
 | `PROSE.OVER_DEFENSIVE` | 一条 caveat 只准一个 canonical home；禁认怂前置/免责收尾；Abstract/Intro 贡献未立不谈不足；免责式否定谓语（We do not X）翻成正面（我们做的是 Y） |
@@ -98,7 +101,7 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 | `PROSE.EQUATION_EXPLANATION` | 公式放进数据流里讲：引入句说作用，新符号交代从哪来、起什么作用（粘贴测试），公式链每步写出推理关系，不要"每个符号一条 where" |
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
-| `PROSE.CAUSAL_CONNECTIVE` | 因果连接词按类型选，不默认用 `, so`。**先读 lint 的密度行再逐条判**：三子类保留偏置只在基线密度下成立 |
+| `PROSE.CAUSAL_CONNECTIVE` | 因果连接词逐处按关系准确性、必要性和重复句架判断；语料只用于举例验证，不按密度差定改动量 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
 ## Overview
@@ -187,22 +190,22 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 ### 3. Vary Rhythm
 Mix sentence lengths. End paragraphs differently.
 
-**⚠️ 均质化本身就是 AI 痕迹。** 逐句读全部合格、但句长压在同一区间的散文，读者一眼认出是机器写的。执行 `PROSE.SENTENCE_LENGTH`（≤35 词）时不要把所有句子拉到同一长度——那是上限不是目标值。句长标准差 ≥10 词、15–30 词区间占比 ≤55% 是**诊断**：数值偏低时去找原因（通常是一次机械拆句改写），**不是去调数值**。作者原稿的句长就是作者要的节奏，默认不动。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
+**⚠️ 均质化本身就是 AI 痕迹。** 逐句读全部合格、但句长压在同一区间的散文，读者一眼认出是机器写的。执行 `PROSE.SENTENCE_LENGTH` 时不要把所有句子拉到同一长度——超过 35 词只触发复查，不是硬拆线（v1.38.1，nso 实验 077207a 分析）。句长标准差 ≥10 词、15–30 词区间占比 ≤55% 是**诊断**：数值偏低时去找原因（通常是一次机械拆句改写），**不是去调数值**。作者原稿的句长就是作者要的节奏，默认不动。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
 
-**一次 pass 里节奏只修两样东西**：① 无锚孤句；② 从句链（下一条）。其余句子的长短一律保留。
+**一次 pass 里节奏只定位两样东西**：① 无锚孤句；② 难以解析的从句链（下一条）。为写清已有关系可以拆合句，不能为调句长分布而改。
 
 **Check**:
-- Three consecutive sentences same length? Look for the cause (a clause chain, or a mechanical split pass) before touching anything. The only licensed re-cut is to cut the core claim out of a clause-chain sentence and keep its connective. **Never add a sentence to lower the sd, and never merge sentences to raise it.**
+- Three consecutive sentences same length? Look for the cause (a clause chain, or a mechanical split pass) before touching anything. Split a hard-to-parse clause chain while preserving its relations, or combine a fact with its reason, condition, purpose, or qualification when this makes the relation clearer. **Never add a sentence to lower the sd, and never merge sentences to raise it.**
 - Every sentence ≤10 words you added this pass: does it carry a checkable claim, or an explicit anchor (connective / this / these / the same)? Neither → it is an orphan hiding a relation; write the relation into the neighbouring sentence and delete it (deletion test, see card).
 - Paragraph ends with punchy one-liner? Vary it.
 - 整节找不到 <12 词的句子？或找不到 >32 词的句子？→ 分布已被压平，这是**诊断信号**：检查是不是有过一次机械拆句 pass（有就撤回它），或长句里藏着从句链（有就拆）。**不要为了造出 >32 词的句子去并句**——实测并出来的 36–44 词长句会重新长出从句链，作者判定"句子太长、改之前节奏更好"（R²D²，2026-09-24）
 - 一句逗号 ≥4 个时，检查从句链并拆清关系。不用分号解决逗号过多，修法按 `PROSE.SEMICOLON_RESTRICTION`。 <!-- policy:PROSE.COMMA_OVERUSE -->
 
-**从句链：一句只挂一层从属结构** <!-- policy:PROSE.CLAUSE_CHAIN -->
-关系从句（`, which ...`）、句中插入语（`and, without X, ...`）、第二个并列谓语（`... and sets ...`）、句末分词尾巴——一句里叠了 ≥2 个，就拆成各说一件事的句子，新句给**具体主语或锚**（`The estimates ...` / `thus` / `the same`），不要用裸 `It` / `This` 指代一整个小句。`which` 的先行词是整个前句时最难读，优先拆。这类句子常常只有 2–3 个逗号、≤35 词，逗号规则和长度规则都抓不到，只能读出来。
+**从句链：数量只定位，按理解负担判断** <!-- policy:PROSE.CLAUSE_CHAIN -->
+关系从句（`, which ...`）、句中插入语（`and, without X, ...`）、第二个并列谓语（`... and sets ...`）、句末分词尾巴——一句里出现 ≥2 个只标候选，按指代、嵌套、主干距离和理解负担判断；并列谓语不等于嵌套，确实难读才拆，新句给**具体主语或锚**（`The estimates ...` / `thus` / `the same`），不要用裸 `It` / `This` 指代一整个小句。`which` 的先行词是整个前句时最难读，优先拆。这类句子常常只有 2–3 个逗号、≤35 词，逗号规则和长度规则都抓不到，只能读出来。
 - ❌ `Four sampled paths per question suffice to estimate both properties, which tells in advance whether more paths will pay and, without ground-truth answers, sets a budget that keeps 98\% ...`
 - ✅ `Four sampled paths per question suffice to estimate both properties. The estimates predict whether more paths will pay, and without ground-truth answers they set a budget that keeps 98\% ...`
-- **只拆不并**：拆完 sd 下降是可接受的代价（`PROSE.RHYTHM_VARIANCE` 让步）；**不得**为补回方差把别的句子并长——并出来的句子会重新长出从句链。
+- **拆合按关系判断**：允许「事实 + 原因／条件／用途／限定」合句，不限于残句修复；读者能一次解析主干及限定就可保留。拆完 sd 下降可以接受，**不得**为补回方差把别的句子并长。（来源：v1.38.1，nso 实验 077207a 分析）
 - 不拆：无逗号的限定性从句（`a budget that keeps ...`）、给符号下定义的 `where $p$ is ...`、数学条件 `whenever ...`。
 
 **短句的两道门槛**（短句本身没问题，这两种短句有问题）：
@@ -267,21 +270,9 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 - **句首连接词密度**：`Moreover,` / `Furthermore,` / `Additionally,` / `In addition,` 全文合计 ≤4。超出说明逻辑靠连接词粘贴而非论证顺序承载；修法是重排句序，不是换个同义连接词。
 
 **因果连接词要选，不能默认用 `so`** <!-- policy:PROSE.CAUSAL_CONNECTIVE -->
-`X, so Y` 是口语里默认的因果连接——**正因为默认，用它时通常没做过选择**。Pre-GPT 基线（两组不重叠类别，56 篇 51 万词）：`, so` 0.18–0.28/千词，`therefore/hence/thus/consequently` 约 2.2/千词，比例 8–12:1。
+逐处判断关系是否准确、连接是否必要、相邻句是否机械重复同一句架。关系已经清楚且表达准确，就保留；需要改时按下面的语义判据选结构。语料只用于举例验证，不能用历史频率差决定改多少，也不能成为增删配额。（来源：v1.38.1，nso 实验 077207a 分析）
 
-⚠️ **这不是 AI 痕迹检测**。42 条真实句子的盲评实测：任取一个 `, so`，无论出自 pre-GPT 论文还是当代 draft，"可改进"的比例都差不多（收紧判据后 pre-GPT 64% vs draft 29%，顺序还反转）。差别只在**有多少个**——本地 draft 抽样是基线的 15–25 倍。所以**判据不能是「能否改得更精确」**，否则会把 pre-GPT 水准的散文一起改掉。
-
-**扫描顺序：先跑 lint 看密度，再逐条判。** 本卡下 lint 打印两行 report-only 数据，第二行是关键：
-
-```
-causal register (report-only) — ", so" 47 = 3.76/1k · formal 26 = 2.08/1k · ratio 1:0.55
-                                [pre-GPT: ", so" 0.18-0.28/1k · formal ~2.2/1k · ratio 1:8-12]
-```
-
-- 比值落在 **1:8–12** 附近 → 下面的三子类保留偏置成立，逐条判，**报零 finding 是正确结果**；
-- 比值掉到个位数甚至倒挂 → **超出基线的那部分是真的**。这时该报告的是这个总量事实，不是逐条裁决后的零 finding。修法照走优先级阶梯、照样不机械替换，但**改多少由密度差决定，不由三子类决定**。
-
-⚠️ **不看密度就逐条扫描，必然报零。** 这是本条在真实稿件上反复漏报的机制：三子类判据是按基线密度校准的（pre-GPT 的 `so` 按同一判据也有 64% "应改"），所以它在任何密度下都会保留绝大多数——包括 15–25 倍基线的稿子。**唯一有判别力的量不在你看得见的地方，于是每一遍扫描都诚实地报告没问题。** 不设阈值也不设目标值（不写「降到 0.3/千词以下」），密度行只是让判断对着真实数字做。
+lint 的密度与分布数据只作定位提示，不据此判违规或要求换词；改动量由具体关系问题决定。
 
 **只有三个子类触发改写，其余一律保留：**
 
@@ -301,7 +292,7 @@ causal register (report-only) — ", so" 47 = 3.76/1k · formal 26 = 2.08/1k · 
 
 ⚠️ **连接词单一化是跨 pass 累积的，上面那条护栏守不住它。** 三条标点清理规则（em-dash / 分号 / 句中冒号）的修法都把标点隐含的关系赶到词汇层，而 `therefore` 是菜单里最安全的默认——每遍清理引入一两个，逐处判都合理，只在总量上崩（实测：三遍清理后 26 个正式连接词 22 个是 `therefore`）。**清完任何一批标点后，看 lint 的 connective distribution 计数表**（只报分布不判违规），逐处追问：**这是哪一种因果，答案是否真的全是同一种？** 全是同一种就合规（全为逻辑蕴含的稿子本该 `therefore` 占多数，不要硬塞 `hence`）；不是就说明有几处退回了默认词。修法优先级：**删**（因果已由上一句承担，或与 `However`/`Because` 双重标记——实测 10 处 8 处走这条）→ 从属化 → 按语义换。
 
-⚠️ **反方向还有一条累积路径：「写得简单直白一点」会制造 `, so`。** 上一条是标点清理把关系赶进 `therefore`，这一条是压缩 / de-jargon / 口语化的 pass 把 `therefore` 压成 `so`。它有个早得多的拦截点——**那是 diff 上的语域下降，归 `PROSE.REGISTER_PRESERVATION` 的 `CONNECTIVE-DOWNGRADE`**，在做替换的当场就可判；等它沉淀成全文密度再由本条发现，已经晚了几个 pass，而且那时每一处单看都合理。简化 pass 收尾先跑那条的替换测试。
+⚠️ **反方向还有一条累积路径：「写得简单直白一点」会制造 `, so`。** 上一条是标点清理把关系赶进 `therefore`，这一条是压缩 / de-jargon / 口语化的 pass 把 `therefore` 压成 `so`。它有个早得多的拦截点——**那是 diff 上的语域下降，归 `PROSE.REGISTER_PRESERVATION` 的 `CONNECTIVE-DOWNGRADE`**，在做替换的当场就可判；收尾仍须逐处核对关系是否准确、必要，不能用全文密度代替判断。简化 pass 收尾先跑那条的替换测试。
 
 不在范围内：`so that`（目的从句，合法）· `so far`（习语性状语，归 `PROSE.INFORMAL_VOCABULARY` 第 1 类）· `so large` 式程度副词。
 
@@ -529,7 +520,7 @@ For comprehensive pattern lists, see:
 | a sanction set too high deters | too heavy a one drives off | 名词被代词顶替 + 短语动词顶替拉丁语源动词 |
 | permanently excluding a verifier | excluding a verifier for good | 口语惯用语 |
 | Institutional instruments impose a cost | Institutions hold levers | 谓语位置的比喻 |
-| The bound is monotone. Therefore any continuation tightens. | The bound is monotone, so any continuation tightens. | 连接词降级——`therefore` 标记的逻辑蕴含被抹平（`CONNECTIVE-DOWNGRADE`，密度层兜底在 `PROSE.CAUSAL_CONNECTIVE`） |
+| The bound is monotone. Therefore any continuation tightens. | The bound is monotone, so any continuation tightens. | 连接词降级——`therefore` 标记的逻辑蕴含被抹平（`CONNECTIVE-DOWNGRADE`，关系复核见 `PROSE.CAUSAL_CONNECTIVE`） |
 
 注意前两行**根本不口语**，只是更含糊——词表永远抓不到它们。
 
@@ -588,7 +579,7 @@ For comprehensive pattern lists, see:
 
 ## Workflow (工作流程)
 
-> **Order inside this skill — six principles first.** 先按 `PROSE.EXPLAINING_REGISTER` 的六原则改一遍，再按本 skill 的其余规则改一遍，然后停手（见顶部「最高优先级」一节）。
+> **Order inside this skill — six principles first.** 先按 `PROSE.EXPLAINING_REGISTER` 的六原则改一遍，再按本 skill 的其余规则改一遍，只复核改动段落的原因、对照、限定及新增主语／目的是否减少推断，然后停手（见顶部「最高优先级」一节；来源：v1.38.1，nso 实验 077207a 分析）。
 
 > **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
 
@@ -604,7 +595,7 @@ For comprehensive pattern lists, see:
 > **register check 未通过之前，不得报告词数或压缩百分比。**
 > 实测教训：agent 在作者读到正文之前三次报告「968 → 728 words, −25%」作为成功指标，而那一版正文里有九处语域塌陷。**数字先于质量出现，就会替代质量成为验收标准。**
 > 顺序固定为：压缩 → 逐个改动 span 跑替换测试（见 Do NOT Over-Correct §1）→ 用稿件已有措辞修复 → **然后**才报数字。
-> **替换测试里点名查一项：`therefore` / `hence` / `thus` / `consequently` 有没有被压成 `, so`**（`CONNECTIVE-DOWNGRADE`）。它是简化指令最稳定的产物，而改后那句完全合法——只有对着改前文本才看得出来。漏在这里，它就要等到全文密度超基线十几倍时才会被发现。
+> **替换测试里点名查一项：`therefore` / `hence` / `thus` / `consequently` 有没有被压成 `, so`**（`CONNECTIVE-DOWNGRADE`）。它是简化指令最稳定的产物，而改后那句完全合法——只有对着改前文本才看得出来。收尾逐处核对关系和语域是否仍准确，不等全文密度越过某个基线才复查。
 
 > **📏 输入尺度会静默削掉覆盖率。** 一段（~200 词）和一整个 `.tex`（1.2 万–6 万词）不是同一件事，但一遍读完再报告，两种情况读起来一样自信。**给整篇时不要一次通读就出结论**——按 section 逐个过，或者明说这一轮只覆盖了哪些规则、哪些部分。给一段或一节时不需要这条。
 
