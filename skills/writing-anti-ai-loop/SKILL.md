@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai-loop
-description: Use when the user wants a whole LaTeX manuscript revised chapter by chapter across bounded rounds. Uses writing-anti-ai and its six explaining-register principles, validates fidelity and contextual expression, and stops when no specific solvable obstacle or confirmed improvement remains. Selects changes by contextual comparison, never by era similarity. Works on a copy. For one paragraph or section use writing-anti-ai directly.
-version: 1.1.0
+description: Use when the user wants a whole LaTeX manuscript revised chapter by chapter across bounded rounds. Uses writing-anti-ai and its six explaining-register principles, validates fidelity and contextual expression, and reports bounded pre-ChatGPT style preference separately. Stops without concrete revision tasks; style may break contextual ties only after gain checks. Works on a copy. For one paragraph or section use writing-anti-ai directly.
+version: 1.2.0
 author: OniReimu
 license: MIT
 tags: [Writing, AI, Anti-AI, LaTeX, Subagents]
@@ -9,7 +9,7 @@ tags: [Writing, AI, Anti-AI, LaTeX, Subagents]
 
 # Writing Anti-AI Loop
 
-整篇论文逐章改写，迭代到文风不再变好为止。改写规则全部来自 `writing-anti-ai` 和 `PROSE.EXPLAINING_REGISTER`（六原则），正文段落（含脚注）的句中冒号与分号一律禁止，锁、六原则和保真都不能豁免。本 skill 只负责编排：分章、派子代理、每轮审改动、核保真、核规则、打分、决定停不停。
+整篇论文逐章改写，在有限轮次内改善表达并兼顾历史学术文风偏好。改写规则全部来自 `writing-anti-ai` 和 `PROSE.EXPLAINING_REGISTER`（六原则），正文段落（含脚注）的句中冒号与分号一律禁止，锁、六原则和保真都不能豁免。本 skill 只负责编排：分章、派子代理、每轮审改动、核保真、核规则、打分、决定停不停。
 
 claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 
@@ -20,7 +20,8 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 验收维度为表达清楚、关系连贯、信息适量、用语准确自然；保真与作者偏好合规单独核查。六原则及共同操作管怎么改，四维度管效果，执行过规则不等于合格。
 
 - 表达评估可以由带上下文的阅读完成，不依赖打分服务。需数值时用固定单元的表达验收通过率，同时报覆盖率、重大问题和待核项。未检查不算通过，同稿比较须固定单元对应，不能以拆段或加字增加通过率。
-- `P2G_STYLE_URL` 可选，仅返回年代诊断时不能冒充表达分。已有评估可传 `scripts/score.py --evaluation <json>`；无评估则显示未评，不退回词率主分。没有服务也按具体问题决定是否继续，不强制跑两轮。
+- 文风分使用 p2g 的旧词率与措辞公式，启用 `within_range=True`；衡量与 ChatGPT 前参照语料在词率和措辞习惯上的接近程度，不是 AI 使用率或写作质量。p2g 总分按文风∶立论∶论证 = 2∶1∶1 合成；本循环只取文风，不能拿文风冒充总分，也不能为评分重跑立论或论证。
+- `P2G_STYLE_URL` 可选。`scripts/score.py` 请求确定性的文风分，不请求 LLM；已有表达评估可另传 `--evaluation <json>`，结果只放在 `expression`，不替代 `style`。无服务或正文不足则文风不可用（退出码 3），仍按具体问题决定是否继续，不强制跑两轮。客户端可读过渡服务的明确 `era_similarity_bounded` 字段，但拒绝只有含义不明的 `style` 的旧响应。
 - 服务请求会上传稿件。仅在作者已授权该服务处理稿件时调用；本机评读无需这一步。不得因配置了 URL 就自动获得上传授权。
 - 有 `latexmk` 时每轮编译一次；没有则注明版面未验收。
 
@@ -131,18 +132,19 @@ python3 scripts/guardrails.py <out>/work/main.tex --json <out>/rules-rN.json
 - 有 `latexmk` 时编译 `work/` 的一份临时拷贝。未定义的引用和 ref 必须是 0，记录正文终页、参考文献起页和总页数，不只记总页数。有页数要求时按编译验收；临时放开要记作者来源，标「内容候选，版面未通过」，不能称可投稿完成版。
 - 有 PDF 时查段末一两词的悬浮行、溢出和浮动体。先尝试不改文字的排版修复；改文字就重跑保真和规则。不删目的、情态、条件或精确限定来省一行。
 - 已有表达评估时用 `python3 scripts/score.py <out>/work --main main.tex --evaluation <本轮评估.json>`。文件必须携带逐单元判断和源文件哈希；脚本拒绝陈旧来源，不接受只给一个分数的文件。
-- 已授权服务可另取 `era_similarity`、`era_similarity_bounded`、`wording_per_1k`、`words` 和 `gain_top3_share`。均只作年代诊断，不设置涨分门槛，也不能据变化集中度否决已确认的改善。
-- 保存 `r<N>/` 快照，`LOG.md` 记录具体改善／退化、表达评估范围、保真、规则、版面结果和诊断值。评估未完成就明确记未评。
+- 已授权服务用 `python3 scripts/score.py <out>/work --main main.tex --base <上一轮快照>` 取文风及 `gain_top3_share`。`style` 必须是 `era_similarity_bounded`，原始年代值仅供诊断。与基线比较时也传 `--base <out>/orig`，避免多轮分散换词绕过集中度检查；不向子代理暴露这些值。
+- **集中度护栏**：任一比较的 `gain_top3_share > 0.5`，该次涨分不得作为续轮或选稿优势；脚本同时标记 `concentrated_gain`。它衡量向历史方向移动的虚词贡献集中程度，不证明质量好坏。`null` 表示样本不足或虚词移动太小，字段缺失表示未提供；均不能自动当作通过。虚词移动太小时，只有原文对照确认是合规措辞或结构修改带来的收益，才可采用该风格优势；缺数据则放弃分数选稿，照常保留已确认的表达改善。
+- 保存 `r<N>/` 快照，`LOG.md` 记录具体改善／退化、独立表达评估范围、保真、规则、版面、带护栏文风分及相邻轮／基线集中度。评估未完成就明确记未评。
 
 ### 6. 停不停与选稿
 
-- 有明确、能保真解决的表达障碍才继续定点修改。没有这样的障碍，或本轮没有可确认的改善，就停，记录未解决项。不为了跑满轮数制造问题。
+- 只有仍存在明确、可保真处理的表达障碍或适用写作规则问题才继续定点修改；任务须能定位到原文，不能写成词频目标。没有具体任务就停，即使分数还低；本轮没有可确认的表达或规则改善也停，即使分数上涨。不为了跑满轮数制造问题。
 - 最多 4 轮（含第 1 轮）。达到上限表示本次处理结束，不代表全文合格；未解决项仍需报告。
-- 不沿用旧 80 分门槛、涨幅不足 1 分停手或最高分优先。年代诊断、虚词变化集中度、单元数量及篇幅变化均不能认证质量。
-- 用保真核查及带必要上下文的比较决定采用改动；可做盲读时隐藏版本标签和分数。局部改善与退化并存时逐项选择，再复核组合文本，不自动选整轮最高分。没有可确认差别时保留原表达。
+- 不把旧 80 分当验收线，也不把涨幅不足 1 分当唯一停手条件。降低总分中文风权重不改变这些约束。分数不涨但有确认改善时可以保留；分数涨但只是换词或制造重复句架时不算改善。
+- 先用保真、规则、版面及带必要上下文的比较决定采用改动；可做盲读时隐藏版本标签和分数。局部改善与退化并存时逐项选择，不自动选整轮最高分。表达明确较好的版本不因文风低而淘汰；只有上下文比较确认候选相当、且具体改动合理时，才用通过上述护栏的历史文风优势作次级选择依据。未评、结论不明或集中度未核查均不等于相当，不能用分数代替判断；同分或无可靠优势时取更早的合格版本。
 - 采用版本须同时满足规则与当前版面要求。超页先处理具体空间冲突，不将其称为“没涨分”。未编译且有页数上限时版面仍待验收。
 
-选定或组合后复制回 `work/`，重新核保真、规则、段落关系及版面。没有合格快照时交付未通过项，不称完成；若选择了某个局部改动，说明它减少了哪一步推断及保真依据。表达通过率只汇总固定单元的已完成判断，重大条件／分母／保证范围问题单列，不被其他单元抵消。
+选定或组合后复制回 `work/`，重新核保真、规则、段落关系及版面；组合文本重新计文风及相对基线的集中度，不能拼接沿用各轮分数。没有合格快照时交付未通过项，不称完成；若选择了某个局部改动，说明其表达或适用规则依据及保真依据。表达通过率只汇总固定单元的已完成判断，重大条件／分母／保证范围问题单列，不被其他单元抵消。
 
 ## 不要做
 
@@ -158,7 +160,7 @@ python3 scripts/guardrails.py <out>/work/main.tex --json <out>/rules-rN.json
 最终报告给作者：
 
 - 最终版的位置（`<out>/work`）；
-- 分别报告规则验收、可读性结论和文风分，不互相替代；可读性注明改动段落的关系改善或退化，盲读未做就写未验。表达通过率列分子、分母、覆盖率、重大问题和待核项；年代诊断另列，基线也注明已评范围。
+- 分别报告规则验收、可读性结论和带护栏的历史文风分，不互相替代；可读性注明改动段落的关系改善或退化，盲读未做就写未验。表达通过率列分子、分母、覆盖率、重大问题和待核项；文风注明偏好定义及集中度核查，基线也注明已评范围，不报未经计算的总分。
 - 保真结果，以及保留下来的每一处 `NOT IN ORIGINAL` 的理由；
 - 回退了哪些改动；
 - 子代理报告的原文问题，原样列出，作者自己决定改不改；

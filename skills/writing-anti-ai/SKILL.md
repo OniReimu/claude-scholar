@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
 description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Six explaining-register principles (policy PROSE.EXPLAINING_REGISTER) run first; they cannot exempt body colons or semicolons from the author’s hard bans. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.7.0
+version: 1.7.1
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -626,6 +626,8 @@ For comprehensive pattern lists, see:
 5. **注入灵魂** - 添加个性和观点
 
 ## Expression Acceptance（表达验收）
+
+表达验收是独立诊断。历史文风偏好另用 p2g 带范围护栏的词率与措辞分，不代表 AI 使用率或写作质量；多轮的停手、选稿及集中度检查见 `writing-anti-ai-loop`。两种分数不能互相替代。
 
 按 `PROSE.EXPLAINING_REGISTER` 的四维度及五步共同操作验收。若需数值，报告表达验收通过率，固定评估单元并注明已完成数、覆盖率、重大问题及待核项。标点等作者偏好单独报告；改写保真单独验收。没有完整证据记录就不报分，不以“像真人”或词率替代质量，不沿用旧 80 分门槛。例句的适用前提与保留／待核对照见六原则卡 Examples。
 
