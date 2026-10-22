@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
 description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Six explaining-register principles (policy PROSE.EXPLAINING_REGISTER) run first; they cannot exempt body colons or semicolons from the author’s hard bans. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.7.1
+version: 1.7.2
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -17,7 +17,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 ## ⚠️ 最高优先级：解释式语域六原则 <!-- policy:PROSE.EXPLAINING_REGISTER -->
 
-> **先执行六原则，但正文冒号和分号硬禁令不能被六原则、锁或保真豁免。**其余规则冲突时，按这六条执行。权威定义和实测见 `policy/rules/prose-explaining-register.md`。六原则保护作者、关系、条件、情态和真实对照，不保护禁用句式；命题要换成合规结构，句中冒号、正文分号、em-dash 和档 A 对照仍须清理。逐字锁若与禁标点冲突，应保留命题并报告冲突。
+> **先执行六原则，但正文冒号和分号硬禁令不能被六原则、锁或保真豁免；逐字锁冲突时保留命题并报告冲突。**优先级与合规改写要求执行 `policy/rules/prose-midsentence-colon.md` 和 `policy/rules/prose-semicolon-restriction.md` 的「Requirement／适用范围与优先级」。以下目标与六原则是供改写者就地阅读的摘要；权威定义及其余规则的冲突处理以 `policy/rules/prose-explaining-register.md`「Requirement」为准，不一致时按规则卡；实测见该卡「Rationale」。
 
 目标是在保留技术命题和必要披露的前提下，让目标读者准确、顺畅地理解已有内容。六原则用于发现和修复具体表达障碍，不按主语、语态、从句、情态词或连接词的数量判定质量。每个拟修改项应说明原文位置、具体理解障碍、稿内依据和解决标准；按章节职责与必要上下文判断，已清楚的表达可保留，依据缺失或解释不唯一时报告。验收看表达清楚、关系连贯、信息适量、用语准确自然；保真和作者偏好合规单独核查。
 
@@ -36,15 +36,15 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 **执行顺序固定：**
 1. 先按 `policy/rules/prose-explaining-register.md`「六原则的共同操作」逐段执行六原则，不以某一条合格放行整段；
-2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条，并在回复里写明；正文冒号和分号禁令不能跳过，须保留命题并改成合规结构；
+2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条，并在回复里写明；正文冒号和分号仍执行 `policy/rules/prose-midsentence-colon.md`、`policy/rules/prose-semicolon-restriction.md`「Requirement／适用范围与优先级」；
 3. **最终关系复核**：第二个 pass 后按共同操作第 5 步比较改动段落，并复核决定保留的疑点，读完整段落：原有原因、对照、限定是否仍明确？新增主语或目的句是否真的减少读者推断？同时做**反向压缩检查**：是否把原有谓语改成名词化、把明确所属者改成代词、把原因或容差来源改成前置修饰语？若让读者多推断一步，就保义修复；句子更短、禁用形式更少不是保留理由。
 4. lint 兜底，然后停手。
 
 ⚠️ **反例：事实还在，比较关系却被拆没。** 示意场景：原句用 `whereas` 对照两种验证方法各自接受和拒绝的数量。改稿拆成两句，只保留两组数字，删掉 `whereas`，让读者自己补比较关系。拆句可以，比较须保留，可沿用 `whereas` 或明确接回对照。
 
-章节粒度按 `writing-anti-ai-loop`「准备／章节功能与粒度」：摘要只留理解核心发现必需的细节，结论不复演实验；减少重复前逐项确认同一事实仍在正文或表图中（E12）。
+章节粒度及减少重复前的逐项落点核查，执行 `skills/writing-anti-ai-loop/SKILL.md`「准备」第 2 项「章节功能与粒度」及其后紧接的「减少重复细节前」要求（E12）。
 
-E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整篇论文要多轮，用 `writing-anti-ai-loop`：逐章、第 2 轮起以六原则为改写主任务，硬约束和新增改动每轮复核，并核保真（E9、E12）。**本 skill 不提供、也不使用任何词频表。**按统计词频去改写，就是对检测器做 reward hacking。
+E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整篇论文要多轮，执行 `skills/writing-anti-ai-loop/SKILL.md`「准备」「每一轮」的逐章编排与检查（E9、E12）。**本 skill 不提供、也不使用任何词频表。**按统计词频去改写，就是对检测器做 reward hacking。
 
 ## Policy Rules
 
@@ -161,21 +161,9 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
   ⚠️ **lint 只定位不分档**：五条 pattern 现在覆盖两档全部形式（此前只有 `, not` 一条，实测一份全稿报 15 处而实际 38 处，`rather than` 17 处全部不可见）。报出来的每一条都要自己判档。
 - 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**。**跨节转诊**：本条只判本段/本节内的重复列举；若怀疑同一组对象在别节也列过，转 `claim-architecture-review`——`information-ledger.md` 以集合为 info-key，第二次列举在 `lookup-before-create` 时撞上（最小调用见下方转诊说明）
 - Em-dash (zero allowed — not even one): "X---Y---Z" parentheticals. **替换标点不算修法**——`X --- a 12.5$\times$ reduction` 改成 `X, a 12.5$\times$ reduction` 只换了标点，同位语仍然是尾巴，而本条存在的理由正是这种挂载方式。按尾巴性质选：完整命题→拆成新句；对前面名词的限定→关系从句 `, which ...`；真旁白→括号或删。判据是"原来挂着的内容是否已经进入某个语法主结构" <!-- policy:PROSE.EM_DASH_RESTRICTION -->
-- **正文段落（含脚注）一律禁止分号** <!-- policy:PROSE.SEMICOLON_RESTRICTION -->：修法**两级**，不是只有断句一条路。**① 句法改变**——从属化 `Because A, B` / 关系从句 `, which ...` / **逗号 + 连接词**（`whereas` / `while` / `but` / `and`）；**② 断句**，第二句首字母大写。
-  `;` → **裸逗号**禁止（comma splice，只换标点）；`;` → **逗号 + 连接词**允许（引入承载语义的连接词，是句法改变）。
-  **用 ① 需四条同时成立**：第二子句 < 10 词 · 关系是对比/让步/互补且连接词承载真实语义 · 断句会产生连续短句或回声碎片 · 合并后逗号 ≤ 3（`PROSE.COMMA_OVERUSE` 阈值是 ≥4）。**不适用 ①**：并列的规格罗列（两个 seed、两条配置项），拆开更清楚。
-  ⚠️ **只给断句一条路会系统性造新违规**：全稿去分号 47 处的实测回归里，第二子句中位数 10 词、19/39 短于 10 词，最差一例 `The point-estimate rule passes. Interval equivalence does not.`（4 词 + 4 词）正是 `PROSE.THEATRICAL_SPLIT` 点名的违规型，而**那张卡的修法就是用 `but`/`yet`/`, and` 接回去**——两卡会对冲。实测 39 处里 32 处仍走 ②，① 是少数情形不是新默认。
-  ⚠️ **连接词按语义分布，不得统一**：全篇一律 `while` 只是把分号指纹换成 `while` 指纹（撞 `PROSE.RHYTHM_VARIANCE`）。优先沿用稿件已有的同型句式，不要自造。豁免与排除按下方共同范围执行，列表分隔和引语不豁免。⚠️ **这是作者选定的风格约束，不是被验证过的 AI 痕迹**：作者 pre-GPT 2.62/千词 vs 当前 draft 5.60（2.14x），arXiv 同期 1.32→1.80（1.36x），但两侧语料不可比且未做盲评——不要在报告里把它写成"AI 味"证据
+- **分号检查与改写** <!-- policy:PROSE.SEMICOLON_RESTRICTION -->：必须读取并执行 `policy/rules/prose-semicolon-restriction.md`「Requirement」「Check」的完整禁令、范围、优先级与两级修法（含四项同时成立的准入条件、规格罗列排除及连接词选择要求）；修法依据和风格约束的证据边界见该卡「Rationale」，不得当作已验证的 AI 痕迹。
 - Colon-list overuse: "X: A, B, and C" inline enumeration (restructure into separate sentences or use "such as"/"including") <!-- policy:PROSE.COLON_LIST_OVERUSE -->
-- **正文段落（含脚注）句中冒号一律禁止**，不再逐条判断。改写为完整句子或断句。 <!-- policy:PROSE.MIDSENTENCE_COLON -->
-
-**适用范围与优先级**：正文段落（含脚注、列表中的散文和直接引语）一律执行。锁、六原则和保真都不能豁免；保留命题并改成合规结构，不再逐条判断是否放行。
-
-**仅非散文内容豁免**：数学、代码（含 `\texttt{...}`、`\verb`）、`\;` 细空格、URL、时间、引用键；结构标题中的冒号也豁免，含段首 `\textbf{...}` / `\paragraph{...}` run-in 小标题，冒号可在标题中间，例如 `\textbf{TV-1: Static extraction scope. }`。普通句中的加粗文字不是标题，标题中的分号也不因此豁免。
-
-**排除范围**：caption 和表格（`table`、`tabular` 及其变体，包括 `\input` 进来的表格文件）不计候选、不计违规，只在报告中给「已排除」计数。表格按实际环境识别，不因文件在 `tables/` 目录就跳过其中的正文。
-
-作者 2026-10-21 定为硬规则，用来取代逐条判断；MSR 一稿因为逐条判断加上锁，违规句一路存活了 11 组。
+- **句中冒号检查与改写** <!-- policy:PROSE.MIDSENTENCE_COLON -->：必须读取并执行 `policy/rules/prose-midsentence-colon.md`「Requirement」「Check」。两张标点卡的「Requirement」完整定义适用范围、优先级、非散文豁免与 caption / table 排除，「Check」定义报告计数；硬规则的由来见各卡「Rationale」。
 
 - Trailing afterthought: "..., as editable." comma + short tag tacked onto a sentence end (fold into the main clause) <!-- policy:PROSE.TRAILING_AFTERTHOUGHT -->
 - Cleft construction: "That is what sets X" / "which is what makes X" / "What X is is Y" — front the real subject instead: "X sets Y" <!-- policy:PROSE.CLEFT_CONSTRUCTION -->
@@ -539,7 +527,7 @@ For comprehensive pattern lists, see:
 4. **第一人称复数 "we"**：学术标准，不为"去 AI 味"改写规避
 5. **正式定义、命名的方法/指标、术语、公式、符号**：逐字保留
 6. **数字、结果、引用**：不发明或改动，不删论文唯一的事实或结果；cite key 一个不丢。重复数字可减少提及，但须记录同一论断保留的准确位置，逐项核对，不能只看数字仍出现
-7. **偶发的三项并列、真实需要的列举**：可以保留。正文分号仍按 `PROSE.SEMICOLON_RESTRICTION`；仅非散文豁免见该卡，caption / table 排除，列表末尾分号照常违规。`PROSE.RULE_OF_THREE` 管的是**密度与重复**，不是禁绝列举——一个方法确实作用于四种维度就该说出那四种；它的修法是给集合命名后引用，**不是删项**
+7. **偶发的三项并列、真实需要的列举**：可以保留。分号执行 `policy/rules/prose-semicolon-restriction.md`「Requirement」「Check」。`PROSE.RULE_OF_THREE` 管的是**密度与重复**，不是禁绝列举——一个方法确实作用于四种维度就该说出那四种；它的修法是给集合命名后引用，**不是删项**
 
 **Funding proposal 是另一个语域**：proposal 靠 vision + feasibility 卖，论文语域要削的 ambition 语言（"long-term goal"、"transformative"）在 proposal 里是预期形态。改 grant/fellowship 文本走 `grant-application-writing` skill，不要用本 skill 的论文标准去压平 vision。
 
@@ -581,7 +569,7 @@ For comprehensive pattern lists, see:
 
 ## Workflow (工作流程)
 
-> **Order inside this skill — six principles first.** 按顶部「执行顺序」调用 `PROSE.EXPLAINING_REGISTER` 的共同操作，再执行其余规则，完成最终关系复核（含保留疑点和反向压缩）后停手。
+> **Order inside this skill — six principles first.** 执行 `skills/writing-anti-ai/SKILL.md`「⚠️ 最高优先级：解释式语域六原则／执行顺序」的全部四步。
 
 > **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
 

@@ -10,6 +10,8 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-10-22 (v1.41.1)**: Deduplicates shared writing goals and punctuation rules between writing-anti-ai and its whole-manuscript loop, with direct references to authoritative rule cards. Keeps the six-principle summary, hard-ban priority and per-round subagent reading requirements without changing rule meaning.
+
 - **2026-10-22 (v1.41.0)**: Adds an explicitly enabled target-style mode without changing the default rewrite loop. Requires an author-approved length limit, server-side score decomposition, whole-manuscript writing-habit passes, mandatory blind reading and repaired meaning drift. Stops on a guarded target, failed safeguards or four rounds, and reports readability counts, length costs, every introduced meaning error and score contributions alongside the score, with evidence paths.
 - **2026-10-22 (v1.40.0)**: Restores bounded pre-ChatGPT word-rate style preference, separate from contextual expression diagnostics. The client requests no LLM evaluation and matches p2g's style field; p2g's composite uses style:framing:argument = 2:1:1. Rewrite selection requires fidelity and contextual checks before any style tie-break, checks gain concentration against both the previous round and baseline, and never continues just to raise a score.
 - **2026-10-21 (v1.39.0)**: Defines style evaluation as contextual expression acceptance. Keeps the six principles and shared five-step workflow, fixes merge/deletion criteria, adds contextual invented examples, and selects rewrites by fidelity and confirmed improvement. Era similarity is diagnostic only.

@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai-loop
 description: Use when the user wants a whole LaTeX manuscript revised chapter by chapter across bounded rounds. By default stops without concrete revision tasks and uses bounded pre-ChatGPT style only for contextual ties. An explicitly requested target-score mode adds whole-manuscript habit rewrites, mandatory blind reading and a cost report under strict safeguards. Works on a copy. For one paragraph or section use writing-anti-ai directly.
-version: 1.3.0
+version: 1.3.1
 author: OniReimu
 license: MIT
 tags: [Writing, AI, Anti-AI, LaTeX, Subagents]
@@ -9,7 +9,7 @@ tags: [Writing, AI, Anti-AI, LaTeX, Subagents]
 
 # Writing Anti-AI Loop
 
-整篇论文逐章改写，在有限轮次内改善表达并兼顾历史学术文风偏好。改写规则全部来自 `writing-anti-ai` 和 `PROSE.EXPLAINING_REGISTER`（六原则），正文段落（含脚注）的句中冒号与分号一律禁止，锁、六原则和保真都不能豁免。本 skill 只负责编排：分章、派子代理、每轮审改动、核保真、核规则、打分、决定停不停。
+整篇论文逐章改写，在有限轮次内改善表达并兼顾历史学术文风偏好。改写规则执行 `skills/writing-anti-ai/SKILL.md`「⚠️ 最高优先级：解释式语域六原则」「Core Rules (快速检查清单)」及其引用的规则卡；标点硬禁令及优先级见 `policy/rules/prose-midsentence-colon.md`、`policy/rules/prose-semicolon-restriction.md`「Requirement」。本 skill 只负责编排：分章、派子代理、每轮审改动、核保真、核规则、打分、决定停不停。
 
 claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 
@@ -21,11 +21,11 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 
 ## 共同目标与前提
 
-目标是在保留技术命题和必要披露的前提下，让目标读者准确、顺畅地理解已有内容。六原则用于发现和修复具体表达障碍，不按主语、语态、从句、情态词或连接词的数量判定质量。每个拟修改项说明原文位置、具体理解障碍、稿内依据和解决标准；按章节职责与必要上下文判断，已清楚可保留，依据缺失或解释不唯一时报告。
+共同目标与拟修改项的诊断要求执行 `skills/writing-anti-ai/SKILL.md`「⚠️ 最高优先级：解释式语域六原则」开头的目标段落。
 
 验收维度为表达清楚、关系连贯、信息适量、用语准确自然；保真与作者偏好合规单独核查。六原则及共同操作管怎么改，四维度管效果，执行过规则不等于合格。
 
-- 表达评估可以由带上下文的阅读完成，不依赖打分服务。需数值时用固定单元的表达验收通过率，同时报覆盖率、重大问题和待核项。未检查不算通过，同稿比较须固定单元对应，不能以拆段或加字增加通过率。
+- 表达评估可以由带上下文的阅读完成，不依赖打分服务。需数值时执行 `policy/rules/prose-explaining-register.md`「Rationale／表达验收通过率」的计算、固定单元、证据与报告要求。
 - 文风分使用 p2g 的旧词率与措辞公式，启用 `within_range=True`；衡量与 ChatGPT 前参照语料在词率和措辞习惯上的接近程度，不是 AI 使用率或写作质量。p2g 总分按文风∶立论∶论证 = 2∶1∶1 合成；本循环只取文风，不能拿文风冒充总分，也不能为评分重跑立论或论证。
 - `P2G_STYLE_URL` 可选。`scripts/score.py` 请求确定性的文风分，不请求 LLM；已有表达评估可另传 `--evaluation <json>`，结果只放在 `expression`，不替代 `style`。无服务或正文不足则文风不可用（退出码 3），仍按具体问题决定是否继续，不强制跑两轮。客户端可读过渡服务的明确 `era_similarity_bounded` 字段，但拒绝只有含义不明的 `style` 的旧响应。
 - 服务请求会上传稿件。仅在作者已授权该服务处理稿件时调用；本机评读无需这一步。不得因配置了 URL 就自动获得上传授权。
@@ -58,14 +58,15 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 
 每章一个全新子代理（Agent tool，`general-purpose`），**在同一条消息里一起派出去**。子代理之间不共享上下文，每轮都是新的子代理。
 
-- **第 1 轮**：完整执行 `writing-anti-ai`，先按六原则改，再按 anti-AI 规则改，复核改动段落及保留疑点后停手。
+- **第 1 轮**：完整执行 `skills/writing-anti-ai/SKILL.md`，顺序按其「⚠️ 最高优先级：解释式语域六原则／执行顺序」。
 - **第 2 轮起**：以六原则（`$CS/policy/rules/prose-explaining-register.md`）为改写主任务，按其「六原则的共同操作」逐段检查，不重跑完整润色。关系藏在句序或名词串里时，可调句序、拆合句、重组段落；单句或单条原则合格不等于整段讲清。已讲清的段落可不动。硬约束和新增改动每轮复核。已测稿件支持这个方向，不足以推断所有稿件重复完整 skill 都无益（E8、E9）。
 
 子代理提示词模板（把 `{}` 换掉）。每条任务级硬约束都带规则 ID 或作者指令的可定位来源；工作范围约束注明本 skill 的小节。发出前核对实际 prompt 与模板的差异，新增条款缺来源就不发送。不从一次回退推导新的句式禁令或保留令，也不要求一组自然语言句子用同一种写法；术语和标签可以一致。
 
 ```
 你负责改写 {file}（{chapter}），只改这一个文件{abstract_note}。
-先读 {CS}/policy/rules/prose-explaining-register.md 和 {CS}/policy/rules/prose-negation-contrast.md。
+先完整读 {CS}/policy/rules/prose-explaining-register.md（重点「Requirement」「六原则的共同操作」「Check」）和 {CS}/policy/rules/prose-negation-contrast.md（重点「Requirement」「Check」）。
+每轮必读并执行 {CS}/policy/rules/prose-midsentence-colon.md、{CS}/policy/rules/prose-semicolon-restriction.md「Requirement」「Check」；另读 {CS}/skills/writing-anti-ai/SKILL.md「⚠️ 最高优先级：解释式语域六原则／执行顺序」，本轮执行范围按下方轮次要求。
 {round_rule}
 硬约束：
 - [来源：writing-anti-ai-loop §准备、§并行改写] 只用 Edit 改 {file}。不建任何文件，不改其他文件，不跑会写文件的命令。
@@ -73,7 +74,7 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 - [来源：PROSE.EXPLAINING_REGISTER、PROSE.HEDGING_DISCIPLINE] 不改变论断的强度、条件和范围。只用整篇论文已明确给出的解释、原因和关系；跨句或跨节移用要注明来源。同一关系换结构不算新增事实，推测不能当已写明的原因。原意不清时报告。
 - [来源：writing-anti-ai-loop §并行改写；有作者要求时填 {length_source}] {length_rule}
 - [来源：writing-anti-ai-loop §不要做] 只按规则和读者任务改，不按词频改。
-- [来源：PROSE.EXPLAINING_REGISTER、PROSE.NEGATION_CONTRAST、PROSE.MIDSENTENCE_COLON、PROSE.SEMICOLON_RESTRICTION、PROSE.EM_DASH_RESTRICTION] 命题保真始终有效，锁、六原则和保真都不能豁免正文冒号与分号硬禁令。不能兼得时报告具体冲突，不删论断、不报通过。rather than / instead of 先核定义／范围的必要区分，其余按三判据逐条给依据，不能因入锁就保留。
+- [来源：PROSE.EXPLAINING_REGISTER、PROSE.NEGATION_CONTRAST、PROSE.MIDSENTENCE_COLON、PROSE.SEMICOLON_RESTRICTION、PROSE.EM_DASH_RESTRICTION] 命题保真始终有效，标点优先级执行 {CS}/policy/rules/prose-midsentence-colon.md、{CS}/policy/rules/prose-semicolon-restriction.md「Requirement／适用范围与优先级」。不能兼得时报告具体冲突，不删论断、不报通过。rather than / instead of 先核定义／范围的必要区分，其余按三判据逐条给依据，不能因入锁就保留。
 改前任务（来源：writing-anti-ai-loop §准备）：
 按六原则卡「六原则的共同操作」检查内容未接齐和内容已在但压进句内结构两类问题；只列有问题的段落，每段一句「读者要补哪一步关系—已有来源在哪里—准备怎样重组」，压缩疑点指出具体短语。
 回复（简述改动量和保留理由，尽量在 400 字以内；语义风险报告不受此上限限制）：
@@ -83,8 +84,8 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
 4. rather than / instead of 的必要划界依据或三判据判定，以及原文里看到的事实问题（只报告，不改）。
 ```
 
-- `{round_rule}`，第 1 轮：`再读 {CS}/skills/writing-anti-ai/SKILL.md，按它的执行顺序改：先按共同操作执行六原则，再 anti-AI 规则，复核改动段落及保留疑点，然后停手。`
-- `{round_rule}`，第 2 轮起：`以六原则为主任务，按六原则卡的共同操作逐段检查，必要时重组段落。不重跑完整润色；硬约束和新增改动每轮复核，完成后按 writing-anti-ai「执行顺序」查反向压缩。`
+- `{round_rule}`，第 1 轮：`再读并完整执行 {CS}/skills/writing-anti-ai/SKILL.md，顺序按其「⚠️ 最高优先级：解释式语域六原则／执行顺序」。`
+- `{round_rule}`，第 2 轮起：`以六原则为主任务，按六原则卡的共同操作逐段检查，必要时重组段落。不重跑完整润色；硬约束和新增改动每轮复核，完成后按 {CS}/skills/writing-anti-ai/SKILL.md「⚠️ 最高优先级：解释式语域六原则／执行顺序」第 3 步查反向压缩。`
 - 第 2 轮起，只锁有回退记录的原句。`locks.json` 用对象数组，每条必填 `sentence`（原句）、`orig`（相对台账或绝对路径）、`rollback_round`（正整数）、`rollback_reason`、`proposition`（含条件和强度）。`python3 scripts/guardrails.py locks <out>/locks.json` 核对原句逐字存在于 orig，输出原文哈希和位置；可填 `orig_sha256` 固定基线，变了就拒绝。旧式字符串数组、缺字段或找不到原句都拒绝。
 - 机器只能验证原文来源，不能凭五个字段证明真实回退。主代理另核对该轮 diff / 回退记录确实恢复了原句，记录证据位置；未经这一步不得派发。不要给旧数组补个来源标签就算重建完成。
 - **锁保护命题，不保护语法外壳。**原句含零容忍候选时标「只锁命题」，不能要求逐字保留；换成合规结构。其余锁默认不动，若阻碍六原则重组，改写者给保义候选和理由，主代理按「审改动」核对实际语义变化；不能因某个候选的局部失败锁死原来的语法结构。
@@ -101,7 +102,7 @@ claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
    - 条件和范围：原来不限定的论断被加了条件，或者反过来；
    - 新出现的因果和推论；
    - 数字换成回指（「this rate」）以后，读者在本处还能不能理解结论所需的分母、实例和限定，不只查能否在别处找到原值。
-3. **最终关系复核**：首轮在第二个 pass 后，后续轮在改写完成后，按六原则卡「共同操作」第 5 步比较改动段落，并复核未改却有压缩疑点的句子及其保留理由，读完整段落；不能只复核改动段落。按 `writing-anti-ai`「执行顺序」检查反向压缩，不能只凭数字齐全验收；原有原因、对照、限定须仍明确，只换语态或重复标题不算改善。回退或保义修补后，对受影响段落再做此检查，不扩成全文长台账。
+3. **最终关系复核**：首轮在第二个 pass 后，后续轮在改写完成后，按六原则卡「共同操作」第 5 步比较改动段落，并复核未改却有压缩疑点的句子及其保留理由，读完整段落；不能只复核改动段落。按 `skills/writing-anti-ai/SKILL.md`「⚠️ 最高优先级：解释式语域六原则／执行顺序」第 3 步检查反向压缩，不能只凭数字齐全验收；原有原因、对照、限定须仍明确，只换语态或重复标题不算改善。回退或保义修补后，对受影响段落再做此检查，不扩成全文长台账。
 4. 子代理报告的原文事实问题不在这里修，收进最终报告交给作者。
 
 ### 3. 核保真
@@ -122,14 +123,14 @@ bash "$CS/policy/lint.sh" <out>/work
 python3 scripts/guardrails.py <out>/work/main.tex --json <out>/rules-rN.json
 ```
 
-- 完整 lint 与候选枚举不能互相代替。枚举从摘要到参考文献前的全部正文，含脚注、列表、宏参数和输入文件；caption 和 table / tabular（含输入的表格文件）排除，只报已排除计数，不计候选或违规。仅非散文豁免也计数，含数学、代码及 `\texttt` / `\verb`、`\;`、URL、时间、引用键和结构标题冒号（含段首 `\textbf{TV-1: Static extraction scope. }` / `\paragraph{...}`），不能整块跳过盒子、括号或未改内容。
+- 完整 lint 与候选枚举不能互相代替。枚举从摘要到参考文献前的全部正文，含脚注、列表、宏参数和输入文件；豁免、排除及其计数执行 `policy/rules/prose-midsentence-colon.md`、`policy/rules/prose-semicolon-restriction.md`「Requirement」「Check」。不能整块跳过盒子、括号或未改内容。
 - JSON 记录文件、行号、规则 ID、源哈希、正文范围与各类计数；简表输出到 stderr。退出码 0 为无候选，1 为有候选，2 为解析或覆盖失败。对照候选仍需按规则卡判档；脚本不代替语义判定，也不执行 TeX；支持静态 input/include 与源码中的宏参数。调用的自定义宏若在定义中藏了候选，报覆盖错误，展开后复核；不能据此宣称生成文本已全覆盖。
-- 正文冒号和分号在明确豁免之外一律记「违规」，不再有「待判断」；列表末尾和直接引语不豁免。em-dash 照旧，档 A 对照仍可待判。非散文记明确豁免及理由，caption / table 仅报已排除计数。违规与待判断都为 0 才通过；无输出、空正文、空章节、漏摘要或解析失败一律失败。范围内的受保护正文也要报告冲突，不能静默放行。分号修法为断句或按规则卡改成逗号加连接词。
+- 冒号和分号的违规判定、非散文豁免、排除计数及修法执行 `policy/rules/prose-midsentence-colon.md`、`policy/rules/prose-semicolon-restriction.md`「Requirement」「Check」。em-dash 照旧，档 A 对照仍可待判。非散文豁免须记理由。违规与待判断都为 0 才通过；无输出、空正文、空章节、漏摘要或解析失败一律失败。范围内的受保护正文也要报告冲突，不能静默放行。
 - 回退、合并、换快照后重新跑最终文件。旧报告不可复用；`--check-report <旧报告.json>` 可核对输入哈希，变化时报覆盖错误，仍会重新枚举。
 - 失败时只把原句、位置和规则交回改写者，不给分数或检测器信息。每轮至多补修两次；仍失败则保留最近合格版本，汇总未解决项，不报完成。
 - 批量清标点或展开解释后，组合检查新句是否套同一框架。按 `PROSE.CAUSAL_CONNECTIVE` 判断关系，不因词多换同义词；同一关系可用同一连接词，不同关系不能靠同一词掩盖。新增计数、因果、闭合列举和情态逐项回原文核对，需要重写的交回改写者。
 
-作者 2026-10-21 定为硬规则，用来取代逐条判断；MSR 一稿因为逐条判断加上锁，违规句一路存活了 11 组。
+标点硬规则的由来见 `policy/rules/prose-midsentence-colon.md`、`policy/rules/prose-semicolon-restriction.md`「Rationale」。
 
 理由：MSR H 组自报零命中，摘要的 “]; 54.2” 仍在；G 检出 14 处不证明覆盖完整。F 新增 11 个 therefore、H 七句同框架说明组合验收也不能省；这些次数不构成新禁令（E12）。
 
