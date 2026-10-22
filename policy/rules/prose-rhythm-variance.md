@@ -26,7 +26,7 @@ lint_targets: "**/*.tex"
 
 执行 `PROSE.SENTENCE_LENGTH` 时**不得**把所有句子压到同一长度带——超过 35 词只触发复查，不是硬拆线。（来源：v1.38.1，nso 实验 077207a 分析）
 
-### 落差只能在现有信息里重新分配，不能靠新增句子制造
+### 拆合句为解释已有关系，不为制造落差
 
 标准差是**诊断**，不是**目标**。为调数值往段里丢一句 6–8 词的短话，正是本卡最常见的违规形态，而且逐句读每句都合格，只有整段读才暴露。
 
@@ -71,7 +71,7 @@ lint_targets: "**/*.tex"
   1. 连续三句是否长度接近（差值 <5 词）
   2. 整节是否找不到任何 <12 词的句子
   3. 整节是否找不到任何 >32 词的句子
-  4. 改写指令是否只含长度上限而无落差要求
+  4. 改写指令是否把长度上限或落差当成硬目标；以上分布信号只用于查找具体理解障碍，不直接要求改写
 - **孤句扫描（regex，部分覆盖）**：frontmatter 的 lint 模式抓「同一行内、前面有句末标点、≤ ~50 字符、不以锚定词开头」的句子。它只能看到没被硬换行劈开的短句，且会误报纯数据句（"Sample counts are 65, 56, and 277."）——数据句自动合规。命中后按删除测试人工判，不要按命中数报。两类显式锚被排除在命中之外：句中任意位置的指示词（`this / that / these / those / such`，"Downstream kernels assume that layout." 靠 `that layout` 钉在上一句），以及以已定义标签开头的句子（`RQ2 asks …`、`C1 holds …`，标签本身就指回它的定义）。代价是 `that` 作补语从句引导词时也会被放过，这里宁可漏判。段首句不在扫描范围内（模式要求同行前面有句末标点），因为段首的主题句是合法短句。
 - **LLM 检查追加**：
   5. 每个 ≤10 词句是否属于两类合规来源之一；不属于则跑删除测试
@@ -109,7 +109,7 @@ that produce retained outputs at other times and on other trajectories, so an
 edit aimed at the segment lands on the dynamics that carry everything else.
 ```
 
-句长 22 / 33 / 4 / 38 词，sd 高，读起来有呼吸。
+句长 22 / 33 / 4 / 38 词只作诊断。此例明确交代共享向量场如何连接局部输入、训练与后续影响，短句承载主张；合规不以 sd 高为依据。
 
 ### Fail
 
@@ -121,7 +121,7 @@ that interval also updates the same vector field and readout. Once the segment
 has been absorbed, a post-hoc edit acts on the retained dynamics as well.
 ```
 
-句长 11 / 12 / 11 / 15 / 15 词，全部落在同一带，节拍器感。
+句长 11 / 12 / 11 / 15 / 15 词，集中在同一带只提示复查。本例若没有其他上下文说明共享向量场如何使局部更新影响保留轨迹，就把关系留给了读者；按这个具体缺口改写。关系已由上下文说明时可保留，不因 sd 低判错。
 
 
 ### Fail（孤句：方差达标，关系丢失）
@@ -143,6 +143,6 @@ work has asked whether it must be.
 
 ## Conflicts
 
-与 `PROSE.ANNOUNCEMENT_SENTENCE` / `PROSE.THEATRICAL_SPLIT` / `PROSE.SHORT_PUNCHY_FRAGMENTS` 的张力裁决线：**本卡要求短句存在，那三条约束短句的内容。** 合规短句 = 承载可核对主张的短句（"Training deepens the coupling."）。修本卡时新增的短句必须直接过那三条的门槛——如果为了拉开句长落差而写出预告句或两拍式反驳，等于把一个违规换成另一个。
+与 `PROSE.ANNOUNCEMENT_SENTENCE` / `PROSE.THEATRICAL_SPLIT` / `PROSE.SHORT_PUNCHY_FRAGMENTS` 的张力裁决线：**本卡只用句长分布作诊断，不要求短句必须存在；那三条约束短句的内容。** 承载可核对主张或有明确上下文锚的短句可以保留。新增或拆合句必须服务于已有内容和关系的解释，仍须过那三条的门槛，不得为了方差制造短句、预告句或两拍式反驳。
 
 与 `PROSE.CLAUSE_CHAIN` 的裁决线：**拆链优先，方差让步。** 拆从句链会增加短句、可能压低 sd；这是可以接受的代价，不得为补回方差去并别处的句子。

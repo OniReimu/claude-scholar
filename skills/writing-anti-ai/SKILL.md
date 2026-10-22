@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai
-description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Six explaining-register principles (policy PROSE.EXPLAINING_REGISTER) run first; they cannot exempt body colons or semicolons from the author’s hard bans. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; for whether a paragraph should exist/move/merge at all, run claim-architecture-review FIRST; for drafting new content use ml-paper-writing.
-version: 1.7.2
+description: This skill should be used when the user asks to "remove AI writing patterns", "humanize this text", "make this sound more natural", "remove AI-generated traces", "fix robotic writing", "polish this paragraph/section", or needs sentence-level cleanup of AI patterns in prose. Supports both English and Chinese. Based on Wikipedia's "Signs of AI writing" guide plus the local policy PROSE rules — detects and fixes inflated symbolism, promotional language, intensifiers, em-dash abuse, superficial -ing analyses, vague attributions, AI vocabulary, negative parallelisms, copula dodges, rhetorical self-answers, hyphenated compound modifiers coined once and never reused, causal connectives defaulting to ", so" instead of therefore/hence/thus/consequently, and excessive conjunctive phrases. Six explaining-register principles (policy PROSE.EXPLAINING_REGISTER) run first; they cannot exempt body colons or semicolons from the author’s hard bans. Academic cleanup preserves technical density and the author voice (policy/style-guide.md) — no casual "humanizer" tone. Also handles questions about statistical AI detectors (Pangram, GPTZero, Turnitin AI, "会不会被检测出来") — the skill separates reader-facing tells from detector-facing generation dynamics and never promises detector evasion. This is a LINE edit; one paragraph or section needs no whole-paper review first. If paragraph necessity, placement or cross-section redundancy is in question, use targeted claim-architecture-review before polishing the affected text; for drafting new content use ml-paper-writing.
+version: 1.8.0
 author: gaoruizhang
 license: MIT
 tags: [Writing, AI, Anti-AI, Humanizer]
@@ -49,7 +49,7 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 ## Policy Rules
 
 > 本 skill 执行以下论文写作规则。权威定义在 `policy/rules/`。
-> 行内出现处以 HTML 注释标记引用。**冲突时以 `policy/rules/` 为准。**
+> 行内出现处以 HTML 注释标记引用。**本 skill 中的规则表、Core Rules、模式清单及其他规则摘要均不替代完整规则卡；范围、判据、计数口径或例外不一致时，以 `policy/rules/` 对应卡为准；新旧规定冲突时，以作者已定的新决定为准。**
 > 紧凑版 guardrail checklist 见 `policy/guardrail-checklist.md`（35 条禁止模式）。
 > **本表是执行清单，不是索引** <!-- policy-table:checklist -->——表里每一条 `enforcement: doc` 的规则
 > 都必须在正文有对应的执行块（`validate.sh` 9b 节机器检查），否则它没有任何东西会执行它。
@@ -57,8 +57,8 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 | Rule ID | 摘要 |
 |---------|------|
 | `PROSE.EXPLAINING_REGISTER` | 解释式语域六原则先执行；不能豁免正文冒号、分号硬禁令 |
-| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation 环境 |
-| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} |
+| `LATEX.EQ.DISPLAY_STYLE` | Display 公式用 equation、equation*、align 或 align*；禁用 $$ 与 \[...\] |
+| `LATEX.VAR.LONG_TOKEN_USE_TEXT` | 长变量名用 \text{} 或 \mathrm{}（默认 ≥4 字母） |
 | `PROSE.AI_LEXICON` | AI 高频词表（tier-1 零容忍 + tier-2 密度阈值） |
 | `PROSE.FRACTAL_SUMMARY` | 禁止逐层预告/回顾（"In this section we…"） |
 | `PROSE.INVENTED_CONCEPT_LABEL` | 禁止自造术语冒充既有概念 |
@@ -79,7 +79,7 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 | `PROSE.ELEGANT_VARIATION` | 术语全文一致 |
 | `PROSE.COPULA_DODGE` | 禁止"serves as"替代"is" |
 | `PROSE.NEGATIVE_PARALLELISM` | 禁止"It's not X, it's Y"假深刻 |
-| `PROSE.NEGATION_CONTRAST` | 对比构造分两档：系动词型零容忍；`rather than`/`instead of` 只在排除项是 ①具体默认做法 ②点名引用的主张 ③本文检验过（必须保留并就地给结果）时保留 |
+| `PROSE.NEGATION_CONTRAST` | 对比构造分两档：系动词型零容忍；`rather than`/`instead of` 的必要定义／威胁模型／保证边界按依据保留，其余按 ①具体默认做法 ②点名引用的主张 ③本文检验过（必须保留并就地给结果）判断 |
 | `PROSE.TRAILING_AFTERTHOUGHT` | 禁止句末逗号甩短片段（"..., as editable."） |
 | `PROSE.COMMA_OVERUSE` | 单句逗号≤3（≥4 触发） |
 | `PROSE.MIDSENTENCE_COLON` | 正文（含脚注）句中冒号一律禁止；非散文豁免，caption / table 排除 |
@@ -151,12 +151,12 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 - Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
 - Unnecessary contrast <!-- policy:PROSE.NEGATION_CONTRAST -->：**按句式分两档**。
   **档 A（零容忍）**：`X is/are A, not B` · `not A, but B` · `X is neither A nor B`——**系动词 + 表语对比**，是 `PROSE.NEGATIVE_PARALLELISM` 的 `It is not X, it is Y` 近亲，强制改正面。
-  **档 B（按三条判据，即六原则第 6 条）**：`rather than` · `instead of` 只在以下三种情况保留——
+  **档 B（按六原则第 6 条和规则卡 Requirement）**：`rather than` · `instead of` 先核定义、威胁模型及保证边界中的必要区分，按定义或范围依据保留，不冒充实验；其余对照须满足以下三条之一——
   - ① 排除项是读者原本会默认采用的具体做法（`we mark X as unavailable rather than guessing its timing`）；
   - ② 排除项是在原处点名并引用的真实主张；
   - ③ 排除项是本文检验过的可能，这种**必须保留，并在同一处给出结果**（同一句、紧接的一句，或者指向某个表或图）。
 
-  三条都不满足，就是假想对手，改成正面陈述（`only` / `alone` / 一个更准的正面形容词常能把排除项吸收进去）。不许把一种对照句式换成另一种（`rather than` ↔ `instead of` ↔ `whereas` ↔ `unlike`）。**删排除项前先确认它不属于 ③**：属于 ③ 而删掉，等于丢掉一个比较性论断。
+  三条都不满足且无必要划界时，删除无依据的对照；留下的正面解释仍须有依据，`only` / `alone` 不能凭空增加排他性，删对照也不证明因果。互换对照句式（`rather than` ↔ `instead of` ↔ `whereas` ↔ `unlike`）本身不解决问题。**删排除项前先确认它不属于 ③ 或必要区分**，不得丢掉比较性论断或边界命题；档 A 仍须改成合规结构，不因此放行。
   ⚠️ **单纯的否定谓语不在禁令内**：`that difference is not an effect estimate` / `visible events are not yet evidence for action` 同句内没有正面对项，是正常陈述。实测一份全稿 16 处命中里 5 处属此类，铲掉它们会让作者关掉整条规则。
   ⚠️ **lint 只定位不分档**：五条 pattern 现在覆盖两档全部形式（此前只有 `, not` 一条，实测一份全稿报 15 处而实际 38 处，`rather than` 17 处全部不可见）。报出来的每一条都要自己判档。
 - 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**。**跨节转诊**：本条只判本段/本节内的重复列举；若怀疑同一组对象在别节也列过，转 `claim-architecture-review`——`information-ledger.md` 以集合为 info-key，第二次列举在 `lookup-before-create` 时撞上（最小调用见下方转诊说明）
@@ -178,7 +178,7 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
   **跨节不归本条**：同一命题在几个节各有一个 home，转 `claim-architecture-review` 的 **P2 relocation**——那里才是重锚会被误杀的地方（ledger 只看见「一个命题两个 home」，设计目标就是压成一个）。最小调用：`spine.md` 在就只跑该节的 P1 再进 P2 判这一个 cluster，不在就先跑 P0；要求 P2 把保留的 home 标 `(re-anchor)` 并写出 canonical home 的位置 <!-- policy:PROSE.FRACTAL_SUMMARY -->
 
 ### 3. Vary Rhythm
-Mix sentence lengths. End paragraphs differently.
+Let sentence length follow the explanation; use length distribution only to diagnose specific problems.
 
 **⚠️ 均质化本身就是 AI 痕迹。** 逐句读全部合格、但句长压在同一区间的散文，读者一眼认出是机器写的。执行 `PROSE.SENTENCE_LENGTH` 时不要把所有句子拉到同一长度——超过 35 词只触发复查，不是硬拆线（v1.38.1，nso 实验 077207a 分析）。句长标准差 ≥10 词、15–30 词区间占比 ≤55% 是**诊断**：数值偏低时去找原因（通常是一次机械拆句改写），**不是去调数值**。作者原稿的句长就是作者要的节奏，默认不动。 <!-- policy:PROSE.RHYTHM_VARIANCE -->
 
@@ -187,7 +187,7 @@ Mix sentence lengths. End paragraphs differently.
 **Check**:
 - Three consecutive sentences same length? Look for the cause (a clause chain, or a mechanical split pass) before touching anything. Split a hard-to-parse clause chain while preserving its relations, or combine a fact with its reason, condition, purpose, or qualification when this makes the relation clearer. **Never add a sentence to lower the sd, and never merge sentences to raise it.**
 - Every sentence ≤10 words you added this pass: does it carry a checkable claim, or an explicit anchor (connective / this / these / the same)? Neither → it is an orphan hiding a relation; write the relation into the neighbouring sentence and delete it (deletion test, see card).
-- Paragraph ends with punchy one-liner? Vary it.
+- Paragraph ends with a punchy one-liner? Check whether it carries a claim or a needed relation; revise only a concrete problem, not the length pattern.
 - 整节找不到 <12 词的句子？或找不到 >32 词的句子？→ 分布已被压平，这是**诊断信号**：检查是不是有过一次机械拆句 pass（有就撤回它），或长句里藏着从句链（有就拆）。**不要为了造出 >32 词的句子去并句**——实测并出来的 36–44 词长句会重新长出从句链，作者判定"句子太长、改之前节奏更好"（R²D²，2026-09-24）
 - 一句逗号 ≥4 个时，检查从句链并拆清关系。不用分号解决逗号过多，修法按 `PROSE.SEMICOLON_RESTRICTION`。 <!-- policy:PROSE.COMMA_OVERUSE -->
 
@@ -218,20 +218,20 @@ If it sounds like a pull-quote, rewrite it.
 
 排版装饰是最容易被误当成"强调"的 AI 习惯。五条：
 
-1. `\textbf{}` 只给**首次定义的核心术语**，不给普通词做强调。一段里三处 bold 等于没有 bold
+1. `\textbf{}` 只给**首次定义的核心术语**，不给普通词做强调。按每页检查是否超过 3 次（Contribution/Definition 除外）
 2. `\textit{}` 只给术语引入和外来语，不做情绪强调
-3. 正文段落用连贯散文，**不在段落中间插 `itemize`**。Contribution 列表与算法描述除外
-4. `\texttt{}` 只给代码字面量、命令名、以及确属贡献一部分的文件名。方法名和系统名定义一次后用正体，不持续 `\texttt{}`
+3. 正文段落用连贯散文，**不在段落中间插 `itemize`**。Contribution section 和算法描述中的 `enumerate` 除外
+4. `\texttt{}` 只给代码字面量、命令名、以及确属贡献一部分的文件名。方法名、系统名、字段类别定义一次后用正体，不持续 `\texttt{}`
 5. 用模板的原生格式，不加装饰性排版
 
 ### 6. Preserve LaTeX Math Rules (Academic Manuscripts)
 When editing paper text, preserve math-style constraints instead of "humanizing" them away.
 
 **Required:**
-- Display equations must use `\begin{equation}...\end{equation}` <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
+- Display equations use `\begin{equation}...\end{equation}`; `equation*`, `align` and `align*` are also allowed <!-- policy:LATEX.EQ.DISPLAY_STYLE -->
 - Do not rewrite display equations into `$$...$$` or `\[...\]`
 - Inline equations can use `$...$`
-- In math mode, variable-like tokens longer than 3 letters must use `\text{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
+- In math mode, variable-like tokens with at least `min_token_length` letters (default 4) must use `\text{}` or `\mathrm{}` <!-- policy:LATEX.VAR.LONG_TOKEN_USE_TEXT -->
 
 ### 7. No Over-Defensive Placement <!-- policy:PROSE.OVER_DEFENSIVE -->
 每条 scope 限定只能有**一个** canonical home（设计描述 或 Limitations 块）。禁止：让步放在段落主题句、贡献/结果段以「做不到什么」收尾、为正文未提出的质疑预先辩解、正面句已蕴含还用否定重说。
@@ -239,7 +239,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 **文档域第 5 条：贡献未立先谈不足。** 扫 Abstract 与 Introduction，任何出现在**贡献陈述之前**的 caveat / 局限 / 排除声明都是违规——读者应当先拿到"这篇做成了什么"，再拿到边界。判定只看位置，不看措辞。
 处置**只允许"移"不允许"删"**，且移之前先确认 Limitations 已完整承担该条（`ETHICS.LIMITATIONS_SECTION_MANDATORY` 优先，不得因移动削薄披露）；那句也可能是上一轮 reviewer 要求前置的唯一答复。
-**分工**：本条只在 Abstract/Intro 内部判先后，**不做跨节搬迁规划**——那归 `claim-architecture-review` 的 P2 relocation-map，且它在本 skill 之前跑。
+**分工**：本条只在 Abstract/Intro 内部判先后，**不做跨节搬迁规划**——发现这类结构问题时，先定点调用 `claim-architecture-review` 的 P2 relocation-map，再继续相关文字的线编。
 
 **句子层：免责式否定谓语。** 以上判据全是位置与次数——一句免责句只出现一次、落点合法时全放行，但十六句叠起来通篇是在报备（实测一份全稿 1.7/千词）。所以还要按**句子形状**查：作者或本文产物做主语 + 拒绝某项主张做谓语（`We do not select an optimal policy` · `The rule does not judge private work`）。
 **先分诊，只有 A 类在射程内**：A 免责式（作者/产物主语 + 拒绝主张）在射程内；**B 事实性否定**（定义、发现、数值结果——`Equalizing the window does not restore the pattern`）不在。实测 33 处否定构造只有 16 处属 A，不划界会把定义和发现一起铲掉。
@@ -333,7 +333,7 @@ lint 的密度与分布数据只作定位提示，不据此判违规或要求换
 "the supervision paradox" / "workload creep" 这类标签只在两种情况下允许：有文献出处并引用，或是本文明确的命名贡献（显式声明 + 定义 + 全文一致）。两者都不满足就用普通语言描述现象。审稿人会去检索你造的"既有概念"。
 
 **删除无作用的复述，保留必要展开、衔接与局部证据** <!-- policy:PROSE.RESTATEMENT_DILUTION -->
-AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。删除测试：删掉后出现的那句，本段信息零损失即确认是复述，删掉定稿（不要合并改写）。跨节的重复主张不归这里，交 `claim-architecture-review` 的 **P2 relocation-map**——同一命题有多个 home 时由它定 canonical home（最小调用见下方转诊说明）。
+AI 平均把每件事说 1.5 遍：抽象陈述一次 → 给证据 → 换措辞再总结一次。先判断每处复述承担的是定义、推理展开、衔接、总结还是无作用的重复，再按职责删除、合并或回指。试改后重读完整段落，核查范围、证据覆盖、计数单位、推理衔接及本处理解所需的分母、实例和限定；这些信息仍在且无说明作用时才删除。跨节的重复主张不归这里，交 `claim-architecture-review` 的 **P2 relocation-map**——同一命题有多个 home 时由它定 canonical home（最小调用见下方转诊说明）。
 
 **每句必须新增可证伪的内容（"轱辘话"）** <!-- policy:PROSE.SEMANTIC_IDLING -->
 与上一条正好相反：那条是**同一个命题说了两遍**，这条是**一个命题都没有**。所以删除测试在这里不成立——空转句删掉后信息同样零损失，但原因不是"别处说过"，而是"这里从来没说过"，修法因此不是删后一句而是补事实。
@@ -518,7 +518,7 @@ For comprehensive pattern lists, see:
 
 **易懂 ≠ 低语域。** 降低阅读门槛的正确手段是理顺句子结构、讲清术语，不是换上口语措辞。实测中一处 `at all` 正是 agent 在「让句子更好懂」这一步主动加进去的——**anti-AI pass 本身就会触发这个失效模式**，不只是压缩 pass。
 
-**压缩为什么必然触发这个**：压缩优化词数，而最便宜可砍的恰恰是精确的多音节词。所以 drift 不是失误，是这个优化目标的预期输出，每次压缩 pass 都会复发，除非语域被单独计分。`PROSE.RHYTHM_VARIANCE`（拉句长方差）推的是同一个方向——**拉方差不得靠写短口语句**。
+**压缩为什么必然触发这个**：压缩优化词数，而最便宜可砍的恰恰是精确的多音节词。所以 drift 不是失误，是这个优化目标的预期输出，每次压缩 pass 都会复发，除非语域被单独计分。`PROSE.RHYTHM_VARIANCE` 的分布只作诊断，**不为方差改写**；为讲清已有关系而拆合句时，也不得降低语域。
 
 ### 以下内容保留，不要"修复"（删除方向）
 
@@ -571,13 +571,13 @@ For comprehensive pattern lists, see:
 
 > **Order inside this skill — six principles first.** 执行 `skills/writing-anti-ai/SKILL.md`「⚠️ 最高优先级：解释式语域六原则／执行顺序」的全部四步。
 
-> **Order — line edit is LAST.** Run `claim-architecture-review` (paragraph necessity / placement / cross-section redundancy + claim spine) and then `paper-self-review` BEFORE this skill. Fix the architecture before polishing sentences; polishing a paragraph that should be moved or cut is wasted work.
+> **Check structure within the requested scope.** 单段或单节改写不必先跑整篇 `claim-architecture-review` 或 `paper-self-review`。仅发现段落必要性、位置、跨节重复或论证主线问题时，先定点调用 `claim-architecture-review`，解决该问题再润色相关文字；只有任务包含投稿质量检查时，才另按 `paper-self-review` 的 checklist 执行。整篇循环按 loop「准备／派发前确认结构」处理，不把完整结构审查设为每次线编的前提。
 
 > **📄 转诊说明（定点调用本 skill 时读这条）**
 > 逐节定点跑本 skill 是**合法用法**，不是流水线的错误入口。但本 skill 判不了跨节的事，遇到上述转诊点时，
 > **不必重跑整篇 arch-review**——它的 P1 本来就是逐节的：
 > - `architecture-review/spine.md` 已存在 → **只对当前这一节跑 P1**，读 ledger 判跨节重复
-> - spine 不存在 → 先跑 **P0**（只读 abstract + intro + 各节标题 + 每段主题句，不读正文，很便宜），再 P1 单节
+> - spine 不存在 → 只补理解已定位问题必需的主线（按 P0），再 P1 单节，不扩大成整篇结构审查
 > - 只有需要全局搬迁规划时才跑 P2/P3
 > 转诊要说清**最小需要跑什么**，只丢一个 skill 名字等于没转。
 
@@ -603,7 +603,7 @@ For comprehensive pattern lists, see:
 2. **Rewrite sections** - Replace AI-isms with natural alternatives
 3. **Preserve meaning** - Keep core message intact
 4. **Maintain voice** - Match intended tone (formal, casual, technical)
-5. **Add soul** - Inject personality and opinions
+5. **Add soul (casual register only)** - For blogs, social posts and similar casual writing, add personality and opinions as appropriate. For academic writing, follow “Voice, by Register” and preserve a neutral, precise, evidence-bound voice.
 
 ### For Chinese Text (中文文本):
 
@@ -611,7 +611,7 @@ For comprehensive pattern lists, see:
 2. **重写问题片段** - 用自然替代方案替换
 3. **保留含义** - 保持核心信息完整
 4. **维持语调** - 匹配预期的语气（正式、随意、技术）
-5. **注入灵魂** - 添加个性和观点
+5. **注入灵魂（仅随意语域）** - 博客、社交帖等可酌情添加个性和观点；学术语域不适用，按「Voice, by Register」保持中性、精确、证据绑定。
 
 ## Expression Acceptance（表达验收）
 
@@ -660,7 +660,7 @@ See **`examples/`** for before/after transformations:
 ## Best Practices
 
 ✅ **DO**:
-- Combine pattern detection with soul injection
+- Combine pattern detection with the intended register; soul injection applies only to casual writing (blogs, social posts, etc.), not academic prose
 - Support both English and Chinese
 - Use progressive disclosure (core rules here, details in references/)
 - Vary sentence structure and rhythm
@@ -668,7 +668,7 @@ See **`examples/`** for before/after transformations:
 - Use simple constructions (is/are/have) where appropriate
 
 ❌ **DON'T**:
-- Just remove patterns without adding voice
+- Ignore the intended register: academic voice is neutral, precise and evidence-bound; added personality and opinions belong only in casual writing
 - Leave stereotypic structures intact
 - Over-correct and lose the original meaning
 - Ignore language-specific patterns

@@ -180,6 +180,6 @@ Regrettably, our model suffers a performance drop under distribution shift.
 
 - **`PROSE.OVER_DEFENSIVE` — 结构 vs 词汇。** 那条管**辩护放在哪里、放了几次**（认怂前置 / 免责收尾 / 预防性辩解 / 负向重述、每条 caveat 只许一个 canonical home），它的 Rationale 明说"这是结构性问题，不是词级问题"。因此**词级层面与责任范围判断此前无人认领**，那正是本卡的领地：同一句话，放错位置归那条，写成自我攻击归本卡。一处文本可能同时违反两条（位置错 + 措辞自贬），各报各的，不合并。走完本卡三步处置后仍要写的 limitation，**落点由那条裁决**。
 - **`PROSE.HEDGING_DISCIPLINE` — 动词强度 vs 证据强度，它在校准过的 hedge 上压过本卡。** 那条是双向的：既禁 over-claim 也禁 over-hedge。当一句 hedge 是**校准正确**的（`suggests` / `is consistent with` / `we hypothesize`，用于真不确定的主张），它就是正确形态，本卡不得以"听起来示弱"为由把它改强——那是制造 over-claim。本卡管的是与证据强度无关的**情绪与自贬措辞**（`unfortunately`、`merely`、`far from practical`），删掉它们不改变任何动词的强度。
-- **`ETHICS.LIMITATIONS_SECTION_MANDATORY` — 强制披露压过本卡。** venue 要求的 Limitations section 必须存在且实质（3+ 具体局限点）。本卡**只改这些局限点的措辞**（去掉情绪副词、回填锚点、把普遍判决收回局部），**不减少条数、不削弱内容、不允许因本卡而使该 section 变得敷衍**。若某次改写的净效果是 Limitations 变短变空，该改写违反那条，回滚。
+- **`ETHICS.LIMITATIONS_SECTION_MANDATORY` — 强制披露压过本卡。** venue 要求的 Limitations section 必须存在且实质，**不设条数下限，按真实存在的适用边界写**；每条是否该存在由 `PAPER.LIMITATION_NECESSITY` 判。本卡**只改这些局限点的措辞**（去掉情绪副词、回填锚点、把普遍判决收回局部），**不因措辞调整删减真实局限、不削弱内容、不允许因本卡而使该 section 变得敷衍**。若某次改写削薄了必要披露，该改写违反那条，回滚。
 - **`EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE` — 强制披露压过本卡。** fabricated / 占位结果的 caption 红色大写披露、以及 `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` 的状态注释，是合规声明，不是自我攻击。本卡对其**零管辖**：不得弱化、不得移位、不得以"读起来不好看"为由改写。
 - **`CITE.CLAIM_SUPPORT_REQUIRED` — 收缩主张不得留下无支撑的断言。** 本卡第三步"收缩主张到证据实际支持的范围"会重写比较句；重写后的句子仍须携带它自己的支撑（表号 / 图号 / 引用）。把"我们弱于 X"改成"在 D 上差 3.1 点"却不给出 Table 号，是用一条本卡违规换一条那条违规。**收缩主张的同时必须补锚点**，二者是同一次编辑。

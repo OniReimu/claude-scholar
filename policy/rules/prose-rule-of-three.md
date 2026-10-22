@@ -98,7 +98,7 @@ explanation generators.
 ## Conflicts
 
 - `PROSE.RESTATEMENT_DILUTION` 拥有**命题层**复述（同一主张说两遍）；本卡第 2 条是它在**列举层**的表现（同一集合列两遍）。同一处可能两条都成立，以本卡的"命名 + 引用"修法为准，不重复计数。**两条的跨节边界也一致**：都只管段内/节内，跨节归 `claim-architecture-review`
-- **`claim-architecture-review`（skill，非规则）** 拥有跨节重复列举：其 `information-ledger.md` 把一组被列举的对象记为一个 information unit，第二次列举由 `lookup-before-create` 命中。本卡在**线编**阶段只判段内/节内，且 arch-review 在本 skill 之前跑——它给出的"命名"结果正是本卡"引用名字"修法的输入
-- `PROSE.COMMA_OVERUSE`（单句 ≤3 逗号）会在四项列表上**副作用命中**——它报的是逗号数，不是列举结构。**先按本卡判定**：列表合规（短项 ≤4）则改用分号或重述以满足逗号规则，**不得为了降逗号数而删项**
+- **`claim-architecture-review`（skill，非规则）** 拥有跨节重复列举：其 `information-ledger.md` 把一组被列举的对象记为一个 information unit，第二次列举由 `lookup-before-create` 命中。本卡在**线编**阶段只判段内/节内；发现跨节重复问题时才定点调用 arch-review，复用已有命名结果，不把整篇结构审查设为单段或单节线编的前提
+- `PROSE.COMMA_OVERUSE`（单句 ≤3 逗号）会在四项列表上**副作用命中**——它报的是逗号数，不是列举结构。**先按本卡判定**：列表合规（短项 ≤4）则给集合命名后引用或重述以满足逗号规则，仍须遵守正文分号硬禁令，**不得为了降逗号数而删项**
 - `PROSE.COLON_LIST_OVERUSE` 管冒号引出的内联编号列举（`we: (1)...(2)...`）；本卡管不带冒号的并列列举密度，两者形态不同不重叠
 - `PROSE.ELEGANT_VARIATION` 是本卡首选修法的约束：给集合命名后，全文必须一致使用该名字，不得再换同义说法

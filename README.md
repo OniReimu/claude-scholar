@@ -10,6 +10,8 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-10-22 (v1.42.0)**: Resolves existing writing-rule conflicts using rule cards as the authority and the author’s newer decisions as the priority. Aligns rewrite criteria, register-specific guidance, necessary distinctions and local information preservation, with structural review invoked only for identified problems.
+
 - **2026-10-22 (v1.41.1)**: Deduplicates shared writing goals and punctuation rules between writing-anti-ai and its whole-manuscript loop, with direct references to authoritative rule cards. Keeps the six-principle summary, hard-ban priority and per-round subagent reading requirements without changing rule meaning.
 
 - **2026-10-22 (v1.41.0)**: Adds an explicitly enabled target-style mode without changing the default rewrite loop. Requires an author-approved length limit, server-side score decomposition, whole-manuscript writing-habit passes, mandatory blind reading and repaired meaning drift. Stops on a guarded target, failed safeguards or four rounds, and reports readability counts, length costs, every introduced meaning error and score contributions alongside the score, with evidence paths.

@@ -54,12 +54,12 @@ Em-dash 过度使用是 LLM 生成文本的典型特征。人类学术写作极�
 ### Pass
 
 ```latex
-% 全段无 em-dash
-Our method builds on prior work and outperforms all baselines, including recent
-state-of-the-art approaches, by a large margin.
+% 把补充内容并进主句，不只替换标点
+Our method builds on prior work. It outperforms all baselines by a large
+margin. The baselines include recent state-of-the-art approaches.
 
-% 用逗号插入语替代 em-dash
-Our method, the first to combine both techniques, outperforms all baselines.
+% 完整命题拆成新句，原插入语成为主句谓语
+Our method is the first to combine both techniques. It outperforms all baselines.
 ```
 
 ### Fail
