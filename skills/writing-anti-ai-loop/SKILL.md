@@ -1,7 +1,7 @@
 ---
 name: writing-anti-ai-loop
-description: Use when the user wants a whole LaTeX manuscript revised chapter by chapter across bounded rounds. Uses writing-anti-ai and its six explaining-register principles, validates fidelity and contextual expression, and reports bounded pre-ChatGPT style preference separately. Stops without concrete revision tasks; style may break contextual ties only after gain checks. Works on a copy. For one paragraph or section use writing-anti-ai directly.
-version: 1.2.0
+description: Use when the user wants a whole LaTeX manuscript revised chapter by chapter across bounded rounds. By default stops without concrete revision tasks and uses bounded pre-ChatGPT style only for contextual ties. An explicitly requested target-score mode adds whole-manuscript habit rewrites, mandatory blind reading and a cost report under strict safeguards. Works on a copy. For one paragraph or section use writing-anti-ai directly.
+version: 1.3.0
 author: OniReimu
 license: MIT
 tags: [Writing, AI, Anti-AI, LaTeX, Subagents]
@@ -12,6 +12,12 @@ tags: [Writing, AI, Anti-AI, LaTeX, Subagents]
 整篇论文逐章改写，在有限轮次内改善表达并兼顾历史学术文风偏好。改写规则全部来自 `writing-anti-ai` 和 `PROSE.EXPLAINING_REGISTER`（六原则），正文段落（含脚注）的句中冒号与分号一律禁止，锁、六原则和保真都不能豁免。本 skill 只负责编排：分章、派子代理、每轮审改动、核保真、核规则、打分、决定停不停。
 
 claude-scholar 根目录是本 skill 目录的上两级，下文记作 `$CS`。
+
+## 模式选择
+
+默认执行下文原有流程。只有作者**显式开启目标分模式**时，先读 [目标分模式与代价报告](references/target-mode.md)，记录目标文风分和作者批准的全文页数／篇幅硬上限。不能从低分或作者说「改善文风」推定开启。
+
+目标分模式的 T1–T6 是本次作者授权的局部覆盖：覆盖默认的任务范围、续轮／选稿条件、可选盲读及无评分／无编译时的降级路径；与 `PROSE.EXPLAINING_REGISTER` 的具体冲突见该文件的覆盖表。保真、规则、锁来源、稿内依据和原稿保护不变。模式结束必须把代价报告与分数并列交给作者，包括失败、提前停止及回退；不能只链接日志或只报涨分。
 
 ## 共同目标与前提
 

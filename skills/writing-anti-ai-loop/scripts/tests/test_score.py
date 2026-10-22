@@ -110,3 +110,72 @@ class ScoreTest(unittest.TestCase):
         out = json.loads(stdout.getvalue())
         self.assertEqual((rc, out['style'], out['expression']['score']), (0, 71, 100))
         self.assertTrue(out['concentrated_gain'])
+
+    def breakdown(self):
+        return {'version': 'style-breakdown-1',
+                'attribution_order': 'function_words_then_wording_then_cap',
+                'function_word_penalty_points': 20, 'wording_penalty_points': 29,
+                'other_penalty_points': 0, 'wording_cleared_style': 80}
+
+    def test_target_breakdown_and_counterfactual_gap(self):
+        out = score.style_result({'era_similarity_bounded': 51, 'style_breakdown': self.breakdown()})
+        target = score.target_diagnostics(out, 85)
+        self.assertEqual(target, {'status': 'ok', 'target': 85, 'score_reached': False,
+                                 'gap': 34, 'wording_cleared_style': 80,
+                                 'wording_only_gain_ceiling': 29, 'gap_after_wording_clear': 5})
+        self.assertTrue(score.target_diagnostics(out, 51)['score_reached'])
+        self.assertEqual(score.target_diagnostics(out, 0)['gap'], 0)
+        self.assertEqual(score.target_diagnostics(out, 100)['gap_after_wording_clear'], 20)
+        self.assertNotIn('accepted', target)  # score reached never certifies other safeguards
+
+    def test_target_requires_breakdown_but_default_accepts_old_service(self):
+        for remote in ({'era_similarity_bounded': 51},
+                       {'era_similarity_bounded': 51, 'style_breakdown': None},
+                       {'era_similarity_bounded': None, 'style_breakdown': None}):
+            out = score.style_result(remote)
+            self.assertEqual(score.target_diagnostics(out, 70)['status'], 'unavailable')
+
+    def test_invalid_breakdown_rejected(self):
+        bad = [None, {}, self.breakdown() | {'version': 'unknown'},
+               self.breakdown() | {'attribution_order': 'unknown'},
+               self.breakdown() | {'wording_penalty_points': -1},
+               self.breakdown() | {'wording_penalty_points': True},
+               self.breakdown() | {'wording_penalty_points': float('nan')},
+               self.breakdown() | {'wording_penalty_points': float('inf')},
+               self.breakdown() | {'wording_penalty_points': 28},
+               self.breakdown() | {'wording_cleared_style': 50},
+               self.breakdown() | {'wording_cleared_style': 81}]
+        for data in bad:
+            with self.subTest(data=data), self.assertRaises(ValueError):
+                score.breakdown_result(data, 51)
+        with self.assertRaises(ValueError):
+            score.breakdown_result(self.breakdown(), None)
+
+    def test_cap_is_not_reported_as_clearable_wording(self):
+        data = self.breakdown() | {'other_penalty_points': 41, 'wording_cleared_style': 10}
+        out = score.style_result({'era_similarity_bounded': 10, 'style_breakdown': data})
+        self.assertEqual(score.target_diagnostics(out, 70)['wording_only_gain_ceiling'], 0)
+
+    def test_cli_target_unavailable_and_invalid_without_upload(self):
+        for value, expected in [('70', 3), ('nan', 1), ('inf', 1), ('-1', 1), ('101', 1)]:
+            with self.subTest(value=value), \
+                 patch.object(score.sys, 'argv', ['score.py', str(self.root), '--target-style', value]), \
+                 patch.dict(score.os.environ, {}, clear=True), \
+                 patch.object(score.urllib.request, 'urlopen') as fetch, \
+                 patch('sys.stdout', io.StringIO()), patch('sys.stderr', io.StringIO()):
+                self.assertEqual(score.main(), expected)
+                fetch.assert_not_called()
+
+    def test_cli_target_is_local_diagnostic_and_does_not_leak_target(self):
+        for breakdown, expected in [(self.breakdown(), 0), (None, 3)]:
+            response = io.BytesIO(json.dumps({'era_similarity_bounded': 51,
+                                             'style_breakdown': breakdown}).encode())
+            stdout = io.StringIO()
+            with self.subTest(breakdown=breakdown), \
+                 patch.object(score.sys, 'argv', ['score.py', str(self.root), '--target-style', '85']), \
+                 patch.dict(score.os.environ, {'P2G_STYLE_URL': 'https://example.invalid/api/style'}, clear=True), \
+                 patch.object(score.urllib.request, 'urlopen', return_value=response) as fetch, \
+                 patch('sys.stdout', stdout):
+                self.assertEqual(score.main(), expected)
+            self.assertEqual(set(json.loads(fetch.call_args.args[0].data)), {'main', 'files', 'evaluate_expression'})
+            self.assertEqual(json.loads(stdout.getvalue())['target']['status'], 'ok' if breakdown else 'unavailable')

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fetch bounded historical style without LLM calls; report expression ledgers separately.
 
-python3 score.py PAPER_DIR --main main.tex [--evaluation evaluation.json] [--base PREVIOUS_DIR]
+python3 score.py PAPER_DIR --main main.tex [--evaluation evaluation.json] [--base PREVIOUS_DIR] [--target-style SCORE]
 No available style: exit 3, even if an independent expression ledger is present.
 A configured, author-authorized P2G_STYLE_URL receives .tex files; this client never requests LLM evaluation.
 """
@@ -19,6 +19,42 @@ EXCLUDED = {"comments", "comment", "revision", "reviews", "review", "rebuttal", 
 STYLE_METRIC = "pre-chatgpt-bounded-1"
 STYLE_DESCRIPTION = ("Similarity to pre-ChatGPT reference papers in word rates and wording habits; "
                      "not AI usage or writing quality.")
+
+
+def bounded_number(value: object, label: str, maximum: float = 100) -> float:
+    if type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= maximum:
+        raise ValueError(f"invalid {label}")
+    return value
+
+
+def breakdown_result(data: dict, style: float | None) -> dict:
+    """Validate server-side attribution; never reproduce the private model here."""
+    if (not isinstance(data, dict) or data.get("version") != "style-breakdown-1"
+            or data.get("attribution_order") != "function_words_then_wording_then_cap"):
+        raise ValueError("unknown style breakdown")
+    fields = ("function_word_penalty_points", "wording_penalty_points", "other_penalty_points",
+              "wording_cleared_style")
+    values = {k: bounded_number(data.get(k), k) for k in fields}
+    if style is None or not math.isclose(sum(values[k] for k in fields[:3]), 100 - style, abs_tol=1e-6):
+        raise ValueError("style breakdown does not reconcile with score")
+    if not style <= values["wording_cleared_style"] <= 100 - values["function_word_penalty_points"]:
+        raise ValueError("invalid wording-cleared score")
+    return {"version": data["version"], "attribution_order": data["attribution_order"], **values}
+
+
+def target_diagnostics(result: dict, target: float) -> dict:
+    """A numeric target check is not acceptance of fidelity, layout or blind reading."""
+    bounded_number(target, "target style")
+    data = result.get("style_breakdown")
+    if result.get("style") is None or data is None:
+        return {"status": "unavailable", "target": target,
+                "reason": "bounded style and server-side breakdown are required"}
+    style = result["style"]
+    cleared = data["wording_cleared_style"]
+    return {"status": "ok", "target": target, "score_reached": style >= target,
+            "gap": max(0, target - style), "wording_cleared_style": cleared,
+            "wording_only_gain_ceiling": cleared - style,
+            "gap_after_wording_clear": max(0, target - cleared)}
 
 
 def tex_files(directory: Path) -> dict[str, str]:
@@ -94,6 +130,8 @@ def style_result(remote: dict) -> dict:
     if share is not None and (type(share) not in (int, float) or not math.isfinite(share) or not 0 <= share <= 1):
         raise ValueError("invalid gain concentration")
     out["concentrated_gain"] = share > 0.5 if share is not None else None
+    if remote.get("style_breakdown") is not None:
+        out["style_breakdown"] = breakdown_result(remote["style_breakdown"], value)
     return out
 
 
@@ -103,9 +141,12 @@ def main() -> int:
     parser.add_argument("--main", default="main.tex")
     parser.add_argument("--base", type=Path)
     parser.add_argument("--evaluation", type=Path)
+    parser.add_argument("--target-style", type=float, help="diagnose an explicitly authorized target; does not run the loop")
     args = parser.parse_args()
     out = {"style": None, "style_status": "not_evaluated"}
     try:
+        if args.target_style is not None:
+            bounded_number(args.target_style, "target style")
         if args.evaluation:
             out["expression"] = acceptance(args.paper, args.evaluation, args.main)
         url = os.environ.get("P2G_STYLE_URL")
@@ -123,7 +164,11 @@ def main() -> int:
             with urllib.request.urlopen(req, timeout=900) as response:
                 remote = json.loads(response.read())
             out.update(style_result(remote))
+        if args.target_style is not None:
+            out["target"] = target_diagnostics(out, args.target_style)
         print(json.dumps(out, ensure_ascii=False))
+        if args.target_style is not None and out["target"]["status"] != "ok":
+            return 3
         return 0 if out["style"] is not None else 3
     except (OSError, ValueError, KeyError, TypeError, urllib.error.URLError) as e:
         print(str(e), file=sys.stderr)
