@@ -803,6 +803,17 @@ lint_rule() {
     for file in "${tfiles[@]}"; do
       local matches view
       view=$(lint_view "$file")
+      if [[ "$RULE_ID" == "PROSE.MIDSENTENCE_COLON" && "$file" == *.tex ]]; then
+        # Exempt reference keys only for this rule; other rules need the shared
+        # view unchanged. Bound key arguments to one line with no nested braces.
+        local key_view="$view.midsentence-colon"
+        if [[ ! -f "$key_view" ]]; then
+          perl -pe '
+            s{(\\(?:label|ref|pageref|nameref|[cC]ref|eqref|autoref|[vV]ref|cite|citep|citet|citealp|citealt|citeauthor|citeyear|citeyearpar|Cite|Citep|Citet|parencite|textcite|autocite|footcite|nocite)(?![a-zA-Z])\*?[ \t]*(?:\[[^\]\n]*\][ \t]*)*\{)([^{}\n]*)(\})}{my ($p, $k, $s) = ($1, $2, $3); $k =~ s/:[ \t]+/:/g; "$p$k$s"}ge;
+          ' "$view" > "$key_view"
+        fi
+        view="$key_view"
+      fi
       matches=$(regex_match "$pat" "$view")
       # A timed-out pattern is a defect in the pattern, reported as an error.
       # Falling through would record zero matches, which reads as a clean file.

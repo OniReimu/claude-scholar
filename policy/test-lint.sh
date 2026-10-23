@@ -405,6 +405,63 @@ assert_contains "tiny input refuses to report a rate" 'corpus too small' \
 rm -rf "$CC_DIR" "$CC_TINY"
 
 echo ""
+echo "=== 10. PROSE.MIDSENTENCE_COLON Reference-Key Exemption ==="
+# The card exempts reference keys (label, ref, cite...), but the generic regex
+# engine matches across the line. Only this rule rewrites key whitespace in its
+# view so keys are not flagged while genuine mid-sentence colons still are.
+COLON_DIR="$TEST_DIR/midsentence-colon"
+mkdir -p "$COLON_DIR"
+colon_lint() { bash "$LINT" --rule PROSE.MIDSENTENCE_COLON "$COLON_DIR" 2>&1 || true; }
+
+colon_flags() {
+  local desc="$1" content="$2"
+  printf '%s\n' "$content" > "$COLON_DIR/case.tex"
+  if colon_lint | grep -E '(ERROR|WARN)' | grep -q 'details: the'; then
+    ((PASS++)) || true; echo "  ✓ $desc"
+  else
+    ((FAIL++)) || true; echo "  ✗ $desc (expected a finding on 'details: the', got none)"
+  fi
+}
+colon_clean() {
+  local desc="$1" content="$2"
+  printf '%s\n' "$content" > "$COLON_DIR/case.tex"
+  local out; out=$(colon_lint)
+  if echo "$out" | grep -qE '(ERROR|WARN)'; then
+    ((FAIL++)) || true; echo "  ✗ $desc (false positive)"; echo "$out" | grep -E '(ERROR|WARN)' | sed 's/^/      /'
+  else
+    ((PASS++)) || true; echo "  ✓ $desc"
+  fi
+}
+
+echo "10.1 reference keys with colons must not flag"
+colon_clean "reference keys with colons are exempted" \
+  '\subsubsection{Ownership}\label{subsec: threat_model_2}
+This is covered in $\S$\ref{subsec: verification_watermark} and in \cite{smith: jones}.'
+
+echo "10.2 genuine prose colons must still flag"
+colon_flags "prose colon on same line as reference key flags" \
+  'See $\S$\ref{subsec: x} for details: the chain is fixed.'
+
+echo "10.3 unclosed reference must not swallow later paragraphs"
+colon_flags "prose colon after unclosed reference flags" \
+  '\ref{subsec: x
+
+We list the details: the chain is fixed.'
+
+echo "10.4 citation prose must still flag"
+colon_flags "citetext prose colon flags" \
+  'The result holds \citetext{see details: the chain is fixed}.'
+
+echo "10.5 sentence length must keep the shared view unchanged"
+{
+  for i in $(seq 1 34); do printf 'word '; done
+  printf '\\ref{sec: key}.\n'
+} > "$COLON_DIR/case.tex"
+assert_contains "34 words plus reference still flags sentence length" 'WARN.*case.tex:1:' \
+  bash "$LINT" --rule PROSE.SENTENCE_LENGTH "$COLON_DIR"
+rm -rf "$COLON_DIR"
+
+echo ""
 echo "═══ Test Summary ═══"
 echo "  Passed: $PASS"
 echo "  Failed: $FAIL"
