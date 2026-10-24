@@ -24,6 +24,8 @@ autofix: none
 
 ## Rationale
 
+主语到主干谓语等依存关系拉长时的加工负担，见 Gibson（1998，*Cognition*, 68(1):1–76），相关模型研究和跨时代复测见 [解释式语域卡的 Rationale](prose-explaining-register.md#rationale)。
+
 从句链是 LLM 行文最稳定的指纹之一：模型倾向于把一个主张的前提、推论和限定都挂在同一个句子上，用 `which` 接推论、用插入语塞条件、用 `and` 再接第二个谓语。每一处单看都合语法，逗号数也常常只有 2–3 个，`PROSE.COMMA_OVERUSE`（≥4 触发）和 `PROSE.SENTENCE_LENGTH`（>35 词触发）都抓不到。但读者必须在工作记忆里同时持有主语、关系从句的先行词、插入的条件和两个谓语，才能拼出句意。
 
 实测（R²D² abstract，Saber 2026-09-24 判定）：

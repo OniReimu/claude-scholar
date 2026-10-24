@@ -10,6 +10,8 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-10-25 (v1.42.1)**: Adds external evidence and cross-era replication findings for noun stacks and dependency length, records counterexamples that do not justify new rules, and leaves writing requirements and checks unchanged.
+
 - **2026-10-22 (v1.42.0)**: Resolves existing writing-rule conflicts using rule cards as the authority and the author’s newer decisions as the priority. Aligns rewrite criteria, register-specific guidance, necessary distinctions and local information preservation, with structural review invoked only for identified problems.
 
 - **2026-10-22 (v1.41.1)**: Deduplicates shared writing goals and punctuation rules between writing-anti-ai and its whole-manuscript loop, with direct references to authoritative rule cards. Keeps the six-principle summary, hard-ban priority and per-round subagent reading requirements without changing rule meaning.
