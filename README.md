@@ -10,6 +10,8 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-10-27 (v1.42.2)**: Aligns the loop client with body-only style scoring, excluding appendices and post-reference checklists. Requires the new metric ID and retains body word counts and boundary metadata; rejects older or unversioned scores.
+
 - **2026-10-25 (v1.42.1)**: Adds external evidence and cross-era replication findings for noun stacks and dependency length, records counterexamples that do not justify new rules, and leaves writing requirements and checks unchanged.
 
 - **2026-10-22 (v1.42.0)**: Resolves existing writing-rule conflicts using rule cards as the authority and the author’s newer decisions as the priority. Aligns rewrite criteria, register-specific guidance, necessary distinctions and local information preservation, with structural review invoked only for identified problems.

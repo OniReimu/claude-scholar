@@ -54,10 +54,18 @@ class ScoreTest(unittest.TestCase):
         self.data['source_hashes']['../elsewhere.tex'] = 'bad'
         with self.assertRaises(ValueError): self.read()
 
-    def test_transitional_service_uses_bounded_field_not_expression_style(self):
-        out = score.style_result({'style': 100, 'era_similarity': 83, 'era_similarity_bounded': 71})
-        self.assertEqual(out['style'], 71)
-        self.assertIsNone(out['concentrated_gain'])
+    def test_old_or_unversioned_service_rejected(self):
+        for metric in (None, 'pre-chatgpt-bounded-1'):
+            with self.subTest(metric=metric), self.assertRaisesRegex(ValueError, 'unknown style metric'):
+                score.style_result({'style_metric': metric, 'style': 71, 'era_similarity_bounded': 71})
+
+    def test_body_scope_metadata_preserved(self):
+        remote = {'style_metric': score.STYLE_METRIC, 'style': 71, 'era_similarity_bounded': 71,
+                  'body_words': 2000, 'appendix': {'cut': {'kind': 'appendix_command'}}}
+        out = score.style_result(remote)
+        self.assertEqual(out['body_words'], remote['body_words'])
+        self.assertEqual(out['appendix'], remote['appendix'])
+        self.assertIn('excluding appendices', out['style_description'])
 
     def test_new_contract_and_concentration_boundary(self):
         for share, flag in [(None, None), (.5, False), (.51, True)]:
@@ -76,7 +84,7 @@ class ScoreTest(unittest.TestCase):
         for remote in bad:
             with self.subTest(remote=remote), self.assertRaises(ValueError):
                 score.style_result(remote)
-        out = score.style_result({'era_similarity_bounded': None, 'style': 100})
+        out = score.style_result({'style_metric': score.STYLE_METRIC, 'era_similarity_bounded': None, 'style': None})
         self.assertIsNone(out['style'])
         self.assertEqual(out['style_status'], 'unavailable')
 
@@ -118,7 +126,7 @@ class ScoreTest(unittest.TestCase):
                 'other_penalty_points': 0, 'wording_cleared_style': 80}
 
     def test_target_breakdown_and_counterfactual_gap(self):
-        out = score.style_result({'era_similarity_bounded': 51, 'style_breakdown': self.breakdown()})
+        out = score.style_result({'style_metric': score.STYLE_METRIC, 'style': 51, 'era_similarity_bounded': 51, 'style_breakdown': self.breakdown()})
         target = score.target_diagnostics(out, 85)
         self.assertEqual(target, {'status': 'ok', 'target': 85, 'score_reached': False,
                                  'gap': 34, 'wording_cleared_style': 80,
@@ -128,10 +136,10 @@ class ScoreTest(unittest.TestCase):
         self.assertEqual(score.target_diagnostics(out, 100)['gap_after_wording_clear'], 20)
         self.assertNotIn('accepted', target)  # score reached never certifies other safeguards
 
-    def test_target_requires_breakdown_but_default_accepts_old_service(self):
-        for remote in ({'era_similarity_bounded': 51},
-                       {'era_similarity_bounded': 51, 'style_breakdown': None},
-                       {'era_similarity_bounded': None, 'style_breakdown': None}):
+    def test_target_requires_breakdown_but_default_accepts_score_without_breakdown(self):
+        for remote in ({'style_metric': score.STYLE_METRIC, 'style': 51, 'era_similarity_bounded': 51},
+                       {'style_metric': score.STYLE_METRIC, 'style': 51, 'era_similarity_bounded': 51, 'style_breakdown': None},
+                       {'style_metric': score.STYLE_METRIC, 'style': None, 'era_similarity_bounded': None, 'style_breakdown': None}):
             out = score.style_result(remote)
             self.assertEqual(score.target_diagnostics(out, 70)['status'], 'unavailable')
 
@@ -153,7 +161,7 @@ class ScoreTest(unittest.TestCase):
 
     def test_cap_is_not_reported_as_clearable_wording(self):
         data = self.breakdown() | {'other_penalty_points': 41, 'wording_cleared_style': 10}
-        out = score.style_result({'era_similarity_bounded': 10, 'style_breakdown': data})
+        out = score.style_result({'style_metric': score.STYLE_METRIC, 'style': 10, 'era_similarity_bounded': 10, 'style_breakdown': data})
         self.assertEqual(score.target_diagnostics(out, 70)['wording_only_gain_ceiling'], 0)
 
     def test_cli_target_unavailable_and_invalid_without_upload(self):
@@ -168,7 +176,7 @@ class ScoreTest(unittest.TestCase):
 
     def test_cli_target_is_local_diagnostic_and_does_not_leak_target(self):
         for breakdown, expected in [(self.breakdown(), 0), (None, 3)]:
-            response = io.BytesIO(json.dumps({'era_similarity_bounded': 51,
+            response = io.BytesIO(json.dumps({'style_metric': score.STYLE_METRIC, 'style': 51, 'era_similarity_bounded': 51,
                                              'style_breakdown': breakdown}).encode())
             stdout = io.StringIO()
             with self.subTest(breakdown=breakdown), \

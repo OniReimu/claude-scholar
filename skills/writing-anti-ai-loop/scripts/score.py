@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch bounded historical style without LLM calls; report expression ledgers separately.
+"""Fetch body-only bounded historical style without LLM calls; report expression ledgers separately.
 
 python3 score.py PAPER_DIR --main main.tex [--evaluation evaluation.json] [--base PREVIOUS_DIR] [--target-style SCORE]
 No available style: exit 3, even if an independent expression ledger is present.
@@ -16,8 +16,9 @@ import urllib.request
 from pathlib import Path
 
 EXCLUDED = {"comments", "comment", "revision", "reviews", "review", "rebuttal", "responses"}
-STYLE_METRIC = "pre-chatgpt-bounded-1"
-STYLE_DESCRIPTION = ("Similarity to pre-ChatGPT reference papers in word rates and wording habits; "
+STYLE_METRIC = "pre-chatgpt-bounded-2"
+STYLE_DESCRIPTION = ("Similarity to pre-ChatGPT reference papers in body-only word rates and wording habits "
+                     "(excluding appendices and post-reference checklists); "
                      "not AI usage or writing quality.")
 
 
@@ -107,14 +108,11 @@ def acceptance(directory: Path, path: Path, main: str) -> dict:
 
 
 def style_result(remote: dict) -> dict:
-    """Read explicit bounded values, including the transitional expression-style service.
-
-    Never reinterpret its ambiguous style field as historical preference or expression.
-    """
+    """Require the body-only metric; older/unversioned scores use a different denominator."""
     if not isinstance(remote, dict) or "era_similarity_bounded" not in remote:
         raise ValueError("ambiguous service response: bounded historical style is required")
     metric = remote.get("style_metric")
-    if metric is not None and metric != STYLE_METRIC:
+    if metric != STYLE_METRIC:
         raise ValueError("unknown style metric")
     value = remote["era_similarity_bounded"]
     if value is not None and (type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 100):
@@ -123,7 +121,8 @@ def style_result(remote: dict) -> dict:
         raise ValueError("style and bounded historical score disagree")
     out = {"style": value, "style_status": "ok" if value is not None else "unavailable",
            "style_metric": STYLE_METRIC, "style_description": STYLE_DESCRIPTION}
-    for field in ("era_similarity", "era_similarity_bounded", "wording_per_1k", "words", "gain_top3_share"):
+    for field in ("era_similarity", "era_similarity_bounded", "wording_per_1k", "words", "gain_top3_share",
+                  "body_words", "appendix"):
         if field in remote:
             out[field] = remote[field]
     share = remote.get("gain_top3_share")
