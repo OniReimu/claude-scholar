@@ -11,7 +11,7 @@
 - **NO filler phrases**: "In order to" → "to"; "It is important to note that" → delete; "plays a crucial role in" → "is critical for"
 - **NO copula dodges**: "serves as" → "is"; "stands as" → "is"; "marks a" → "is a"
 - **NO intensifiers without data**: very, extremely, highly, significantly, remarkably, substantially (except "statistically significant")
-- **NO em-dashes** (---/—): use commas, semicolons, "which" clauses, or new sentences
+- **NO em-dashes** (---/—): change the structure, not the punctuation. A full proposition → new sentence; a modifier → ", which" clause; a true aside → parentheses or delete. Never a semicolon
 - **NO promotional language**: groundbreaking, game-changing, pioneering, revolutionary
 - **NO self-undermining wording**: "Unfortunately/Regrettably/Admittedly", "merely matches", "falls short", "lags behind", "does not outperform", "far from practical" → delete the emotive word and state the unfavourable result with its anchors ("recall is 3.1 points lower on ImageNet-LT, Table 4"), never as a general verdict ("weaker at recall"); disclosure itself is never reduced
 - **NO informal register** — five classes, a wordlist only reaches the first: `LEXIS` "at all", "in the first place", "ahead of time" → delete or formalise; `PHRASAL-VERB` "comes with" → "entails"; `JUDGMENT-ADJ` "is hard" → "is difficult"; `PREDICATE-METAPHOR` "the wall is a property" → the paper's own term; `WORK-TRACE` "what quarantine buys". **Check the card's allowlists first** — "from scratch", "rules out", "cheap unlearning" are terms of art. Word level: "a lot of" → "many"; "kind of" → "somewhat"
@@ -30,9 +30,9 @@
 - **NO negative parallelism**: "It's not X — it's Y" / "not just X, but Y"
 - **NO unnecessary contrast**: "X, not Y" / "X rather than Y" / "X instead of Y" → default to plain positive "X is A"; keep the contrast ONLY when ruling out Y carries information (don't just swap "not Y"→"rather than Y")
 - **NO colon-numbered lists**: "we: (1)...(2)...(3)..." → use `enumerate` or prose
-- **NO mid-sentence colons**: "key observation: the model fails" → full sentence or split (heading colons `\textbf{X:}` exempt)
+- **NO mid-sentence colons or body semicolons** (footnotes included): "key observation: the model fails" → full sentence or split (heading colons `\textbf{X:}` exempt). A semicolon → split, or comma + a meaning-carrying conjunction when the card's four criteria hold; never a bare comma. Math, code and `\;` exempt
 - **NO trailing afterthoughts**: "..., as editable." comma + short tag → fold into main clause
-- **Comma overuse**: max 3 commas per sentence (≥4 → split or use semicolons)
+- **Comma overuse**: max 3 commas per sentence (≥4 → split or restructure; never a semicolon)
 - **NO internal provenance** in text, captions or tables — result paths, data files, column identifiers, internal fixture names, or a superseded earlier version (`\path{experiments/...}`, `\texttt{empirical\_rate}`, "As Golden G4", "the old bound is retracted"). Provenance lives in the ledger and the released artifact; the manuscript cites the artifact
 - **NO AI lexicon (tier-1)**: delve, leverage, underscore, harness (verb only — an evaluation harness is a noun), foster, showcase, seamless, intricate, nuanced, pivotal, tapestry, realm, myriad, "paving the way for", "valuable insights" → plain word or concrete noun. Tier-2 (comprehensive, essential, ensure, explore, insights, paradigm) ≤1 per sentence. Terms of art exempt (loss landscape, robust, optimize)
 - **NO section previews/recaps**: "In this section, we present…" / "As we have seen…" / "Having described X, we now…" → start on content, end on the last concrete result; forward refs via `\Cref{}`
@@ -41,5 +41,5 @@
 - **NO despite-dismissal**: "Despite challenges, X continues to thrive" → analyze the challenge
 - **NO superficial -ing suffixes**: trailing ", highlighting/underscoring/emphasizing/showcasing/fostering…" → be specific. Open set (", enabling/ensuring/providing…") is LLM-judged, not regex: delete the tail and ask whether checkable information was lost
 - **NO dangling cross-references**: "Fig.~\ref{} illustrates X." → weave ref into analytical sentence; delete `\ref{}` and check if claim remains
-- **Sentence length**: max 35 words per sentence
+- **Sentence length**: >35 words triggers a review, not a hard split. Split only when reference, nesting or subject-to-verb distance makes the main clause hard to parse in one pass. Never shorten with a semicolon
 - **LaTeX**: `\begin{equation}` not `$$`; `\toprule/\midrule/\bottomrule` not `\hline`; BibTeX keys: `lastname_year_word` format

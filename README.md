@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-10-27 (v1.42.3)**: The compact guardrail checklist now matches the rule cards. It no longer offers semicolons as a fix for em-dashes or comma overuse, states the body-semicolon ban, and treats 35 words as a review trigger rather than a hard split.
 - **2026-10-27 (v1.42.2)**: Aligns the loop client with body-only style scoring, excluding appendices and post-reference checklists. Requires the new metric ID and retains body word counts and boundary metadata; rejects older or unversioned scores.
 
 - **2026-10-25 (v1.42.1)**: Adds external evidence and cross-era replication findings for noun stacks and dependency length, records counterexamples that do not justify new rules, and leaves writing requirements and checks unchanged.
