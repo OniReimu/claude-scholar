@@ -10,6 +10,7 @@ Personal Claude Code configuration repository, optimized for academic research a
 
 ## News
 
+- **2026-10-28 (v1.42.5)**: The anti-AI loop now expects the p2g style metric `pre-chatgpt-bounded-3`: 133 function-word rates plus eight paper features (from arXiv 2610.29162) and wording. The score breakdown is `style-breakdown-2`, whose first term covers all text features rather than function words alone. Scores from the older metrics are rejected.
 - **2026-10-28 (v1.42.4)**: Define-before-use is stricter after the Introduction. Only the Introduction may use a term first and gloss it; later sections, Related Work especially, must not use a paper-specific term before its formal definition, and a gloss there does not fix it.
 - **2026-10-27 (v1.42.3)**: The compact guardrail checklist now matches the rule cards. It no longer offers semicolons as a fix for em-dashes or comma overuse, states the body-semicolon ban, and treats 35 words as a review trigger rather than a hard split.
 - **2026-10-27 (v1.42.2)**: Aligns the loop client with body-only style scoring, excluding appendices and post-reference checklists. Requires the new metric ID and retains body word counts and boundary metadata; rejects older or unversioned scores.

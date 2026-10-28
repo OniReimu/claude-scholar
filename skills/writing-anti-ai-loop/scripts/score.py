@@ -16,8 +16,8 @@ import urllib.request
 from pathlib import Path
 
 EXCLUDED = {"comments", "comment", "revision", "reviews", "review", "rebuttal", "responses"}
-STYLE_METRIC = "pre-chatgpt-bounded-2"
-STYLE_DESCRIPTION = ("Similarity to pre-ChatGPT reference papers in body-only word rates and wording habits "
+STYLE_METRIC = "pre-chatgpt-bounded-3"
+STYLE_DESCRIPTION = ("Similarity to pre-ChatGPT reference papers in body-only function-word rates, eight paper features and wording habits "
                      "(excluding appendices and post-reference checklists); "
                      "not AI usage or writing quality.")
 
@@ -30,15 +30,15 @@ def bounded_number(value: object, label: str, maximum: float = 100) -> float:
 
 def breakdown_result(data: dict, style: float | None) -> dict:
     """Validate server-side attribution; never reproduce the private model here."""
-    if (not isinstance(data, dict) or data.get("version") != "style-breakdown-1"
-            or data.get("attribution_order") != "function_words_then_wording_then_cap"):
+    if (not isinstance(data, dict) or data.get("version") != "style-breakdown-2"
+            or data.get("attribution_order") != "text_features_then_wording_then_cap"):
         raise ValueError("unknown style breakdown")
-    fields = ("function_word_penalty_points", "wording_penalty_points", "other_penalty_points",
+    fields = ("text_feature_penalty_points", "wording_penalty_points", "other_penalty_points",
               "wording_cleared_style")
     values = {k: bounded_number(data.get(k), k) for k in fields}
     if style is None or not math.isclose(sum(values[k] for k in fields[:3]), 100 - style, abs_tol=1e-6):
         raise ValueError("style breakdown does not reconcile with score")
-    if not style <= values["wording_cleared_style"] <= 100 - values["function_word_penalty_points"]:
+    if not style <= values["wording_cleared_style"] <= 100 - values["text_feature_penalty_points"]:
         raise ValueError("invalid wording-cleared score")
     return {"version": data["version"], "attribution_order": data["attribution_order"], **values}
 

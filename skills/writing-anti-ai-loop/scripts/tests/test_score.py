@@ -55,7 +55,7 @@ class ScoreTest(unittest.TestCase):
         with self.assertRaises(ValueError): self.read()
 
     def test_old_or_unversioned_service_rejected(self):
-        for metric in (None, 'pre-chatgpt-bounded-1'):
+        for metric in (None, 'pre-chatgpt-bounded-1', 'pre-chatgpt-bounded-2'):
             with self.subTest(metric=metric), self.assertRaisesRegex(ValueError, 'unknown style metric'):
                 score.style_result({'style_metric': metric, 'style': 71, 'era_similarity_bounded': 71})
 
@@ -120,9 +120,9 @@ class ScoreTest(unittest.TestCase):
         self.assertTrue(out['concentrated_gain'])
 
     def breakdown(self):
-        return {'version': 'style-breakdown-1',
-                'attribution_order': 'function_words_then_wording_then_cap',
-                'function_word_penalty_points': 20, 'wording_penalty_points': 29,
+        return {'version': 'style-breakdown-2',
+                'attribution_order': 'text_features_then_wording_then_cap',
+                'text_feature_penalty_points': 20, 'wording_penalty_points': 29,
                 'other_penalty_points': 0, 'wording_cleared_style': 80}
 
     def test_target_breakdown_and_counterfactual_gap(self):
