@@ -36,7 +36,7 @@ Remove AI-generated writing patterns from text to make it sound natural and huma
 
 **执行顺序固定：**
 1. 先按 `policy/rules/prose-explaining-register.md`「六原则的共同操作」逐段执行六原则，不以某一条合格放行整段；
-2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照），就跳过那条，并在回复里写明；正文冒号和分号仍执行 `policy/rules/prose-midsentence-colon.md`、`policy/rules/prose-semicolon-restriction.md`「Requirement／适用范围与优先级」；
+2. 再按下面的 anti-AI 规则改一遍。哪条规则会撤回第 1 步的改动（把 we 改回无主句、把名词串重新堆起来、删掉有证据的情态、删掉目的从句、删掉第 ③ 种对照、删掉连接词后支撑关系看不出来），就跳过那条，并在回复里写明；正文冒号和分号仍执行 `policy/rules/prose-midsentence-colon.md`、`policy/rules/prose-semicolon-restriction.md`「Requirement／适用范围与优先级」；
 3. **最终关系复核**：第二个 pass 后按共同操作第 5 步比较改动段落，并复核决定保留的疑点，读完整段落：原有原因、对照、限定是否仍明确？新增主语或目的句是否真的减少读者推断？同时做**反向压缩检查**：是否把原有谓语改成名词化、把明确所属者改成代词、把原因或容差来源改成前置修饰语？若让读者多推断一步，就保义修复；句子更短、禁用形式更少不是保留理由。
 4. lint 兜底，然后停手。
 
@@ -104,6 +104,7 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
 | `PROSE.CAUSAL_CONNECTIVE` | 因果连接词逐处按关系准确性、必要性和重复句架判断；语料只用于举例验证，不按密度差定改动量 |
+| `PAPER.ARGUMENT_STRUCTURE` | 论断和支撑的搭法；本 skill 只做段内调序和点明关系，缺的理由和文献列给作者 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
 ## Overview
@@ -257,7 +258,10 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 - **Tier 2 看密度**（comprehensive · essential · vital · innovative · powerful · facilitate · enhance · ensure · explore · highlight · insights · perspective · interplay · paradigm …）：单个合法，聚集违规。同句两个即 cluster，单文件累计 >5 触发。别逐个替换——找最密的那一段改。
 - 词表已按学术语域裁剪：`robust` / `optimize` / `trajectory` / `loss landscape` / `framework` / `approach` 是术语，**不在表内**，不要误伤。
 - **套话开场（零容忍，本条此前在本 skill 里不可见）**：`In recent years,` · `has attracted increasing attention` · `With the rapid development of`。lint 已在抓，但执行者读本 skill 时看不到它，等于扫描时不会去查开篇句。**正面要求**：Abstract / Introduction 的第一句必须携带**具体的张力或 gap**（一个可验证的结构性事实），不能是泛化趋势陈述——趋势应由那个事实自己带出来。与 `PROSE.FRACTAL_SUMMARY` 分工：那条管**节内**的预告/回顾（"In this section we…"），本条管**论文/章节的开篇**是不是套话。
-- **句首连接词密度**：`Moreover,` / `Furthermore,` / `Additionally,` / `In addition,` 全文合计 ≤4。超出说明逻辑靠连接词粘贴而非论证顺序承载；修法是重排句序，不是换个同义连接词。
+- **句首连接词密度**：`Moreover,` / `Furthermore,` / `Additionally,` / `In addition,` 全文合计 ≤4。超出说明逻辑靠连接词粘贴而非论证顺序承载；修法是重排句序，不是换个同义连接词。本条只管这四个加法词。
+
+**论断和支撑的搭法** <!-- policy:PAPER.ARGUMENT_STRUCTURE -->
+本 skill 只做规则卡里属于句子和段内的部分：支撑排在论断之前且不属于卡内例外时，段内调序；读者要靠推断才能看出支撑关系，而这个关系在稿内已明确或可直接推出时，保留或补上连接词，不确定是否成立就报告。缺的设计理由和文献支撑不在这里补，跨段搬动、加层问题也不在这里判，转 `claim-architecture-review` 的 P1：`spine.md` 已在就只跑当前这一节，不在就先跑 P0，结果看 `relocation-map.md` 的 Support moves 和 Author input needed。清理连接词后复核一次：读者是否还看得出谁在支撑谁。
 
 **因果连接词要选，不能默认用 `so`** <!-- policy:PROSE.CAUSAL_CONNECTIVE -->
 逐处判断关系是否准确、连接是否必要、相邻句是否机械重复同一句架。关系已经清楚且表达准确，就保留；需要改时按下面的语义判据选结构。语料只用于举例验证，不能用历史频率差决定改多少，也不能成为增删配额。
@@ -571,7 +575,7 @@ For comprehensive pattern lists, see:
 
 > **Order inside this skill — six principles first.** 执行 `skills/writing-anti-ai/SKILL.md`「⚠️ 最高优先级：解释式语域六原则／执行顺序」的全部四步。
 
-> **Check structure within the requested scope.** 单段或单节改写不必先跑整篇 `claim-architecture-review` 或 `paper-self-review`。仅发现段落必要性、位置、跨节重复或论证主线问题时，先定点调用 `claim-architecture-review`，解决该问题再润色相关文字；只有任务包含投稿质量检查时，才另按 `paper-self-review` 的 checklist 执行。整篇循环按 loop「准备／派发前确认结构」处理，不把完整结构审查设为每次线编的前提。
+> **Check structure within the requested scope.** 单段或单节改写不必先跑整篇 `claim-architecture-review` 或 `paper-self-review`。仅发现段落必要性、位置、跨节重复、论证主线问题，或支撑放得太远、设计理由缺失时，先定点调用 `claim-architecture-review`，解决该问题再润色相关文字；只有任务包含投稿质量检查时，才另按 `paper-self-review` 的 checklist 执行。整篇循环按 loop「准备／派发前确认结构」处理，不把完整结构审查设为每次线编的前提。
 
 > **📄 转诊说明（定点调用本 skill 时读这条）**
 > 逐节定点跑本 skill 是**合法用法**，不是流水线的错误入口。但本 skill 判不了跨节的事，遇到上述转诊点时，

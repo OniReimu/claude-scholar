@@ -62,6 +62,7 @@ One row per paragraph, appended section-by-section.
 | `method_role` | Method only (one or more sections): `problem-setup` \| `novel-mechanism` \| `standard-component` \| `instantiation` \| `evaluation-leak` \| `running-example` \| `formal-result` \| `navigation`. `instantiation` and `evaluation-leak` take a `move` with a named destination; a `novel-mechanism` row names the claim it backs and notes which of *what it does / why this design / where it sits in the data flow* is missing |
 | `embedded` | Method only, optional: a sentence of another role inside the paragraph, e.g. `instantiation: "0.2 × mean column norm" → §6.1` |
 | `lim_class` | Limitations items only: `A` (bounds a named finding) \| `B` (explains the authors' effort) \| `C` (answers a critique nobody raised). Only `A` sets `required_caveat=true` |
+| `arg_issue` | optional: `support-first` \| `support-far` \| `extra-layer` \| `reason-describes` \| `reason-missing` \| `no-outside-support` (`PAPER.ARGUMENT_STRUCTURE`) |
 | `canonical_home` | where this information should live (may differ from `loc`) |
 | `verdict` | `keep` \| `tighten` \| `merge` \| `move:<section>` \| `move:appendix` \| `split` \| `delete` \| `escalate`; additive, proposed only: `gloss` \| `add-reason` \| `add-value:<section>` |
 | `confidence` | `high` \| `medium` \| `low` (low ⇒ verdict must be `escalate`, never `delete`) |
@@ -88,6 +89,16 @@ Rules: `delete` legal only when `unique_info=false` AND `required_caveat=false`;
 - §4 ¶2–¶3 (standard-component): FedAvg local training in three paragraphs → one sentence + citation.
 - §4 ¶6 (instantiation): λ = 0.1, ResNet-18, SGD settings → move to §5.1 Experimental Settings (Implementation Details paragraph).
 - Unvalued parameters (check 5): τ, T_min, γ_drop have no value in §5.1, the appendix or any table → add-value:§5.1, values `<TODO>`.
+
+## Support moves (from P1)
+- §4 ¶2 (`support-first`): the audit figures open the paragraph and the claim closes it → move the last sentence to the start.
+- §3 ¶4 (`reason-describes`): the window is explained by restating it; the reason is stated at §5 ¶1 → bring that sentence here, or point to it.
+
+## Author input needed (from P1)
+- §4 ¶5 (`reason-missing`): why a fixed threshold rather than a learned one? Not found (searched `threshold` across all sections).
+- §5 ¶2 (`reason-missing`, `unresolved`): why two stages? `stage` hits in §3 and §4 do not settle it; the appendix sources were not available.
+- §2 ¶3 (`no-outside-support`): the latency claim rests on our own run alone; is there a published baseline to cite?
+- §3 ¶2 (`extra-layer`): C3 holds without the intermediate claim here; keep it?
 
 ## Forward uses and undefined terms (from P1)
 - `cascade-drift`: first use §1 ¶3, defined §4 ¶2 → one-clause gloss at §1 ¶3 ("the error each stage inherits from the stage before it"); definition stays in §4.

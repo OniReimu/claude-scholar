@@ -209,6 +209,18 @@
 
 后续先过固定回归，再在冻结输入上对比流程。一次只改一个变量，记录人工纠偏、违规、语义回退、未解决项和版面状态；分数及检测器信息始终只给主代理。
 
+### E13 — 论证结构的人机差异，清理后的稿子里仍在（2026-10-29，一手观察）
+
+- `source`: 一手实验（p2g 仓库 `spike-runs/1029-process-features/`）
+- `claim`: 人写和 AI 稿在论证的搭法上不同，这些差距在清理后的 AI 稿里仍在；链深度差距从 0.9 层缩到 0.4 层。两组篇数不同，不是同一批稿子的前后对比，清理的效果未确立
+- `date`: 2026-10-29
+- `instrument`: 18 篇论文的论证图和设计理由标注，28 个结构特征，不调用模型；置换检验 2,000 次
+- `register`: 学术论文
+- `n`: 18 篇（人写 8、原始 AI 稿 6、清理后 AI 稿 4）
+- `verdict`: `observational`；照此改写的效果未测，数字见 `PAPER.ARGUMENT_STRUCTURE`「Rationale」
+- **限定**：去掉 3 篇缺设计理由步骤的扫描或 2 篇 PDF 论文，方向不变。合成相似度分时只有 7 篇人写参考，AUC 约 0.7，单个特征分得开不等于能合成一个分数
+- `expiry`: 抽图模型或第 8 步标注改变后重算；扩大人写参考集后重判
+
 ## 本 skill 新增规则的验证状态
 
 | Rule ID | 来源 | 验证状态 | 下一步 |
@@ -219,6 +231,7 @@
 | `PROSE.RESTATEMENT_DILUTION` | 外部 tells.md「one-point dilution」 | **eval-passed (n=1, E7)** | 用删除测试在已接收论文上做对照：作者自己的 pre-GPT 论文复述率应显著低于 AI draft |
 | `HEDGING_DISCIPLINE` 双向化 + Over-Correct 护栏 | academic-humanizer (E5) | **eval-passed (n=1, E7)**——护栏是 39:37 delta 的一半来源 | 真实 rebuttal/Discussion 上验证 |
 | `PROSE.EXPLAINING_REGISTER`（六原则） | 一手测量 + 盲改写 (E8、E9、E10) | **supported（n=3 篇改写）**——文风 33 → 71（E8）；逐章迭代 57 → 75、48 → 75（E9）；按检测器词表改写被识别为换词并删除（E10） | 在其他作者的论文上复测；查 ③ 型对照是否保留 |
+| `PAPER.ARGUMENT_STRUCTURE` | 一手观察 (E13) | **observational（n=18，改写效果未测）** | 同一篇稿子有无本卡各改一次，比较论证特征并盲读 |
 | Interleave protocol 比例阈值 | 外部 anti-ai 包 (E2) | **仍未实测**（学术长文语域） | 用户真实底稿 + 目标检测器复测 |
 
 ## 加新条目的规矩

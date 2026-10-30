@@ -39,6 +39,7 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `REF.CROSS_REFERENCE_STYLE` | 交叉引用用 \ref 命令 |
 | `PAPER.CONCLUSION_SINGLE_PARAGRAPH` | Conclusion 单段落 |
 | `PAPER.OUTCOME_LOGIC` | 写成果逻辑不写过程流水账；证据撑不住原叙事时授权重定义问题、重排贡献 |
+| `PAPER.ARGUMENT_STRUCTURE` | 先论断后理由，设计选择讲动机，能用文献撑就用文献撑，点明支撑关系，支撑放近，不为完整加层 |
 | `PAPER.SECTION_HEADINGS_MAX_6` | 顶级section≤6 |
 | `EXP.TAKEAWAY_BOX` | 实验结果附 takeaway box |
 | `EXP.ERROR_BARS_REQUIRED` | 实验需误差线 |
@@ -527,6 +528,8 @@ Every successful ML paper centers on what Neel Nanda calls "the narrative": a sh
 **If you cannot state your contribution in one sentence, you don't yet have a paper.**
 
 **成果逻辑，不是过程流水账** <!-- policy:PAPER.OUTCOME_LOGIC -->：每一节按「问题 → 设计 → 为何这样设计 → 证据」组织，不按工作发生的先后组织——`we first tried X, then switched to Y`、按实现历史排序的 Method、按跑实验时间排序的 Results，都是把作者的搜索路径当成读者的阅读路径。这条同时给出授权：**当最强证据支持的命题与最初 outline 的命题不同时，改命题**——重定义问题、重排贡献、重写结构都是正确动作，不需要在文中致歉或交代改动过程。改的是顺序与 framing，**不是报告集合**：已跑过且与主张相左的实验照常报告（`EXP.RESULTS_STATUS_DECLARATION_REQUIRED`），消融与负面结果不在禁令范围内。
+
+**论断和支撑的搭法** <!-- policy:PAPER.ARGUMENT_STRUCTURE -->：起草时就按这六条写，因为理由和文献只有此时补得进来：先下论断再给理由；设计选择讲为什么需要，不是把做法再说一遍；能用文献或背景撑的论断就用它撑；读者要推断才看得出的支撑关系，用 `because`、`therefore` 这类词点明；支撑默认放在论断的同一段；论断已被直接支撑时，不再补一层中间论断。例外见规则卡。不设数值目标。
 
 ---
 

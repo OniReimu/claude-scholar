@@ -198,6 +198,7 @@ Paper Quality Checklist:
 - [ ] Subsections containing fabricated results include a `[FABRICATED]` status declaration comment <!-- policy:EXP.RESULTS_STATUS_DECLARATION_REQUIRED -->
 - [ ] Every experiment carries one of the four roles; at least one rules out a competing explanation <!-- policy:EXP.EXPERIMENT_ROLE -->
 - [ ] Sections organised by outcome logic, not by the order the work happened <!-- policy:PAPER.OUTCOME_LOGIC -->
+- [ ] Claims come before their support, design choices give the need rather than restating the method, and support relations a reader would have to infer are stated; missing reasons or citations are listed for the author, not invented <!-- policy:PAPER.ARGUMENT_STRUCTURE -->
 - [ ] SoK: taxonomy is explicit and operational <!-- policy:SOK.TAXONOMY_REQUIRED -->
 - [ ] SoK: methodology reporting is complete (sources + screening criteria) <!-- policy:SOK.METHODOLOGY_REPORTING -->
 - [ ] SoK: big comparison table aligned with taxonomy <!-- policy:SOK.BIG_TABLE_REQUIRED -->

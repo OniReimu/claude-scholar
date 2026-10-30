@@ -198,6 +198,7 @@ SoK 规则集合（语义规则）：
 | PAPER.SECTION_HEADINGS_MAX_6 | paper-section-headings-max-6 | core | error | false | lint_script | guidance | none |
 | PAPER.CONCLUSION_SINGLE_PARAGRAPH | paper-conclusion-single-paragraph | core | warn | false | doc | guidance | none |
 | PAPER.OUTCOME_LOGIC | paper-outcome-logic | core | warn | false | doc | guidance | none |
+| PAPER.ARGUMENT_STRUCTURE | paper-argument-structure | core | warn | false | doc | guidance | none |
 | PAPER.REVISION_CLOSURE | paper-revision-closure | core | warn | false | doc | guidance | none |
 | PAPER.DEFINE_BEFORE_USE | paper-define-before-use | core | warn | false | doc | guidance | none |
 | PAPER.LIMITATION_NECESSITY | paper-limitation-necessity | core | warn | false | doc | guardrail | none |
