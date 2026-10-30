@@ -17,7 +17,7 @@ autofix: safe
 lint_patterns:
   - pattern: "\\b([Aa] lot of|[Ll]ots of)\\b"
     mode: match
-  - pattern: "(?<![Ii]nternet of )(?<![Ww]eb of )\\b([Tt]hings|[Ss]tuff)\\b"
+  - pattern: "\\b([Tt]hings|[Ss]tuff)\\b"
     mode: match
   - pattern: "\\b[Kk]ind of\\b"
     mode: match
@@ -143,7 +143,7 @@ lint_targets: "**/*.tex"
 | 禁用 | 替代 |
 |------|------|
 | a lot of / lots of | 具体数字，或 many（"many studies" 类组合会触发 `PROSE.VAGUE_QUANTIFIERS`，最好直接量化） |
-| things / stuff | factors / components / elements；data / material（专名 Internet of Things / Web of Things 不算，pattern 已排除） |
+| things / stuff | factors / components / elements；data / material |
 | get | obtain / achieve / acquire |
 | kind of / sort of | 删除，或用 approximately / somewhat |
 | bigger | larger（`smaller` **不禁**，它本身就是规范的比较级学术用词） |
