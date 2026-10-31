@@ -692,6 +692,7 @@ From Sebastian Farquhar (DeepMind):
 
 Must include:
 - 2-4 bullet contribution list (max 1-2 lines each in two-column format)
+- Each contribution answers a gap or challenge the introduction states: it supplies what the gap says is missing or overcomes what the challenge says is hard; a shared topic is not enough
 - Clear problem statement
 - Brief approach overview
 - Methods should start by page 2-3 maximum
