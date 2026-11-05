@@ -587,6 +587,7 @@ Copy this checklist and track progress. **Each step involves drafting → feedba
 Paper Writing Progress:
 - [ ] Step 1: Define the one-sentence contribution (with scientist)
 - [ ] Step 1b: Reader pass on the author's skeleton → author adjusts the skeleton
+- [ ] Step 1c: Draft from the skeleton section by section, in order, in one context
 - [ ] Step 2: Draft Figure 1 → get feedback → revise
 - [ ] Step 3: Draft abstract → get feedback → revise
 - [ ] Step 4: Draft introduction → get feedback → revise
@@ -615,6 +616,18 @@ Before writing anything, articulate and verify:
 **Step 1b: Reader Pass on the Skeleton**
 
 When the author drafts from a markdown skeleton (what each section and subsection must say), have a fresh subagent read the skeleton as a human reviewer would before any prose is written, following `skills/claim-architecture-review/references/human-reader.md`. It reads in order, sets its expectations from the abstract, and writes `reader-ledger.md`: where each expectation is paid, and which are paid late, never paid, or answered by nothing; content that answers no expectation; a core definition that arrives after the reader has lost patience; and a condition the reader predicted the method must handle but the skeleton never addresses. Give it only the skeleton, not the rule cards or the author's notes. Show the ledger to the author, who decides whether to reorder the skeleton. This is the cheapest point to change the order: a few lines of markdown, no prose to rewrite. Expectations the skeleton cannot answer go back to the author; do not invent content for them.
+
+**Step 1c: Draft Section by Section, in Order**
+
+When drafting from the skeleton, write one section at a time, in the paper's reading order, in one continuous context.
+
+- **Keep resident** the skeleton, the reader ledger from Step 1b and every section already written. Each new section reads what came before, so terms, definitions before use and cross-section references line up, and nothing is explained twice.
+- **Content comes only from the skeleton.** Add no fact, reason, citation, number or example the skeleton does not hold; what it lacks goes back to the author.
+- **Not the whole paper in one generation.** In one long output the later sections thin into boilerplate, and nothing can be checked midway.
+- **Not parallel subagents, one per section.** They cannot see each other's sections, so terms drift, definitions come after their first use and content repeats. The whole-chapter rewrite in `writing-anti-ai-loop` runs chapters in parallel only because a structured summary and the spine hold the paper together first.
+- **Pause** after a section only when the author asked to see each one; otherwise draft through and deliver the full draft (see Core Philosophy).
+- **When the context grows long**, compress the sections already written into structured summaries in the form `writing-anti-ai-loop` uses (「准备／结构化总结」), keeping terms, definitions, `\label` and `\cite` keys exact, and keep drafting from those summaries.
+- **After the last section**, check the abstract against what the paper actually pays, then run the reader pass on the full draft (Step 11, Step B).
 
 **Step 2: Draft Figure 1**
 
