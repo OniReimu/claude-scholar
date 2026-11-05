@@ -104,7 +104,7 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 | `PROSE.SELF_UNDERMINING` | 不主动示弱：删情绪副词与自贬措辞，不利结果按「必须讨论→换目标解释→收缩主张」三步处置；只管措辞不减披露 |
 | `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
 | `PROSE.CAUSAL_CONNECTIVE` | 因果连接词逐处按关系准确性、必要性和重复句架判断；语料只用于举例验证，不按密度差定改动量 |
-| `PAPER.ARGUMENT_STRUCTURE` | 论断和支撑的搭法；改整节以上先提取结构化总结再整体重写，单段只做段内调序和点明关系；缺的理由和文献列给作者 |
+| `PAPER.ARGUMENT_STRUCTURE` | 论断和支撑的搭法；改整节以上先提取结构化总结和读者台账再整体重写，单段只做段内调序和点明关系；缺的理由和文献列给作者 |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
 ## Overview
@@ -261,7 +261,7 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 - **句首连接词密度**：`Moreover,` / `Furthermore,` / `Additionally,` / `In addition,` 全文合计 ≤4。超出说明逻辑靠连接词粘贴而非论证顺序承载；修法是重排句序，不是换个同义连接词。本条只管这四个加法词。
 
 **论断和支撑的搭法** <!-- policy:PAPER.ARGUMENT_STRUCTURE -->
-改整节或整篇的论证结构时，先提取结构化总结再整体重写，做法见 `writing-anti-ai-loop`「准备／结构化总结」。只润色单段时，本 skill 只做规则卡里属于句子和段内的部分：支撑排在论断之前且不属于卡内例外时，段内调序；读者要靠推断才能看出支撑关系，而这个关系在稿内已明确或可直接推出时，保留或补上连接词，不确定是否成立就报告。缺的设计理由和文献支撑不在这里补，跨段搬动、加层问题也不在这里判，转 `claim-architecture-review` 的 P1：`spine.md` 已在就只跑当前这一节，不在就先跑 P0，结果看 `relocation-map.md` 的 Support moves 和 Author input needed。清理连接词后复核一次：读者是否还看得出谁在支撑谁。
+改整节或整篇的论证结构时，先提取结构化总结、按人类读者读法建读者台账，再整体重写，做法见 `writing-anti-ai-loop`「准备」。只润色单段时，本 skill 只做规则卡里属于句子和段内的部分：支撑排在论断之前且不属于卡内例外时，段内调序；读者要靠推断才能看出支撑关系，而这个关系在稿内已明确或可直接推出时，保留或补上连接词，不确定是否成立就报告。缺的设计理由和文献支撑不在这里补，跨段搬动、加层问题也不在这里判，转 `claim-architecture-review` 的 P1：`spine.md` 已在就只跑当前这一节，不在就先跑 P0，结果看 `relocation-map.md` 的 Support moves 和 Author input needed。清理连接词后复核一次：读者是否还看得出谁在支撑谁。
 
 **因果连接词要选，不能默认用 `so`** <!-- policy:PROSE.CAUSAL_CONNECTIVE -->
 逐处判断关系是否准确、连接是否必要、相邻句是否机械重复同一句架。关系已经清楚且表达准确，就保留；需要改时按下面的语义判据选结构。语料只用于举例验证，不能用历史频率差决定改多少，也不能成为增删配额。

@@ -1,6 +1,6 @@
 # Audit artifact schemas
 
-Field contracts for the five files under `architecture-review/`. Working-state files (`spine`,
+Field contracts for the five files under `architecture-review/`. The reader's `reader-ledger.md` follows `human-reader.md`, not this file. Working-state files (`spine`,
 `information-ledger`, `progress`) drive the passes; the two final artifacts are the deliverable plan.
 
 ## `spine.md` (working state — insight anchor)

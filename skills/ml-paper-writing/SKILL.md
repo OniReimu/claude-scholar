@@ -586,6 +586,7 @@ Copy this checklist and track progress. **Each step involves drafting → feedba
 ```
 Paper Writing Progress:
 - [ ] Step 1: Define the one-sentence contribution (with scientist)
+- [ ] Step 1b: Reader pass on the author's skeleton → author adjusts the skeleton
 - [ ] Step 2: Draft Figure 1 → get feedback → revise
 - [ ] Step 3: Draft abstract → get feedback → revise
 - [ ] Step 4: Draft introduction → get feedback → revise
@@ -610,6 +611,10 @@ Before writing anything, articulate and verify:
 
 > "I propose framing the contribution as: '[one sentence]'. Does this capture
 > what you see as the main takeaway? Should we adjust the emphasis?"
+
+**Step 1b: Reader Pass on the Skeleton**
+
+When the author drafts from a markdown skeleton (what each section and subsection must say), have a fresh subagent read the skeleton as a human reviewer would before any prose is written, following `skills/claim-architecture-review/references/human-reader.md`. It reads in order, sets its expectations from the abstract, and writes `reader-ledger.md`: where each expectation is paid, and which are paid late, never paid, or answered by nothing; content that answers no expectation; a core definition that arrives after the reader has lost patience; and a condition the reader predicted the method must handle but the skeleton never addresses. Give it only the skeleton, not the rule cards or the author's notes. Show the ledger to the author, who decides whether to reorder the skeleton. This is the cheapest point to change the order: a few lines of markdown, no prose to rewrite. Expectations the skeleton cannot answer go back to the author; do not invent content for them.
 
 **Step 2: Draft Figure 1**
 
@@ -1246,6 +1251,7 @@ NeurIPS, ICML, and ICLR all require paper checklists. See `references/checklists
    - Use `citation-verification` skill for reference validation
    - Use `writing-anti-ai` skill if needed for natural voice
    - Verify claim-evidence-figure alignment from Step 8a
+   - Reader pass on the full draft: a fresh subagent reads it following `skills/claim-architecture-review/references/human-reader.md` and writes a new `reader-ledger.md`. Compare it with the Step 1b ledger: the draft should pay each expectation where the skeleton planned, in the same order. Report where it drifts. When the claims changed because the evidence pointed elsewhere (`PAPER.OUTCOME_LOGIC`), update the skeleton and rerun Step 1b on it instead of reporting the change as drift
    - Check page limits, anonymization, supplementary materials <!-- policy:SUBMIT.PAGE_LIMIT_STRICT --> <!-- policy:ANON.DOUBLE_BLIND_ANONYMIZATION --> <!-- policy:SUBMIT.SECTION_NUMBERING_CONSISTENCY -->
 
 > **Both steps must pass before submission.** When used with the orchestrator, `markStage('self_review', 'done')` enforces this via `validateGates()`.

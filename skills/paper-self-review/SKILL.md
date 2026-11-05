@@ -315,7 +315,7 @@ Use the quality checklist for final verification.
 ### Review Techniques
 - **Reverse reading** - Read from conclusion backwards to check logical coherence
 - **Read aloud** - Reading the paper aloud helps identify language issues
-- **Reviewer perspective** - Assume you are a reviewer and read critically
+- **Reviewer perspective** - Read as a human reviewer would, following `skills/claim-architecture-review/references/human-reader.md`
 
 ### Common Issues
 - Abstract too brief or too verbose
