@@ -105,6 +105,7 @@ E8 的整篇重复实验没有继续提高，不能推广到所有稿件。整�
 | `PROSE.ADHOC_COMPOUND_MODIFIER` | 临时造的连字符复合修饰语（`X-aware`/`X-driven`…）且**全文只用一次**；领域既有术语不算 |
 | `PROSE.CAUSAL_CONNECTIVE` | 因果连接词逐处按关系准确性、必要性和重复句架判断；语料只用于举例验证，不按密度差定改动量 |
 | `PAPER.ARGUMENT_STRUCTURE` | 论断和支撑的搭法；改整节以上先提取结构化总结和读者台账再整体重写，单段只做段内调序和点明关系；缺的理由和文献列给作者 |
+| `PAPER.DEFINE_BEFORE_USE` | 本 skill 只发现术语先用后定义并转 `claim-architecture-review`；不删 Introduction 里的 gloss |
 | `PROSE.UNICODE_ARROWS` | 禁止Unicode箭头，用LaTeX命令 |
 
 ## Overview
@@ -262,6 +263,12 @@ When editing paper text, preserve math-style constraints instead of "humanizing"
 
 **论断和支撑的搭法** <!-- policy:PAPER.ARGUMENT_STRUCTURE -->
 改整节或整篇的论证结构时，先提取结构化总结、按人类读者读法建读者台账，再整体重写，做法见 `writing-anti-ai-loop`「准备」。只润色单段时，本 skill 只做规则卡里属于句子和段内的部分：支撑排在论断之前且不属于卡内例外时，段内调序；读者要靠推断才能看出支撑关系，而这个关系在稿内已明确或可直接推出时，保留或补上连接词，不确定是否成立就报告。缺的设计理由和文献支撑不在这里补，跨段搬动、加层问题也不在这里判，转 `claim-architecture-review` 的 P1：`spine.md` 已在就只跑当前这一节，不在就先跑 P0，结果看 `relocation-map.md` 的 Support moves 和 Author input needed。清理连接词后复核一次：读者是否还看得出谁在支撑谁。
+
+**术语先用后定义：本 skill 只发现、转诊** <!-- policy:PAPER.DEFINE_BEFORE_USE -->
+逐段问：这段用到的本文术语（造词、方法或组件名、RQ 或 claim 标签、威胁模型角色、被收窄含义的常用词、正文里的符号），读者读到这里时知不知道它是什么。本段或前文有定义算知道；首次使用在 Introduction、且此处有一句 gloss 也算。看不到定义的，记下术语、位置和本段怎么用它，转 `claim-architecture-review` P1 的「Define before use」，只送这几个术语。本 skill 不在这里修：Introduction 之后补一句 gloss 不算修好，提前定义或改写早期使用都是跨节的事。
+- 只看得到当前一段或一节时，判不了前文有没有定义；拿不准也转诊，不当成没问题，也不自己补定义。
+- 不删 Introduction 首次使用处那一句 gloss：它和后文的正式定义不算复述（`PROSE.RESTATEMENT_DILUTION`）。
+- 不把术语换成大白话来回避定义（`PROSE.REGISTER_PRESERVATION`）。
 
 **因果连接词要选，不能默认用 `so`** <!-- policy:PROSE.CAUSAL_CONNECTIVE -->
 逐处判断关系是否准确、连接是否必要、相邻句是否机械重复同一句架。关系已经清楚且表达准确，就保留；需要改时按下面的语义判据选结构。语料只用于举例验证，不能用历史频率差决定改多少，也不能成为增删配额。
@@ -575,13 +582,14 @@ For comprehensive pattern lists, see:
 
 > **Order inside this skill — six principles first.** 执行 `skills/writing-anti-ai/SKILL.md`「⚠️ 最高优先级：解释式语域六原则／执行顺序」的全部四步。
 
-> **Check structure within the requested scope.** 单段或单节改写不必先跑整篇 `claim-architecture-review` 或 `paper-self-review`。仅发现段落必要性、位置、跨节重复、论证主线问题，或支撑放得太远、设计理由缺失时，先定点调用 `claim-architecture-review`，解决该问题再润色相关文字；只有任务包含投稿质量检查时，才另按 `paper-self-review` 的 checklist 执行。整篇循环按 loop「准备／派发前确认结构」处理，不把完整结构审查设为每次线编的前提。
+> **Check structure within the requested scope.** 单段或单节改写不必先跑整篇 `claim-architecture-review` 或 `paper-self-review`。仅发现段落必要性、位置、跨节重复、论证主线问题，支撑放得太远、设计理由缺失，或术语先用后定义时，先定点调用 `claim-architecture-review`，解决该问题再润色相关文字；只有任务包含投稿质量检查时，才另按 `paper-self-review` 的 checklist 执行。整篇循环按 loop「准备／派发前确认结构」处理，不把完整结构审查设为每次线编的前提。
 
 > **📄 转诊说明（定点调用本 skill 时读这条）**
 > 逐节定点跑本 skill 是**合法用法**，不是流水线的错误入口。但本 skill 判不了跨节的事，遇到上述转诊点时，
 > **不必重跑整篇 arch-review**——它的 P1 本来就是逐节的：
 > - `architecture-review/spine.md` 已存在 → **只对当前这一节跑 P1**，读 ledger 判跨节重复
 > - spine 不存在 → 只补理解已定位问题必需的主线（按 P0），再 P1 单节，不扩大成整篇结构审查
+> - 术语先用后定义 → 只送列出的术语，跑 P1 的「Define before use」，不需要 P0，也不扫其他节
 > - 只有需要全局搬迁规划时才跑 P2/P3
 > 转诊要说清**最小需要跑什么**，只丢一个 skill 名字等于没转。
 
