@@ -104,7 +104,7 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `SUBMIT.PAGE_LIMIT_STRICT` | 严格页数限制 |
 | `SUBMIT.AVAILABILITY_COMMITMENT` | 代码/数据的延期或按请求承诺须现在兑现、作者确认，或删掉 |
 | `ETHICS.LIMITATIONS_SECTION_MANDATORY` | 必须Limitations节 |
-| `PAPER.LIMITATION_NECESSITY` | 每条 limitation 须是发现的边界，不是作者的边界或对假想质疑的回应；不设条数下限 |
+| `PAPER.LIMITATION_NECESSITY` | 每条 limitation 须是发现的边界，不是作者的边界或没有证据的辩护；每条写全顾虑、事实、影响；不设条数下限 |
 | `ANON.DOUBLE_BLIND_ANONYMIZATION` | 双盲匿名检查 |
 
 ## SoK Profile Addendum
@@ -1175,7 +1175,9 @@ Opens with 1-2 paragraphs introducing what aspects need deeper analysis and why,
 \subsubsection{Limitations}
 State where each result stops holding: the assumption, scale, language,
 or setting it was measured under. Each item names the result it bounds.
-No resource excuses, no rebuttals of critiques nobody raised.
+Each item also says why a reader would raise it and what it changes
+about reading the result. No resource excuses, no defences that rest on
+assertion instead of the paper's evidence.
 ...
 
 \subsubsection{Real-World Applicability}
@@ -1189,7 +1191,7 @@ No resource excuses, no rebuttals of critiques nobody raised.
 - Use exact variable names from `Table~\ref{tab:notation}` — never introduce ad-hoc symbols
 - If full analysis is lengthy, provide summary bounds in main text and defer proofs to Appendix with `\ref`
 
-**Limitations are the boundaries of the findings, not of the effort** <!-- policy:PAPER.LIMITATION_NECESSITY -->: an item that names no result it bounds ("due to limited compute we could not…", "one might argue…; however…") is either rewritten as the boundary it hides or cut. There is no minimum count, and no genuine boundary is dropped.
+**Limitations are the boundaries of the findings, not of the effort** <!-- policy:PAPER.LIMITATION_NECESSITY -->: an item that names no result it bounds ("due to limited compute we could not…", "one might argue…; however…") is either rewritten as the boundary it hides or cut. A bullet that states a fact about the paper's own design, data or checks is not such an item: it is completed, never cut. Each item that stays, including a pre-empted reviewer concern answered with the paper's own evidence, states three things: why a reader would raise it (the result or design choice it concerns), the fact or check that bears on it, and what it changes about reading that result. A bullet that only lists what the authors did is unfinished. There is no minimum count, and no genuine boundary is dropped.
 
 **What belongs here:** Security analysis, complexity analysis, limitations, real-world applicability, failure mode analysis, scalability discussion.
 
