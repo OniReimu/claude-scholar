@@ -213,6 +213,7 @@ SoK 规则集合（语义规则）：
 | EXP.FABRICATED_RESULTS_CAPTION_DISCLOSURE | exp-fabricated-results-caption-disclosure | core | error | false | doc | guidance | none |
 | EXP.RESULTS_STATUS_DECLARATION_REQUIRED | exp-results-status-declaration-required | core | warn | false | doc | guidance | none |
 | EXP.MULTIRUN_AGGREGATE_CONSISTENCY | exp-multirun-aggregate-consistency | core | error | false | doc | guardrail | none |
+| EXP.SCOPE_EXCLUSION_CONSISTENCY | exp-scope-exclusion-consistency | core | warn | false | lint_script | guardrail | none |
 | EXP.EXPERIMENT_ROLE | exp-experiment-role | core | warn | false | doc | guidance | none |
 | REPRO.RANDOM_SEED_DOCUMENTATION | repro-random-seed-documentation | core | error | false | doc | guidance | none |
 | REPRO.COMPUTE_RESOURCES_DOCUMENTED | repro-compute-resources-documented | core | warn | false | doc | guidance | none |

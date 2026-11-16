@@ -769,6 +769,39 @@ lint_prose_no_internal_provenance() {
   rm -f "$scrub_file"
 }
 
+# ─── Builtin: EXP.SCOPE_EXCLUSION_CONSISTENCY ───────────────────────────────
+# Cross-file by nature: a scope statement in one file is checked against counts
+# in every other, so no per-line pattern can express it. The work lives in
+# policy/scripts/scope-consistency.pl; this wrapper hands it the comment-blanked
+# views and turns its F lines into findings. [A] pairs are a locator (the card's
+# judgment layer decides each one); [B1]-[B3] are mechanical count checks.
+lint_exp_scope_exclusion_consistency() {
+  local severity="$1"
+  local -a tex_files=()
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tex_files+=("$f")
+  done < <(find_target_files "*.tex" "$TARGET_DIR")
+  [[ ${#tex_files[@]} -gt 0 ]] || return 0
+
+  local file view list="" out
+  for file in "${tex_files[@]}"; do
+    view=$(lint_view "$file")
+    list+="${file}"$'\t'"${view}"$'\n'
+  done
+  # VIEW_DIR is removed by the EXIT trap, so the list needs no cleanup of its own.
+  [[ -n "$VIEW_DIR" ]] || VIEW_DIR=$(mktemp -d)
+  printf '%s' "$list" > "$VIEW_DIR/scope-list.tsv"
+  out=$($LINT_TIMEOUT perl "$SCRIPT_DIR/scripts/scope-consistency.pl" "$TARGET_DIR" "$VIEW_DIR/scope-list.tsv" 2>&1) \
+    || report_finding "error" "$RULE_ID" "${TARGET_DIR}: scope-consistency.pl failed or timed out — this directory was NOT checked: ${out##*$'\n'}"
+  local kind detail
+  while IFS=$'\t' read -r kind detail; do
+    case "$kind" in
+      F) report_finding "$severity" "$RULE_ID" "$detail" ;;
+      I) $QUIET || echo -e "    ${DIM}${detail}${NC}" ;;
+    esac
+  done <<< "$out"
+}
+
 # ─── Lint Single Rule ───────────────────────────────────────────────────────
 lint_rule() {
   local severity="$1"
@@ -1002,6 +1035,21 @@ for rule_file in "$RULES_DIR"/*.md; do
     prev_e=$TOTAL_ERRORS
     prev_w=$TOTAL_WARNINGS
     lint_prose_semicolon_restriction "$local_severity"
+    if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
+      ((RULES_PASSED++)) || true
+      $QUIET || echo -e "    ${GREEN}PASS${NC}"
+    fi
+    $QUIET || echo ""
+    continue
+  fi
+
+  if [[ "$RULE_ID" == "EXP.SCOPE_EXCLUSION_CONSISTENCY" ]]; then
+    $QUIET || echo -e "  ${CYAN}[$RULE_ID]${NC} (${local_severity}) builtin scope pairs + count checks → *.tex"
+    $QUIET || [[ -z "$RULE_COVERAGE_NOTE" ]] || echo -e "    ${DIM}partial coverage — ${RULE_COVERAGE_NOTE}${NC}"
+    ((RULES_CHECKED++)) || true
+    prev_e=$TOTAL_ERRORS
+    prev_w=$TOTAL_WARNINGS
+    lint_exp_scope_exclusion_consistency "$local_severity"
     if (( TOTAL_ERRORS == prev_e && TOTAL_WARNINGS == prev_w )); then
       ((RULES_PASSED++)) || true
       $QUIET || echo -e "    ${GREEN}PASS${NC}"

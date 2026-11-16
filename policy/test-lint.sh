@@ -193,7 +193,7 @@ echo "=== 5. Filter Count Tests ==="
 
 echo "5.1 guardrail rule count"
 # 期望值随 guardrail 规则增减而变化，新增规则时同步更新
-EXPECTED_GUARDRAIL=32
+EXPECTED_GUARDRAIL=33
 count=$(bash "$LINT" --constraint-type guardrail --quiet "$TEST_DIR" 2>&1 | grep "Rules checked:" | grep -o '[0-9]*')
 if [[ "$count" == "$EXPECTED_GUARDRAIL" ]]; then
   ((PASS++)) || true; echo "  ✓ guardrail rules: $count"
@@ -460,6 +460,64 @@ echo "10.5 sentence length must keep the shared view unchanged"
 assert_contains "34 words plus reference still flags sentence length" 'WARN.*case.tex:1:' \
   bash "$LINT" --rule PROSE.SENTENCE_LENGTH "$COLON_DIR"
 rm -rf "$COLON_DIR"
+
+echo ""
+echo "=== 11. EXP.SCOPE_EXCLUSION_CONSISTENCY Cross-File Checks ==="
+# The corpus suite attributes findings to one case in one file, so the
+# cross-file half of this rule is tested here: a scope statement in one file
+# paired with a pooled row in another, denominator drift between files, and the
+# prose-vs-table numerator check. Fixtures restate the incident that motivated
+# the rule. Each case gets its own directory under TEST_DIR (removed by the trap).
+scope_lint() { bash "$LINT" --rule EXP.SCOPE_EXCLUSION_CONSISTENCY "$1" 2>&1 || true; }
+scope_case() {
+  local d="$TEST_DIR/scope-$1"; mkdir -p "$d"; printf '%s' "$d"
+}
+scope_expect() {
+  local desc="$1" dir="$2" pattern="$3"
+  if scope_lint "$dir" | grep -q -- "$pattern"; then
+    ((PASS++)) || true; echo "  ✓ $desc"
+  else
+    ((FAIL++)) || true; echo "  ✗ $desc (pattern '$pattern' not found)"
+  fi
+}
+scope_absent() {
+  local desc="$1" dir="$2" pattern="$3"
+  if scope_lint "$dir" | grep -q -- "$pattern"; then
+    ((FAIL++)) || true; echo "  ✗ $desc (unexpected '$pattern')"
+  else
+    ((PASS++)) || true; echo "  ✓ $desc"
+  fi
+}
+
+echo "11.1 [A] scope statement in one file paired with the pooled row in another"
+d=$(scope_case a)
+echo 'On Qwen2.5-1.5B we report \textit{riga21} for recovery only and make no ownership claim for it.' > "$d/apdx.tex"
+printf '%s\n' '\begin{tabular}{l c c}' 'riga21 & 120/120 & 11/120 \\' '\end{tabular}' > "$d/tab_ownership.tex"
+scope_expect "pair names the table row" "$d" 'tab_ownership.tex:2'
+scope_expect "rule prints its partial-coverage note" "$d" 'partial coverage'
+
+echo "11.2 [B1] the same population with different denominators across files"
+d=$(scope_case b1)
+echo 'Ownership verification succeeds in 99.9\% of the 1,200 attacked configurations.' > "$d/abstract.tex"
+echo 'Of the 1,170 attacked configurations, 29 remain accepted before recovery.' > "$d/apdx.tex"
+scope_expect "denominator drift flagged" "$d" '\[B1\] "attacked configuration"'
+
+echo "11.3 [B1] a subset of the population is not drift"
+d=$(scope_case b1-subset)
+echo 'Of the 231 certified state pairs, 220 have different labels on their two sides.' > "$d/dataset.tex"
+echo 'PSC is computed on the 45 certified state pairs of the synthetic test split.' > "$d/experiments.tex"
+scope_absent "qualified subset not flagged" "$d" 'WARN.*\[B1\]'
+
+echo "11.4 [B3] prose numerator that no table cell with the same denominator shows"
+d=$(scope_case b3)
+echo 'Under Tier-2, 50 of the 10,160 evaluation runs are accepted.' > "$d/apdx.tex"
+printf '%s\n' '\begin{tabular}{l c}' 'False acceptance & 51/10160 \\' '\end{tabular}' > "$d/tab.tex"
+scope_expect "stale prose total flagged" "$d" '\[B3\] prose 50 of 10,160'
+
+echo "11.5 a statement with no extractable object is listed, not dropped"
+d=$(scope_case noobj)
+echo 'An unsupported operation that mixes features forms a boundary.' > "$d/method.tex"
+scope_expect "listed for hand check" "$d" 'name no extractable object'
 
 echo ""
 echo "═══ Test Summary ═══"

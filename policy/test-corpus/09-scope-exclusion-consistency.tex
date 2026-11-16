@@ -1,0 +1,39 @@
+% Corpus: EXP.SCOPE_EXCLUSION_CONSISTENCY (single-file cases only).
+%
+% The rule is cross-file by nature; the cases here are the ones a corpus case
+% can hold: a scope statement and the table row that contradicts it in one
+% case, and the percentage check. Cross-file pairs, denominator drift and the
+% prose-vs-table numerator check are covered in policy/test-lint.sh section 11.
+% Object names are unique to this file so no other fixture pairs with them.
+
+% ── [A] located pair ────────────────────────────────────────────────────────
+
+% @CASE scope-recovery-only-statement-vs-pooled-row
+% @EXPECT EXP.SCOPE_EXCLUSION_CONSISTENCY
+On the public base model we report \textit{zeta7} for recovery only and make no ownership claim for it.
+\begin{tabular}{l c c}
+zeta7 & 120/120 & 11/120 \\
+\end{tabular}
+% @ENDCASE
+
+% @CASE scope-statement-whose-object-has-no-reported-number
+% @EXPECT none
+The estimator does not apply to \textit{omega9} because its weights are frozen.
+% @ENDCASE
+
+% ── [B2] percentage beside a fraction ───────────────────────────────────────
+
+% @CASE count-percentage-disagrees-with-fraction
+% @EXPECT EXP.SCOPE_EXCLUSION_CONSISTENCY
+After alignment, 39 of the 7,800 evaluation keys are accepted (0.60\%).
+% @ENDCASE
+
+% @CASE count-percentage-agrees-at-shown-precision
+% @EXPECT none
+After alignment, 39 of the 7,800 evaluation keys are accepted (0.50\%).
+% @ENDCASE
+
+% @CASE count-percentage-is-a-second-quantity
+% @EXPECT none
+The model succeeds on both sides of 42 of the 45 pairs against a single-side success of 96.7\%.
+% @ENDCASE

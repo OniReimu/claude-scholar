@@ -49,6 +49,7 @@ Expert-level guidance for writing publication-ready papers targeting **NeurIPS, 
 | `EXP.RESULTS_STATUS_DECLARATION_REQUIRED` | 非实跑结果小节状态声明 |
 | `EXP.EXPERIMENT_ROLE` | 每个实验须承担四种职责之一（证明有效／归因 gain／目标场景价值／排除竞争解释），否则重设计→弱化→删除 |
 | `EXP.MULTIRUN_AGGREGATE_CONSISTENCY` | 多 run 聚合数字须出自带一致性判定的 aggregate 工件 |
+| `EXP.SCOPE_EXCLUSION_CONSISTENCY` | 否定范围陈述（not supported / excluded / for X only）与报告同一对象的表、图、汇总计数一致；排除写进生成器 |
 | `SOK.TAXONOMY_REQUIRED` | SoK 必须给出 taxonomy |
 | `SOK.METHODOLOGY_REPORTING` | SoK 报告文献筛选方法 |
 | `SOK.BIG_TABLE_REQUIRED` | SoK 必须有综合对比大表 |

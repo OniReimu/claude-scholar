@@ -41,6 +41,7 @@ Verify the logical coherence of the paper:
 - Are result interpretations reasonable?
 - Are conclusions supported by evidence?
 - Is each section organised by outcome logic (problem → design → why → evidence) rather than by the order the work happened, and does the Abstract match what the strongest evidence actually supports (re-frame the claim, never the reported set)? <!-- policy:PAPER.OUTCOME_LOGIC -->
+- Does every negative-scope statement (not supported, excluded, reported for X only / no X claim, abstains, does not apply, not evaluated, `--` / N/A cells, footnoted exceptions) agree with every table, figure and prose count that reports the same object, and do pooled counts agree across abstract, introduction, body, conclusion and appendix? Run `bash policy/lint.sh --rule EXP.SCOPE_EXCLUSION_CONSISTENCY <dir>` over the **whole paper, not the diff**, and give each [A] pair its own verdict (consistent / contradiction / scope too broad); never pass the pairs in bulk. Fix each [B1]-[B3] count or make the noun phrase name the population difference. A contradiction is fixed in the generator that produces the counts, then every number citing that output is regenerated. <!-- policy:EXP.SCOPE_EXCLUSION_CONSISTENCY -->
 
 ### 3. Citation Completeness
 

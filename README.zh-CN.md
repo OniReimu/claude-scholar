@@ -10,6 +10,7 @@
 
 ## News
 
+- **2026-11-21 (v1.45.4)**: 把某个对象排除在结果之外的陈述（not supported、excluded、只报告 X、abstains、N/A）现在必须与报告同一对象的每张表、每张图、每个计数一致，同一总体的汇总数在各节必须相同。新规则 `EXP.SCOPE_EXCLUSION_CONSISTENCY`：排除写进产出计数的生成脚本，改一处排除就重读所有报告该总体的位置。`policy/lint.sh` 调用 `policy/scripts/scope-consistency.pl`：把每句范围陈述和报告同一对象的表格行、正文句配对，逐对写一行裁决；另外报出跨文件分母不一致、百分比不等于 k/n、正文 k of n 与表格格子对不上。`paper-self-review` 和 `ml-paper-writing` 已加上本规则。
 - **2026-11-12 (v1.45.3)**: Limitations 和 Discussion 的每一条都要写全三件事：顾虑（读者会因本文哪个结果或设计选择提出这个问题，即为什么在这里讨论）、相关的事实或检查、对那个结果解读的影响（稿内有数字就带上）。`claim-architecture-review` 逐条记录 `lim_parts`；只列出作者做了什么的条目判 `tighten`，缺的部分连同稿内证据位置列入 Author input needed。用本文自己的证据回答的潜在审稿意见现在归 A 类；C 类收窄为靠断言或别人的做法来辩护。`PAPER.LIMITATION_NECESSITY`、`ml-paper-writing`、`paper-self-review` 同步。已在作者自己改写 Discussion 时用过一次，尚未作为审查跑过。
 - **2026-11-10 (v1.45.2)**: 术语先用后定义现在每条路线都会查。`writing-anti-ai` 逐段问读者读到这里知不知道每个本文术语是什么；看不到定义就把术语转给 `claim-architecture-review`，保留引言里那句 gloss，也不用大白话顶替术语。`claim-architecture-review` 定点运行时按术语搜全文，找出首次使用和定义的位置。`writing-anti-ai-loop` 第 1 轮后对整篇新稿扫一遍先用后定义。还没有在论文上跑过。
 - **2026-11-05 (v1.45.1)**: 从骨架起草改为分章节顺序写。`ml-paper-writing` 的 Step 1c 按阅读顺序一节一节写，同一个上下文里常驻骨架、读者台账和已写章节，内容只来自骨架。不一次生成全文，也不按节派并行子代理；上下文太长时压成结构化总结。它比一次生成全文好是判断，不是测量结果。
