@@ -259,13 +259,31 @@ The bound does not hold in the skewed regime.
 The gain is not statistical, but architectural.
 % @ENDCASE
 
-% `not only ... but also` is deliberately UNPATTERNED on both cards: the new
-% reversed-copular pattern's lookahead hands it off, and NEGATIVE_PARALLELISM
-% manages it by frequency (at most twice per paper — a single instance is not a
-% violation), declared in its coverage_note. This case pins the silence.
-% @CASE negation-not-only-unpatterned-by-design
-% @EXPECT none
+% `not only ... but also` was deliberately unpatterned from v1.25.1 to v1.45.4
+% (frequency-managed, at most twice per paper). Saber overrode that on
+% 2026-11-21: every instance is reported, by PROSE.NEGATIVE_PARALLELISM only.
+% The NEGATION_CONTRAST patterns hand `not just/only` off through their lookahead.
+% @CASE negation-not-only-but-also-reported
+% @EXPECT PROSE.NEGATIVE_PARALLELISM
 The proof is not only elegant, but also short.
+% @ENDCASE
+
+% @CASE negation-not-only-but-also-no-comma-reported
+% @EXPECT PROSE.NEGATIVE_PARALLELISM
+The scheme not only lowers latency but also saves memory.
+% @ENDCASE
+
+% Sentence-initial `Whereas` fronts the foil and is located (tier B, judged by
+% hand). Mid-sentence `, whereas` is the semicolon remedy and stays clean; see
+% semicolon-tier1-comma-conjunction-clean in 04-format-and-provenance.tex.
+% @CASE negation-whereas-fronted-locates
+% @EXPECT PROSE.NEGATION_CONTRAST
+Whereas prior work tunes each benchmark separately, we fix one operating point.
+% @ENDCASE
+
+% @CASE negation-unlike-sentence-initial-locates
+% @EXPECT PROSE.NEGATION_CONTRAST
+Unlike FedAvg, our method keeps client state between rounds.
 % @ENDCASE
 
 % Concessive but-CLAUSE: locates at the regex layer by design, judgment clears

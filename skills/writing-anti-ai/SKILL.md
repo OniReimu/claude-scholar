@@ -150,7 +150,7 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
 **Patterns to avoid**:
 - **段落长度异常 → 转诊，不要自己判**：只有一两句的段落（可以并进上下文的）、或明显超长的段落，是 `merge` / `split` 的问题——判它需要看相邻段落各自承载什么信息，那是 `claim-architecture-review` **P1 逐段审计**的 verdict 集合（`{keep, tighten, merge, move, split, delete, escalate}`），不是线编能定的。最小调用见下方转诊说明。
   ⚠️ **段长本身不是 AI 痕迹**：实测 40 篇语料，2019–2021 与 2025–2026 的段落长度中位数同为 **57 词**，均值 74 vs 71，CV 0.86 vs 0.80——**没有差别**。所以**不要按词数抓段落**，触发转诊的是「这段该不该独立存在」，不是它有多长。（句长分布是另一回事，那条有依据，见 §3 `PROSE.RHYTHM_VARIANCE`。）
-- Negative parallelisms: "It's not just X, it's Y" <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
+- Negative parallelisms: "It's not just X, it's Y"；`not only X but also Y` 2026-11-21 起逐处报（用户推翻 8 月「每篇 ≤2 次」的限频：「not only … but also」这个确实不想要） <!-- policy:PROSE.NEGATIVE_PARALLELISM -->
 - Unnecessary contrast <!-- policy:PROSE.NEGATION_CONTRAST -->：**按句式分两档**。
   **档 A（零容忍）**：`X is/are A, not B` · `not A, but B` · `X is neither A nor B`——**系动词 + 表语对比**，是 `PROSE.NEGATIVE_PARALLELISM` 的 `It is not X, it is Y` 近亲，强制改正面。
   **档 B（按六原则第 6 条和规则卡 Requirement）**：`rather than` · `instead of` 先核定义、威胁模型及保证边界中的必要区分，按定义或范围依据保留，不冒充实验；其余对照须满足以下三条之一——
@@ -161,6 +161,10 @@ Avoid binary contrasts, dramatic fragmentation, rhetorical setups.
   三条都不满足且无必要划界时，删除无依据的对照；留下的正面解释仍须有依据，`only` / `alone` 不能凭空增加排他性，删对照也不证明因果。互换对照句式（`rather than` ↔ `instead of` ↔ `whereas` ↔ `unlike`）本身不解决问题。**删排除项前先确认它不属于 ③ 或必要区分**，不得丢掉比较性论断或边界命题；档 A 仍须改成合规结构，不因此放行。
   ⚠️ **单纯的否定谓语不在禁令内**：`that difference is not an effect estimate` / `visible events are not yet evidence for action` 同句内没有正面对项，是正常陈述。实测一份全稿 16 处命中里 5 处属此类，铲掉它们会让作者关掉整条规则。
   ⚠️ **lint 只定位不分档**：五条 pattern 现在覆盖两档全部形式（此前只有 `, not` 一条，实测一份全稿报 15 处而实际 38 处，`rather than` 17 处全部不可见）。报出来的每一条都要自己判档。
+  ⚠️ **人工扫描清单（lint 之外逐句过，2026-10-25 补）**：对照/否定式不只靠 `, not` 和 `rather than` 表达，逐句查下列变体——`X, not Y`（**不限系动词**，动词宾语后挂 `, not Y` 同样算）· `not just/only X but (also) Y` · `is about X, not Y` · 紧接正面项的 `X is not Y` · `does not … but` · `no longer … but` · `rather than` / `instead of` · 句首 `Whereas …,` 和 `while` 对举（句中 `, whereas` 连接两条各自成立的事实不报，是分号规则推荐的改法，用户 2026-11-21 确认） · `unlike` / `in contrast` / `as opposed to` · 副词制造的隐性对照（`even … alone`、`only`、`still`、`already`）· 先否定一个说法、下一句再给正面说法的两句结构。正则只能定位前几种，后两类必须人工读。
+  **反例（K-Bench rebuttal v4 漏扫，作者点名）**：`We compare all methods at one shared operating point, not home benchmarks.` → `We compare all methods at one shared operating point.` 当时按 ② 放行，理由是审稿人点名要 home benchmark，这是误判。**审稿人的请求不算 ② 类「点名引用的既有主张」**：rebuttal 和立场文本只写我们做了什么、结果是什么，不拿对立面作陪衬。
+  **两边都是事实时**不删任何一边，改成两条并列的正面陈述，让数字承担比较：`STaR clears the answer while the tool provider still sees the value` → `STaR lowers answer leakage from 0.994 to 0.014, and the tool provider sees the value on 99.4% of queries`。
+  **可保留的否定（报告里单列并写理由）**：不存在本身就是事实或论证的一环（`no tool channel carries the secret`、`ELM drops its consistency term`）；术语和既定名称（`no-intervention`、`answer-only`）；逐字引文；转述对方问题的小标题。
 - 并列列举的密度与重复 <!-- policy:PROSE.RULE_OF_THREE -->：**不要**把三项列表改成四项来破坏三段式指纹——那在学术散文里只会造出更长的列举墙（本行此前写的就是 "prefer two or four items"，它是这个问题的生产者）。四条判据：同段三项并列 ≤1 次；**同一集合不得枚举两次**（首次列举时命名，之后引用名字）；短项内联 ≤4 项、长项（>3 词的名词短语）内联 ≤2 项；一段中带列表的句子 ≤2 句。⚠️ 反向护栏：技术散文里列举合法且常见，**首选修法是命名+引用，不是删项**。**跨节转诊**：本条只判本段/本节内的重复列举；若怀疑同一组对象在别节也列过，转 `claim-architecture-review`——`information-ledger.md` 以集合为 info-key，第二次列举在 `lookup-before-create` 时撞上（最小调用见下方转诊说明）
 - Em-dash (zero allowed — not even one): "X---Y---Z" parentheticals. **替换标点不算修法**——`X --- a 12.5$\times$ reduction` 改成 `X, a 12.5$\times$ reduction` 只换了标点，同位语仍然是尾巴，而本条存在的理由正是这种挂载方式。按尾巴性质选：完整命题→拆成新句；对前面名词的限定→关系从句 `, which ...`；真旁白→括号或删。判据是"原来挂着的内容是否已经进入某个语法主结构" <!-- policy:PROSE.EM_DASH_RESTRICTION -->
 - **分号检查与改写** <!-- policy:PROSE.SEMICOLON_RESTRICTION -->：必须读取并执行 `policy/rules/prose-semicolon-restriction.md`「Requirement」「Check」的完整禁令、范围、优先级与两级修法（含四项同时成立的准入条件、规格罗列排除及连接词选择要求）；修法依据和风格约束的证据边界见该卡「Rationale」，不得当作已验证的 AI 痕迹。

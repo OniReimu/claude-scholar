@@ -45,6 +45,25 @@ lint_patterns:
     mode: match
   - pattern: "\\binstead of\\b"
     mode: match
+  # Added 2026-10-25 after a rebuttal pass missed contrast pairs written with
+  # other connectives. Tier B locators only: `unlike` / `in contrast` are often
+  # legitimate, and the hit is a prompt to read the sentence, not a verdict.
+  # Case-insensitive: the common forms are sentence-initial (`Unlike X,`,
+  # `In contrast,`).
+  - pattern: "(?i)\\b(unlike|in contrast|as opposed to)\\b"
+    mode: match
+  # `whereas` is located only sentence-initially (`Whereas A, B`), where the
+  # first clause is a fronted foil; case-sensitive on purpose. Mid-sentence
+  # `, whereas` joins two stated facts. It is the tier-1 remedy of
+  # PROSE.SEMICOLON_RESTRICTION and is not reported (Saber 2026-11-21:
+  # 「, whereas」不是问题).
+  - pattern: "\\bWhereas\\b"
+    mode: match
+  # Negated verb, then `, but`. The lookahead hands `not just/only/merely/simply`
+  # to PROSE.NEGATIVE_PARALLELISM, as the reversed-copular pattern above does,
+  # so a `not only ... but also` sentence is reported once, by that card.
+  - pattern: "\\b(does|do|did|is|are|was|were)\\s+(not|no\\s+longer)\\s+(?!just\\b|only\\b|merely\\b|simply\\b)[^.!?]{1,80},\\s+but\\b"
+    mode: match
 coverage_note: "tier B (rather than / instead of) is located but not judged here — preserve necessary definition/threat/guarantee boundaries on their stated basis; otherwise keep it only under (a) concrete default, (b) named and cited holder, or (c) tested here with the result at the same place (PROSE.EXPLAINING_REGISTER principle 6). Tier A (copular contrast both orders, neither...nor) is zero-tolerance. Not enumerable: the comma-free reversed form (is not A but B) and fronted Not A, but B — check negated copulas by hand."
 lint_targets: "**/*.tex"
 ---
@@ -76,6 +95,8 @@ lint_targets: "**/*.tex"
 
 定义、威胁模型及保证边界的必要区分另按定义或范围依据保留，不属于实验判据 ③，也不需要虚构实验。自拟例：`The attacker can alter sensor readings. The controller is trusted.` 保留两边的边界。档 A 仍改为合规结构，不删边界命题。
 
+**审稿回复与立场文本不享受 ②。** 审稿人的请求不是「点名引用的既有主张」。反例（2026-10-25，作者点名）：`We compare all methods at one shared operating point, not home benchmarks.` 应写成 `We compare all methods at one shared operating point.` 变体清单和保留例外见 `skills/writing-anti-ai/SKILL.md` 本条下的「人工扫描清单」。
+
 **换句式不算修改。**把 `, not Y`、`rather than Y`、`instead of Y`、`whereas`、`unlike` 互相替换，只是给同一个对照换了件衣服。
 
 与 `PROSE.NEGATIVE_PARALLELISM` 的关系：后者抓 `It's not X, it's Y` / `not just X, but Y` 的整句排比，本规则抓 `X, not/rather than/instead of Y` 的短对比。
@@ -98,7 +119,7 @@ LLM 习惯用"否定一个对照项"来制造强调或深度感，即使那个�
 - **无正面对项的否定谓语不报**：`is not` / `are not` / `does not` 后面没有跟一个被对照的正面项时，不是本卡的对象。档 A 的 pattern 已经把这类排除在外（它要求 `is <表语>, not <X>` 的完整形状），审阅时不要手工补报
 - **档 B 逐条判 ①②③，并查必要划界**：定义和范围按其依据保留；其余无依据对照可删，但正面因果也须有依据。`only` / `alone` 不能凭空增加排他性。属于 ③ 保留并同处给结果；属于 ② 确认原处有引用
 - **删排除项前必须确认它在别处有落点**。实测的两处删除分别核实于同段末句；排除项承载的是实证主张时，删掉等于丢一个 claim
-- **排除**: `, not only ... but also ...`（由 `PROSE.NEGATIVE_PARALLELISM` 限频管理，每篇≤2 次）
+- **交给别的卡或不报**: `not only/just ... but (also) ...` 由 `PROSE.NEGATIVE_PARALLELISM` 报，2026-11-21 起逐处报（用户推翻 8 月「每篇 ≤2 次」的限频）。句中 `, whereas` 连接两条各自成立的事实，是 `PROSE.SEMICOLON_RESTRICTION` 推荐的改法，不报（用户 2026-11-21：「, whereas」不是问题）；句首 `Whereas …,` 把对立面前置作陪衬，照常定位
 - **检查范围**: `.tex` 文件正文区域
 
 ## Examples
