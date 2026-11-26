@@ -1,7 +1,7 @@
 ---
 name: research-workspace-layout
 description: This skill should be used when the user asks to "start a new paper project", "set up a repo for this paper", "scaffold a research project", "organise this project", "the directory is a mess", "apply the workspace contract", "adopt the research file structure", "where should this cache directory go", "add PROJECT-WORKSPACE.md", "link Overleaf as a submodule", "why does git say the submodule has untracked changes", or when a research repository has accumulated parallel copies of the same thing (cache_v2, cache_v2_now, cache_v2_now_rx) and needs a canonical layout. Covers both a project started from scratch and an existing one retrofitted. Do not use for LaTeX template organisation (latex-conference-template-organizer), experiment provenance narrative (lineage), or general git hygiene (git-workflow).
-version: 0.1.0
+version: 0.2.0
 tags: [Research, Workspace, Git, Overleaf, Reproducibility]
 ---
 
@@ -122,6 +122,19 @@ Then, in order:
 5. **Run the validator** once the first record exists, and keep it in whatever check
    the project already runs.
 
+## Freezing the analysis plan
+
+Fill `design.md` and `analysis-plan.md`, set the plan's Status to `frozen`, and
+commit it. Before any run larger than a smoke test, run
+
+```sh
+uv run <skill>/scripts/prereg_check.py experiments/EXP-YYYY-NNN
+```
+
+It refuses when a record file is missing, the plan is not frozen, its decision
+rules still hold template blanks, or the plan has uncommitted changes. Record any
+later change in `deviations.md` and leave the committed plan as it was.
+
 ## Where an existing directory goes
 
 Relocation should be a lookup, not a fresh judgement each time.
@@ -187,6 +200,7 @@ rules decide whether a mistake is recoverable, and the playbook gives the reason
 | `references/migration-playbook.md` | the retrofit procedure, in order |
 | `references/overleaf-submodule.md` | attaching a manuscript repository, and its failure modes |
 | `scripts/validate_workspace.py` | the checker below |
+| `scripts/prereg_check.py` | refuses a record whose analysis plan is not frozen, filled in and committed |
 
 ## Verifying
 

@@ -2,7 +2,7 @@
 name: results-analysis
 description: This skill should be used when the user asks to "analyze experimental results", "generate results section", "statistical analysis of experiments", "compare model performance", "create results visualization", or mentions connecting experimental data to paper writing. Provides comprehensive guidance for analyzing ML/AI experimental results and generating paper-ready content.
 tags: [Research, Analysis, Statistics, Visualization, Paper Writing]
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Results Analysis for ML/AI Research
@@ -111,6 +111,7 @@ Select appropriate tools for data loading and preliminary validation based on da
 - Ensure reproducibility: document random seeds per `rules/experiment-reproducibility.md`
 
 See `references/statistical-methods.md` for the complete statistical methods guide.
+For how a comparison against a baseline is judged (the three verdicts, the resampling unit, fair tuning and what counts as new data), see `references/comparison-integrity.md`.
 
 ### Step 3: Model Performance Comparison
 
@@ -404,6 +405,7 @@ See the guides in the `references/` directory for detailed methods and best prac
 - **`references/results-writing-guide.md`** - Results section writing standards
 - **`references/visualization-best-practices.md`** - Visualization best practices
 - **`references/common-pitfalls.md`** - Common errors and fixes
+- **`references/comparison-integrity.md`** - Verdicts, resampling unit and fair comparison for method-vs-baseline claims
 
 ### External Resources
 

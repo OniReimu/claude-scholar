@@ -25,6 +25,19 @@ written afterwards is a reconstruction and has to say so.
 - Randomization, blinding, counterbalancing:
 - Stopping rule:
 
+## Fair comparison
+
+- Baseline tuning budget:
+  Same selection data and a comparable number of configurations as the new method.
+  A baseline at default settings is weaker than the strongest reasonable baseline.
+- Search grids, per arm:
+  A selected value on a grid edge means the grid extends past that edge, for every arm.
+- Training or inference budget parity (wall-clock or steps, and the tolerance):
+- Without training (for example LLM evaluation), inference settings and prompt-tuning effort per arm:
+- Selection data:
+  Selection uses validation data. The test set is used once, for the final report.
+- Predicted result, written before the run:
+
 ## Risks and governance
 
 - Ethics, safety, privacy status:
